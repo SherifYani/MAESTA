@@ -20,7 +20,7 @@
     backdrop-filter: blur(24px);
     border: 1px solid var(--translucent-white-2);
     border-radius: 1rem;
-    padding: 3.5rem 5rem;
+    padding: 3.5rem 2.5rem;
     box-shadow: 0 24px 64px var(--translucent-black-1);
     width: 100%;
 }
@@ -50,8 +50,8 @@
 /* === Role Selection === */
 .register-form__role-selection {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(8rem,1fr));
+    gap:1rem;
     margin-bottom: 2rem;
 }
 

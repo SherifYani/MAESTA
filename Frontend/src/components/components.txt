@@ -1,0 +1,882 @@
+/**
+ * @file FormInput.jsx
+ * @description Reusable form input component with icon support
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import PropTypes from "prop-types";
+import "../styles/form-components.css";
+
+/**
+ * FormInput Component
+ * @description Renders a styled input field with icon and optional password toggle
+ * @param {Object} props - The component props
+ * @param {string} props.icon - Font Awesome icon class
+ * @param {string} props.type - Input type (text, email, password, url, etc.)
+ * @param {string} props.name - Input name attribute
+ * @param {string} props.placeholder - Input placeholder text
+ * @param {string} props.value - Input value
+ * @param {Function} props.onChange - Change event handler
+ * @param {boolean} props.required - Whether the field is required
+ * @param {boolean} props.showPasswordToggle - Whether to show password toggle button
+ * @param {boolean} props.showPassword - Whether password is visible
+ * @param {Function} props.onTogglePassword - Password toggle handler
+ * @param {string} props.className - Additional CSS class names
+ * @param {boolean} props.hasError - Whether the input has an error state
+ * @returns {JSX.Element} The rendered form input component
+ */
+function FormInput({
+  icon,
+  type,
+  name,
+  placeholder,
+  value,
+  onChange,
+  required = false,
+  showPasswordToggle = false,
+  showPassword = false,
+  onTogglePassword,
+  className = "",
+  hasError = false,
+}) {
+  const containerClass = `form-input__container ${className} ${
+    hasError ? "form-input--error" : ""
+  }`.trim();
+
+  return (
+    <div className={containerClass}>
+      <div className="form-input__wrapper">
+        <i className={`${icon} form-input__icon`} />
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className="form-input__field"
+        />
+        {showPasswordToggle && (
+          <button
+            type="button"
+            onClick={onTogglePassword}
+            className="form-input__password-toggle"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+FormInput.propTypes = {
+  icon: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  required: PropTypes.bool,
+  showPasswordToggle: PropTypes.bool,
+  showPassword: PropTypes.bool,
+  onTogglePassword: PropTypes.func,
+  className: PropTypes.string,
+  hasError: PropTypes.bool,
+};
+
+export default FormInput;
+==========================================================
+
+/**
+ * @file FormSelect.jsx
+ * @description Reusable form select component with icon support
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import PropTypes from "prop-types";
+import "../styles/form-components.css";
+
+/**
+ * FormSelect Component
+ * @description Renders a styled select dropdown with icon
+ * @param {Object} props - The component props
+ * @param {string} props.icon - Font Awesome icon class
+ * @param {string} props.name - Select name attribute
+ * @param {string} props.value - Selected value
+ * @param {Function} props.onChange - Change event handler
+ * @param {Array} props.options - Array of option objects with value and label
+ * @param {boolean} props.required - Whether the field is required
+ * @param {string} props.className - Additional CSS class names
+ * @param {boolean} props.hasError - Whether the select has an error state
+ * @returns {JSX.Element} The rendered form select component
+ */
+function FormSelect({
+    icon,
+    name,
+    value,
+    onChange,
+    options,
+    required = false,
+    className = "",
+    hasError = false,
+}) {
+    const containerClass = `form-select__container ${className} ${hasError ? "form-select--error" : ""
+        }`.trim();
+
+    return (
+        <div className={containerClass}>
+            <div className="form-select__wrapper">
+                <i className={`${icon} form-select__icon left`} />
+                <i className={`fa-solid fa-angle-down form-select__icon right`} />
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    required={required}
+                    className="form-select__field"
+                >
+                    {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+    );
+}
+
+FormSelect.propTypes = {
+    icon: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    options: PropTypes.arrayOf(
+        PropTypes.shape({
+            value: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    required: PropTypes.bool,
+    className: PropTypes.string,
+    hasError: PropTypes.bool,
+};
+
+export default FormSelect;
+
+================================================================
+
+
+/**
+ * @file FormTextarea.jsx
+ * @description Reusable form textarea component with icon support
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import PropTypes from "prop-types";
+import "../styles/form-components.css";
+
+/**
+ * FormTextarea Component
+ * @description Renders a styled textarea field with icon
+ * @param {Object} props - The component props
+ * @param {string} props.icon - Font Awesome icon class
+ * @param {string} props.name - Textarea name attribute
+ * @param {string} props.placeholder - Textarea placeholder text
+ * @param {string} props.value - Textarea value
+ * @param {Function} props.onChange - Change event handler
+ * @param {number} props.rows - Number of visible text rows
+ * @param {boolean} props.required - Whether the field is required
+ * @param {string} props.className - Additional CSS class names
+ * @param {boolean} props.hasError - Whether the textarea has an error state
+ * @returns {JSX.Element} The rendered form textarea component
+ */
+function FormTextarea({
+  icon,
+  name,
+  placeholder,
+  value,
+  onChange,
+  rows = 4,
+  required = false,
+  className = "",
+  hasError = false,
+}) {
+  const containerClass = `form-textarea__container ${className} ${
+    hasError ? "form-textarea--error" : ""
+  }`.trim();
+
+  return (
+    <div className={containerClass}>
+      <div className="form-textarea__wrapper">
+        <i className={`${icon} form-textarea__icon`} />
+        <textarea
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          rows={rows}
+          required={required}
+          className="form-textarea__field"
+        />
+      </div>
+    </div>
+  );
+}
+
+FormTextarea.propTypes = {
+  icon: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  rows: PropTypes.number,
+  required: PropTypes.bool,
+  className: PropTypes.string,
+  hasError: PropTypes.bool,
+};
+
+export default FormTextarea;
+
+
+========================================================
+
+/**
+ * @file RoleCard.jsx
+ * @description Role selection card component
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import PropTypes from "prop-types";
+import "../styles/form-components.css";
+
+/**
+ * RoleCard Component
+ * @description Renders a selectable role card with icon, title, and description
+ * @param {Object} props - The component props
+ * @param {string} props.icon - Font Awesome icon class
+ * @param {string} props.title - Role title
+ * @param {string} props.description - Role description
+ * @param {boolean} props.isSelected - Whether this role is currently selected
+ * @param {Function} props.onClick - Click event handler
+ * @param {string} props.className - Additional CSS class names
+ * @returns {JSX.Element} The rendered role card component
+ */
+function RoleCard({ icon, title, description, isSelected, onClick, className = "" }) {
+  const cardClass = `role-card ${isSelected ? "role-card--selected" : ""} ${className}`.trim();
+
+  return (
+    <div
+      className={cardClass}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      aria-pressed={isSelected}
+      aria-label={`Select ${title} role`}
+    >
+      <i className={`${icon} role-card__icon`} />
+      <h3 className="role-card__title">{title}</h3>
+      <p className="role-card__description">{description}</p>
+    </div>
+  );
+}
+
+RoleCard.propTypes = {
+  icon: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+};
+
+export default RoleCard;
+
+================================================================
+
+
+
+
+/**
+ * @file RegisterForm.jsx
+ * @description Registration form component with role selection, validation, and social login
+ * @author Job Magnet Development Team
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import { useState, useCallback } from "react";
+import RoleCard from "./RoleCard";
+import FormInput from "./FormInput";
+import FormTextarea from "./FormTextarea";
+import FormSelect from "./FormSelect";
+import "../styles/register-form.css";
+import "../styles/form-components.css";
+/**
+ * RegisterForm Component
+ * @description Renders the complete registration form with role selection and validation
+ * @returns {JSX.Element} The rendered registration form component
+ */
+function RegisterForm() {
+    // Form state management
+    const [selectedRole, setSelectedRole] = useState("");
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        companyName: "",
+        industry: "",
+        companySize: "",
+        location: "",
+        website: "",
+        companyDescription: "",
+    });
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    // Password strength validation state
+    const [passwordValidation, setPasswordValidation] = useState({
+        minLength: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasNumber: false,
+        hasSymbol: false,
+    });
+
+    /**
+     * Validates password strength requirements
+     * @param {string} password - The password to validate
+     * @returns {Object} Validation results for each requirement
+     */
+    const validatePassword = useCallback((password) => {
+        return {
+            minLength: password.length >= 8,
+            hasUppercase: /[A-Z]/.test(password),
+            hasLowercase: /[a-z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        };
+    }, []);
+
+    /**
+     * Handles input changes and updates form state
+     * @param {Event} e - The input change event
+     */
+    const handleInputChange = useCallback(
+        (e) => {
+            const { name, value } = e.target;
+            setFormData((prev) => ({ ...prev, [name]: value }));
+
+            // Validate password in real-time
+            if (name === "password") {
+                setPasswordValidation(validatePassword(value));
+            }
+        },
+        [validatePassword]
+    );
+
+    /**
+     * Checks if all required fields are filled and valid
+     * @returns {boolean} True if form is valid
+     */
+    const isFormValid = useCallback(() => {
+        const baseFieldsFilled =
+            formData.fullName.trim().length >= 2 &&
+            formData.fullName.trim().length <= 100 &&
+            formData.email.trim() !== "" &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
+            formData.password !== "" &&
+            formData.confirmPassword !== "" &&
+            formData.password === formData.confirmPassword &&
+            Object.values(passwordValidation).every((v) => v === true) &&
+            selectedRole !== "" &&
+            termsAccepted;
+
+        // Additional validation for employer role
+        if (selectedRole === "employer") {
+            return (
+                baseFieldsFilled &&
+                formData.companyName.trim() !== "" &&
+                formData.industry !== "" &&
+                formData.companySize !== "" &&
+                formData.location.trim() !== ""
+            );
+        }
+
+        return baseFieldsFilled;
+    }, [formData, passwordValidation, selectedRole, termsAccepted]);
+
+    /**
+     * Handles form submission
+     * @param {Event} e - The form submit event
+     */
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        // Simulate API call
+        setTimeout(() => {
+            console.log("Form submitted:", { ...formData, role: selectedRole });
+            setIsLoading(false);
+            alert("Registration successful! Please check your email to verify your account.");
+        }, 3000);
+    };
+
+    /**
+     * Handles social login (Google/LinkedIn)
+     * @param {string} provider - The social login provider
+     */
+    const handleSocialLogin = (provider) => {
+        console.log(`${provider} login initiated`);
+        alert(`${provider} login will be implemented`);
+    };
+
+    const hasPasswordError = formData.confirmPassword && formData.password !== formData.confirmPassword;
+
+    return (
+        <div className="register-form__container">
+            <div className="register-form__card">
+                {/* Header */}
+                <div className="register-form__header">
+                    <h2 className="register-form__title">Create Your Account</h2>
+                    <p className="register-form__subtitle">Start your journey in less than 2 minutes</p>
+                </div>
+
+                {/* Role Selection */}
+                <div className="register-form__role-selection">
+                    <RoleCard
+                        icon="fa-solid fa-bullseye"
+                        title="Job Seeker"
+                        description="Find opportunities"
+                        isSelected={selectedRole === "jobseeker"}
+                        onClick={() => setSelectedRole("jobseeker")}
+                    />
+                    <RoleCard
+                        icon="fa-solid fa-briefcase"
+                        title="Employer"
+                        description="Hire top talent"
+                        isSelected={selectedRole === "employer"}
+                        onClick={() => setSelectedRole("employer")}
+                    />
+                </div>
+
+                {/* Registration Form */}
+                <form onSubmit={handleSubmit} className="register-form__form">
+                    {/* Common Fields */}
+                    <FormInput
+                        icon="fa-solid fa-user"
+                        type="text"
+                        name="fullName"
+                        placeholder="Full Name"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        required
+                    />
+
+                    <FormInput
+                        icon="fa-solid fa-envelope"
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                    />
+
+                    <FormInput
+                        icon="fa-solid fa-lock"
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        showPasswordToggle
+                        showPassword={showPassword}
+                        onTogglePassword={() => setShowPassword(!showPassword)}
+                        required
+                    />
+                    {/* Password Strength Requirements */}
+                    {formData.password && (
+                        <div className="register-form__password-requirements">
+                            <p className="register-form__requirements-title">Password must contain:</p>
+                            <ul className="register-form__requirements-list">
+                                <li className={passwordValidation.minLength ? "register-form__requirement-item--valid" : ""}>
+                                    <i className={`fa-solid ${passwordValidation.minLength ? "fa-check" : "fa-xmark"} register-form__requirement-icon`} />
+                                    At least 8 characters
+                                </li>
+                                <li className={passwordValidation.hasUppercase ? "register-form__requirement-item--valid" : ""}>
+                                    <i className={`fa-solid ${passwordValidation.hasUppercase ? "fa-check" : "fa-xmark"} register-form__requirement-icon`} />
+                                    One uppercase letter
+                                </li>
+                                <li className={passwordValidation.hasLowercase ? "register-form__requirement-item--valid" : ""}>
+                                    <i className={`fa-solid ${passwordValidation.hasLowercase ? "fa-check" : "fa-xmark"} register-form__requirement-icon`} />
+                                    One lowercase letter
+                                </li>
+                                <li className={passwordValidation.hasNumber ? "register-form__requirement-item--valid" : ""}>
+                                    <i className={`fa-solid ${passwordValidation.hasNumber ? "fa-check" : "fa-xmark"} register-form__requirement-icon`} />
+                                    One number
+                                </li>
+                                <li className={passwordValidation.hasSymbol ? "register-form__requirement-item--valid" : ""}>
+                                    <i className={`fa-solid ${passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"} register-form__requirement-icon`} />
+                                    One special character
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+
+                    <FormInput
+                        icon="fa-solid fa-lock"
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        hasError={hasPasswordError}
+                        required
+                    />
+                    {/* Password Match Validation */}
+                    {hasPasswordError && (
+                        <p className="register-form__error-message">Passwords do not match</p>
+                    )}
+
+
+
+                    {/* Employer-specific Fields */}
+                    {selectedRole === "employer" && (
+                        <div className="register-form__employer-fields">
+                            <FormInput
+                                icon="fa-solid fa-building"
+                                type="text"
+                                name="companyName"
+                                placeholder="Company Name"
+                                value={formData.companyName}
+                                onChange={handleInputChange}
+                                required
+                            />
+
+                            <FormSelect
+                                icon="fa-solid fa-industry"
+                                name="industry"
+                                value={formData.industry}
+                                onChange={handleInputChange}
+                                options={[
+                                    { value: "", label: "Select Industry" },
+                                    { value: "technology", label: "Technology" },
+                                    { value: "healthcare", label: "Healthcare" },
+                                    { value: "finance", label: "Finance" },
+                                    { value: "education", label: "Education" },
+                                    { value: "retail", label: "Retail" },
+                                    { value: "manufacturing", label: "Manufacturing" },
+                                    { value: "other", label: "Other" },
+                                ]}
+                                required
+                            />
+
+                            <FormSelect
+                                icon="fa-solid fa-users"
+                                name="companySize"
+                                value={formData.companySize}
+                                onChange={handleInputChange}
+                                options={[
+                                    { value: "", label: "Select Company Size" },
+                                    { value: "1-10", label: "1-10 employees" },
+                                    { value: "11-50", label: "11-50 employees" },
+                                    { value: "51-200", label: "51-200 employees" },
+                                    { value: "201-500", label: "201-500 employees" },
+                                    { value: "500+", label: "500+ employees" },
+                                ]}
+                                required
+                            />
+
+                            <FormInput
+                                icon="fa-solid fa-location-dot"
+                                type="text"
+                                name="location"
+                                placeholder="Location"
+                                value={formData.location}
+                                onChange={handleInputChange}
+                                required
+                            />
+
+                            <FormInput
+                                icon="fa-solid fa-globe"
+                                type="url"
+                                name="website"
+                                placeholder="Website (optional)"
+                                value={formData.website}
+                                onChange={handleInputChange}
+                            />
+
+                            <FormTextarea
+                                icon="fa-solid fa-file-lines"
+                                name="companyDescription"
+                                placeholder="Company Description (optional)"
+                                value={formData.companyDescription}
+                                onChange={handleInputChange}
+                                rows={4}
+                            />
+                        </div>
+                    )}
+
+                    {/* Terms and Conditions */}
+                    <div className="register-form__terms-container">
+                        <label className="register-form__terms-label">
+                            <input
+                                type="checkbox"
+                                checked={termsAccepted}
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                                className="register-form__terms-checkbox"
+                            />
+                            <span>
+                                I agree to the{" "}
+                                <a href="/terms" target="_blank" rel="noopener noreferrer" className="register-form__terms-link">
+                                    Terms and Conditions
+                                </a>
+                            </span>
+                        </label>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        disabled={!isFormValid() || isLoading}
+                        className={`register-form__submit-button ${isLoading ? "register-form__submit-button--loading" : ""}`}
+                    >
+                        {isLoading ? (
+                            <>
+                                <i className="fa-regular fa-paper-plane"></i>
+                                Sending...
+                            </>
+                        ) : (
+                            <>
+                                <i className="fa-solid fa-envelope" />
+                                Create Account
+                            </>
+                        )}
+                    </button>
+
+                    <div className="register-form__sign-in-link">
+                        <p className="register-form__sign-in-text">Already have an account?</p>
+                        <a href="#signin" className="register-form__sign-in-anchor">Sign in instead</a>
+                    </div>
+
+                    <div className="register-form__divider">
+                        <span>Or continue with</span>
+                    </div>
+
+                    <div className="register-form__social-login">
+                        <div className="register-form__social-buttons">
+                            <button
+                                type="button"
+                                onClick={() => handleSocialLogin("Google")}
+                                className="register-form__social-button"
+                            >
+                                <i class="fa-brands fa-google register-form__social-button-icon"></i>
+                                Google
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => handleSocialLogin("LinkedIn")}
+                                className="register-form__social-button"
+                            >
+                                <i class="fa-brands fa-linkedin register-form__social-button-icon"></i>
+                                LinkedIn
+                            </button>
+                        </div>
+                    </div>
+
+                    <p className="register-form__terms-text">
+                        By creating an account, you agree to our{" "}
+                        <a href="#terms" className="register-form__terms-link">Terms of Service</a> and{" "}
+                        <a href="#privacy" className="register-form__terms-link">Privacy Policy</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export default RegisterForm;
+
+
+=================================================================
+/**
+ * @file RegistrationPage.jsx
+ * @description Main registration page with 3D background and welcome content
+ * @author Job Magnet Development Team
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import { useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, MeshDistortMaterial, Sphere } from "@react-three/drei";
+import {
+  ArrowLeft,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import "../styles/registration-page.css";
+import RegisterForm from "./RegisterForm";
+
+/**
+ * EnhancedBubble Component
+ * @description Renders a 3D animated sphere for the background
+ * @returns {JSX.Element} The rendered 3D bubble component
+ */
+function EnhancedBubble() {
+  return (
+    <group>
+      {/* Main sphere with enhanced glass effect */}
+      <Sphere args={[2.2, 128, 128]} scale={1}>
+        <MeshDistortMaterial
+          color="#ff1a75"
+          attach="material"
+          distort={0.5}
+          speed={2}
+          roughness={0.1}
+          metalness={0.95}
+          transparent
+          opacity={0.2}
+        />
+      </Sphere>
+
+      {/* Secondary inner sphere for depth */}
+      <Sphere args={[1.8, 100, 100]} scale={1}>
+        <MeshDistortMaterial
+          color="#ff0080"
+          distort={0.3}
+          speed={1.5}
+          roughness={0.2}
+          metalness={0.8}
+          transparent
+          opacity={0.15}
+        />
+      </Sphere>
+
+      {/* Outer glow ring */}
+      <Sphere args={[2.4, 64, 64]} scale={1}>
+        <meshBasicMaterial
+          color="#e6005c"
+          transparent
+          opacity={0.06}
+          wireframe
+        />
+      </Sphere>
+
+      {/* Core light sphere */}
+      <Sphere args={[1.2, 64, 64]} scale={1}>
+        <meshStandardMaterial
+          color="#ff80b3"
+          emissive="#ff80b3"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.2}
+        />
+      </Sphere>
+
+      {/* Enhanced lighting setup */}
+      <pointLight position={[6, 6, 6]} intensity={2.5} color="#ffffff" />
+      <pointLight position={[-6, -6, 6]} intensity={1.5} color="#0000ff" />
+      <pointLight position={[0, 0, -6]} intensity={1} color="#ffff00" />
+      <pointLight position={[6, -6, 0]} intensity={0.8} color="#ff0066" />
+      <ambientLight intensity={0.4} />
+      <hemisphereLight intensity={0.5} color="#ffffff" groundColor="#ffb3d1" />
+    </group>
+  );
+}
+
+/**
+ * RegistrationPage Component
+ * @description Main registration page component with 3D background and form
+ * @returns {JSX.Element} The rendered registration page
+ */
+function RegistrationPage() {
+  const features = [
+    { icon: Sparkles, text: "AI-Powered Matching" },
+    { icon: TrendingUp, text: "Career Growth Tools" },
+    { icon: Users, text: "Global Network" },
+  ];
+
+  return (
+    <div className="registration-page">
+      <button className="registration-page__back-button" aria-label="Go back">
+        <ArrowLeft size={20} />
+      </button>
+
+      <div className="registration-page__left-section">
+        <div className="registration-page__canvas-container">
+          <Canvas camera={{ position: [0, 0, 7], fov: 50 }}>
+            <EnhancedBubble />
+            <OrbitControls
+              enableZoom={false}
+              autoRotate
+              autoRotateSpeed={1.2}
+              enablePan={false}
+              minPolarAngle={Math.PI / 3}
+              maxPolarAngle={Math.PI / 1.5}
+            />
+          </Canvas>
+          <div className="registration-page__floating-particles">
+            <div className="registration-page__particle registration-page__particle--1"></div>
+            <div className="registration-page__particle registration-page__particle--2"></div>
+            <div className="registration-page__particle registration-page__particle--3"></div>
+            <div className="registration-page__particle registration-page__particle--4"></div>
+            <div className="registration-page__particle registration-page__particle--5"></div>
+          </div>
+        </div>
+
+        <div className="registration-page__welcome-content">
+          <div className="registration-page__badge">
+            <Sparkles size={14} className="registration-page__badge-icon" />
+            <span>Trusted by 100K+ professionals</span>
+          </div>
+
+          <h1 className="registration-page__welcome-title">
+            Transform Your
+            <br />
+            <span className="registration-page__gradient-text">Career Journey</span>
+          </h1>
+
+          <p className="registration-page__welcome-description">
+            Join the next generation of professionals. Connect with
+            opportunities, grow your network, and unlock your full potential.
+          </p>
+
+          <div className="registration-page__features-list">
+            {features.map((feature, index) => (
+              <div key={index} className="registration-page__feature-item">
+                <div className="registration-page__feature-icon">
+                  <feature.icon size={18} />
+                </div>
+                <span>{feature.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="registration-page__right-section">
+        <RegisterForm />
+      </div>
+    </div>
+  );
+}
+
+export default RegistrationPage;

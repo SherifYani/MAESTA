@@ -1,0 +1,946 @@
+﻿/**
+ * @file onboarding.css
+ * @description Enhanced styles for the second phase of registration with optimized form layout
+ * @author Sherif Talaat
+ * @version 2.4.0
+ * @date 24-10-2025
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 24-10-2025
+ */
+
+@import "./globals.css";
+
+/* ==========================================================================
+   Onboarding Layout
+   ========================================================================== */
+
+.onboarding-phase-2 {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+/*    overflow-x: hidden;*/
+    background: var(--background);
+    font-family: var(--font-sans);
+}
+
+    .onboarding-phase-2::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 15% 30%, var(--radial-pink-1) 0%, transparent 50%), radial-gradient(circle at 85% 70%, var(--radial-pink-2) 0%, transparent 50%), radial-gradient(circle at 50% 50%, var(--radial-pink-3) 0%, transparent 60%);
+        pointer-events: none;
+        animation: onboardingBackgroundPulse 15s ease-in-out infinite;
+    }
+
+/* ==========================================================================
+   Onboarding Container & Header
+   ========================================================================== */
+
+.onboarding-phase-2__container {
+    width: 100%;
+    max-width: 85rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.onboarding-phase-2__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 52rem;
+}
+
+.onboarding-phase-2__title {
+    font-size: 3.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.onboarding-phase-2__subtitle {
+    font-size: 1.375rem;
+    color: var(--accent-pink);
+    font-weight: 400;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   Progress Section
+   ========================================================================== */
+
+.onboarding-phase-2__progress-section {
+    position: sticky;
+    top: 0rem;
+    z-index:10;
+    background: var(--card);
+    backdrop-filter: blur(32px);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 78rem;
+    box-shadow: 0 12px 32px var(--translucent-black-1);
+}
+
+.onboarding-phase-2__progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+    .onboarding-phase-2__progress-header h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--card-foreground);
+        margin: 0;
+    }
+
+.onboarding-phase-2__progress-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-pink);
+    background: var(--radial-pink-1);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border);
+}
+
+.onboarding-phase-2__progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--muted);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.onboarding-phase-2__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-pink), var(--vivid-pink));
+    border-radius: 4px;
+    transition: width 0.5s ease-in-out;
+    box-shadow: 0 0 10px var(--shadow-pink);
+}
+
+.onboarding-phase-2__progress-hint {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    text-align: center;
+    margin: 0;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Onboarding Card
+   ========================================================================== */
+
+.onboarding-phase-2__card {
+    background: var(--card);
+    backdrop-filter: blur(32px);
+    border: 1px solid var(--border);
+    border-radius: 2.5rem;
+    padding: 4rem;
+    box-shadow: 0 24px 64px var(--translucent-black-1), 0 0 0 1px var(--translucent-white-3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    max-width: 78rem;
+    margin: 0 auto;
+    color: var(--card-foreground);
+    position: relative;
+}
+
+    .onboarding-phase-2__card:hover {
+        box-shadow: 0 32px 80px var(--translucent-black-1), 0 0 0 1px var(--accent-pink);
+    }
+
+/* ==========================================================================
+   Form Sections
+   ========================================================================== */
+
+.onboarding-phase-2__section {
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+}
+
+    .onboarding-phase-2__section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 2rem;
+        padding-bottom: 0;
+    }
+
+.onboarding-phase-2__section-header {
+    margin-bottom: 2rem;
+}
+
+.onboarding-phase-2__section-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.onboarding-phase-2__section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--card-foreground);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.onboarding-phase-2__section-badge {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background: var(--accent-pink);
+    color: var(--primary-white);
+    border: 1px solid var(--border);
+}
+
+    .onboarding-phase-2__section-badge.completed {
+        background: var(--accent-pink);
+        color: var(--primary-white);
+    }
+
+    .onboarding-phase-2__section-badge.incomplete {
+        background: var(--muted);
+        color: var(--muted-foreground);
+    }
+
+.onboarding-phase-2__section-description {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Form Layout & Grid
+   ========================================================================== */
+
+.onboarding-phase-2__form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.onboarding-phase-2__form-item {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+    .onboarding-phase-2__form-item:only-child {
+        grid-column: 1 / -1;
+    }
+
+.onboarding-phase-2__form-grid:has(.onboarding-phase-2__form-item:nth-child(1):nth-last-child(2)),
+.onboarding-phase-2__form-grid:has(.onboarding-phase-2__form-item:nth-child(2):nth-last-child(1)) {
+    grid-template-columns: auto-fit, minmax(200px, 1fr);
+}
+
+.onboarding-phase-2__form-grid:has(.onboarding-phase-2__form-item:only-child) {
+    grid-template-columns: 1fr;
+}
+
+.onboarding-phase-2__full-width {
+    grid-column: 1 / -1;
+}
+
+/* ==========================================================================
+   Textarea Section
+   ========================================================================== */
+
+.onboarding-phase-2__textarea-section {
+    position: relative;
+}
+
+.onboarding-phase-2__character-counter {
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Field Hints & Labels
+   ========================================================================== */
+
+.onboarding-phase-2__field-hint {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+.onboarding-phase-2__file-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--card-foreground);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.onboarding-phase-2__required-asterisk {
+    color: var(--accent-pink);
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   Dynamic Sections (Experience/Education)
+   ========================================================================== */
+
+.onboarding-phase-2__dynamic-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.onboarding-phase-2__dynamic-item {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    animation: onboardingSlideInUp 0.4s ease-out;
+}
+
+    .onboarding-phase-2__dynamic-item:hover {
+        border-color: var(--accent-pink);
+        transform: translateY(-0.125rem);
+        box-shadow: 0 8px 24px var(--shadow-pink);
+    }
+
+.onboarding-phase-2__dynamic-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.onboarding-phase-2__dynamic-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--card-foreground);
+    margin: 0;
+}
+
+.onboarding-phase-2__dynamic-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.onboarding-phase-2__dynamic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* ==========================================================================
+   Buttons (Add/Remove)
+   ========================================================================== */
+
+.onboarding-phase-2__add-button {
+    background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    color: var(--primary-white);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 16px var(--shadow-pink);
+    margin-top: 1rem;
+    width: fit-content;
+}
+
+    .onboarding-phase-2__add-button:hover {
+        transform: translateY(-0.25rem);
+        box-shadow: 0 8px 24px var(--shadow-pink);
+    }
+
+    .onboarding-phase-2__add-button:active {
+        transform: translateY(-0.125rem);
+    }
+
+.onboarding-phase-2__remove-button {
+    background: var(--destructive);
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    color: var(--destructive-foreground);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px var(--translucent-black-1);
+}
+
+    .onboarding-phase-2__remove-button:hover {
+        background: var(--accent-pink);
+        color: var(--primary-white);
+        transform: translateY(-0.125rem);
+        box-shadow: 0 4px 12px var(--shadow-pink);
+    }
+
+    .onboarding-phase-2__remove-button:active {
+        transform: translateY(0);
+    }
+
+/* ==========================================================================
+   Uploaded Files Styles
+   ========================================================================== */
+
+.onboarding-phase-2__uploaded-files {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--translucent-white-3);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+}
+
+.onboarding-phase-2__uploaded-count {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.onboarding-phase-2__uploaded-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.onboarding-phase-2__uploaded-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: var(--primary-black);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+}
+
+    .onboarding-phase-2__uploaded-item span {
+        font-size: 0.875rem;
+        color: var(--primary-white);
+        font-weight: 500;
+    }
+
+.onboarding-phase-2__remove-upload {
+    background: none;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+    .onboarding-phase-2__remove-upload:hover {
+        color: var(--destructive);
+        background: var(--translucent-white-1);
+    }
+
+/* ==========================================================================
+   Submit Section
+   ========================================================================== */
+
+.onboarding-phase-2__submit-section {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.onboarding-phase-2__draft-button {
+    padding: 1.25rem 2.5rem;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    color: var(--card-foreground);
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 200px;
+    justify-content: center;
+}
+
+    .onboarding-phase-2__draft-button:hover {
+        background: var(--accent);
+        border-color: var(--accent-pink);
+        transform: translateY(-0.25rem);
+        box-shadow: 0 8px 20px var(--shadow-pink);
+    }
+
+    .onboarding-phase-2__draft-button:active {
+        transform: translateY(-0.125rem);
+    }
+
+.onboarding-phase-2__submit-button {
+    padding: 1.25rem 2.5rem;
+    background: linear-gradient(135deg, var(--submit-pink-1) 0%, var(--submit-pink-2) 100%);
+    border: none;
+    border-radius: 1.25rem;
+    color: var(--primary-white);
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 240px;
+    justify-content: center;
+    box-shadow: 0 12px 32px var(--shadow-pink);
+    position: relative;
+    overflow: hidden;
+}
+
+    .onboarding-phase-2__submit-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--translucent-white-4), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .onboarding-phase-2__submit-button:hover::before {
+        left: 100%;
+    }
+
+    .onboarding-phase-2__submit-button:hover:not(:disabled) {
+        transform: translateY(-0.5rem) scale(1.02);
+        box-shadow: 0 20px 48px var(--shadow-pink);
+    }
+
+    .onboarding-phase-2__submit-button:active:not(:disabled) {
+        transform: translateY(-0.125rem);
+    }
+
+    .onboarding-phase-2__submit-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 0 6px 20px var(--shadow-pink);
+    }
+
+/* ==========================================================================
+   Terms Notice
+   ========================================================================== */
+
+.onboarding-phase-2__terms-notice {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+
+    .onboarding-phase-2__terms-notice p {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+.onboarding-phase-2__terms-link {
+    color: var(--accent-pink);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+    .onboarding-phase-2__terms-link:hover {
+        color: var(--vivid-pink);
+        text-decoration: underline;
+    }
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.onboarding-phase-2__loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--translucent-white-3);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.onboarding-phase-2__loading-overlay--active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.onboarding-phase-2__loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--accent-pink);
+    border-radius: 50%;
+    animation: onboardingSpin 1s linear infinite;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 75rem) {
+    .onboarding-phase-2__container {
+        max-width: 65rem;
+    }
+
+    .onboarding-phase-2__title {
+        font-size: 3.25rem;
+    }
+
+    .onboarding-phase-2__card {
+        padding: 3rem;
+        max-width: 65rem;
+    }
+
+    .onboarding-phase-2__progress-section {
+        max-width: 65rem;
+    }
+
+    .onboarding-phase-2__form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .onboarding-phase-2__dynamic-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .onboarding-phase-2__dynamic-item {
+        padding: 1.75rem;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .onboarding-phase-2__container {
+        max-width: 100%;
+    }
+
+    .onboarding-phase-2__title {
+        font-size: 2.75rem;
+    }
+
+    .onboarding-phase-2__subtitle {
+        font-size: 1.25rem;
+    }
+
+    .onboarding-phase-2__card {
+        padding: 2.5rem;
+        border-radius: 2rem;
+    }
+
+    .onboarding-phase-2__progress-section {
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+    }
+
+    .onboarding-phase-2__form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .onboarding-phase-2__section-title {
+        font-size: 1.5rem;
+    }
+
+    .onboarding-phase-2__dynamic-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .onboarding-phase-2__dynamic-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .onboarding-phase-2__dynamic-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .onboarding-phase-2__remove-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 40rem) {
+    .onboarding-phase-2 {
+        padding: 1rem;
+    }
+
+    .onboarding-phase-2__header {
+        margin-bottom: 1.5rem;
+    }
+
+    .onboarding-phase-2__title {
+        font-size: 2.25rem;
+    }
+
+    .onboarding-phase-2__subtitle {
+        font-size: 1.125rem;
+    }
+
+    .onboarding-phase-2__card {
+        padding: 2rem;
+        border-radius: 1.5rem;
+    }
+
+    .onboarding-phase-2__progress-section {
+        padding: 1.25rem;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .onboarding-phase-2__progress-header h3 {
+        font-size: 1.125rem;
+    }
+
+    .onboarding-phase-2__progress-percentage {
+        font-size: 1.25rem;
+        padding: 0.375rem 0.875rem;
+    }
+
+    .onboarding-phase-2__form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .onboarding-phase-2__section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .onboarding-phase-2__section-title-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .onboarding-phase-2__section-title {
+        font-size: 1.375rem;
+    }
+
+    .onboarding-phase-2__section-description {
+        font-size: 1rem;
+    }
+
+    .onboarding-phase-2__dynamic-items {
+        gap: 1.5rem;
+    }
+
+    .onboarding-phase-2__dynamic-item {
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+    }
+
+    .onboarding-phase-2__dynamic-header {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+    }
+
+    .onboarding-phase-2__dynamic-title {
+        font-size: 1.0625rem;
+    }
+
+    .onboarding-phase-2__dynamic-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .onboarding-phase-2__add-button {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.25rem;
+    }
+
+    .onboarding-phase-2__remove-button {
+        padding: 0.875rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .onboarding-phase-2__submit-section {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
+
+    .onboarding-phase-2__draft-button,
+    .onboarding-phase-2__submit-button {
+        width: 100%;
+        min-width: auto;
+        padding: 1.125rem 2rem;
+    }
+
+    .onboarding-phase-2__terms-notice {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+    }
+}
+
+@media (max-width: 30rem) {
+    .onboarding-phase-2__card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+
+    .onboarding-phase-2__title {
+        font-size: 2rem;
+    }
+
+    .onboarding-phase-2__progress-section {
+        padding: 1rem;
+    }
+
+    .onboarding-phase-2__dynamic-item {
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
+
+    .onboarding-phase-2__remove-button {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   Focus Management
+   ========================================================================== */
+
+.onboarding-phase-2__draft-button:focus-visible,
+.onboarding-phase-2__submit-button:focus-visible,
+.onboarding-phase-2__add-button:focus-visible,
+.onboarding-phase-2__remove-button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .onboarding-phase-2::before {
+        display: none;
+    }
+
+    .onboarding-phase-2__card {
+        box-shadow: none;
+        border: 1px solid var(--border);
+    }
+
+    .onboarding-phase-2__submit-button,
+    .onboarding-phase-2__draft-button,
+    .onboarding-phase-2__add-button,
+    .onboarding-phase-2__remove-button {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes onboardingBackgroundPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.85;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes onboardingSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes onboardingSlideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(2rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

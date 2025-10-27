@@ -1,15 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import './globals.css';
 /* Import Arabic fonts */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
 
 @layer base {
-  body {
-    @apply font-arabic bg-gray-50 text-gray-900;
-    /*direction: rtl;*/  /* Support for Arabic RTL */
-  }
+    body {
+        @apply font-arabic bg-gray-50 text-gray-900;
+        /*direction: rtl;*/ /* Support for Arabic RTL */
+        background-color: var(--primary-black);
+    }
   
   html {
 /*    direction: rtl;*/

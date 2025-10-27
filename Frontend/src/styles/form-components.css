@@ -1,14 +1,21 @@
 ﻿/**
- * @file form-components-optimized.css
+ * @file form-components.css
  * @description Optimized shared styles for form input components and role cards
  * @author Sherif Talaat
- * @version 2.1.0
- * @date 15-10-2025
- * @last-updated 15-10-2025 Optimized for performance and maintainability
+ * @version 2.3.0
+ * @date 24-10-2025
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 24-10-2025
  */
+
 @import './globals.css';
 
-/* === Shared Form Component Styles === */
+/* ==========================================================================
+   Form Input Components
+   ========================================================================== */
+
+/* === Form Input Wrapper === */
 .form-input__wrapper,
 .form-textarea__wrapper,
 .form-select__wrapper {
@@ -20,7 +27,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 20px var(--shadow-pink);
     background-image: radial-gradient(circle at 10% 20%, var(--radial-pink-1) 0%, transparent 20%), radial-gradient(circle at 90% 80%, var(--radial-pink-2) 0%, transparent 20%);
-    animation: slideIn 0.3s ease-out;
+    animation: formSlideIn 0.3s ease-out;
 }
 
     .form-input__wrapper:hover,
@@ -37,9 +44,10 @@
         border-color: var(--vivid-pink);
         box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
         transform: translateY(-2px);
-        animation: glowPulse 2s infinite;
+        animation: formGlowPulse 2s infinite;
     }
 
+/* === Form Container === */
 .form-input__container,
 .form-textarea__container,
 .form-select__container {
@@ -47,7 +55,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* Icon Styles */
+/* === Form Icons === */
 .form-input__icon,
 .form-textarea__icon,
 .form-select__icon {
@@ -60,11 +68,16 @@
     z-index: 1;
 }
 
-    .form-select__icon.right {
-        right: 16px;
-        left: auto;
-        pointer-events: none;
-    }
+.form-select__icon--right {
+    right: 16px;
+    left: auto;
+    pointer-events: none;
+}
+
+.form-textarea__icon {
+    top: 20px;
+    transform: none;
+}
 
 .form-input__wrapper:hover .form-input__icon,
 .form-textarea__wrapper:hover .form-textarea__icon,
@@ -75,12 +88,7 @@
     color: var(--accent-pink);
 }
 
-.form-textarea__icon {
-    top: 20px;
-    transform: none;
-}
-
-/* Field Styles */
+/* === Form Fields === */
 .form-input__field,
 .form-textarea__field,
 .form-select__field {
@@ -110,7 +118,7 @@
         font-weight: 400;
     }
 
-/* Textarea Specific */
+/* === Textarea Specific === */
 .form-textarea__field {
     min-height: 120px;
     padding: 20px 52px;
@@ -118,7 +126,7 @@
     resize: vertical;
 }
 
-/* Select Specific */
+/* === Select Specific === */
 .form-select__field {
     appearance: none;
     cursor: pointer;
@@ -152,7 +160,25 @@
         color: var(--primary-white);
     }
 
-/* Password Toggle */
+/* === Character Counter for Textarea === */
+.form-textarea__counter {
+    position: absolute;
+    bottom: 10px;
+    right: 16px;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    background: var(--translucent-white-3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.form-textarea__counter--warning {
+    color: var(--accent-pink);
+    font-weight: 600;
+}
+
+/* === Password Toggle === */
 .form-input__password-toggle {
     position: absolute;
     top: 50%;
@@ -181,7 +207,11 @@
     padding-right: 84px;
 }
 
-/* State Modifiers */
+/* ==========================================================================
+   Form States & Modifiers
+   ========================================================================== */
+
+/* === Error State === */
 .form-input__wrapper--error,
 .form-textarea__wrapper--error,
 .form-select__wrapper--error {
@@ -201,6 +231,7 @@
         color: var(--destructive);
     }
 
+/* === Success State === */
 .form-input__wrapper--success,
 .form-textarea__wrapper--success,
 .form-select__wrapper--success {
@@ -220,29 +251,30 @@
         color: var(--accent-pink);
     }
 
-.form-input__wrapper:disabled,
-.form-textarea__wrapper:disabled,
-.form-select__wrapper:disabled {
+/* === Disabled State === */
+.form-input__wrapper--disabled,
+.form-textarea__wrapper--disabled,
+.form-select__wrapper--disabled {
     background: var(--muted);
     border-color: var(--border);
     box-shadow: none;
 }
 
-.form-input__field:disabled,
-.form-textarea__field:disabled,
-.form-select__field:disabled {
+.form-input__field--disabled,
+.form-textarea__field--disabled,
+.form-select__field--disabled {
     background: var(--muted);
     color: var(--muted-foreground);
     cursor: not-allowed;
 }
 
-.form-input__wrapper:disabled .form-input__icon,
-.form-textarea__wrapper:disabled .form-textarea__icon,
-.form-select__wrapper:disabled .form-select__icon {
+.form-input__wrapper--disabled .form-input__icon,
+.form-textarea__wrapper--disabled .form-textarea__icon,
+.form-select__wrapper--disabled .form-select__icon {
     color: var(--muted-foreground);
 }
 
-/* Size Variants */
+/* === Size Variants === */
 .form-input__wrapper--sm .form-input__field,
 .form-textarea__wrapper--sm .form-textarea__field,
 .form-select__wrapper--sm .form-select__field {
@@ -266,12 +298,14 @@
     min-height: 160px;
     padding: 24px 56px;
 }
+/* ==========================================================================
+   Role Card Components
+   ========================================================================== */
 
-/* === Role Card Styles === */
 .role-card {
     position: relative;
     width: 100%;
-    padding: 2rem;
+    padding: 1.5rem 1rem;
     border-radius: 16px;
     background: var(--primary-black);
     border: 2px solid var(--translucent-black-1);
@@ -280,7 +314,11 @@
     background-image: radial-gradient(circle at 0% 0%, var(--radial-pink-1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, var(--radial-pink-2) 0%, transparent 50%);
     cursor: pointer;
     outline: none;
-    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
     animation: cardSlideIn 0.4s ease-out;
 }
 
@@ -306,14 +344,14 @@
         background: linear-gradient(135deg, var(--primary-black) 0%, var(--radial-pink-3) 100%);
         box-shadow: 0 0 0 2px var(--vivid-pink), 0 8px 30px var(--shadow-pink);
         transform: translateY(-2px);
-        animation: glowPulse 2s infinite;
+        animation: formGlowPulse 2s infinite;
     }
 
         .role-card[aria-pressed="true"]::after {
             content: "✓";
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 5px;
+            right: 5px;
             width: 24px;
             height: 24px;
             background: var(--vivid-pink);
@@ -354,11 +392,11 @@
 }
 
 .role-card__title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
     line-height: 1.3;
     color: var(--primary-white);
-    margin-bottom: 0.75rem;
+    margin: 0rem 0rem 0.75rem 0.5rem;
     transition: color 0.3s ease;
 }
 
@@ -367,15 +405,7 @@
     color: var(--accent-pink);
 }
 
-.role-card__description {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    margin: 0;
-    transition: color 0.3s ease;
-}
-
-.role-card:hover .role-card__description {
+.role-card:hover {
     color: var(--primary-white);
 }
 
@@ -385,24 +415,277 @@
     gap: 1.5rem;
 }
 
-/* === Theme Toggle === */
-.theme-toggle__button--compact {
-    min-width: auto;
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0.5rem;
-    border-radius: 50%;
+/* ==========================================================================
+   File Upload Components
+   ========================================================================== */
+
+.file-upload__container {
+    width: 100%;
+    margin: 1.5rem 0;
 }
 
-    .theme-toggle__button--compact .theme-toggle__text {
-        display: none;
+.file-upload__wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    background: var(--primary-black);
+    border: 2px dashed var(--translucent-black-1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px var(--shadow-pink);
+    background-image: radial-gradient(circle at 10% 20%, var(--radial-pink-1) 0%, transparent 20%), radial-gradient(circle at 90% 80%, var(--radial-pink-2) 0%, transparent 20%);
+    animation: formSlideIn 0.3s ease-out;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+    .file-upload__wrapper:hover {
+        border-color: var(--accent-pink);
+        box-shadow: 0 6px 25px var(--shadow-pink);
+        transform: translateY(-2px);
+        background: var(--translucent-white-3);
     }
 
-    .theme-toggle__button--compact .theme-toggle__icon {
-        margin: 0;
+    .file-upload__wrapper:focus-within {
+        border-color: var(--vivid-pink);
+        box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+        transform: translateY(-2px);
+        animation: formGlowPulse 2s infinite;
     }
 
-/* === Responsive Design === */
+.file-upload__wrapper--dragover {
+    border-color: var(--accent-pink);
+    background: var(--radial-pink-1);
+    border-style: solid;
+    transform: translateY(-1px);
+}
+
+.file-upload__wrapper--has-file {
+    border-color: var(--accent-pink);
+    background: var(--radial-pink-2);
+}
+
+.file-upload__wrapper--loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+    .file-upload__wrapper--loading .file-upload__icon {
+        animation: formPulse 1.5s ease-in-out infinite;
+    }
+
+.file-upload__input {
+    display: none;
+}
+
+.file-upload__label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    color: var(--primary-white);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 160px;
+}
+
+.file-upload__wrapper--loading .file-upload__label {
+    cursor: not-allowed;
+}
+
+.file-upload__icon {
+    font-size: 2.5rem;
+    color: var(--accent-pink);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.file-upload__wrapper:hover .file-upload__icon {
+    transform: scale(1.1);
+    color: var(--vivid-pink);
+}
+
+.file-upload__text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primary-white);
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.file-upload__wrapper:hover .file-upload__text {
+    color: var(--accent-pink);
+}
+
+.file-upload__filename {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--accent);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--accent-foreground);
+    border: 1px solid var(--border);
+    max-width: 100%;
+    animation: formSlideUp 0.3s ease-out;
+    position: relative;
+}
+
+.file-upload__success-icon {
+    color: var(--accent-pink);
+    font-size: 1rem;
+}
+
+.file-upload__clear {
+    background: none;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    margin-left: auto;
+}
+
+    .file-upload__clear:hover {
+        color: var(--destructive);
+        background: var(--translucent-white-1);
+    }
+
+.file-upload__hint {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin-top: 0.75rem;
+    opacity: 0.8;
+}
+
+/* === File Preview === */
+.file-upload__preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: var(--muted);
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.file-upload__preview-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.file-upload__preview-icon {
+    font-size: 2rem;
+    color: var(--accent-pink);
+}
+
+.file-upload__preview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.file-upload__preview-name {
+    font-weight: 600;
+    color: var(--card-foreground);
+    font-size: 1rem;
+}
+
+.file-upload__preview-size {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.file-upload__preview-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.file-upload__preview-action {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    color: var(--card-foreground);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .file-upload__preview-action:hover {
+        border-color: var(--accent-pink);
+        color: var(--accent-pink);
+        transform: translateY(-1px);
+    }
+
+.file-upload__preview-action--remove {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+    border-color: var(--destructive);
+}
+
+    .file-upload__preview-action--remove:hover {
+        background: var(--accent-pink);
+        color: var(--primary-white);
+        border-color: var(--accent-pink);
+    }
+
+/* ==========================================================================
+   Progress Components
+   ========================================================================== */
+
+.progress__container {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.progress__bar {
+    width: 100%;
+    height: 8px;
+    background: var(--muted);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-pink), var(--vivid-pink));
+    border-radius: 4px;
+    transition: width 0.5s ease-in-out;
+    box-shadow: 0 0 10px var(--shadow-pink);
+}
+
+.progress__text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.progress__percentage {
+    font-weight: 600;
+    color: var(--accent-pink);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
 @media (max-width: 75rem) {
     .form-input__field,
     .form-textarea__field,
@@ -423,15 +706,15 @@
         font-size: 1rem;
     }
 
-        .form-input__icon.left,
-        .form-textarea__icon.left,
-        .form-select__icon.left {
-            left: 1.125rem;
-        }
+    .form-input__icon--left,
+    .form-textarea__icon--left,
+    .form-select__icon--left {
+        left: 1.125rem;
+    }
 
-        .form-select__icon.right {
-            right: 1.125rem;
-        }
+    .form-select__icon--right {
+        right: 1.125rem;
+    }
 
     .form-textarea__icon {
         top: 1.125rem;
@@ -442,30 +725,54 @@
         padding: 6px;
     }
 
+    .file-upload__label {
+        padding: 2rem 1.5rem;
+        min-height: 140px;
+    }
+
+    .file-upload__icon {
+        font-size: 2rem;
+    }
+
+    .file-upload__text {
+        font-size: 1rem;
+    }
+
+    .file-upload__filename {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.8125rem;
+    }
+
     .role-card {
-        padding: 1.75rem;
+        padding: 1.25rem 0.875rem;
         border-radius: 14px;
+        margin-bottom: 1rem;
     }
 
     .role-card__icon {
         width: 3rem;
         height: 3rem;
-        font-size: 1.375rem;
+        font-size: 1.25rem;
         margin-bottom: 0.875rem;
+        border-radius: 10px;
     }
 
     .role-card__title {
-        font-size: 1.125rem;
+        font-size: 1.05rem;
         margin-bottom: 0.625rem;
     }
 
     .role-card__description {
         font-size: 0.8125rem;
+        line-height: 1.4;
     }
 
-    .role-cards-grid {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 1.25rem;
+    .role-card[aria-pressed="true"]::after {
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+        top: 4px;
+        right: 4px;
     }
 }
 
@@ -489,15 +796,15 @@
         font-size: 1rem;
     }
 
-        .form-input__icon.left,
-        .form-textarea__icon.left,
-        .form-select__icon.left {
-            left: 1rem;
-        }
+    .form-input__icon--left,
+    .form-textarea__icon--left,
+    .form-select__icon--left {
+        left: 1rem;
+    }
 
-        .form-select__icon.right {
-            right: 1rem;
-        }
+    .form-select__icon--right {
+        right: 1rem;
+    }
 
     .form-textarea__icon {
         top: 1rem;
@@ -507,35 +814,69 @@
         right: 1rem;
     }
 
+    .file-upload__label {
+        padding: 1.75rem 1.25rem;
+        min-height: 130px;
+    }
+
+    .file-upload__icon {
+        font-size: 1.75rem;
+        margin-bottom: 0.875rem;
+    }
+
+    .file-upload__text {
+        font-size: 0.9375rem;
+        margin-bottom: 0.375rem;
+    }
+
+    .file-upload__filename {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .file-upload__hint {
+        font-size: 0.6875rem;
+        margin-top: 0.625rem;
+    }
+
+    .file-upload__wrapper {
+        min-height: 120px;
+    }
+
+    .file-upload__preview {
+        padding: 1.25rem;
+    }
+
+    .file-upload__preview-icon {
+        font-size: 1.75rem;
+    }
+
+    .role-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.25rem;
+    }
+
     .role-card {
-        padding: 1.5rem;
+        padding: 1.125rem 0.75rem;
         border-radius: 12px;
     }
 
     .role-card__icon {
         width: 2.75rem;
         height: 2.75rem;
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         margin-bottom: 0.75rem;
+        border-radius: 8px;
     }
 
     .role-card__title {
-        font-size: 1.0625rem;
+        font-size: 1rem;
         margin-bottom: 0.5rem;
     }
 
     .role-card__description {
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         line-height: 1.4;
-    }
-
-    .role-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .role-cards-grid {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1rem;
     }
 }
 
@@ -558,15 +899,15 @@
         font-size: 0.875rem;
     }
 
-        .form-input__icon.left,
-        .form-textarea__icon.left,
-        .form-select__icon.left {
-            left: 0.75rem;
-        }
+    .form-input__icon--left,
+    .form-textarea__icon--left,
+    .form-select__icon--left {
+        left: 0.75rem;
+    }
 
-        .form-select__icon.right {
-            right: 0.75rem;
-        }
+    .form-select__icon--right {
+        right: 0.75rem;
+    }
 
     .form-textarea__icon {
         top: 0.75rem;
@@ -601,62 +942,169 @@
             box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
         }
 
-    .role-card {
-        padding: 1.25rem;
+    .file-upload__container {
+        margin: 1rem 0;
+    }
+
+    .file-upload__wrapper {
         border-radius: 10px;
         border-width: 1.5px;
+        box-shadow: 0 2px 10px var(--shadow-pink);
     }
 
-    .role-card__icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 1.25rem;
+        .file-upload__wrapper:hover,
+        .file-upload__wrapper:focus-within,
+        .file-upload__wrapper--dragover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 15px var(--shadow-pink);
+        }
+
+        .file-upload__wrapper:focus-within {
+            box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
+            animation: none;
+        }
+
+    .file-upload__label {
+        padding: 1.5rem 1rem;
+        min-height: 120px;
+    }
+
+    .file-upload__icon {
+        font-size: 1.5rem;
         margin-bottom: 0.75rem;
-        border-radius: 8px;
     }
 
-    .role-card__title {
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
+    .file-upload__text {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
     }
 
-    .role-card__description {
-        font-size: 0.8125rem;
-        line-height: 1.4;
-    }
-
-    .role-card:hover,
-    .role-card:focus {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px var(--shadow-pink);
-    }
-
-    .role-card:focus {
-        box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
-    }
-
-    .role-card[aria-pressed="true"]::after {
-        top: 8px;
-        right: 8px;
-        width: 20px;
-        height: 20px;
+    .file-upload__filename {
+        padding: 0.5rem 0.75rem;
         font-size: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .file-upload__success-icon {
+        font-size: 0.875rem;
+    }
+
+    .file-upload__clear {
+        padding: 0.125rem;
+        font-size: 0.75rem;
+    }
+
+    .file-upload__hint {
+        font-size: 0.625rem;
+        margin-top: 0.5rem;
+    }
+
+    .file-upload__wrapper--loading .file-upload__icon {
+        animation: none;
+    }
+
+    .file-upload__wrapper {
+        min-height: 100px;
+        border-radius: 10px;
+    }
+
+    .file-upload__preview {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .file-upload__preview-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .file-upload__preview-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .file-upload__preview-action {
+        flex: 1;
+        justify-content: center;
     }
 
     .role-cards-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding: 0 0.5rem;
     }
 
-    .form-input__wrapper:focus-within,
-    .form-textarea__wrapper:focus-within,
-    .form-select__wrapper:focus-within,
-    .role-card[aria-pressed="true"] {
-        animation: none;
+    .role-card {
+        padding: 1rem 0.75rem;
+        border-radius: 10px;
+        border-width: 1.5px;
+        box-shadow: 0 2px 10px var(--shadow-pink);
+        margin-bottom: 0.5rem;
+    }
+
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow-pink);
+        }
+
+        .role-card:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 15px var(--shadow-pink);
+        }
+
+        .role-card:active {
+            transform: translateY(0);
+        }
+
+        .role-card[aria-pressed="true"] {
+            transform: translateY(-1px);
+            box-shadow: 0 0 0 1.5px var(--vivid-pink), 0 4px 15px var(--shadow-pink);
+        }
+
+    .role-card__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+        margin-bottom: 0.625rem;
+        border-radius: 6px;
+    }
+
+    .role-card:hover .role-card__icon {
+        transform: scale(1.03);
+    }
+
+    .role-card[aria-pressed="true"] .role-card__icon {
+        transform: scale(1.03);
+    }
+
+    .role-card__title {
+        font-size: 0.9375rem;
+        margin-bottom: 0.375rem;
+        text-align: center;
+    }
+
+    .role-card__description {
+        font-size: 0.6875rem;
+        line-height: 1.3;
+        text-align: center;
+    }
+
+    .role-card[aria-pressed="true"]::after {
+        width: 18px;
+        height: 18px;
+        font-size: 0.625rem;
+        top: 3px;
+        right: 3px;
     }
 }
 
-/* === Utility Styles === */
+/* ==========================================================================
+   Utility Styles & Animations
+   ========================================================================== */
+
+/* === Scrollbar Styling === */
 .form-textarea__field::-webkit-scrollbar,
 .form-select__field::-webkit-scrollbar {
     width: 8px;
@@ -686,17 +1134,19 @@
     }
 }
 
-.role-card:focus-visible {
-    outline: 2px solid var(--vivid-pink);
+/* === Focus Management === */
+.form-input__field:focus-visible,
+.form-textarea__field:focus-visible,
+.form-select__field:focus-visible {
+    outline: 2px solid var(--ring);
     outline-offset: 2px;
 }
 
-/* === Reduced Motion === */
+/* === Reduced Motion Support === */
 @media (prefers-reduced-motion: reduce) {
     .form-input__wrapper,
     .form-textarea__wrapper,
-    .form-select__wrapper,
-    .role-card {
+    .form-select__wrapper {
         animation: none;
         transition: none;
     }
@@ -706,23 +1156,57 @@
         .form-select__wrapper:hover,
         .form-input__wrapper:focus-within,
         .form-textarea__wrapper:focus-within,
-        .form-select__wrapper:focus-within,
-        .role-card:hover,
-        .role-card:focus,
-        .role-card[aria-pressed="true"] {
+        .form-select__wrapper:focus-within {
             transform: none;
         }
 
     .form-input__icon,
     .form-textarea__icon,
-    .form-select__icon,
-    .role-card__icon {
+    .form-select__icon {
         transition: none;
     }
+
+    .file-upload__wrapper {
+        animation: none;
+        transition: none;
+    }
+
+        .file-upload__wrapper:hover,
+        .file-upload__wrapper:focus-within,
+        .file-upload__wrapper--dragover {
+            transform: none;
+        }
+
+    .file-upload__icon,
+    .file-upload__filename {
+        transition: none;
+        animation: none;
+    }
+
+    .file-upload__wrapper--loading .file-upload__icon {
+        animation: none;
+    }
+
+    .role-card {
+        animation: none;
+        transition: none;
+    }
+
+        .role-card:hover,
+        .role-card:focus,
+        .role-card:active,
+        .role-card[aria-pressed="true"] {
+            transform: none;
+        }
+
+            .role-card:hover .role-card__icon,
+            .role-card[aria-pressed="true"] .role-card__icon {
+                transform: none;
+            }
 }
 
 /* === Animations === */
-@keyframes slideIn {
+@keyframes formSlideIn {
     from {
         opacity: 0;
         transform: translateY(-8px);
@@ -734,7 +1218,7 @@
     }
 }
 
-@keyframes glowPulse {
+@keyframes formGlowPulse {
     0%, 100% {
         box-shadow: 0 4px 20px var(--shadow-pink);
     }
@@ -744,14 +1228,26 @@
     }
 }
 
-@keyframes cardSlideIn {
+@keyframes formPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes formSlideUp {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.95);
+        transform: translateY(10px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
