@@ -1,0 +1,757 @@
+﻿/**
+ * @file form-components-optimized.css
+ * @description Optimized shared styles for form input components and role cards
+ * @author Sherif Talaat
+ * @version 2.1.0
+ * @date 15-10-2025
+ * @last-updated 15-10-2025 Optimized for performance and maintainability
+ */
+@import './globals.css';
+
+/* === Shared Form Component Styles === */
+.form-input__wrapper,
+.form-textarea__wrapper,
+.form-select__wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    background: var(--primary-black);
+    border: 2px solid var(--translucent-black-1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px var(--shadow-pink);
+    background-image: radial-gradient(circle at 10% 20%, var(--radial-pink-1) 0%, transparent 20%), radial-gradient(circle at 90% 80%, var(--radial-pink-2) 0%, transparent 20%);
+    animation: slideIn 0.3s ease-out;
+}
+
+    .form-input__wrapper:hover,
+    .form-textarea__wrapper:hover,
+    .form-select__wrapper:hover {
+        border-color: var(--accent-pink);
+        box-shadow: 0 6px 25px var(--shadow-pink);
+        transform: translateY(-2px);
+    }
+
+    .form-input__wrapper:focus-within,
+    .form-textarea__wrapper:focus-within,
+    .form-select__wrapper:focus-within {
+        border-color: var(--vivid-pink);
+        box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+        transform: translateY(-2px);
+        animation: glowPulse 2s infinite;
+    }
+
+.form-input__container,
+.form-textarea__container,
+.form-select__container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+/* Icon Styles */
+.form-input__icon,
+.form-textarea__icon,
+.form-select__icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 16px;
+    color: var(--muted-foreground);
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+    .form-select__icon.right {
+        right: 16px;
+        left: auto;
+        pointer-events: none;
+    }
+
+.form-input__wrapper:hover .form-input__icon,
+.form-textarea__wrapper:hover .form-textarea__icon,
+.form-select__wrapper:hover .form-select__icon,
+.form-input__wrapper:focus-within .form-input__icon,
+.form-textarea__wrapper:focus-within .form-textarea__icon,
+.form-select__wrapper:focus-within .form-select__icon {
+    color: var(--accent-pink);
+}
+
+.form-textarea__icon {
+    top: 20px;
+    transform: none;
+}
+
+/* Field Styles */
+.form-input__field,
+.form-textarea__field,
+.form-select__field {
+    width: 100%;
+    padding: 16px 52px 16px 48px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--primary-white);
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    transition: background 0.3s ease;
+    font-family: var(--font-sans);
+}
+
+    .form-input__field:focus,
+    .form-textarea__field:focus,
+    .form-select__field:focus {
+        background: var(--translucent-white-3);
+    }
+
+    .form-input__field::placeholder,
+    .form-textarea__field::placeholder {
+        color: var(--muted-foreground);
+        font-weight: 400;
+    }
+
+/* Textarea Specific */
+.form-textarea__field {
+    min-height: 120px;
+    padding: 20px 52px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+/* Select Specific */
+.form-select__field {
+    appearance: none;
+    cursor: pointer;
+}
+
+    .form-select__field:invalid {
+        color: var(--muted-foreground);
+    }
+
+    .form-select__field option {
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--primary-white);
+        background: var(--primary-black);
+        border-bottom: 1px solid var(--border);
+    }
+
+        .form-select__field option:checked {
+            background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+            color: var(--primary-black);
+            font-weight: 600;
+        }
+
+        .form-select__field option:hover {
+            background: var(--light-pink);
+            color: var(--primary-white);
+        }
+
+    .form-select__field:valid {
+        color: var(--primary-white);
+    }
+
+/* Password Toggle */
+.form-input__password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+    .form-input__password-toggle:hover {
+        color: var(--accent-pink);
+        background: var(--translucent-white-1);
+    }
+
+    .form-input__password-toggle:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+.form-input__wrapper:has(.form-input__password-toggle) .form-input__field {
+    padding-right: 84px;
+}
+
+/* State Modifiers */
+.form-input__wrapper--error,
+.form-textarea__wrapper--error,
+.form-select__wrapper--error {
+    border-color: var(--destructive);
+}
+
+    .form-input__wrapper--error:focus-within,
+    .form-textarea__wrapper--error:focus-within,
+    .form-select__wrapper--error:focus-within {
+        border-color: var(--destructive);
+        box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+    }
+
+    .form-input__wrapper--error .form-input__icon,
+    .form-textarea__wrapper--error .form-textarea__icon,
+    .form-select__wrapper--error .form-select__icon {
+        color: var(--destructive);
+    }
+
+.form-input__wrapper--success,
+.form-textarea__wrapper--success,
+.form-select__wrapper--success {
+    border-color: var(--accent-pink);
+}
+
+    .form-input__wrapper--success:focus-within,
+    .form-textarea__wrapper--success:focus-within,
+    .form-select__wrapper--success:focus-within {
+        border-color: var(--vivid-pink);
+        box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+    }
+
+    .form-input__wrapper--success .form-input__icon,
+    .form-textarea__wrapper--success .form-textarea__icon,
+    .form-select__wrapper--success .form-select__icon {
+        color: var(--accent-pink);
+    }
+
+.form-input__wrapper:disabled,
+.form-textarea__wrapper:disabled,
+.form-select__wrapper:disabled {
+    background: var(--muted);
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+.form-input__field:disabled,
+.form-textarea__field:disabled,
+.form-select__field:disabled {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    cursor: not-allowed;
+}
+
+.form-input__wrapper:disabled .form-input__icon,
+.form-textarea__wrapper:disabled .form-textarea__icon,
+.form-select__wrapper:disabled .form-select__icon {
+    color: var(--muted-foreground);
+}
+
+/* Size Variants */
+.form-input__wrapper--sm .form-input__field,
+.form-textarea__wrapper--sm .form-textarea__field,
+.form-select__wrapper--sm .form-select__field {
+    padding: 12px 44px 12px 40px;
+    font-size: 14px;
+}
+
+.form-textarea__wrapper--sm .form-textarea__field {
+    min-height: 100px;
+    padding: 16px 44px;
+}
+
+.form-input__wrapper--lg .form-input__field,
+.form-textarea__wrapper--lg .form-textarea__field,
+.form-select__wrapper--lg .form-select__field {
+    padding: 20px 56px 20px 52px;
+    font-size: 18px;
+}
+
+.form-textarea__wrapper--lg .form-textarea__field {
+    min-height: 160px;
+    padding: 24px 56px;
+}
+
+/* === Role Card Styles === */
+.role-card {
+    position: relative;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 16px;
+    background: var(--primary-black);
+    border: 2px solid var(--translucent-black-1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px var(--shadow-pink);
+    background-image: radial-gradient(circle at 0% 0%, var(--radial-pink-1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, var(--radial-pink-2) 0%, transparent 50%);
+    cursor: pointer;
+    outline: none;
+    text-align: left;
+    animation: cardSlideIn 0.4s ease-out;
+}
+
+    .role-card:hover {
+        border-color: var(--accent-pink);
+        box-shadow: 0 8px 30px var(--shadow-pink);
+        transform: translateY(-4px);
+    }
+
+    .role-card:focus {
+        border-color: var(--vivid-pink);
+        box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+        transform: translateY(-2px);
+    }
+
+    .role-card:active {
+        transform: translateY(-1px);
+        transition: all 0.1s ease;
+    }
+
+    .role-card[aria-pressed="true"] {
+        border-color: var(--vivid-pink);
+        background: linear-gradient(135deg, var(--primary-black) 0%, var(--radial-pink-3) 100%);
+        box-shadow: 0 0 0 2px var(--vivid-pink), 0 8px 30px var(--shadow-pink);
+        transform: translateY(-2px);
+        animation: glowPulse 2s infinite;
+    }
+
+        .role-card[aria-pressed="true"]::after {
+            content: "✓";
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background: var(--vivid-pink);
+            color: var(--primary-black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+.role-card__icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--translucent-white-1);
+    border-radius: 12px;
+    color: var(--accent-pink);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid var(--translucent-black-1);
+}
+
+.role-card:hover .role-card__icon {
+    background: var(--radial-pink-1);
+    color: var(--vivid-pink);
+    transform: scale(1.05);
+}
+
+.role-card[aria-pressed="true"] .role-card__icon {
+    background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+    color: var(--primary-black);
+    transform: scale(1.05);
+}
+
+.role-card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--primary-white);
+    margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.role-card:hover .role-card__title,
+.role-card[aria-pressed="true"] .role-card__title {
+    color: var(--accent-pink);
+}
+
+.role-card__description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.role-card:hover .role-card__description {
+    color: var(--primary-white);
+}
+
+.role-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* === Theme Toggle === */
+.theme-toggle__button--compact {
+    min-width: auto;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+    .theme-toggle__button--compact .theme-toggle__text {
+        display: none;
+    }
+
+    .theme-toggle__button--compact .theme-toggle__icon {
+        margin: 0;
+    }
+
+/* === Responsive Design === */
+@media (max-width: 75rem) {
+    .form-input__field,
+    .form-textarea__field,
+    .form-select__field {
+        padding: 0.875rem 3rem;
+        font-size: 0.875rem;
+        border-radius: 0.75rem;
+    }
+
+    .form-textarea__field {
+        padding: 1rem 3rem;
+        min-height: 110px;
+    }
+
+    .form-input__icon,
+    .form-textarea__icon,
+    .form-select__icon {
+        font-size: 1rem;
+    }
+
+        .form-input__icon.left,
+        .form-textarea__icon.left,
+        .form-select__icon.left {
+            left: 1.125rem;
+        }
+
+        .form-select__icon.right {
+            right: 1.125rem;
+        }
+
+    .form-textarea__icon {
+        top: 1.125rem;
+    }
+
+    .form-input__password-toggle {
+        right: 1.125rem;
+        padding: 6px;
+    }
+
+    .role-card {
+        padding: 1.75rem;
+        border-radius: 14px;
+    }
+
+    .role-card__icon {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.375rem;
+        margin-bottom: 0.875rem;
+    }
+
+    .role-card__title {
+        font-size: 1.125rem;
+        margin-bottom: 0.625rem;
+    }
+
+    .role-card__description {
+        font-size: 0.8125rem;
+    }
+
+    .role-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .form-input__field,
+    .form-textarea__field,
+    .form-select__field {
+        padding: 0.75rem 2.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.75rem;
+    }
+
+    .form-textarea__field {
+        padding: 0.875rem 2.5rem;
+        min-height: 100px;
+    }
+
+    .form-input__icon,
+    .form-textarea__icon,
+    .form-select__icon {
+        font-size: 1rem;
+    }
+
+        .form-input__icon.left,
+        .form-textarea__icon.left,
+        .form-select__icon.left {
+            left: 1rem;
+        }
+
+        .form-select__icon.right {
+            right: 1rem;
+        }
+
+    .form-textarea__icon {
+        top: 1rem;
+    }
+
+    .form-input__password-toggle {
+        right: 1rem;
+    }
+
+    .role-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .role-card__icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .role-card__title {
+        font-size: 1.0625rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .role-card__description {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+
+    .role-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .role-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 40rem) {
+    .form-input__field,
+    .form-textarea__field,
+    .form-select__field {
+        padding: 0.625rem 2rem;
+        font-size: 0.875rem;
+        border-radius: 0.625rem;
+    }
+
+    .form-textarea__field {
+        min-height: 100px;
+    }
+
+    .form-input__icon,
+    .form-textarea__icon,
+    .form-select__icon {
+        font-size: 0.875rem;
+    }
+
+        .form-input__icon.left,
+        .form-textarea__icon.left,
+        .form-select__icon.left {
+            left: 0.75rem;
+        }
+
+        .form-select__icon.right {
+            right: 0.75rem;
+        }
+
+    .form-textarea__icon {
+        top: 0.75rem;
+    }
+
+    .form-input__password-toggle {
+        right: 0.75rem;
+        padding: 4px;
+    }
+
+    .form-input__wrapper,
+    .form-textarea__wrapper,
+    .form-select__wrapper {
+        border-width: 1.5px;
+        box-shadow: 0 2px 10px var(--shadow-pink);
+    }
+
+        .form-input__wrapper:hover,
+        .form-textarea__wrapper:hover,
+        .form-select__wrapper:hover,
+        .form-input__wrapper:focus-within,
+        .form-textarea__wrapper:focus-within,
+        .form-select__wrapper:focus-within {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 15px var(--shadow-pink);
+            animation: none;
+        }
+
+        .form-input__wrapper:focus-within,
+        .form-textarea__wrapper:focus-within,
+        .form-select__wrapper:focus-within {
+            box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
+        }
+
+    .role-card {
+        padding: 1.25rem;
+        border-radius: 10px;
+        border-width: 1.5px;
+    }
+
+    .role-card__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .role-card__title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .role-card__description {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+
+    .role-card:hover,
+    .role-card:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px var(--shadow-pink);
+    }
+
+    .role-card:focus {
+        box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
+    }
+
+    .role-card[aria-pressed="true"]::after {
+        top: 8px;
+        right: 8px;
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+    }
+
+    .role-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-input__wrapper:focus-within,
+    .form-textarea__wrapper:focus-within,
+    .form-select__wrapper:focus-within,
+    .role-card[aria-pressed="true"] {
+        animation: none;
+    }
+}
+
+/* === Utility Styles === */
+.form-textarea__field::-webkit-scrollbar,
+.form-select__field::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-textarea__field::-webkit-scrollbar-track,
+.form-select__field::-webkit-scrollbar-track {
+    background: var(--muted);
+    border-radius: 4px;
+}
+
+.form-textarea__field::-webkit-scrollbar-thumb,
+.form-select__field::-webkit-scrollbar-thumb {
+    background: var(--accent-pink);
+    border-radius: 4px;
+}
+
+    .form-textarea__field::-webkit-scrollbar-thumb:hover,
+    .form-select__field::-webkit-scrollbar-thumb:hover {
+        background: var(--vivid-pink);
+    }
+
+@media (max-width: 40rem) {
+    .form-textarea__field::-webkit-scrollbar,
+    .form-select__field::-webkit-scrollbar {
+        width: 6px;
+    }
+}
+
+.role-card:focus-visible {
+    outline: 2px solid var(--vivid-pink);
+    outline-offset: 2px;
+}
+
+/* === Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+    .form-input__wrapper,
+    .form-textarea__wrapper,
+    .form-select__wrapper,
+    .role-card {
+        animation: none;
+        transition: none;
+    }
+
+        .form-input__wrapper:hover,
+        .form-textarea__wrapper:hover,
+        .form-select__wrapper:hover,
+        .form-input__wrapper:focus-within,
+        .form-textarea__wrapper:focus-within,
+        .form-select__wrapper:focus-within,
+        .role-card:hover,
+        .role-card:focus,
+        .role-card[aria-pressed="true"] {
+            transform: none;
+        }
+
+    .form-input__icon,
+    .form-textarea__icon,
+    .form-select__icon,
+    .role-card__icon {
+        transition: none;
+    }
+}
+
+/* === Animations === */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 4px 20px var(--shadow-pink);
+    }
+
+    50% {
+        box-shadow: 0 6px 25px var(--shadow-pink), 0 0 20px var(--radial-pink-1);
+    }
+}
+
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

@@ -1,0 +1,78 @@
+/**
+ * @file FormSelect.jsx
+ * @description Reusable form select component with icon support
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+import PropTypes from "prop-types";
+import "../styles/form-components.css";
+
+/**
+ * FormSelect Component
+ * @description Renders a styled select dropdown with icon
+ * @param {Object} props - The component props
+ * @param {string} props.icon - Font Awesome icon class
+ * @param {string} props.name - Select name attribute
+ * @param {string} props.value - Selected value
+ * @param {Function} props.onChange - Change event handler
+ * @param {Array} props.options - Array of option objects with value and label
+ * @param {boolean} props.required - Whether the field is required
+ * @param {string} props.className - Additional CSS class names
+ * @param {boolean} props.hasError - Whether the select has an error state
+ * @returns {JSX.Element} The rendered form select component
+ */
+function FormSelect({
+    icon,
+    name,
+    value,
+    onChange,
+    options,
+    required = false,
+    className = "",
+    hasError = false,
+}) {
+    const containerClass = `form-select__container ${className} ${hasError ? "form-select--error" : ""
+        }`.trim();
+
+    return (
+        <div className={containerClass}>
+            <div className="form-select__wrapper">
+                <i className={`${icon} form-select__icon left`} />
+                <i className={`fa-solid fa-angle-down form-select__icon right`} />
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    required={required}
+                    className="form-select__field"
+                >
+                    {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+    );
+}
+
+FormSelect.propTypes = {
+    icon: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    options: PropTypes.arrayOf(
+        PropTypes.shape({
+            value: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    required: PropTypes.bool,
+    className: PropTypes.string,
+    hasError: PropTypes.bool,
+};
+
+export default FormSelect;

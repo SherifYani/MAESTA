@@ -1,0 +1,607 @@
+/**
+ * @file registration-page.css
+ * @description Styles for the registration page layout and components
+ * @author Shahd Mohay
+ * @version 2.0.0
+ * @date 10-10-2025
+ */
+
+/*
+    last update on 14-10-2025
+    edit on Dark Theme support , make sure all colors are defined in variables , remove hardcoded colors and remove duplicate styles and unused styles
+    by Sherif Talaat
+*/
+@import "./globals.css";
+/* === Registration Layout === */
+.registration-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary-black) 0%, var(--primary-black) 50%, var(--primary-black) 100%);
+}
+
+    .registration-page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 15% 30%, var(--radial-pink-1) 0%, transparent 50%), radial-gradient(circle at 85% 70%, var(--radial-pink-2) 0%, transparent 50%), radial-gradient(circle at 50% 50%, var(--radial-pink-3) 0%, transparent 60%);
+        pointer-events: none;
+        animation: backgroundPulse 15s ease-in-out infinite;
+    }
+
+@keyframes backgroundPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* === Back Button === */
+.registration-page__back-button {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1rem;
+    background: var(--translucent-black-1);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--translucent-white-2);
+    color: var(--primary-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+}
+
+    .registration-page__back-button:hover {
+        background: var(--translucent-white-1);
+        transform: translateX(-0.25rem);
+        border-color: var(--translucent-white-4);
+        box-shadow: 0 8px 24px var(--translucent-black-1);
+    }
+
+/* === Left Section === */
+.registration-page__left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 3.75rem;
+    position: relative;
+    gap: 3rem;
+}
+
+.registration-page__canvas-container {
+    width: 31.25rem;
+    height: 31.25rem;
+    position: relative;
+}
+
+/* === Floating Particles === */
+.registration-page__floating-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* === Welcome Content === */
+.registration-page__welcome-content {
+    text-align: center;
+    color: var(--primary-white);
+    max-width: 35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.registration-page__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--translucent-black-1);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--translucent-white-2);
+    border-radius: 6.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--translucent-white-4);
+    margin: 0 auto;
+    box-shadow: 0 0.25rem 1rem var(--translucent-black-1);
+}
+
+.registration-page__badge-icon {
+    color: var(--accent-pink);
+}
+
+.registration-page__welcome-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0.25rem 1.5rem var(--shadow-pink);
+}
+
+.registration-page__gradient-text {
+    background: linear-gradient(135deg, var(--select-pink) 0%, var(--accent-pink) 40%, var(--light-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease infinite;
+    background-size: 200% auto;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% center;
+    }
+
+    50% {
+        background-position: 100% center;
+    }
+}
+
+.registration-page__welcome-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--muted-foreground);
+    font-weight: 400;
+}
+
+/* === Features List === */
+.registration-page__features-list {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.registration-page__feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--translucent-black-1);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--translucent-white-2);
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--translucent-white-4);
+    transition: all 0.3s ease;
+}
+
+    .registration-page__feature-item:hover {
+        background: var(--translucent-white-1);
+        border-color: var(--translucent-white-4);
+        transform: translateY(-0.125rem);
+    }
+
+.registration-page__feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, var(--radial-pink-1), var(--radial-pink-2));
+    color: var(--accent-pink);
+}
+
+/* === Right Section === */
+.registration-page__right-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3.75rem;
+    background: var(--translucent-black-1);
+    backdrop-filter: blur(24px);
+    border-left: 1px solid var(--translucent-white-1);
+}
+
+/* === Role Selector === */
+.registration-page__role-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.registration-page__role-button {
+    background: var(--translucent-white-1);
+    border: 2px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.25rem 1rem;
+    color: var(--primary-white);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+    .registration-page__role-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--radial-pink-1), var(--radial-pink-2));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .registration-page__role-button:hover::before {
+        opacity: 1;
+    }
+
+    .registration-page__role-button:hover {
+        background: var(--translucent-white-3);
+        border: 1px solid var(--accent-pink);
+        transform: translateY(-0.25rem);
+        box-shadow: 0 8px 24px var(--translucent-black-1);
+    }
+
+.registration-page__role-button--active {
+    background: var(--translucent-white-3);
+    border-color: var(--accent-pink);
+    box-shadow: 0 0 2rem var(--shadow-pink), 0 8px 24px var(--translucent-black-1);
+}
+
+    .registration-page__role-button--active::before {
+        opacity: 1;
+    }
+
+.registration-page__role-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: var(--translucent-white-1);
+    transition: all 0.3s ease;
+}
+
+.registration-page__role-button--active .registration-page__role-icon {
+    background: linear-gradient(135deg, var(--light-pink), var(--accent-pink));
+    color: var(--select-pink);
+}
+
+.registration-page__role-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+.registration-page__role-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.registration-page__role-subtitle {
+    font-size: 0.75rem;
+    color: var(--accent-pink);
+    font-weight: 400;
+}
+
+.registration-page__role-check {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    color: var(--primary-white);
+    animation: checkIn 0.3s ease;
+}
+
+@keyframes checkIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* === Input Groups === */
+.registration-page__input-group {
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.registration-page__input {
+    width: 100%;
+    padding: 1rem 1.25rem 1rem 3.25rem;
+    background: var(--translucent-white-1);
+    border: 2px solid var(--border);
+    border-radius: 0.875rem;
+    color: var(--primary-white);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+    .registration-page__input::placeholder {
+        color: var(--primary-white);
+    }
+
+    .registration-page__input:focus {
+        outline: none;
+        background: var(--translucent-white-3);
+        border-color: var(--accent-pink);
+        box-shadow: 0 0 0 0.25rem var(--shadow-pink);
+    }
+
+.registration-page__input-icon {
+    position: absolute;
+    left: 1.125rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-white);
+    transition: color 0.3s ease;
+}
+
+.registration-page__input:focus ~ .registration-page__input-icon {
+    color: var(--accent-pink);
+}
+
+.registration-page__toggle-password {
+    position: absolute;
+    right: 1.125rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--primary-white);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+}
+
+    .registration-page__toggle-password:hover {
+        color: var(--primary-white);
+        background: var(--translucent-white-3);
+    }
+
+/* === Create Account Button === */
+.registration-page__create-account-button {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--submit-pink-1) 0%, var(--submit-pink-2) 100%);
+    border: none;
+    border-radius: 0.875rem;
+    color: var(--primary-white);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    margin-top: 0.75rem;
+    box-shadow: 0 8px 24px var(--shadow-pink);
+    position: relative;
+    overflow: hidden;
+}
+
+    .registration-page__create-account-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--translucent-white-4), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .registration-page__create-account-button:hover::before {
+        left: 100%;
+    }
+
+    .registration-page__create-account-button:hover {
+        transform: translateY(-0.125rem);
+        box-shadow: 0 12px 32px var(--shadow-pink);
+        background: linear-gradient(135deg, var(--submit-pink-2) 0%, var(--light-pink) 100%);
+    }
+
+    .registration-page__create-account-button:active {
+        transform: translateY(0);
+    }
+
+/* === Form Card === */
+.registration-page__form-card {
+    width: 100%;
+    max-width: 32.5rem;
+    background: var(--translucent-white-1);
+    backdrop-filter: blur(24px);
+    border-radius: 2rem;
+    border: 1px solid var(--translucent-white-2);
+    padding: 3rem;
+    box-shadow: 0 24px 64px var(--translucent-black-1);
+}
+
+.registration-page__form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--primary-white);
+}
+
+.registration-page__form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+    background: linear-gradient(135deg, var(--primary-white) 0%, var(--light-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.registration-page__form-description {
+    font-size: 0.9375rem;
+    color: var(--accent-pink);
+    font-weight: 400;
+}
+
+/* === Responsive Design === */
+@media (max-width: 75rem) {
+    .registration-page__left-section {
+        padding: 3.75rem 2.5rem;
+    }
+
+    .registration-page__canvas-container {
+        width: 25rem;
+        height: 25rem;
+    }
+
+    .registration-page__welcome-title {
+        font-size: 3.25rem;
+    }
+
+    .registration-page__right-section {
+        padding: 2.5rem;
+    }
+
+    .registration-page__form-card {
+        padding: 2.5rem;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .registration-page {
+        flex-direction: column;
+    }
+
+    .registration-page__left-section,
+    .registration-page__right-section {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .registration-page__left-section {
+        padding: 3.75rem 2rem;
+        gap: 2rem;
+    }
+
+    .registration-page__canvas-container {
+        width: 20rem;
+        height: 20rem;
+    }
+
+    .registration-page__welcome-title {
+        font-size: 2.625rem;
+    }
+
+    .registration-page__right-section {
+        border-left: none;
+        border-top: 1px solid var(--translucent-white-2);
+        padding: 2.5rem 2rem;
+    }
+
+    .registration-page__form-card {
+        max-width: 100%;
+        padding: 2rem;
+    }
+
+    .registration-page__role-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .registration-page__role-button {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 1rem 1.25rem;
+    }
+
+    .registration-page__role-text {
+        align-items: flex-start;
+        text-align: left;
+    }
+}
+
+@media (max-width: 40rem) {
+    .registration-page__back-button {
+        top: 1.25rem;
+        left: 1.25rem;
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .registration-page__left-section {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .registration-page__canvas-container {
+        width: 17.5rem;
+        height: 17.5rem;
+    }
+
+    .registration-page__welcome-title {
+        font-size: 2.25rem;
+    }
+
+    .registration-page__welcome-description {
+        font-size: 1rem;
+    }
+
+    .registration-page__features-list {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .registration-page__right-section {
+        padding: 2rem 1.5rem;
+    }
+
+    .registration-page__form-card {
+        padding: 1.75rem;
+        border-radius: 1.5rem;
+    }
+
+    .registration-page__form-title {
+        font-size: 1.75rem;
+    }
+
+    .registration-page__social-login {
+        grid-template-columns: 1fr;
+    }
+}
