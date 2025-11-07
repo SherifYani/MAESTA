@@ -1,7 +1,7 @@
 /**
  * @file RegistrationPage.jsx
  * @description Main registration page with 3D background and welcome content
- * @author Job Magnet Development Team
+ * @author Shahd Mohay
  * @version 2.0.0
  * @date 10-10-2025
  */

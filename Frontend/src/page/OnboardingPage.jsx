@@ -1,7 +1,7 @@
 import JobSeekerOnboarding from "./JobSeekerOnboarding";
 import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
-
+import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 export default function OnboardingPage() {
     const userRole = localStorage.getItem("userRole");
 
@@ -13,6 +13,8 @@ export default function OnboardingPage() {
                 return <FreelancerOnboarding />;
             case "employer":
                 return <CompanyOnboarding />;
+            case "CompanyMember":
+                return <CompanyMemberOnboarding />;
             default:
                 return (
                     <div className="text-center p-8">
@@ -27,7 +29,8 @@ export default function OnboardingPage() {
         <div className="min-h-screen">
             {/*{renderForm()}*/}
             {/*<FreelancerOnboarding />*/}
-            <CompanyOnboarding />
+            {/*<CompanyOnboarding />*/}
+            {<CompanyMemberOnboarding /> }
         </div>
     );
 }

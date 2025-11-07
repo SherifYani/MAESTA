@@ -15,13 +15,12 @@ import "../styles/form-components.css";
  * @param {Object} props - The component props
  * @param {string} props.icon - Font Awesome icon class
  * @param {string} props.title - Role title
- * @param {string} props.description - Role description
  * @param {boolean} props.isSelected - Whether this role is currently selected
  * @param {Function} props.onClick - Click event handler
  * @param {string} props.className - Additional CSS class names
  * @returns {JSX.Element} The rendered role card component
  */
-function RoleCard({ icon, title, description, isSelected, onClick, className = "" }) {
+function RoleCard({ icon, title, isSelected, onClick, className = "" }) {
   const cardClass = `role-card ${isSelected ? "role-card--selected" : ""} ${className}`.trim();
 
   return (
@@ -36,7 +35,6 @@ function RoleCard({ icon, title, description, isSelected, onClick, className = "
     >
       <i className={`${icon} role-card__icon`} />
       <h3 className="role-card__title">{title}</h3>
-      <p className="role-card__description">{description}</p>
     </div>
   );
 }

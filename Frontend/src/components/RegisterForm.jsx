@@ -255,21 +255,27 @@ function RegisterForm() {
                 <div className="register-form__role-selection">
                     <RoleCard
                         icon="fa-solid fa-bullseye"
-                        title="Job Seeker"
+                        title="Candidate"
                         isSelected={selectedRole === "jobseeker"}
                         onClick={() => setSelectedRole("jobseeker")}
                     />
                     <RoleCard
                         icon="fa-solid fa-briefcase"
-                        title="Employer"
+                        title="Hirer"
                         isSelected={selectedRole === "employer"}
                         onClick={() => setSelectedRole("employer")}
                     />
                     <RoleCard
-                        icon="fa-solid fa-user-tie"
+                        icon="fa-solid fa-user-clock"  
                         title="Freelancer"
                         isSelected={selectedRole === "freelancer"}
                         onClick={() => setSelectedRole("freelancer")}
+                    />
+                    <RoleCard
+                        icon="fa-solid fa-building"
+                        title="Staff"
+                        isSelected={selectedRole === "CompanyMember"}
+                        onClick={() => setSelectedRole("CompanyMember")}
                     />
                 </div>
 

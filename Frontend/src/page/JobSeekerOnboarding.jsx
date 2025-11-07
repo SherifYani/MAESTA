@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import FormTextarea from "../components/FormTextarea";
-import FormSelect from "../components/FormSelect";
 import FileUpload from "../components/FileUpload";
 import "../styles/onboarding.css";
 
