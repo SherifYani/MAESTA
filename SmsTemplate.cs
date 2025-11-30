@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace JobMagnet.Domain.Entities
+{
+
+    public class SmsTemplate
+    {
+        [Key]
+        public int SmsTemplateId { get; set; }
+        
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string TemplateName { get; set; }
+        
+        [Required]
+        [StringLength(1000, MinimumLength = 10)]
+        public string Body { get; set; }
+        
+        [StringLength(2000)]
+        public string? VariablesJson { get; set; }
+        
+        [Required]
+        public DateTimeOffset CreatedAt { get; set; }
+    }
+
+
+}
