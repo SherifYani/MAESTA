@@ -35,6 +35,12 @@ namespace JobMagnet.Domain.Entities
         
         [StringLength(200, ErrorMessage = "سبب الإبطال يجب ألا يتجاوز 200 حرف")]
         public string? ReasonRevoked { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
 
         [ForeignKey("UserId")]
         public User? User { get; set; }

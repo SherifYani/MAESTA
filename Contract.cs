@@ -29,6 +29,19 @@ namespace JobMagnet.Domain.Entities
         [StringLength(500, ErrorMessage = "رابط ملف العقد يجب ألا يتجاوز 500 حرف")]
         [Url(ErrorMessage = "صيغة رابط ملف العقد غير صحيحة")]
         public string? ContractFileUrl { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
 
         [ForeignKey("ProjectId")]
         public Project? Project { get; set; }

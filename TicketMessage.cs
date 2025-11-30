@@ -23,6 +23,19 @@ namespace JobMagnet.Domain.Entities
         
         [Required]
         public DateTimeOffset SentAt { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
 
         [ForeignKey("SenderUserId")]
         public User? User { get; set; }

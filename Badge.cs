@@ -21,6 +21,19 @@ namespace JobMagnet.Domain.Entities
         [StringLength(500, ErrorMessage = "رابط الأيقونة يجب ألا يتجاوز 500 حرف")]
         [Url(ErrorMessage = "صيغة رابط الأيقونة غير صحيحة")]
         public string? IconUrl { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 
 

@@ -26,6 +26,19 @@ namespace JobMagnet.Domain.Entities
         
         [StringLength(2000)]
         public string? Description { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
 
         [ForeignKey("UserId")]
         public User? User { get; set; }

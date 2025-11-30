@@ -23,6 +23,19 @@ namespace JobMagnet.Domain.Entities
         
         [Range(1, 10000, ErrorMessage = "حد الاستخدام يجب أن يكون بين 1 و 10000")]
         public int? UsageLimit { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
+        public bool IsDeleted { get; set; }
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 
 

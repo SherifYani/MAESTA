@@ -26,6 +26,15 @@ namespace JobMagnet.Domain.Entities
         public bool IsDeleted { get; set; }
         
         public DateTimeOffset SentAt { get; set; }
+        
+        public DateTimeOffset CreatedAt { get; set; }
+        
+        public int? CreatedBy { get; set; }
+        
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
+        public int? UpdatedBy { get; set; }
+        
         [Timestamp]
         public byte[]? RowVersion { get; set; }
     }
