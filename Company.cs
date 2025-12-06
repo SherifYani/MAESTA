@@ -33,6 +33,17 @@ namespace JobMagnet.Domain.Entities
         [Url(ErrorMessage = "صيغة رابط ملف السجل التجاري غير صحيحة")]
         public string? CommercialRegistrationFileUrl { get; set; }
         
+        [StringLength(2000, ErrorMessage = "نبذة عن الشركة يجب ألا تتجاوز 2000 حرف")]
+        public string? Description { get; set; }
+
+        public int? FoundedYear { get; set; }
+
+        [StringLength(100, ErrorMessage = "الدولة يجب ألا تتجاوز 100 حرف")]
+        public string? Country { get; set; }
+
+        [StringLength(100, ErrorMessage = "المدينة يجب ألا تتجاوز 100 حرف")]
+        public string? City { get; set; }
+
         [StringLength(500, ErrorMessage = "العنوان يجب ألا يتجاوز 500 حرف")]
         public string? Address { get; set; }
         

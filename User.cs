@@ -19,6 +19,34 @@ namespace JobMagnet.Domain.Entities
         [Required(ErrorMessage = "كلمة المرور مطلوبة")]
         [StringLength(500, ErrorMessage = "كلمة المرور المشفرة يجب ألا تتجاوز 500 حرف")]
         public string PasswordHash { get; set; }
+
+        [Required(ErrorMessage = "الاسم الأول مطلوب")]
+        [StringLength(50, ErrorMessage = "الاسم الأول يجب ألا يتجاوز 50 حرف")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "الاسم الأخير مطلوب")]
+        [StringLength(50, ErrorMessage = "الاسم الأخير يجب ألا يتجاوز 50 حرف")]
+        public string LastName { get; set; }
+
+        [StringLength(500, ErrorMessage = "رابط الصورة الشخصية يجب ألا يتجاوز 500 حرف")]
+        [Url(ErrorMessage = "صيغة رابط الصورة غير صحيحة")]
+        public string? ProfilePictureUrl { get; set; }
+
+        public DateTimeOffset? DateOfBirth { get; set; }
+
+        [StringLength(20, ErrorMessage = "الجنس يجب ألا يتجاوز 20 حرف")]
+        [RegularExpression(@"^(Male|Female)$", ErrorMessage = "الجنس يجب أن يكون ذكر أو أنثى")]
+        public string? Gender { get; set; }
+
+        [StringLength(100, ErrorMessage = "الدولة يجب ألا تتجاوز 100 حرف")]
+        public string? Country { get; set; }
+
+        [StringLength(100, ErrorMessage = "المدينة يجب ألا تتجاوز 100 حرف")]
+        public string? City { get; set; }
+
+        [StringLength(500, ErrorMessage = "رابط LinkedIn يجب ألا يتجاوز 500 حرف")]
+        [Url(ErrorMessage = "صيغة رابط LinkedIn غير صحيحة")]
+        public string? LinkedInUrl { get; set; }
         
         [StringLength(20, ErrorMessage = "رقم الهاتف يجب ألا يتجاوز 20 حرف")]
         [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]

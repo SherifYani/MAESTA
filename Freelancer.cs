@@ -15,6 +15,12 @@ namespace JobMagnet.Domain.Entities
         public int UserId { get; set; }
         
         public int? FreelancerLevelId { get; set; }
+
+        [StringLength(100, ErrorMessage = "المسمى الوظيفي يجب ألا يتجاوز 100 حرف")]
+        public string? ProfessionalTitle { get; set; }
+
+        [Range(0, 50, ErrorMessage = "سنوات الخبرة يجب أن تكون بين 0 و 50")]
+        public int? ExperienceYears { get; set; }
         
         [Range(0.01, 100000, ErrorMessage = "السعر بالساعة يجب أن يكون بين 0.01 و 100000")]
         public decimal? HourlyRate { get; set; }

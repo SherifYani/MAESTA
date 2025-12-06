@@ -17,6 +17,9 @@ namespace JobMagnet.Domain.Entities
         [StringLength(500, ErrorMessage = "رابط السيرة الذاتية يجب ألا يتجاوز 500 حرف")]
         [Url(ErrorMessage = "صيغة رابط السيرة الذاتية غير صحيحة")]
         public string? CVUrl { get; set; }
+
+        [StringLength(100, ErrorMessage = "المسمى الوظيفي يجب ألا يتجاوز 100 حرف")]
+        public string? ProfessionalTitle { get; set; }
         
         [Range(0, 50, ErrorMessage = "سنوات الخبرة يجب أن تكون بين 0 و 50")]
         public int? ExperienceYears { get; set; }

@@ -23,7 +23,11 @@ namespace JobMagnet.Domain.Entities
         
         [StringLength(500, ErrorMessage = "العنوان يجب ألا يتجاوز 500 حرف")]
         public string? Address { get; set; }
-        
+
+        [StringLength(200, ErrorMessage = "الموقع الإلكتروني يجب ألا يتجاوز 200 حرف")]
+        [Url(ErrorMessage = "صيغة الموقع الإلكتروني غير صحيحة")]
+        public string? Website { get; set; }
+
         [StringLength(500, ErrorMessage = "رابط وثيقة الهوية يجب ألا يتجاوز 500 حرف")]
         [Url(ErrorMessage = "صيغة رابط وثيقة الهوية غير صحيحة")]
         public string? IdentityDocumentUrl { get; set; }
