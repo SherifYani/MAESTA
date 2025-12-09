@@ -7,7 +7,7 @@
  */
 
 import PropTypes from "prop-types";
-import "../styles/form-components.css";
+import "../../styles/components/form-components.css";
 
 /**
  * FormTextarea Component

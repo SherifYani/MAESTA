@@ -1,0 +1,364 @@
+/**
+ * @file Progress.css
+ * @description Styles for progress bar components including container, bar, fill, and text display
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+@import "../../globals.css";
+
+/* ==========================================================================
+   Progress Container
+   ========================================================================== */
+
+.progress {
+  &__container {
+    width: 100%;
+    margin: var(--space-4) 0;
+  }
+
+  /* ========================================================================
+     Progress Bar
+     ======================================================================== */
+
+  &__bar {
+    width: 100%;
+    height: 8px;
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ========================================================================
+     Progress Fill
+     ======================================================================== */
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink)
+    );
+    border-radius: var(--radius-sm);
+    transition: width 0.5s ease-in-out;
+    box-shadow: 0 0 10px var(--color-shadow-pink);
+    position: relative;
+    overflow: hidden;
+
+    /* Shimmer effect for active progress */
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      animation: progressShimmer 2s infinite;
+    }
+  }
+
+  /* ========================================================================
+     Progress States
+     ======================================================================== */
+
+  /* Success state (100% complete) */
+  &__fill--success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+    }
+  }
+
+  /* Warning state (in progress but needs attention) */
+  &__fill--warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  }
+
+  /* Error state (stalled or blocked) */
+  &__fill--error {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+  }
+
+  /* Indeterminate state (loading/processing) */
+  &__fill--indeterminate {
+    width: 50%;
+    animation: progressIndeterminate 1.5s ease-in-out infinite;
+  }
+
+  /* ========================================================================
+     Progress Text & Labels
+     ======================================================================== */
+
+  &__text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    line-height: 1.4;
+  }
+
+  &__label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+  }
+
+  &__percentage {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-accent-pink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__value {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ========================================================================
+     Progress Variations
+     ======================================================================== */
+
+  /* Size variations */
+  &__bar--sm {
+    height: 4px;
+  }
+
+  &__bar--lg {
+    height: 12px;
+  }
+
+  &__bar--xl {
+    height: 16px;
+    border-radius: var(--radius-md);
+
+    .progress__fill {
+      border-radius: var(--radius-md);
+    }
+  }
+
+  /* Rounded variation */
+  &__bar--rounded {
+    border-radius: var(--radius-full);
+
+    .progress__fill {
+      border-radius: var(--radius-full);
+    }
+  }
+
+  /* With border variation */
+  &__bar--bordered {
+    border: 1px solid var(--color-border);
+    background: transparent;
+    padding: 2px;
+
+    .progress__fill {
+      border-radius: calc(var(--radius-sm) - 1px);
+    }
+
+    &.progress__bar--rounded .progress__fill {
+      border-radius: var(--radius-full);
+    }
+  }
+
+  /* Striped variation */
+  &__fill--striped {
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+    animation: progressStriped 1s linear infinite;
+  }
+
+  /* ========================================================================
+     Progress with Tooltip
+     ======================================================================== */
+
+  &__tooltip {
+    position: absolute;
+    top: -2.5rem;
+    left: 0;
+    transform: translateX(-50%);
+    background: var(--color-card);
+    color: var(--color-card-foreground);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    box-shadow: 0 2px 8px var(--color-translucent-black-1);
+    border: 1px solid var(--color-border);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 10;
+    pointer-events: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px 4px 0;
+      border-style: solid;
+      border-color: var(--color-card) transparent transparent transparent;
+    }
+  }
+
+  &__bar:hover &__tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ========================================================================
+     Progress Group (Multiple bars)
+     ======================================================================== */
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  &__group-item {
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-2);
+    }
+
+    &-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-foreground);
+    }
+
+    &-value {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-accent-pink);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes progressIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes progressStriped {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 48rem) {
+  .progress {
+    &__bar {
+      height: 6px;
+    }
+
+    &__bar--lg {
+      height: 10px;
+    }
+
+    &__bar--xl {
+      height: 14px;
+    }
+
+    &__text {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+    }
+
+    &__percentage,
+    &__value {
+      align-self: flex-end;
+    }
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    &__fill {
+      transition: none;
+
+      &::after {
+        animation: none;
+      }
+    }
+
+    &__fill--indeterminate {
+      animation: none;
+      width: 100%;
+    }
+
+    &__fill--striped {
+      animation: none;
+    }
+  }
+}

@@ -1,11 +1,14 @@
 /**
- * @fileoverview General rules and colours for all tabs in project
- * @description Optimized color palette prioritizing visual comfort, accessibility, and modern aesthetics
- * @author Sherif Talaat 
+ * @file globals.css
+ * @description Global CSS variables, theme definitions, and base styles for the entire application
+ * @author Sherif Talaat
  * @version 2.0.0
- * @date 26-11-2025
- * 
- * Key Improvements:
+ * @date 2025-11-26
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-11-26
+ *
+ * Key Features:
  * - WCAG AAA compliance for critical UI elements
  * - Reduced blue light exposure in dark mode
  * - Harmonious color transitions with psychological consideration
@@ -13,222 +16,351 @@
  * - Optimized contrast ratios for extended viewing comfort
  */
 
+/* ==========================================================================
+   Typography System
+   ========================================================================== */
+
 :root {
-  /* ========================================
-       LIGHT THEME - Enhanced for Eye Comfort
-       ======================================== */
-
-  /* Core UI Colors */
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(0.985 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(0.985 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.85 0 0);
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.85 0 0);
-  --muted-foreground: oklch(0.4 0 0);
-  --accent: oklch(0.85 0 0);
-  --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.95 0.1 25);
-  --destructive-foreground: oklch(0.4 0.2 25);
-  --border: oklch(0.85 0 0);
-  --input: oklch(0.95 0 0);
-  --ring: oklch(0.6 0 0);
-
-  /* Chart Colors */
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-
-  /* Sidebar Colors */
-  --sidebar: oklch(0.95 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.85 0 0);
-  --sidebar-accent-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.85 0 0);
-  --sidebar-ring: oklch(0.6 0 0);
-
-  /* ========================================
-       CUSTOM JOB MAGNET COLORS - LIGHT THEME
-       Enhanced for Professional Context
-       ======================================== */
-
-  /* Primary Base Colors - Softer for extended viewing */
-  --primary-black: #fafafa;
-  --primary-white: #1f1f1f;
-
-  /* Pink Accent Palette - Balanced vibrancy and professionalism */
-  --accent-pink: #d81b60;
-  --vivid-pink: #c2185b;
-  --light-pink: #fce4ec;
-
-  /* Radial Gradients - Subtle depth with reduced intensity */
-  --radial-pink-1: rgba(216, 27, 96, 0.08);
-  --radial-pink-2: rgba(216, 27, 96, 0.05);
-  --radial-pink-3: rgba(216, 27, 96, 0.03);
-
-  /* Translucent White Overlays - Enhanced layering system */
-  --translucent-white-1: rgba(0, 0, 0, 0.04);
-  --translucent-white-2: rgba(0, 0, 0, 0.08);
-  --translucent-white-3: rgba(0, 0, 0, 0.02);
-  --translucent-white-4: rgba(0, 0, 0, 0.75);
-  --translucent-white-5: rgba(0, 0, 0, 0.55);
-
-  /* Translucent Black - For light theme overlays */
-  --translucent-black-1: rgba(255, 255, 255, 0.85);
-
-  /* Interactive Elements - Optimized for action */
-  --select-pink: #ad1457;
-  --submit-pink-1: #d81b60;
-  --submit-pink-2: #c2185b;
-
-  /* Shadow & Effects - Soft and natural */
-  --shadow-pink: rgba(216, 27, 96, 0.15);
-  --transparent: transparent;
-}
-
-.dark {
-  /* ========================================
-       DARK THEME - Optimized for Low Light
-       Reduced blue light, enhanced comfort
-       ======================================== */
-
-  /* Typography */
+  /* Font Families */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
   --font-mono: "Courier New", monospace;
 
-  /* Core UI Colors - Warmer dark palette */
-  --background: oklch(0.15 0.005 280);
-  --foreground: oklch(0.92 0.005 90);
-  --card: oklch(0.18 0.005 280);
-  --card-foreground: oklch(0.93 0.005 90);
-  --popover: oklch(0.2 0.005 280);
-  --popover-foreground: oklch(0.93 0.005 90);
-  --primary: oklch(0.9 0.005 90);
-  --primary-foreground: oklch(0.15 0.005 280);
-  --secondary: oklch(0.25 0.005 280);
-  --secondary-foreground: oklch(0.92 0.005 90);
-  --muted: oklch(0.28 0.005 280);
-  --muted-foreground: oklch(0.7 0.005 90);
-  --accent: oklch(0.25 0.005 280);
-  --accent-foreground: oklch(0.92 0.005 90);
-  --destructive: oklch(0.35 0.1 25);
-  --destructive-foreground: oklch(0.93 0.1 25);
-  --border: oklch(0.28 0.005 280);
-  --input: oklch(0.22 0.005 280);
-  --ring: oklch(0.6 0.005 90);
+  /* Font Sizes - Typography Scale */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
 
-  /* Chart Colors - Enhanced visibility in dark mode */
-  --chart-1: oklch(0.72 0.22 264.376);
-  --chart-2: oklch(0.75 0.16 162.48);
-  --chart-3: oklch(0.78 0.18 70.08);
-  --chart-4: oklch(0.7 0.24 303.9);
-  --chart-5: oklch(0.72 0.23 16.439);
+  /* Line Heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/* ==========================================================================
+   Spacing System (8px base unit)
+   ========================================================================== */
+
+:root {
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+}
+
+/* ==========================================================================
+   Border Radius System
+   ========================================================================== */
+
+:root {
+  --radius-none: 0;
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.5rem; /* 24px */
+  --radius-full: 9999px;
+}
+
+/* ==========================================================================
+   Light Theme (Default)
+   Optimized for Eye Comfort and Professional Context
+   ========================================================================== */
+
+:root {
+  /* Core UI Colors */
+  --color-background: oklch(0.985 0 0);
+  --color-foreground: oklch(0.145 0 0);
+
+  --color-card: oklch(0.985 0 0);
+  --color-card-foreground: oklch(0.145 0 0);
+
+  --color-popover: oklch(0.985 0 0);
+  --color-popover-foreground: oklch(0.145 0 0);
+
+  --color-primary: oklch(0.145 0 0);
+  --color-primary-foreground: oklch(0.985 0 0);
+
+  --color-secondary: oklch(0.85 0 0);
+  --color-secondary-foreground: oklch(0.145 0 0);
+
+  --color-muted: oklch(0.85 0 0);
+  --color-muted-foreground: oklch(0.4 0 0);
+
+  --color-accent: oklch(0.85 0 0);
+  --color-accent-foreground: oklch(0.145 0 0);
+
+  --color-destructive: oklch(0.95 0.1 25);
+  --color-destructive-foreground: oklch(0.4 0.2 25);
+
+  --color-border: oklch(0.85 0 0);
+  --color-input: oklch(0.95 0 0);
+  --color-ring: oklch(0.6 0 0);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.17 162.48);
+  --color-chart-3: oklch(0.769 0.188 70.08);
+  --color-chart-4: oklch(0.627 0.265 303.9);
+  --color-chart-5: oklch(0.645 0.246 16.439);
 
   /* Sidebar Colors */
-  --sidebar: oklch(0.16 0.005 280);
-  --sidebar-foreground: oklch(0.92 0.005 90);
-  --sidebar-primary: oklch(0.72 0.22 264.376);
-  --sidebar-primary-foreground: oklch(0.16 0.005 280);
-  --sidebar-accent: oklch(0.25 0.005 280);
-  --sidebar-accent-foreground: oklch(0.92 0.005 90);
-  --sidebar-border: oklch(0.28 0.005 280);
-  --sidebar-ring: oklch(0.6 0.005 90);
+  --color-sidebar: oklch(0.95 0 0);
+  --color-sidebar-foreground: oklch(0.145 0 0);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.985 0 0);
+  --color-sidebar-accent: oklch(0.85 0 0);
+  --color-sidebar-accent-foreground: oklch(0.145 0 0);
+  --color-sidebar-border: oklch(0.85 0 0);
+  --color-sidebar-ring: oklch(0.6 0 0);
 
-  /* ========================================
-       CUSTOM JOB MAGNET COLORS - DARK THEME
-       Enhanced for Night Viewing
-       ======================================== */
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS - LIGHT THEME
+     Enhanced for Professional Context
+     ======================================================================== */
+
+  /* Primary Base Colors - Softer for extended viewing */
+  --color-primary-black: #fafafa;
+  --color-primary-white: #1f1f1f;
+
+  /* Pink Accent Palette - Balanced vibrancy and professionalism */
+  --color-accent-pink: #d81b60;
+  --color-vivid-pink: #c2185b;
+  --color-light-pink: #fce4ec;
+
+  /* Radial Gradients - Subtle depth with reduced intensity */
+  --color-radial-pink-1: rgba(216, 27, 96, 0.08);
+  --color-radial-pink-2: rgba(216, 27, 96, 0.05);
+  --color-radial-pink-3: rgba(216, 27, 96, 0.03);
+
+  /* Translucent White Overlays - Enhanced layering system */
+  --color-translucent-white-1: rgba(0, 0, 0, 0.04);
+  --color-translucent-white-2: rgba(0, 0, 0, 0.08);
+  --color-translucent-white-3: rgba(0, 0, 0, 0.02);
+  --color-translucent-white-4: rgba(0, 0, 0, 0.75);
+  --color-translucent-white-5: rgba(0, 0, 0, 0.55);
+
+  /* Translucent Black - For light theme overlays */
+  --color-translucent-black-1: rgba(255, 255, 255, 0.85);
+
+  /* Interactive Elements - Optimized for action */
+  --color-select-pink: #ad1457;
+  --color-submit-pink-1: #d81b60;
+  --color-submit-pink-2: #c2185b;
+
+  /* Shadow & Effects - Soft and natural */
+  --color-shadow-pink: rgba(216, 27, 96, 0.15);
+  --color-transparent: transparent;
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.98 0 0);
+  --color-accent-hover: oklch(0.95 0 0);
+
+}
+
+/* ==========================================================================
+   Dark Theme
+   Optimized for Low Light - Reduced blue light, enhanced comfort
+   ========================================================================== */
+
+.dark {
+  /* Core UI Colors - Warmer dark palette */
+  --color-background: oklch(0.15 0.005 280);
+  --color-foreground: oklch(0.92 0.005 90);
+
+  --color-card: oklch(0.18 0.005 280);
+  --color-card-foreground: oklch(0.93 0.005 90);
+
+  --color-popover: oklch(0.2 0.005 280);
+  --color-popover-foreground: oklch(0.93 0.005 90);
+
+  --color-primary: oklch(0.9 0.005 90);
+  --color-primary-foreground: oklch(0.15 0.005 280);
+
+  --color-secondary: oklch(0.25 0.005 280);
+  --color-secondary-foreground: oklch(0.92 0.005 90);
+
+  --color-muted: oklch(0.28 0.005 280);
+  --color-muted-foreground: oklch(0.7 0.005 90);
+
+  --color-accent: oklch(0.25 0.005 280);
+  --color-accent-foreground: oklch(0.92 0.005 90);
+
+  --color-destructive: oklch(0.35 0.1 25);
+  --color-destructive-foreground: oklch(0.93 0.1 25);
+
+  --color-border: oklch(0.28 0.005 280);
+  --color-input: oklch(0.22 0.005 280);
+  --color-ring: oklch(0.6 0.005 90);
+
+  /* Chart Colors - Enhanced visibility in dark mode */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.48);
+  --color-chart-3: oklch(0.78 0.18 70.08);
+  --color-chart-4: oklch(0.7 0.24 303.9);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.16 0.005 280);
+  --color-sidebar-foreground: oklch(0.92 0.005 90);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.16 0.005 280);
+  --color-sidebar-accent: oklch(0.25 0.005 280);
+  --color-sidebar-accent-foreground: oklch(0.92 0.005 90);
+  --color-sidebar-border: oklch(0.28 0.005 280);
+  --color-sidebar-ring: oklch(0.6 0.005 90);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS - DARK THEME
+     Enhanced for Night Viewing
+     ======================================================================== */
 
   /* Primary Base Colors - True dark with warmth */
-  --primary-black: #0a0a0b;
-  --primary-white: #f5f5f7;
+  --color-primary-black: #0a0a0b;
+  --color-primary-white: #f5f5f7;
 
   /* Pink Accent Palette - Vibrant but comfortable */
-  --accent-pink: #ff6b9d;
-  --vivid-pink: #ff4d8f;
-  --light-pink: #4a2f3e;
+  --color-accent-pink: #ff6b9d;
+  --color-vivid-pink: #ff4d8f;
+  --color-light-pink: #4a2f3e;
 
   /* Radial Gradients - Enhanced glow for dark mode */
-  --radial-pink-1: rgba(255, 107, 157, 0.12);
-  --radial-pink-2: rgba(255, 107, 157, 0.08);
-  --radial-pink-3: rgba(255, 107, 157, 0.05);
+  --color-radial-pink-1: rgba(255, 107, 157, 0.12);
+  --color-radial-pink-2: rgba(255, 107, 157, 0.08);
+  --color-radial-pink-3: rgba(255, 107, 157, 0.05);
 
   /* Translucent White Overlays - Optimized for dark surfaces */
-  --translucent-white-1: rgba(255, 255, 255, 0.08);
-  --translucent-white-2: rgba(255, 255, 255, 0.85);
-  --translucent-white-3: rgba(255, 255, 255, 0.04);
-  --translucent-white-4: rgba(255, 255, 255, 0.92);
-  --translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-white-1: rgba(255, 255, 255, 0.08);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
 
   /* Translucent Black - For dark theme depth */
-  --translucent-black-1: rgba(0, 0, 0, 0.35);
+  --color-translucent-black-1: rgba(0, 0, 0, 0.35);
 
   /* Interactive Elements - High visibility without strain */
-  --select-pink: #b8004d;
-  --submit-pink-1: #ff4d8f;
-  --submit-pink-2: #ff6b9d;
+  --color-select-pink: #b8004d;
+  --color-submit-pink-1: #ff4d8f;
+  --color-submit-pink-2: #ff6b9d;
 
   /* Shadow & Effects - Enhanced depth in dark mode */
-  --shadow-pink: rgba(255, 77, 143, 0.25);
-  --transparent: transparent;
+  --color-shadow-pink: rgba(255, 77, 143, 0.25);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.2 0.005 280);
+  --color-accent-hover: oklch(0.3 0.005 280);
+  /* Dark theme versions */
+  --gradient-registration: linear-gradient(
+    135deg,
+    var(--color-primary-black) 0%,
+    oklch(0.15 0.005 280) 30%,
+    oklch(0.18 0.005 280) 60%,
+    oklch(0.15 0.005 280) 80%,
+    var(--color-primary-black) 100%
+  );
+
+  --gradient-onboarding: linear-gradient(
+    135deg,
+    var(--color-primary-black) 0%,
+    oklch(0.15 0.005 280) 25%,
+    oklch(0.22 0.005 280) 40%,
+    oklch(0.15 0.005 280) 60%,
+    var(--color-primary-black) 100%
+  );
 }
 
-/* ========================================
-   THEME INTEGRATION
-   ======================================== */
+/* ==========================================================================
+   Shorthand Aliases (Backward Compatibility)
+   ========================================================================== */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+:root {
+  /* Core Colors */
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --card: var(--color-card);
+  --card-foreground: var(--color-card-foreground);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-foreground);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-foreground);
+  --muted: var(--color-muted);
+  --muted-foreground: var(--color-muted-foreground);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-accent-foreground);
+  --destructive: var(--color-destructive);
+  --destructive-foreground: var(--color-destructive-foreground);
+  --border: var(--color-border);
+  --input: var(--color-input);
+  --ring: var(--color-ring);
+
+  /* Custom Colors */
+  --primary-black: var(--color-primary-black);
+  --primary-white: var(--color-primary-white);
+  --accent-pink: var(--color-accent-pink);
+  --vivid-pink: var(--color-vivid-pink);
+  --light-pink: var(--color-light-pink);
+  --radial-pink-1: var(--color-radial-pink-1);
+  --radial-pink-2: var(--color-radial-pink-2);
+  --radial-pink-3: var(--color-radial-pink-3);
+  --translucent-white-1: var(--color-translucent-white-1);
+  --translucent-white-2: var(--color-translucent-white-2);
+  --translucent-white-3: var(--color-translucent-white-3);
+  --translucent-white-4: var(--color-translucent-white-4);
+  --translucent-white-5: var(--color-translucent-white-5);
+  --translucent-black-1: var(--color-translucent-black-1);
+  --select-pink: var(--color-select-pink);
+  --submit-pink-1: var(--color-submit-pink-1);
+  --submit-pink-2: var(--color-submit-pink-2);
+  --shadow-pink: var(--color-shadow-pink);
+  --transparent: var(--color-transparent);
 }
 
-/* ========================================
-   ACCESSIBILITY & COMFORT ENHANCEMENTS
-   ======================================== */
+/* ==========================================================================
+   Global Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
 
 /* Smooth color transitions for theme switching */
 * {
@@ -240,21 +372,49 @@
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms t;
+    scroll-behavior: auto;
   }
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
-    --accent-pink: #c2185b;
-    --submit-pink-1: #c2185b;
+    --color-accent-pink: #c2185b;
+    --color-submit-pink-1: #c2185b;
   }
 
   .dark {
-    --accent-pink: #ff80ab;
-    --submit-pink-1: #ff80ab;
+    --color-accent-pink: #ff80ab;
+    --color-submit-pink-1: #ff80ab;
   }
+}
+
+/* ==========================================================================
+   Focus Management
+   ========================================================================== */
+
+/* :focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+} */
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==========================================================================
+   Selection Styling
+   ========================================================================== */
+
+::selection {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
 }

@@ -1,22 +1,16 @@
 /**
  * @file RegistrationPage.jsx
  * @description Main registration page with 3D background and welcome content
- * @author Job Magnet Development Team
+ * @author Shahd Mohay
  * @version 2.0.0
  * @date 10-10-2025
  */
 
-import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, MeshDistortMaterial, Sphere } from "@react-three/drei";
-import {
-  ArrowLeft,
-  Sparkles,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import "../styles/registration-page.css";
-import RegisterForm from "./RegisterForm";
+import { ArrowLeft, Sparkles, TrendingUp, Users } from "lucide-react";
+import "../../styles/pages/registration-page.css";
+import RegisterForm from "../../components/forms/RegisterForm";
 
 /**
  * EnhancedBubble Component
@@ -134,7 +128,9 @@ function RegistrationPage() {
           <h1 className="registration-page__welcome-title">
             Transform Your
             <br />
-            <span className="registration-page__gradient-text">Career Journey</span>
+            <span className="registration-page__gradient-text">
+              Career Journey
+            </span>
           </h1>
 
           <p className="registration-page__welcome-description">

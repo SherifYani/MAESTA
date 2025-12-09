@@ -7,7 +7,7 @@
  */
 
 import PropTypes from "prop-types";
-import "../styles/form-components.css";
+import "../../styles/components/form-components.css";
 
 /**
  * RoleCard Component
@@ -21,7 +21,9 @@ import "../styles/form-components.css";
  * @returns {JSX.Element} The rendered role card component
  */
 function RoleCard({ icon, title, isSelected, onClick, className = "" }) {
-  const cardClass = `role-card ${isSelected ? "role-card--selected" : ""} ${className}`.trim();
+  const cardClass = `role-card ${
+    isSelected ? "role-card--selected" : ""
+  } ${className}`.trim();
 
   return (
     <div
@@ -31,8 +33,7 @@ function RoleCard({ icon, title, isSelected, onClick, className = "" }) {
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       aria-pressed={isSelected}
-      aria-label={`Select ${title} role`}
-    >
+      aria-label={`Select ${title} role`}>
       <i className={`${icon} role-card__icon`} />
       <h3 className="role-card__title">{title}</h3>
     </div>

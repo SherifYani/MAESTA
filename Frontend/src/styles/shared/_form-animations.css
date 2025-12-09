@@ -1,0 +1,304 @@
+/**
+ * @file _form-animations.css
+ * @description Shared CSS animations for form components including transitions, pulses, and slide effects
+ * @author Sherif Talaat
+ * @version 2.5.0
+ * @date 2025-12-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+/* ==========================================================================
+   Animation Variables
+   ========================================================================== */
+
+:root {
+  /* Timing functions */
+  --animation-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Durations */
+  --animation-duration-fast: 150ms;
+  --animation-duration-normal: 300ms;
+  --animation-duration-slow: 500ms;
+  --animation-duration-pulse: 2s;
+}
+
+/* ==========================================================================
+   Entry & Exit Animations
+   ========================================================================== */
+
+/* === Form Slide In (Primary form entry) === */
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-2) * -2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Form Slide Up (For modals, dropdowns) === */
+@keyframes formSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-5));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Form Fade In (Subtle appearance) === */
+@keyframes formFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* === Scale In (For calendar, date pickers) === */
+@keyframes formScaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-5)) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   Focus & Glow Animations
+   ========================================================================== */
+
+/* === Form Glow Pulse (Active focus state) === */
+@keyframes formGlowPulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px var(--color-shadow-pink);
+  }
+  50% {
+    box-shadow: 0 6px 25px var(--color-shadow-pink),
+      0 0 20px var(--color-radial-pink-1);
+  }
+}
+
+/* === Input Glow (Intense focus state) === */
+@keyframes inputGlow {
+  0%,
+  100% {
+    box-shadow: 0 12px 40px rgba(216, 27, 96, 0.15),
+      0 0 0 4px var(--color-radial-pink-1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 16px 48px rgba(216, 27, 96, 0.2),
+      0 0 0 4px var(--color-radial-pink-1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 30px var(--color-radial-pink-2);
+  }
+}
+
+/* === Validation Pulse (For error/success states) === */
+@keyframes validationPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+/* === Button Pulse (Call to action elements) === */
+@keyframes buttonPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-radial-pink-1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 20px var(--color-radial-pink-2);
+  }
+}
+
+/* ==========================================================================
+   Loading & Status Animations
+   ========================================================================== */
+
+/* === Spin Animation (Loading indicators) === */
+@keyframes formSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === Loading Pulse (For indeterminate progress) === */
+@keyframes loadingPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === Progress Bar Fill (For form completion) === */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Shake & Error Animations
+   ========================================================================== */
+
+/* === Form Shake (Validation errors) === */
+@keyframes formShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(calc(var(--space-1) * -1));
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(var(--space-1));
+  }
+}
+
+/* === Error Flash (For destructive actions) === */
+@keyframes errorFlash {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+}
+
+/* ==========================================================================
+   Success & Completion Animations
+   ========================================================================== */
+
+/* === Success Checkmark === */
+@keyframes checkmarkStroke {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* === Success Fade (For form submission) === */
+@keyframes successFade {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Utility Animation Classes
+   ========================================================================== */
+
+/* Animation utilities for direct application */
+.animate-form-slide-in {
+  animation: formSlideIn var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.animate-form-slide-up {
+  animation: formSlideUp var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.animate-form-fade-in {
+  animation: formFadeIn var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.animate-form-glow {
+  animation: formGlowPulse var(--animation-duration-pulse) infinite
+    var(--animation-ease-in-out);
+}
+
+.animate-form-spin {
+  animation: formSpin 1s linear infinite;
+}
+
+.animate-form-shake {
+  animation: formShake 0.5s var(--animation-ease-out);
+}
+
+.animate-validation-pulse {
+  animation: validationPulse 0.6s var(--animation-ease-in-out);
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-form-slide-in,
+  .animate-form-slide-up,
+  .animate-form-fade-in,
+  .animate-form-glow,
+  .animate-form-spin,
+  .animate-form-shake,
+  .animate-validation-pulse {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  @keyframes formFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Simplify all animations for reduced motion */
+  *[class*="animate-"] {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

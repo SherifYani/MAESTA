@@ -7,7 +7,8 @@
  */
 
 import PropTypes from "prop-types";
-import "../styles/form-components.css";
+import "../../styles/components/forms/FormInput.css";
+import "../../styles/shared/_form-base.css";
 
 /**
  * FormInput Component
