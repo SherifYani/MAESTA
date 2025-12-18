@@ -1,0 +1,655 @@
+/**
+ * @file profile.css
+ * @description Styles for profile pages using BEM methodology.
+ * @author Shahd Mohay
+ * @date 11-12-2025
+ */
+
+:root {
+  --profile-bg-1: #0b0b0d;
+  --profile-bg-2: #0f0a12;
+  --profile-accent-1: #ff69b4;
+  --profile-accent-2: #ff1493;
+  --profile-muted: #b0b0b0;
+  --profile-card-bg: rgba(255, 255, 255, 0.03);
+}
+
+/* Block: profile */
+.profile {
+  min-height: 100vh;
+  background: radial-gradient(
+      75rem 37.5rem at 10% 10%,
+      rgba(255, 105, 180, 0.06),
+      transparent 8%
+    ),
+    radial-gradient(
+      62.5rem 31.25rem at 90% 90%,
+      rgba(138, 43, 226, 0.045),
+      transparent 10%
+    ),
+    linear-gradient(180deg, var(--profile-bg-1) 0%, var(--profile-bg-2) 100%);
+  color: #ffffff;
+}
+
+/* Element: profile__nav */
+.profile__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.55),
+    rgba(10, 10, 10, 0.25)
+  );
+  backdrop-filter: blur(0.5rem);
+  border-bottom: 1px solid rgba(255, 105, 180, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.profile__logo {
+  font-size: 1.75rem;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    var(--profile-accent-1),
+    var(--profile-accent-2)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
+.profile__nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.profile__nav-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.profile__nav-links a:hover {
+  color: var(--profile-accent-1);
+  background: rgba(255, 105, 180, 0.1);
+}
+
+/* Element: profile__content */
+.profile__content {
+  max-width: 62.5rem;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Element: profile__header */
+.profile__header {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  padding: 2rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile__avatar {
+  flex-shrink: 0;
+}
+
+.profile__avatar img {
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  border: 3px solid var(--profile-accent-1);
+  object-fit: cover;
+}
+
+.profile__avatar--company img {
+  border-radius: 1rem;
+}
+
+.profile__info h1,
+.profile__name {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #ffffff, var(--profile-accent-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile__role,
+.profile__industry {
+  color: var(--profile-accent-1);
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.profile__headline {
+  color: var(--profile-muted);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.profile__location {
+  color: var(--profile-muted);
+  margin: 0 0 1rem 0;
+}
+
+/* Element: profile__badges */
+.profile__badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile__badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile__badge--verified {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.profile__badge--rating {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.profile__badge--rate,
+.profile__badge--size,
+.profile__badge--resume {
+  background: rgba(255, 105, 180, 0.15);
+  color: var(--profile-accent-1);
+  border: 1px solid rgba(255, 105, 180, 0.3);
+}
+
+/* Element: profile__edit-btn */
+.profile__edit-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    var(--profile-accent-1),
+    var(--profile-accent-2)
+  );
+  border: none;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile__edit-btn:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 105, 180, 0.3);
+}
+
+/* Element: profile__details */
+.profile__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Element: profile__card */
+.profile__card {
+  padding: 1.5rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.75rem;
+}
+
+.profile__card-title {
+  color: var(--profile-accent-1);
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.profile__detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile__detail-row:last-child {
+  border-bottom: none;
+}
+
+.profile__label {
+  color: var(--profile-muted);
+}
+
+.profile__value {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.profile__value--link {
+  color: var(--profile-accent-1);
+  text-decoration: none;
+}
+
+.profile__value--link:hover {
+  text-decoration: underline;
+}
+
+.profile__overview {
+  color: var(--profile-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Element: profile__stats-grid */
+.profile__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.profile__stat {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 105, 180, 0.05);
+  border-radius: 0.5rem;
+}
+
+.profile__stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    var(--profile-accent-1),
+    var(--profile-accent-2)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile__stat-label {
+  display: block;
+  color: var(--profile-muted);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Element: profile__section */
+.profile__section {
+  margin-bottom: 2rem;
+}
+
+.profile__section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff, var(--profile-accent-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Element: profile__skills-grid */
+.profile__skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.25rem, 1fr));
+  gap: 1rem;
+}
+
+.profile__skill-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.625rem;
+}
+
+.profile__skill-name {
+  font-weight: 600;
+}
+
+.profile__proficiency {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.profile__proficiency--expert {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.profile__proficiency--intermediate {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.profile__proficiency--beginner {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+/* Element: profile__experience-list */
+.profile__experience-list,
+.profile__education-list,
+.profile__applications-list,
+.profile__jobs-list,
+.profile__projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile__experience-card,
+.profile__education-card,
+.profile__application-card,
+.profile__job-card,
+.profile__project-card {
+  padding: 1.5rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.profile__experience-card:hover,
+.profile__education-card:hover,
+.profile__application-card:hover,
+.profile__job-card:hover,
+.profile__project-card:hover {
+  border-color: rgba(255, 105, 180, 0.2);
+  transform: translateY(-0.125rem);
+}
+
+.profile__exp-header,
+.profile__app-header,
+.profile__job-header,
+.profile__project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.profile__exp-title,
+.profile__app-title,
+.profile__job-title,
+.profile__project-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.profile__exp-company,
+.profile__app-company {
+  color: var(--profile-accent-1);
+  font-weight: 500;
+}
+
+.profile__exp-dates,
+.profile__edu-years {
+  color: var(--profile-muted);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0.75rem 0;
+}
+
+.profile__exp-desc,
+.profile__project-desc {
+  color: var(--profile-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.profile__edu-institution {
+  margin: 0 0 0.25rem 0;
+}
+
+.profile__edu-degree {
+  color: var(--profile-accent-1);
+  margin: 0 0 0.25rem 0;
+}
+
+/* Element: profile__status */
+.profile__status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.profile__status--open {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.profile__status--in-progress,
+.profile__status--interviewing,
+.profile__status--under-review {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.profile__status--completed,
+.profile__status--closed {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+}
+
+.profile__status--applied {
+  background: rgba(255, 105, 180, 0.15);
+  color: var(--profile-accent-1);
+}
+
+/* Element: profile__app-meta, profile__job-meta, profile__project-meta */
+.profile__app-meta,
+.profile__job-meta,
+.profile__project-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  color: var(--profile-muted);
+  font-size: 0.9rem;
+}
+
+.profile__match-score {
+  color: var(--profile-accent-1);
+  font-weight: 600;
+}
+
+.profile__budget {
+  color: var(--profile-accent-1);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.profile__date {
+  color: var(--profile-muted);
+}
+
+/* Element: profile__skills */
+.profile__skills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profile__skill-tag {
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 105, 180, 0.1);
+  border: 1px solid rgba(255, 105, 180, 0.2);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--profile-accent-1);
+}
+
+/* Element: profile__portfolio-grid */
+.profile__portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+  gap: 1.5rem;
+}
+
+.profile__portfolio-card {
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.profile__portfolio-card:hover {
+  border-color: rgba(255, 105, 180, 0.3);
+  transform: translateY(-0.25rem);
+}
+
+.profile__portfolio-img {
+  width: 100%;
+  height: 11.25rem;
+  object-fit: cover;
+}
+
+.profile__portfolio-info {
+  padding: 1rem;
+}
+
+.profile__portfolio-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.profile__portfolio-desc {
+  color: var(--profile-muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Element: profile__members-grid */
+.profile__members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: 1rem;
+}
+
+.profile__member-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.625rem;
+}
+
+.profile__member-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile__member-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.profile__member-role {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.profile__member-role--admin {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.profile__member-role--hr_manager {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.profile__member-role--member {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+}
+
+/* Element: profile__job-stats */
+.profile__job-stats {
+  margin-top: 0.75rem;
+}
+
+.profile__applications-count {
+  color: var(--profile-accent-1);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 48rem) {
+  .profile__nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .profile__nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .profile__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile__badges {
+    justify-content: center;
+  }
+
+  .profile__details {
+    grid-template-columns: 1fr;
+  }
+
+  .profile__content {
+    padding: 1rem;
+  }
+
+  .profile__skills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr));
+  }
+
+  .profile__portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile__members-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile__app-meta,
+  .profile__job-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

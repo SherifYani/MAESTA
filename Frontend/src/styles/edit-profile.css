@@ -1,0 +1,378 @@
+/**
+ * @file edit-profile.css
+ * @description Styles for edit profile forms using BEM methodology.
+ * @author Shahd Mohay
+ * @date 11-12-2025
+ */
+
+/* Block: edit */
+.edit__header {
+  margin-bottom: 2rem;
+}
+
+.edit__title {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #ffffff, var(--profile-accent-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.edit__subtitle {
+  color: var(--profile-muted);
+  margin: 0;
+}
+
+.edit__form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Element: edit__section */
+.edit__section {
+  padding: 1.5rem;
+  background: var(--profile-card-bg);
+  border: 1px solid rgba(255, 105, 180, 0.08);
+  border-radius: 0.75rem;
+}
+
+.edit__section-title {
+  font-size: 1.25rem;
+  margin: 0 0 1.5rem 0;
+  color: var(--profile-accent-1);
+}
+
+.edit__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.edit__section-header .edit__section-title {
+  margin: 0;
+}
+
+/* Element: edit__grid */
+.edit__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* Element: edit__field */
+.edit__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit__field--full {
+  grid-column: 1 / -1;
+}
+
+.edit__label {
+  font-size: 0.9rem;
+  color: var(--profile-muted);
+  font-weight: 500;
+}
+
+.edit__input,
+.edit__textarea,
+.edit__select {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 105, 180, 0.15);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.edit__input:focus,
+.edit__textarea:focus,
+.edit__select:focus {
+  outline: none;
+  border-color: var(--profile-accent-1);
+  background: rgba(255, 105, 180, 0.05);
+}
+
+.edit__textarea {
+  resize: vertical;
+  min-height: 6.25rem;
+}
+
+.edit__select {
+  cursor: pointer;
+}
+
+.edit__select option {
+  background: var(--profile-bg-1);
+  color: #ffffff;
+}
+
+/* Element: edit__item-card */
+.edit__item-card {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 105, 180, 0.1);
+  border-radius: 0.625rem;
+  margin-bottom: 1rem;
+}
+
+.edit__item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.edit__item-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+/* Element: edit__skills-grid */
+.edit__skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit__skill-edit-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.edit__skill-name-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 105, 180, 0.15);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.edit__skill-name-input:focus {
+  outline: none;
+  border-color: var(--profile-accent-1);
+}
+
+.edit__skill-select {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 105, 180, 0.15);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.edit__skill-select option {
+  background: var(--profile-bg-1);
+}
+
+/* Element: edit__skills-input */
+.edit__skills-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.edit__skill-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.edit__skill-input {
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 105, 180, 0.15);
+  border-radius: 0.375rem;
+  color: #ffffff;
+  font-size: 0.9rem;
+  width: 7.5rem;
+}
+
+.edit__skill-input:focus {
+  outline: none;
+  border-color: var(--profile-accent-1);
+}
+
+/* Element: edit__members-grid */
+.edit__members-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit__member-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 105, 180, 0.1);
+  border-radius: 0.5rem;
+}
+
+.edit__member-item .edit__field {
+  margin: 0;
+}
+
+.edit__member-item .edit__input,
+.edit__member-item .edit__select {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Element: edit__add-btn */
+.edit__add-btn {
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    var(--profile-accent-1),
+    var(--profile-accent-2)
+  );
+  border: none;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__add-btn:hover {
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 105, 180, 0.3);
+}
+
+.edit__add-skill-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 105, 180, 0.15);
+  border: 1px dashed rgba(255, 105, 180, 0.3);
+  border-radius: 0.375rem;
+  color: var(--profile-accent-1);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__add-skill-btn:hover {
+  background: rgba(255, 105, 180, 0.25);
+}
+
+.edit__remove-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.375rem;
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__remove-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.edit__remove-skill-btn {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.375rem;
+  color: #ef4444;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__remove-skill-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* Element: edit__actions */
+.edit__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.edit__cancel-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__cancel-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.edit__save-btn {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--profile-accent-1),
+    var(--profile-accent-2)
+  );
+  border: none;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit__save-btn:hover {
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.25rem 1rem rgba(255, 105, 180, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 48rem) {
+  .edit__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit__member-item {
+    grid-template-columns: 1fr;
+  }
+
+  .edit__skill-edit-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .edit__actions {
+    flex-direction: column;
+  }
+
+  .edit__cancel-btn,
+  .edit__save-btn {
+    width: 100%;
+  }
+}
