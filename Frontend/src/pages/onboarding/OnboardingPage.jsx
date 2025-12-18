@@ -29,7 +29,8 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen">
       {/* {renderForm()} */}
-      <JobSeekerOnboarding />
+      <CompanyOnboarding />
+      {/* <JobSeekerOnboarding /> */}
       {/* <FreelancerOnboarding /> */}
       {/* <CompanyOnboarding /> */}
     </div>

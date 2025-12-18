@@ -634,7 +634,7 @@ function DateInput({
             placeholder="YYYY"
             maxLength={4}
             inputMode="numeric"
-            className="date-input__part date-input__part--year"
+            className="date-input__part"
             aria-label="Year"
           />
         </div>

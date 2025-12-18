@@ -2,28 +2,60 @@
  * @file RegistrationPage.jsx
  * @description Main registration page with 3D background and welcome content
  * @author Shahd Mohay
- * @version 2.0.0
- * @date 10-10-2025
+ * @version 2.1.0
+ * @date 11-10-2025
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-11
  */
 
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, MeshDistortMaterial, Sphere } from "@react-three/drei";
 import { ArrowLeft, Sparkles, TrendingUp, Users } from "lucide-react";
 import "../../styles/pages/registration-page.css";
+import "../../styles/globals.css";
 import RegisterForm from "../../components/forms/RegisterForm";
 
 /**
  * EnhancedBubble Component
- * @description Renders a 3D animated sphere for the background
+ * @description Renders a 3D animated sphere for the background using colors from CSS variables.
  * @returns {JSX.Element} The rendered 3D bubble component
  */
 function EnhancedBubble() {
+  const [maestaColors, setMaestaColors] = useState({
+    accent: "#B8860B",
+    vivid: "#DAA520",
+    light: "#FFF8DC",
+    silver: "#C0C0C0",
+  });
+
+  useEffect(() => {
+    // Fetch colors from CSS variables on component mount
+    const rootStyles = getComputedStyle(document.documentElement);
+    const accentColor = rootStyles
+      .getPropertyValue("--color-accent-pink")
+      .trim();
+    const vividColor = rootStyles.getPropertyValue("--color-vivid-pink").trim();
+    const lightColor = rootStyles.getPropertyValue("--color-light-pink").trim();
+    const silverColor = "#C0C0C0"; // Retaining a specific metallic color for the core
+
+    if (accentColor && vividColor && lightColor) {
+      setMaestaColors({
+        accent: accentColor,
+        vivid: vividColor,
+        light: lightColor,
+        silver: silverColor,
+      });
+    }
+  }, []);
+
   return (
     <group>
       {/* Main sphere with enhanced glass effect */}
       <Sphere args={[2.2, 128, 128]} scale={1}>
         <MeshDistortMaterial
-          color="#ff1a75"
+          color={maestaColors.accent}
           attach="material"
           distort={0.5}
           speed={2}
@@ -37,7 +69,7 @@ function EnhancedBubble() {
       {/* Secondary inner sphere for depth */}
       <Sphere args={[1.8, 100, 100]} scale={1}>
         <MeshDistortMaterial
-          color="#ff0080"
+          color={maestaColors.vivid}
           distort={0.3}
           speed={1.5}
           roughness={0.2}
@@ -50,7 +82,7 @@ function EnhancedBubble() {
       {/* Outer glow ring */}
       <Sphere args={[2.4, 64, 64]} scale={1}>
         <meshBasicMaterial
-          color="#e6005c"
+          color={maestaColors.accent}
           transparent
           opacity={0.06}
           wireframe
@@ -60,8 +92,8 @@ function EnhancedBubble() {
       {/* Core light sphere */}
       <Sphere args={[1.2, 64, 64]} scale={1}>
         <meshStandardMaterial
-          color="#ff80b3"
-          emissive="#ff80b3"
+          color={maestaColors.silver}
+          emissive={maestaColors.silver}
           emissiveIntensity={0.3}
           transparent
           opacity={0.2}
@@ -69,12 +101,32 @@ function EnhancedBubble() {
       </Sphere>
 
       {/* Enhanced lighting setup */}
-      <pointLight position={[6, 6, 6]} intensity={2.5} color="#ffffff" />
-      <pointLight position={[-6, -6, 6]} intensity={1.5} color="#0000ff" />
-      <pointLight position={[0, 0, -6]} intensity={1} color="#ffff00" />
-      <pointLight position={[6, -6, 0]} intensity={0.8} color="#ff0066" />
+      <pointLight
+        position={[6, 6, 6]}
+        intensity={2.5}
+        color={maestaColors.vivid}
+      />
+      <pointLight
+        position={[-6, -6, 6]}
+        intensity={1.5}
+        color={maestaColors.silver}
+      />
+      <pointLight
+        position={[0, 0, -6]}
+        intensity={1}
+        color={maestaColors.accent}
+      />
+      <pointLight
+        position={[6, -6, 0]}
+        intensity={0.8}
+        color={maestaColors.silver}
+      />
       <ambientLight intensity={0.4} />
-      <hemisphereLight intensity={0.5} color="#ffffff" groundColor="#ffb3d1" />
+      <hemisphereLight
+        intensity={0.5}
+        color="#ffffff"
+        groundColor={maestaColors.light}
+      />
     </group>
   );
 }
