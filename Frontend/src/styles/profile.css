@@ -1,34 +1,44 @@
 /**
  * @file profile.css
- * @description Styles for profile pages using BEM methodology.
+ * @description Styles for profile pages using BEM methodology with MAESTA design system.
  * @author Shahd Mohay
  * @date 11-12-2025
+ *
+ * @last-modified-by Sherif Talaat (Code Refactoring)
+ * @last-modified-date 18-12-2025
+ *
+ * @changes
+ * - Replaced all hard-coded color values with CSS variables from globals.css
+ * - Aligned with MAESTA bronze/champagne gold color palette
+ * - Maintained existing layout, spacing, and BEM structure
+ * - Used chart colors (--color-chart-1 through --color-chart-5) for semantic indicators:
+ *   • chart-1 (blue-purple): Intermediate/In-progress/HR Manager
+ *   • chart-2 (green): Expert/Open/Verified
+ *   • chart-3 (yellow-green): Rating badges
+ *   • chart-4 (purple): Applied status
+ *   • chart-5 (orange-red): Admin role/Critical items
+ * - Main brand colors (bronze/gold) reserved for primary UI elements
  */
-
-:root {
-  --profile-bg-1: #0b0b0d;
-  --profile-bg-2: #0f0a12;
-  --profile-accent-1: #ff69b4;
-  --profile-accent-2: #ff1493;
-  --profile-muted: #b0b0b0;
-  --profile-card-bg: rgba(255, 255, 255, 0.03);
-}
 
 /* Block: profile */
 .profile {
   min-height: 100vh;
   background: radial-gradient(
       75rem 37.5rem at 10% 10%,
-      rgba(255, 105, 180, 0.06),
+      var(--color-radial-pink-1),
       transparent 8%
     ),
     radial-gradient(
       62.5rem 31.25rem at 90% 90%,
-      rgba(138, 43, 226, 0.045),
+      var(--color-radial-pink-2),
       transparent 10%
     ),
-    linear-gradient(180deg, var(--profile-bg-1) 0%, var(--profile-bg-2) 100%);
-  color: #ffffff;
+    linear-gradient(
+      180deg,
+      var(--color-primary-black) 0%,
+      var(--color-card) 100%
+    );
+  color: var(--color-primary-white);
 }
 
 /* Element: profile__nav */
@@ -39,11 +49,11 @@
   padding: 1.25rem 2rem;
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 10, 0.55),
-    rgba(10, 10, 10, 0.25)
+    var(--color-translucent-black-1),
+    var(--color-translucent-white-3)
   );
   backdrop-filter: blur(0.5rem);
-  border-bottom: 1px solid rgba(255, 105, 180, 0.06);
+  border-bottom: 1px solid var(--color-radial-pink-3);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -54,8 +64,8 @@
   font-weight: 900;
   background: linear-gradient(
     135deg,
-    var(--profile-accent-1),
-    var(--profile-accent-2)
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -69,7 +79,7 @@
 }
 
 .profile__nav-links a {
-  color: #ffffff;
+  color: var(--color-primary-white);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -78,8 +88,8 @@
 }
 
 .profile__nav-links a:hover {
-  color: var(--profile-accent-1);
-  background: rgba(255, 105, 180, 0.1);
+  color: var(--color-accent-pink);
+  background: var(--color-radial-pink-3);
 }
 
 /* Element: profile__content */
@@ -95,8 +105,8 @@
   gap: 2rem;
   align-items: flex-start;
   padding: 2rem;
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
   margin-bottom: 2rem;
 }
@@ -109,7 +119,7 @@
   width: 7.5rem;
   height: 7.5rem;
   border-radius: 50%;
-  border: 3px solid var(--profile-accent-1);
+  border: 3px solid var(--color-accent-pink);
   object-fit: cover;
 }
 
@@ -121,7 +131,11 @@
 .profile__name {
   font-size: 2rem;
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #ffffff, var(--profile-accent-1));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-white),
+    var(--color-accent-pink)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -129,19 +143,19 @@
 
 .profile__role,
 .profile__industry {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   font-weight: 600;
   margin: 0 0 0.5rem 0;
 }
 
 .profile__headline {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
 }
 
 .profile__location {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   margin: 0 0 1rem 0;
 }
 
@@ -160,23 +174,23 @@
 }
 
 .profile__badge--verified {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: color-mix(in oklch, var(--color-chart-2) 15%, transparent);
+  color: var(--color-chart-2);
+  border: 1px solid color-mix(in oklch, var(--color-chart-2) 30%, transparent);
 }
 
 .profile__badge--rating {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: color-mix(in oklch, var(--color-chart-3) 15%, transparent);
+  color: var(--color-chart-3);
+  border: 1px solid color-mix(in oklch, var(--color-chart-3) 30%, transparent);
 }
 
 .profile__badge--rate,
 .profile__badge--size,
 .profile__badge--resume {
-  background: rgba(255, 105, 180, 0.15);
-  color: var(--profile-accent-1);
-  border: 1px solid rgba(255, 105, 180, 0.3);
+  background: var(--color-radial-pink-3);
+  color: var(--color-accent-pink);
+  border: 1px solid var(--color-border);
 }
 
 /* Element: profile__edit-btn */
@@ -186,12 +200,12 @@
   padding: 0.6rem 1.25rem;
   background: linear-gradient(
     135deg,
-    var(--profile-accent-1),
-    var(--profile-accent-2)
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
   );
   border: none;
   border-radius: 0.5rem;
-  color: #ffffff;
+  color: var(--color-primary-white);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -201,7 +215,7 @@
 
 .profile__edit-btn:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem rgba(255, 105, 180, 0.3);
+  box-shadow: 0 0.25rem 0.75rem var(--color-shadow-pink);
 }
 
 /* Element: profile__details */
@@ -215,13 +229,13 @@
 /* Element: profile__card */
 .profile__card {
   padding: 1.5rem;
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
 }
 
 .profile__card-title {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
 }
@@ -230,7 +244,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-translucent-white-3);
 }
 
 .profile__detail-row:last-child {
@@ -238,16 +252,16 @@
 }
 
 .profile__label {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
 }
 
 .profile__value {
-  color: #ffffff;
+  color: var(--color-primary-white);
   font-weight: 500;
 }
 
 .profile__value--link {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   text-decoration: none;
 }
 
@@ -256,7 +270,7 @@
 }
 
 .profile__overview {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   line-height: 1.7;
   margin: 0;
 }
@@ -271,7 +285,7 @@
 .profile__stat {
   text-align: center;
   padding: 1rem;
-  background: rgba(255, 105, 180, 0.05);
+  background: var(--color-radial-pink-3);
   border-radius: 0.5rem;
 }
 
@@ -281,8 +295,8 @@
   font-weight: 700;
   background: linear-gradient(
     135deg,
-    var(--profile-accent-1),
-    var(--profile-accent-2)
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -291,7 +305,7 @@
 
 .profile__stat-label {
   display: block;
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
@@ -304,7 +318,11 @@
 .profile__section-title {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #ffffff, var(--profile-accent-1));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-white),
+    var(--color-accent-pink)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -322,8 +340,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 0.625rem;
 }
 
@@ -338,18 +356,18 @@
 }
 
 .profile__proficiency--expert {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background: color-mix(in oklch, var(--color-chart-2) 15%, transparent);
+  color: var(--color-chart-2);
 }
 
 .profile__proficiency--intermediate {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: color-mix(in oklch, var(--color-chart-1) 15%, transparent);
+  color: var(--color-chart-1);
 }
 
 .profile__proficiency--beginner {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
+  background: color-mix(in oklch, var(--color-chart-5) 15%, transparent);
+  color: var(--color-chart-5);
 }
 
 /* Element: profile__experience-list */
@@ -369,8 +387,8 @@
 .profile__job-card,
 .profile__project-card {
   padding: 1.5rem;
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   transition: all 0.2s ease;
 }
@@ -380,7 +398,7 @@
 .profile__application-card:hover,
 .profile__job-card:hover,
 .profile__project-card:hover {
-  border-color: rgba(255, 105, 180, 0.2);
+  border-color: var(--color-accent-pink);
   transform: translateY(-0.125rem);
 }
 
@@ -404,20 +422,20 @@
 
 .profile__exp-company,
 .profile__app-company {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   font-weight: 500;
 }
 
 .profile__exp-dates,
 .profile__edu-years {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   font-size: 0.9rem;
   margin: 0.25rem 0 0.75rem 0;
 }
 
 .profile__exp-desc,
 .profile__project-desc {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   line-height: 1.6;
   margin: 0;
 }
@@ -427,7 +445,7 @@
 }
 
 .profile__edu-degree {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   margin: 0 0 0.25rem 0;
 }
 
@@ -440,26 +458,26 @@
 }
 
 .profile__status--open {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background: color-mix(in oklch, var(--color-chart-2) 15%, transparent);
+  color: var(--color-chart-2);
 }
 
 .profile__status--in-progress,
 .profile__status--interviewing,
 .profile__status--under-review {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: color-mix(in oklch, var(--color-chart-1) 15%, transparent);
+  color: var(--color-chart-1);
 }
 
 .profile__status--completed,
 .profile__status--closed {
-  background: rgba(156, 163, 175, 0.15);
-  color: #9ca3af;
+  background: var(--color-translucent-white-3);
+  color: var(--color-muted-foreground);
 }
 
 .profile__status--applied {
-  background: rgba(255, 105, 180, 0.15);
-  color: var(--profile-accent-1);
+  background: color-mix(in oklch, var(--color-chart-4) 15%, transparent);
+  color: var(--color-chart-4);
 }
 
 /* Element: profile__app-meta, profile__job-meta, profile__project-meta */
@@ -469,23 +487,23 @@
   display: flex;
   gap: 1.5rem;
   margin-top: 0.75rem;
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   font-size: 0.9rem;
 }
 
 .profile__match-score {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   font-weight: 600;
 }
 
 .profile__budget {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .profile__date {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
 }
 
 /* Element: profile__skills */
@@ -497,11 +515,11 @@
 
 .profile__skill-tag {
   padding: 0.25rem 0.75rem;
-  background: rgba(255, 105, 180, 0.1);
-  border: 1px solid rgba(255, 105, 180, 0.2);
+  background: var(--color-radial-pink-3);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   font-size: 0.8rem;
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
 }
 
 /* Element: profile__portfolio-grid */
@@ -512,15 +530,15 @@
 }
 
 .profile__portfolio-card {
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   overflow: hidden;
   transition: all 0.2s ease;
 }
 
 .profile__portfolio-card:hover {
-  border-color: rgba(255, 105, 180, 0.3);
+  border-color: var(--color-accent-pink);
   transform: translateY(-0.25rem);
 }
 
@@ -540,7 +558,7 @@
 }
 
 .profile__portfolio-desc {
-  color: var(--profile-muted);
+  color: var(--color-muted-foreground);
   margin: 0;
   font-size: 0.9rem;
 }
@@ -557,8 +575,8 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: var(--profile-card-bg);
-  border: 1px solid rgba(255, 105, 180, 0.08);
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-border);
   border-radius: 0.625rem;
 }
 
@@ -581,18 +599,18 @@
 }
 
 .profile__member-role--admin {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: color-mix(in oklch, var(--color-chart-5) 15%, transparent);
+  color: var(--color-chart-5);
 }
 
 .profile__member-role--hr_manager {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: color-mix(in oklch, var(--color-chart-1) 15%, transparent);
+  color: var(--color-chart-1);
 }
 
 .profile__member-role--member {
-  background: rgba(156, 163, 175, 0.15);
-  color: #9ca3af;
+  background: var(--color-translucent-white-3);
+  color: var(--color-muted-foreground);
 }
 
 /* Element: profile__job-stats */
@@ -601,7 +619,7 @@
 }
 
 .profile__applications-count {
-  color: var(--profile-accent-1);
+  color: var(--color-accent-pink);
   font-weight: 500;
 }
 

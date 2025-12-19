@@ -33,35 +33,31 @@ import {
 function RegisterForm() {
   const navigate = useNavigate();
 
-  // Updated form state to match guide fields
-  const [selectedRole, setSelectedRole] = useState(""); // Will map to: Freelancer, Employer, JobSeeker, Client
+  const [selectedRole, setSelectedRole] = useState("");
   const [formData, setFormData] = useState({
-    // GUIDE: Basic fields for all users
-    email: "", // GUIDE: Email (required, EmailAddress validation)
-    password: "", // GUIDE: Password (required, MinLength(8))
-    confirmPassword: "", // Not in guide, for confirmation
-    firstName: "", // GUIDE: FirstName (required, StringLength(50))
-    lastName: "", // GUIDE: LastName (required, StringLength(50))
-    phone: "", // GUIDE: Phone (optional, RegularExpression)
-    profilePictureUrl: "", // GUIDE: ProfilePictureUrl (optional, Url)
-    linkedInUrl: "", // GUIDE: LinkedInUrl (optional, Url)
-    gender: "", // GUIDE: Gender (optional, Male/Female)
-    dateOfBirth: "", // GUIDE: DateOfBirth (optional, date)
-    country: "", // GUIDE: Country (optional, StringLength(100))
-    city: "", // GUIDE: City (optional, StringLength(100))
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    profilePictureUrl: "",
+    linkedInUrl: "",
+    gender: "",
+    dateOfBirth: "",
+    country: "",
+    city: "",
   });
 
-  // Employer-specific fields (shown when role is "employer")
   const [employerData, setEmployerData] = useState({
-    companyName: "", // GUIDE: CompanyName (required if company)
-    description: "", // GUIDE: Description (optional, up to 2000 characters)
-    industry: "", // GUIDE: Industry (string)
-    companySize: "", // GUIDE: CompanySize (string - 1-10, 11-50, etc.)
-    foundedYear: "", // GUIDE: FoundedYear (int)
-    website: "", // GUIDE: Website (string)
-    // Note: Country and City already in formData
-    commercialRegistrationNumber: "", // GUIDE: CommercialRegistrationNumber (string)
-    logoUrl: "", // GUIDE: LogoUrl (string)
+    companyName: "",
+    description: "",
+    industry: "",
+    companySize: "",
+    foundedYear: "",
+    website: "",
+    commercialRegistrationNumber: "",
+    logoUrl: "",
   });
 
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -150,7 +146,6 @@ function RegisterForm() {
           } must be less than 50 characters`;
         }
       } else if (name === "phone") {
-        // Optional field, only validate if provided
         if (value && value.trim() !== "") {
           const phoneValidation = validatePhoneNumber(value);
           if (!phoneValidation.isValid) {
@@ -734,7 +729,7 @@ function RegisterForm() {
                 required
               />
               <span>
-                I agree to the{" "}
+                I agree to the
                 <a
                   href="/terms"
                   target="_blank"
@@ -795,11 +790,11 @@ function RegisterForm() {
           </div>
 
           <p className="register-form__terms-text">
-            By creating an account, you agree to our{" "}
+            By creating an account, you agree to our
             <a href="#terms" className="register-form__terms-link">
               Terms of Service
-            </a>{" "}
-            and{" "}
+            </a>
+            and
             <a href="#privacy" className="register-form__terms-link">
               Privacy Policy
             </a>

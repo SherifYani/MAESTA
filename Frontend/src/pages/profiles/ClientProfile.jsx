@@ -60,7 +60,7 @@ export default function ClientProfile() {
         <Link to="/" className="profile__logo" aria-label="MAESTA homepage">
           MAESTA
         </Link>
-        
+
         <div className="profile__nav-links">
           <Link to="/profile/client" aria-current="page">
             Client
@@ -91,42 +91,39 @@ export default function ClientProfile() {
               loading="lazy"
             />
           </div>
-          
+
           <div className="profile__info">
             <h1 className="profile__name" aria-label="Client full name">
               {clientData.fullName}
             </h1>
-            
+
             <p className="profile__role" aria-label="User role">
               Client
             </p>
-            
+
             {/* Verification Badges */}
             <div className="profile__badges" aria-label="Verification status">
               {clientData.isEmailVerified && (
-                <span 
+                <span
                   className="profile__badge profile__badge--verified"
-                  aria-label="Email verified"
-                >
+                  aria-label="Email verified">
                   Email Verified
                 </span>
               )}
-              
+
               {clientData.isPhoneVerified && (
-                <span 
+                <span
                   className="profile__badge profile__badge--verified"
-                  aria-label="Phone verified"
-                >
+                  aria-label="Phone verified">
                   Phone Verified
                 </span>
               )}
             </div>
-            
-            <Link 
-              to="/edit/client" 
+
+            <Link
+              to="/edit/client"
               className="profile__edit-btn"
-              aria-label="Edit client profile"
-            >
+              aria-label="Edit client profile">
               Edit Profile
             </Link>
           </div>
@@ -137,31 +134,29 @@ export default function ClientProfile() {
           {/* Contact Information Card */}
           <article className="profile__card">
             <h2 className="profile__card-title">Contact Information</h2>
-            
+
             <div className="profile__detail-row">
               <span className="profile__label">Email</span>
               <span className="profile__value">
-                <a 
+                <a
                   href={`mailto:${clientData.email}`}
-                  className="profile__email-link"
-                >
+                  className="profile__email-link">
                   {clientData.email}
                 </a>
               </span>
             </div>
-            
+
             <div className="profile__detail-row">
               <span className="profile__label">Phone</span>
               <span className="profile__value">
-                <a 
-                  href={`tel:${clientData.phoneNumber.replace(/\D/g, '')}`}
-                  className="profile__phone-link"
-                >
+                <a
+                  href={`tel:${clientData.phoneNumber.replace(/\D/g, "")}`}
+                  className="profile__phone-link">
                   {clientData.phoneNumber}
                 </a>
               </span>
             </div>
-            
+
             <div className="profile__detail-row">
               <span className="profile__label">Member Since</span>
               <span className="profile__value">
@@ -173,7 +168,7 @@ export default function ClientProfile() {
           {/* Statistics Card */}
           <article className="profile__card profile__card--stats">
             <h2 className="profile__card-title">Project Statistics</h2>
-            
+
             <div className="profile__stats-grid">
               <div className="profile__stat" aria-label="Total projects count">
                 <span className="profile__stat-number">
@@ -181,21 +176,23 @@ export default function ClientProfile() {
                 </span>
                 <span className="profile__stat-label">Total Projects</span>
               </div>
-              
+
               <div className="profile__stat" aria-label="Active projects count">
                 <span className="profile__stat-number">
                   {clientData.stats.activeProjects}
                 </span>
                 <span className="profile__stat-label">Active</span>
               </div>
-              
-              <div className="profile__stat" aria-label="Completed projects count">
+
+              <div
+                className="profile__stat"
+                aria-label="Completed projects count">
                 <span className="profile__stat-number">
                   {clientData.stats.completedProjects}
                 </span>
                 <span className="profile__stat-label">Completed</span>
               </div>
-              
+
               <div className="profile__stat" aria-label="Total spent amount">
                 <span className="profile__stat-number">
                   {formatCurrency(clientData.stats.totalSpent)}
@@ -209,56 +206,48 @@ export default function ClientProfile() {
         {/* Projects Section */}
         <section className="profile__section" aria-label="Posted projects">
           <h2 className="profile__section-title">Posted Projects</h2>
-          
+
           <div className="profile__projects-list">
             {clientData.projects.map((project) => (
-              <article 
-                key={project.id} 
+              <article
+                key={project.id}
                 className="profile__project-card"
-                aria-label={`Project: ${project.title}`}
-              >
+                aria-label={`Project: ${project.title}`}>
                 <div className="profile__project-header">
                   <h3 className="profile__project-title">{project.title}</h3>
-                  
-                  <span 
+
+                  <span
                     className={getStatusClass(project.status)}
-                    aria-label={`Project status: ${project.status}`}
-                  >
+                    aria-label={`Project status: ${project.status}`}>
                     {project.status}
                   </span>
                 </div>
-                
-                <p className="profile__project-desc">
-                  {project.description}
-                </p>
-                
+
+                <p className="profile__project-desc">{project.description}</p>
+
                 <div className="profile__project-meta">
-                  <span 
+                  <span
                     className="profile__budget"
-                    aria-label={`Project budget: $${project.budget.toLocaleString()}`}
-                  >
+                    aria-label={`Project budget: $${project.budget.toLocaleString()}`}>
                     ${project.budget.toLocaleString()}
                   </span>
-                  
-                  <span 
+
+                  <span
                     className="profile__date"
-                    aria-label={`Posted on: ${formatDate(project.postedAt)}`}
-                  >
+                    aria-label={`Posted on: ${formatDate(project.postedAt)}`}>
                     Posted: {formatDate(project.postedAt)}
                   </span>
                 </div>
-                
+
                 {/* Skills Required */}
-                <div 
+                <div
                   className="profile__skills"
-                  aria-label="Required skills for this project"
-                >
+                  aria-label="Required skills for this project">
                   {project.requiredSkills.map((skill) => (
-                    <span 
-                      key={skill} 
+                    <span
+                      key={skill}
                       className="profile__skill-tag"
-                      aria-label={`Required skill: ${skill}`}
-                    >
+                      aria-label={`Required skill: ${skill}`}>
                       {skill}
                     </span>
                   ))}

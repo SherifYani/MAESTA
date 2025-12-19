@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./styles/App.css";
 import "./styles/globals.css";
-import Home from "./components/Home";
 import RegistrationPage from "../src/pages/auth/registration-page.jsx";
 import OnboardingPage from "../src/pages/onboarding/OnboardingPage.jsx";
 import ForgetPasswordPage from "./pages/auth/ForgetPasswordPage.jsx";
@@ -25,6 +24,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/" element={<LandingPage />} />
+        <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/forget" element={<ForgetPasswordPage />} />
+        <Route path="/reset" element={<ResetPasswordPage />} />
+        <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/profile/client" element={<ClientProfile />} />
         <Route path="/profile/freelancer" element={<FreelancerProfile />} />
         <Route path="/profile/jobseeker" element={<JobSeekerProfile />} />
@@ -33,11 +36,6 @@ function App() {
         <Route path="/edit/freelancer" element={<EditFreelancerProfile />} />
         <Route path="/edit/jobseeker" element={<EditJobSeekerProfile />} />
         <Route path="/edit/company" element={<EditCompanyProfile />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/forget" element={<ForgetPasswordPage />} />
-        <Route path="/reset" element={<ResetPasswordPage />} />
-        <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<OnboardingPage />} />
       </Routes>
     </main>

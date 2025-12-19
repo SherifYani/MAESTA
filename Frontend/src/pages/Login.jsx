@@ -3,14 +3,18 @@
  * @description Login page component with email/password authentication and social login options.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.0.1
  * @date 2025-12-11
  *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-by Sherif Talaat (Bug Fix)
+ * @last-modified-date 2025-12-18
+ *
+ * @changes
+ * - Fixed star/particle regeneration issue on input changes using useMemo
+ * - Positions now calculated once on mount instead of on every re-render
  */
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
 import "../styles/login.css";
 
@@ -24,18 +28,51 @@ import "../styles/login.css";
 export default function LoginForm() {
   // State for password visibility toggle
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // State for form submission loading
   const [loading, setLoading] = useState(false);
-  
+
   // State for form errors and validation messages
   const [error, setError] = useState("");
-  
+
   // State for form data
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  /**
+   * Memoized star positions - calculated only once on component mount
+   * Prevents stars from regenerating on every input change
+   */
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 50 }).map((_, index) => ({
+        id: `star-${index}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        opacity: Math.random() * 0.7 + 0.3,
+      })),
+    []
+  );
+
+  /**
+   * Memoized particle positions - calculated only once on component mount
+   * Prevents particles from regenerating on every input change
+   */
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 20 }).map((_, index) => ({
+        id: `particle-${index}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 8}s`,
+        width: `${Math.random() * 5 + 2}px`,
+        height: `${Math.random() * 5 + 2}px`,
+      })),
+    []
+  );
 
   /**
    * Handles input field changes and clears any existing errors.
@@ -59,23 +96,23 @@ export default function LoginForm() {
       setError("Email address is required");
       return false;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError("Please enter a valid email address");
       return false;
     }
-    
+
     if (!formData.password.trim()) {
       setError("Password is required");
       return false;
     }
-    
+
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
       return false;
     }
-    
+
     return true;
   };
 
@@ -85,14 +122,14 @@ export default function LoginForm() {
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
     setError("");
-    
+
     try {
       const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
@@ -104,22 +141,26 @@ export default function LoginForm() {
           password: formData.password,
         }),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        setError(data.message || "Login failed. Please check your credentials.");
+        setError(
+          data.message || "Login failed. Please check your credentials."
+        );
         return;
       }
-      
+
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-      
+
       // Navigate to dashboard after successful login
       window.location.href = "/dashboard";
     } catch (error) {
-      setError(error.message || "An error occurred during login. Please try again.");
+      setError(
+        error.message || "An error occurred during login. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -151,33 +192,33 @@ export default function LoginForm() {
 
   return (
     <div className="auth-login">
-      {/* Decorative Background Elements */}
+      {/* Decorative Background Elements - Now memoized */}
       <div className="auth-login__stars" aria-hidden="true">
-        {Array.from({ length: 50 }).map((_, index) => (
+        {stars.map((star) => (
           <div
-            key={`star-${index}`}
+            key={star.id}
             className="auth-login__star"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              opacity: Math.random() * 0.7 + 0.3,
+              left: star.left,
+              top: star.top,
+              animationDelay: star.animationDelay,
+              opacity: star.opacity,
             }}
           />
         ))}
       </div>
 
       <div className="auth-login__particles" aria-hidden="true">
-        {Array.from({ length: 20 }).map((_, index) => (
+        {particles.map((particle) => (
           <div
-            key={`particle-${index}`}
+            key={particle.id}
             className="auth-login__particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 8}s`,
-              width: `${Math.random() * 4 + 2}px`,
-              height: `${Math.random() * 4 + 2}px`,
+              left: particle.left,
+              top: particle.top,
+              animationDelay: particle.animationDelay,
+              width: particle.width,
+              height: particle.height,
             }}
           />
         ))}
@@ -192,8 +233,7 @@ export default function LoginForm() {
         className="auth-login__back-btn"
         aria-label="Go back to previous page"
         onClick={handleBackNavigation}
-        type="button"
-      >
+        type="button">
         <ArrowLeft size={20} />
       </button>
 
@@ -218,27 +258,25 @@ export default function LoginForm() {
 
           {/* Error Display */}
           {error && (
-            <div 
+            <div
               className="auth-login__error"
               role="alert"
-              aria-live="assertive"
-            >
+              aria-live="assertive">
               {error}
             </div>
           )}
 
           {/* Login Form */}
-          <form 
-            onSubmit={handleSubmit} 
+          <form
+            onSubmit={handleSubmit}
             className="auth-login__form"
             aria-label="Login form"
-            noValidate
-          >
+            noValidate>
             {/* Email Field */}
             <div className="auth-login__field">
-              <Mail 
-                className="auth-login__field-icon" 
-                size={20} 
+              <Mail
+                className="auth-login__field-icon"
+                size={20}
                 aria-hidden="true"
               />
               <input
@@ -260,9 +298,9 @@ export default function LoginForm() {
 
             {/* Password Field */}
             <div className="auth-login__field">
-              <Lock 
-                className="auth-login__field-icon" 
-                size={20} 
+              <Lock
+                className="auth-login__field-icon"
+                size={20}
                 aria-hidden="true"
               />
               <input
@@ -287,8 +325,7 @@ export default function LoginForm() {
                 onClick={togglePasswordVisibility}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-controls="login-password"
-                disabled={loading}
-              >
+                disabled={loading}>
                 {showPassword ? (
                   <EyeOff size={20} aria-hidden="true" />
                 ) : (
@@ -300,19 +337,18 @@ export default function LoginForm() {
             {/* Form Options */}
             <div className="auth-login__options">
               <label className="auth-login__checkbox">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   name="rememberMe"
                   aria-label="Remember me on this device"
                   disabled={loading}
                 />
                 <span>Remember me</span>
               </label>
-              <a 
-                href="#forgot-password" 
+              <a
+                href="#forgot-password"
                 className="auth-login__forgot"
-                aria-label="Forgot password? Reset it here"
-              >
+                aria-label="Forgot password? Reset it here">
                 Forgot password?
               </a>
             </div>
@@ -322,8 +358,7 @@ export default function LoginForm() {
               type="submit"
               className="auth-login__submit"
               disabled={loading}
-              aria-label={loading ? "Signing in..." : "Sign in to account"}
-            >
+              aria-label={loading ? "Signing in..." : "Sign in to account"}>
               <Sparkles size={20} aria-hidden="true" />
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -332,10 +367,7 @@ export default function LoginForm() {
           {/* Sign Up Link */}
           <div className="auth-login__signup-link">
             <p>{"Don't have an account?"}</p>
-            <a 
-              href="/register" 
-              aria-label="Create a new account"
-            >
+            <a href="/register" aria-label="Create a new account">
               Create one now
             </a>
           </div>
@@ -352,15 +384,13 @@ export default function LoginForm() {
               type="button"
               onClick={() => handleSocialLogin("google")}
               disabled={loading}
-              aria-label="Sign in with Google"
-            >
-              <svg 
-                width="20" 
-                height="20" 
-                viewBox="0 0 24 24" 
+              aria-label="Sign in with Google">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
                 fill="none"
-                aria-hidden="true"
-              >
+                aria-hidden="true">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -386,15 +416,13 @@ export default function LoginForm() {
               type="button"
               onClick={() => handleSocialLogin("linkedin")}
               disabled={loading}
-              aria-label="Sign in with LinkedIn"
-            >
+              aria-label="Sign in with LinkedIn">
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                aria-hidden="true"
-              >
+                aria-hidden="true">
                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
               </svg>
               LinkedIn
@@ -403,18 +431,14 @@ export default function LoginForm() {
 
           {/* Terms and Conditions */}
           <p className="auth-login__terms">
-            By signing in, you agree to our{" "}
-            <a 
-              href="#terms-of-service" 
-              aria-label="Read our Terms of Service"
-            >
+            By signing in, you agree to our
+            <a href="#terms-of-service" aria-label="Read our Terms of Service">
+              {" "}
               Terms of Service
             </a>{" "}
-            and{" "}
-            <a 
-              href="#privacy-policy" 
-              aria-label="Read our Privacy Policy"
-            >
+            and
+            <a href="#privacy-policy" aria-label="Read our Privacy Policy">
+              {" "}
               Privacy Policy
             </a>
           </p>

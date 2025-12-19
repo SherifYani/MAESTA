@@ -7,7 +7,6 @@
  *
  * @last-modified-by Sherif Talaat
  * @last-modified-date 03-12-2025
- * @fix Updated to match REGISTRATION_FORM_GUIDE.md specifications
  */
 
 import { useState, useEffect } from "react";
@@ -18,11 +17,8 @@ import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
 import "../../styles/pages/onboarding.css";
 import {
-  validateFreelancerOnboarding,
-  calculateFreelancerCompletion,
   validateFile,
   validateMultipleFiles,
-  isFormValid,
 } from "../../utils/form-validation";
 
 /**

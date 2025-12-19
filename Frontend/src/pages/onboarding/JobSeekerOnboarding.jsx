@@ -18,10 +18,7 @@ import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
 import "../../styles/pages/onboarding.css";
 import {
-  validateJobSeekerOnboarding,
-  calculateJobSeekerCompletion,
   validateFile,
-  isFormValid,
 } from "../../utils/form-validation";
 
 /**
