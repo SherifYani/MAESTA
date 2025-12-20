@@ -1,0 +1,273 @@
+/**
+ * @file ClientDashboard.module.css
+ * @description CSS Module for ClientDashboard component
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2025-12-19
+ *
+ */
+
+.clientDashboard {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: var(--space-4);
+}
+
+/* Metrics Section */
+.metricsSection {
+  margin-bottom: var(--space-6);
+}
+
+/* Quick Stats */
+.quickStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.quickStatCard {
+  padding: var(--space-4);
+}
+
+.quickStatContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.quickStatIcon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+.quickStatValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1;
+}
+
+.quickStatLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+/* Content Grid */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Cards */
+.activityCard,
+.actionsCard,
+.jobsCard,
+.budgetCard,
+.pipelineCard {
+  height: 100%;
+}
+
+/* Budget Card */
+.budgetContent {
+  padding: var(--space-2) 0;
+}
+
+.budgetMetric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.budgetMetric:last-child {
+  border-bottom: none;
+}
+
+.budgetLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.budgetValue {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}
+
+.budgetProgress {
+  height: 6px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  margin: var(--space-4) 0;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.budgetNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  text-align: center;
+  margin: var(--space-2) 0 0 0;
+}
+
+/* Pipeline Card */
+.pipelineContent {
+  padding: var(--space-2) 0;
+}
+
+.pipelineStage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pipelineStage:last-child {
+  border-bottom: none;
+}
+
+.stageLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.stageCount {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  background-color: var(--color-muted);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .headerActions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .clientDashboard {
+    padding: var(--space-4);
+  }
+  
+  .header {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+  
+  .quickStats {
+    grid-template-columns: 1fr;
+  }
+  
+  .headerActions {
+    flex-direction: column;
+  }
+  
+  .headerActions button {
+    width: 100%;
+  }
+}
+
+/* Dark theme adjustments */
+.dark .stageCount {
+  background-color: var(--color-card);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .progressBar {
+    transition: none;
+  }
+}

@@ -17,14 +17,8 @@ import FormSelect from "./FormSelect";
 import DateInput from "./dateInput";
 import "../../styles/pages/register-form.css";
 import "../../styles/components/form-components.css";
-import { useNavigate } from "react-router-dom";
-import {
-  validateRegistrationForm,
-  validatePassword,
-  validatePhoneNumber,
-  validateBirthDate,
-  validateURL,
-} from "../../utils/form-validation";
+import { useNavigate, Link } from "react-router-dom";
+import { validatePhoneNumber, validateURL } from "../../utils/form-validation";
 /**
  * RegisterForm Component
  * @description Renders the complete registration form with role selection and validation
@@ -235,18 +229,6 @@ function RegisterForm() {
       }
     },
     [validatePassword, formData.password, formData.confirmPassword]
-  );
-
-  /**
-   * Handles employer data changes
-   */
-  const handleEmployerDataChange = useCallback(
-    (e) => {
-      const { name, value } = e.target;
-      setEmployerData((prev) => ({ ...prev, [name]: value }));
-      handleInputChange(e); // Reuse the same validation logic
-    },
-    [handleInputChange]
   );
 
   /**
@@ -765,9 +747,12 @@ function RegisterForm() {
             <p className="register-form__sign-in-text">
               Already have an account?
             </p>
-            <a href="#signin" className="register-form__sign-in-anchor">
-              Sign in instead
-            </a>
+            <Link
+              to="/login"
+              className="register-form__sign-in-anchor"
+              aria-label="Login to your account">
+              Sign In
+            </Link>
           </div>
           <div className="register-form__social-login">
             <div className="register-form__social-buttons">
@@ -791,13 +776,19 @@ function RegisterForm() {
 
           <p className="register-form__terms-text">
             By creating an account, you agree to our
-            <a href="#terms" className="register-form__terms-link">
+            <Link
+              to="/terms"
+              target="_blank"
+              className="register-form__terms-link">
               Terms of Service
-            </a>
+            </Link>
             and
-            <a href="#privacy" className="register-form__terms-link">
+            <Link
+              to="/privacy"
+              target="_blank"
+              className="register-form__terms-link">
               Privacy Policy
-            </a>
+            </Link>
             .
           </p>
         </form>

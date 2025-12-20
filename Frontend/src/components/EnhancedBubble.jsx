@@ -3,11 +3,15 @@
  * @description Enhanced 3D bubble component with auto-rotation, interactive controls,
  * dynamic colors from CSS variables, and enhanced lighting.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-date 2025-12-19
+ *
+ * Edit :
+ * - Improved lighting setup for better depth and realism.
+ * - Adjusted material properties for enhanced glass effect.
  */
 
 import { useState, useEffect } from "react";
@@ -28,27 +32,110 @@ function BubbleContent() {
     silver: "#C0C0C0",
   });
 
-  useEffect(() => {
-    /**
-     * Fetches color values from CSS custom properties for theme consistency.
-     * Falls back to default values if CSS variables are not defined.
-     */
-    const rootStyles = getComputedStyle(document.documentElement);
-    const accentColor = rootStyles
-      .getPropertyValue("--color-accent-pink")
-      .trim();
-    const vividColor = rootStyles.getPropertyValue("--color-vivid-pink").trim();
-    const lightColor = rootStyles.getPropertyValue("--color-light-pink").trim();
+  const [currentTheme, setCurrentTheme] = useState("light");
 
-    if (accentColor && vividColor && lightColor) {
-      setMaestaColors({
-        accent: accentColor,
-        vivid: vividColor,
-        light: lightColor,
-        silver: "#C0C0C0",
+  /**
+   * Fetches color values from CSS custom properties for theme consistency.
+   * Falls back to default values if CSS variables are not defined.
+   */
+  const fetchColorsFromCSS = () => {
+    const rootStyles = getComputedStyle(document.documentElement);
+
+    // Using the exact CSS variable names from globals.css
+    const accentColor =
+      rootStyles.getPropertyValue("--color-accent-pink").trim() || "#b8945f";
+
+    const vividColor =
+      rootStyles.getPropertyValue("--color-vivid-pink").trim() || "#c9a152";
+
+    const lightColor =
+      rootStyles.getPropertyValue("--color-light-pink").trim() || "#ede4ce";
+
+    return {
+      accent: accentColor,
+      vivid: vividColor,
+      light: lightColor,
+      silver: "#C0C0C0",
+    };
+  };
+
+  /**
+   * Determines the current theme based on document class
+   */
+  const detectCurrentTheme = () => {
+    return document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light";
+  };
+
+  /**
+   * Gets metalness value based on current theme
+   */
+  const getMetalnessForTheme = (theme) => {
+    return theme === "dark" ? 0.95 : 0.05;
+  };
+
+  /**
+   * Gets roughness value based on current theme
+   */
+  const getRoughnessForTheme = (theme) => {
+    return theme === "dark" ? 0.1 : 0.4;
+  };
+
+  useEffect(() => {
+    const updateThemeAndColors = () => {
+      const theme = detectCurrentTheme();
+      setCurrentTheme(theme);
+      setMaestaColors(fetchColorsFromCSS());
+    };
+
+    // Initial fetch
+    updateThemeAndColors();
+
+    // Create a function to handle theme changes
+    const handleThemeChange = () => {
+      setTimeout(() => {
+        updateThemeAndColors();
+      }, 50);
+    };
+
+    // Listen for custom theme change event (if ThemeToggle dispatches it)
+    window.addEventListener("themeChange", handleThemeChange);
+
+    // Also listen for storage changes
+    const handleStorageChange = (event) => {
+      if (event.key === "theme") {
+        handleThemeChange();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    // Watch for class changes on documentElement (when dark class is toggled)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          handleThemeChange();
+        }
       });
-    }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      window.removeEventListener("themeChange", handleThemeChange);
+      window.removeEventListener("storage", handleStorageChange);
+      observer.disconnect();
+    };
   }, []);
+
+  // Get material properties based on current theme
+  const mainMetalness = getMetalnessForTheme(currentTheme);
+  const mainRoughness = getRoughnessForTheme(currentTheme);
+  const secondaryMetalness = currentTheme === "dark" ? 0.8 : 0.2;
+  const emissiveIntensity = currentTheme === "dark" ? 0.5 : 0.2;
 
   return (
     <group>
@@ -59,8 +146,8 @@ function BubbleContent() {
           attach="material"
           distort={0.5}
           speed={2}
-          roughness={0.1}
-          metalness={0.95}
+          roughness={mainRoughness}
+          metalness={mainMetalness}
           transparent
           opacity={0.2}
         />
@@ -72,8 +159,8 @@ function BubbleContent() {
           color={maestaColors.vivid}
           distort={0.3}
           speed={1.5}
-          roughness={0.2}
-          metalness={0.8}
+          roughness={mainRoughness * 1.5}
+          metalness={secondaryMetalness}
           transparent
           opacity={0.15}
         />
@@ -94,7 +181,9 @@ function BubbleContent() {
         <meshStandardMaterial
           color={maestaColors.silver}
           emissive={maestaColors.silver}
-          emissiveIntensity={0.3}
+          emissiveIntensity={emissiveIntensity}
+          roughness={mainRoughness}
+          metalness={mainMetalness}
           transparent
           opacity={0.2}
         />
@@ -103,12 +192,12 @@ function BubbleContent() {
       {/* Enhanced lighting setup for depth and realism */}
       <pointLight
         position={[6, 6, 6]}
-        intensity={2.5}
+        intensity={currentTheme === "dark" ? 3 : 2}
         color={maestaColors.vivid}
       />
       <pointLight
         position={[-6, -6, 6]}
-        intensity={1.5}
+        intensity={currentTheme === "dark" ? 2 : 1.5}
         color={maestaColors.silver}
       />
       <pointLight
@@ -121,7 +210,7 @@ function BubbleContent() {
         intensity={0.8}
         color={maestaColors.silver}
       />
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={currentTheme === "dark" ? 0.3 : 0.4} />
       <hemisphereLight
         intensity={0.5}
         color="#ffffff"

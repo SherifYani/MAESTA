@@ -7,6 +7,9 @@
  *
  * @last-modified-by Sherif Talaat
  * @last-modified-date 2025-12-16
+ * 
+ * Edit :
+ * 
  */
 
 import { ArrowLeft, Sparkles, TrendingUp, Users } from "lucide-react";
@@ -27,22 +30,22 @@ function RegistrationPage() {
     { icon: Users, text: "Global Network" },
   ];
 
+  /**
+   * Navigates back to the previous page.
+   */
+  const handleBackNavigation = () => {
+    window.history.back();
+  };
+
   return (
     <div className="registration-page">
-      <button className="registration-page__back-button" aria-label="Go back">
+      <button className="registration-page__back-button" aria-label="Go back" onClick={handleBackNavigation}>
         <ArrowLeft size={20} />
       </button>
 
       <div className="registration-page__left-section">
-        <div className="registration-page__canvas-container">
+        <div className="register__canvas">
           <EnhancedBubble />
-          <div className="registration-page__floating-particles">
-            <div className="registration-page__particle registration-page__particle--1"></div>
-            <div className="registration-page__particle registration-page__particle--2"></div>
-            <div className="registration-page__particle registration-page__particle--3"></div>
-            <div className="registration-page__particle registration-page__particle--4"></div>
-            <div className="registration-page__particle registration-page__particle--5"></div>
-          </div>
         </div>
 
         <div className="registration-page__welcome-content">

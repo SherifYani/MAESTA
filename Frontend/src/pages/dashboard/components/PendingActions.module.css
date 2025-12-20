@@ -1,0 +1,395 @@
+/**
+ * @file PendingActions.module.css
+ * @description CSS Module for PendingActions component
+ *             To-do list with checkboxes, priority indicators, and progress tracking
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-19
+ */
+
+.pendingActions {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease;
+}
+
+.pendingActions:hover {
+  border-color: var(--color-ring);
+}
+
+.header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.statNumber {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: var(--space-1);
+}
+
+.filterTabs {
+  display: flex;
+  gap: var(--space-2);
+  background-color: var(--color-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-1);
+}
+
+.filterTab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterTab:hover {
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+}
+
+.filterTab.active {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-2) 0;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.actionsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.actionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.actionItem:hover {
+  background-color: var(--color-muted);
+}
+
+.actionItem:last-child {
+  border-bottom: none;
+}
+
+.actionItem[data-completed="true"] {
+  opacity: 0.7;
+}
+
+.actionItem[data-completed="true"] .actionTitle {
+  text-decoration: line-through;
+  color: var(--color-muted-foreground);
+}
+
+.checkboxButton {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: var(--space-1);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s ease;
+}
+
+.checkboxButton:hover {
+  background-color: var(--color-muted);
+}
+
+.checkboxIcon {
+  transition: transform 0.2s ease;
+}
+
+.checkboxButton:hover .checkboxIcon {
+  transform: scale(1.1);
+}
+
+.actionContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-2);
+}
+
+.actionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.actionMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dueDate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.dueDate svg {
+  flex-shrink: 0;
+}
+
+.priorityBadge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.actionDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+}
+
+.actionFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-2);
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  background-color: var(--color-muted);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.categoryTag svg {
+  flex-shrink: 0;
+}
+
+.assignedTo {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-muted-foreground);
+}
+
+.emptyState svg {
+  margin-bottom: var(--space-3);
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-1);
+}
+
+.emptySubtext {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+}
+
+.footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.progressBar {
+  height: 4px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pendingActions {
+    border-radius: var(--radius-md);
+  }
+
+  .header {
+    padding: var(--space-4);
+  }
+
+  .headerTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .stats {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .actionItem {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .actionHeader {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  .actionMeta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .footer {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .content {
+    max-height: 450px;
+  }
+}
+
+/* Dark theme adjustments */
+.dark .filterTab.active {
+  background-color: var(--color-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark .categoryTag {
+  background-color: var(--color-card);
+}
+
+/* Accessibility improvements */
+.checkboxButton:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.actionItem:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+}
+
+.filterTab:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pendingActions,
+  .checkboxIcon,
+  .progressFill,
+  .actionItem,
+  .filterTab {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .actionItem[data-completed="true"] {
+    opacity: 0.5;
+  }
+
+  .progressFill {
+    background: var(--color-accent-pink);
+  }
+}

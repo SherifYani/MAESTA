@@ -1,6 +1,7 @@
 import JobSeekerOnboarding from "./JobSeekerOnboarding";
 // import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
+import { ArrowLeft } from "lucide-react";
 // import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 
 export default function OnboardingPage() {
@@ -26,8 +27,21 @@ export default function OnboardingPage() {
     }
   };
 
+  /**
+   * Navigates back to the previous page.
+   */
+  const handleBackNavigation = () => {
+    window.history.back();
+  };
+
   return (
     <div className="min-h-screen">
+      <button
+        className="registration-page__back-button"
+        aria-label="Go back"
+        onClick={handleBackNavigation}>
+        <ArrowLeft size={20} />
+      </button>
       {/* {renderForm()} */}
       <CompanyOnboarding />
       {/* <JobSeekerOnboarding /> */}

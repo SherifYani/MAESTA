@@ -1,0 +1,27 @@
+/**
+ * @file StatsGrid.module.css
+ * @description CSS Module for StatsGrid component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-19
+ */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}

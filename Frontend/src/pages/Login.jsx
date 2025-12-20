@@ -239,13 +239,6 @@ export default function LoginForm() {
 
       {/* Main Content Wrapper */}
       <main className="auth-login__wrapper">
-        {/* Welcome Section */}
-        <section className="auth-login__welcome">
-          <h1 className="auth-login__welcome-title">Welcome Back</h1>
-          <p className="auth-login__welcome-text">
-            Sign in to access your account
-          </p>
-        </section>
 
         {/* Login Card */}
         <section className="auth-login__card">

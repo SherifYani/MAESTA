@@ -1,0 +1,189 @@
+/**
+ * @file RecentJobPosts.module.css
+ * @description CSS Module for RecentJobPosts component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-19
+ */
+
+.recentJobPosts {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionSubtitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-muted-foreground);
+  margin-top: var(--space-1);
+}
+
+.viewAllButton {
+  background: none;
+  border: none;
+  color: var(--color-accent-pink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.viewAllButton:hover {
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+.jobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.jobItem {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.jobItem:hover {
+  border-color: var(--color-accent-pink);
+  background-color: var(--color-accent);
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.jobTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.statusBadge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.statusBadge.active {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-secondary);
+}
+
+.statusBadge.review {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.jobDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.detailIcon {
+  color: var(--color-muted-foreground);
+}
+
+.detailText {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.jobActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.viewButton,
+.reviewButton {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewButton {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+}
+
+.viewButton:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent-pink);
+}
+
+.reviewButton {
+  background-color: var(--color-accent-pink);
+  border: 1px solid var(--color-accent-pink);
+  color: var(--color-primary-white);
+}
+
+.reviewButton:hover {
+  background-color: var(--color-vivid-pink);
+  border-color: var(--color-vivid-pink);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recentJobPosts {
+    padding: var(--space-4);
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .jobDetails {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .jobActions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .viewButton,
+  .reviewButton {
+    width: 100%;
+  }
+}

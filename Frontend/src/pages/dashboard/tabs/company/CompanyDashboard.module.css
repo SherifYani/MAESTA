@@ -1,0 +1,313 @@
+/**
+ * @file CompanyDashboard.module.css
+ * @description CSS Module for CompanyDashboard component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-12
+ *
+ */
+
+.companyDashboard {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: var(--space-4);
+}
+
+/* Metrics Section */
+.metricsSection {
+  margin-bottom: var(--space-6);
+}
+
+/* Quick Stats */
+.quickStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.quickStatCard {
+  padding: var(--space-4);
+}
+
+.quickStatContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.quickStatIcon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+.quickStatValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1;
+}
+
+.quickStatLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+/* Content Grid */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Cards */
+.activityCard,
+.actionsCard,
+.jobsCard,
+.teamCard,
+.timelineCard {
+  height: 100%;
+}
+
+/* Team Card */
+.teamContent {
+  padding: var(--space-2) 0;
+}
+
+.teamDepartment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.teamDepartment:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.departmentLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+  min-width: 100px;
+}
+
+.departmentBar {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.barFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.departmentCount {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* Timeline Card */
+.timelineContent {
+  padding: var(--space-2) 0;
+}
+
+.timelineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.timelineItem:last-child {
+  border-bottom: none;
+}
+
+.timelineLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.timelineValue {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  background-color: var(--color-muted);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .headerActions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .teamDepartment {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .departmentBar {
+    width: 100%;
+  }
+
+  .departmentCount {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .companyDashboard {
+    padding: var(--space-4);
+  }
+
+  .header {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .quickStats {
+    grid-template-columns: 1fr;
+  }
+
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .headerActions button {
+    width: 100%;
+  }
+
+  .timelineItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .timelineValue {
+    align-self: flex-end;
+  }
+}
+
+/* Dark theme adjustments */
+.dark .timelineValue {
+  background-color: var(--color-card);
+}
+
+.dark .departmentBar {
+  background-color: var(--color-card);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .barFill {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .barFill {
+    background: var(--color-accent-pink);
+  }
+
+  .teamDepartment,
+  .timelineItem {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+}

@@ -1,0 +1,210 @@
+/**
+ * @file DashboardHeader.module.css
+ * @description CSS Module for DashboardHeader component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-19
+ */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-8);
+  background-color: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: background-color 0.3s ease;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.roleBadge {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--color-muted-foreground);
+}
+
+.searchInput {
+  width: 300px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 2px var(--color-shadow-pink);
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.iconButton:hover {
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+  border-color: var(--color-accent-pink);
+}
+
+.notificationContainer {
+  position: relative;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userProfile:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent-pink);
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-white);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.userName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.userRole {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.chevronIcon {
+  color: var(--color-muted-foreground);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header {
+    padding: var(--space-4);
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .rightSection {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .searchInput {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .searchInput {
+    width: 150px;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .userRole {
+    display: none;
+  }
+}

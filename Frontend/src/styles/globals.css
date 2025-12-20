@@ -155,63 +155,32 @@
   --color-light-pink: #ede4ce; /* warmer cream, less washed out */
 
   /* Radial Gradients - Increased opacity for depth */
-  --color-radial-pink-1: rgba(
-    184,
-    148,
-    95,
-    0.12
+  --color-radial-pink-1: rgb(
+    184 148 95 / 0.12
   ); /* doubled opacity for presence */
-  --color-radial-pink-2: rgba(
-    201,
-    161,
-    82,
-    0.08
-  ); /* increased for visibility */
-  --color-radial-pink-3: rgba(
-    201,
-    161,
-    82,
-    0.05
+  --color-radial-pink-2: rgb(201 161 82 / 0.08); /* increased for visibility */
+  --color-radial-pink-3: rgb(
+    201 161 82 / 0.05
   ); /* increased for subtle depth */
 
   /* Translucent White Overlays - Adjusted for new darker base */
-  --color-translucent-white-1: rgba(
-    0,
-    0,
-    0,
-    0.06
+  --color-translucent-white-1: rgb(
+    0 0 0 / 0.06
   ); /* increased for layering clarity */
-  --color-translucent-white-2: rgba(
-    0,
-    0,
-    0,
-    0.1
-  ); /* increased for definition */
-  --color-translucent-white-3: rgba(
-    0,
-    0,
-    0,
-    0.04
+  --color-translucent-white-2: rgb(0 0 0 / 0.1); /* increased for definition */
+  --color-translucent-white-3: rgb(
+    0 0 0 / 0.04
   ); /* increased for subtle separation */
-  --color-translucent-white-4: rgba(
-    0,
-    0,
-    0,
-    0.78
+  --color-translucent-white-4: rgb(
+    0 0 0 / 0.78
   ); /* increased for strong overlays */
-  --color-translucent-white-5: rgba(
-    0,
-    0,
-    0,
-    0.65
+  --color-translucent-white-5: rgb(
+    0 0 0 / 0.65
   ); /* increased for mid-weight overlays */
 
   /* Translucent Black - Adjusted for stronger base colors */
-  --color-translucent-black-1: rgba(
-    255,
-    255,
-    255,
-    0.88
+  --color-translucent-black-1: rgb(
+    255 255 255 / 0.88
   ); /* reduced for balance */
 
   /* Interactive Elements - Deeper for confidence */
@@ -307,24 +276,16 @@
   --color-light-pink: #2d2a26; /* warm deep graphite, replaces cold gray */
 
   /* Radial Gradients - Warm bronze glow instead of silver */
-  --color-radial-pink-1: rgba(
-    157,
-    134,
-    111,
-    0.14
+  --color-radial-pink-1: rgb(
+    157 134 111 / 0.14
   ); /* warm bronze glow, increased opacity */
-  --color-radial-pink-2: rgba(179, 154, 126, 0.1); /* warm metallic glow */
-  --color-radial-pink-3: rgba(179, 154, 126, 0.06); /* subtle warm depth */
+  --color-radial-pink-2: rgb(179 154 126 / 0.1); /* warm metallic glow */
+  --color-radial-pink-3: rgb(179 154 126 / 0.06); /* subtle warm depth */
 
   /* Translucent White Overlays - Reduced for eye comfort in dark mode */
   --color-translucent-white-1: rgba(255, 255, 255, 0.07); /* reduced glare */
   --color-translucent-white-2: rgba(255, 255, 255, 0.85);
-  --color-translucent-white-3: rgba(
-    255,
-    255,
-    255,
-    0.04
-  ); /* reduced reflection */
+  --color-translucent-white-3: rgb(255 255 255 / 0.04); /* reduced reflection */
   --color-translucent-white-4: rgba(255, 255, 255, 0.92);
   --color-translucent-white-5: rgba(255, 255, 255, 0.75);
 
@@ -437,7 +398,6 @@ body {
 a {
   text-decoration: none;
   color: inherit;
-  
 }
 /* ==========================================================================
    Accessibility & Motion Management

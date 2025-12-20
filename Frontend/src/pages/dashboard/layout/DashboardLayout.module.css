@@ -1,0 +1,48 @@
+/**
+ * @file DashboardLayout.module.css
+ * @description CSS Module for DashboardLayout component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-19
+ */
+
+.dashboardLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebarOpen {
+  margin-left: 16rem;
+}
+
+.sidebarClosed {
+  margin-left: 0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-8);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .sidebarOpen {
+    margin-left: 0;
+  }
+
+  .content {
+    padding: var(--space-4);
+  }
+}
