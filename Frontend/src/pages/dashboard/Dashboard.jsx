@@ -8,6 +8,8 @@
 
 import { useContext } from "react";
 import { DashboardContext } from "./layout/DashboardLayout";
+import { getCompleteDashboardData } from "./config/dashboard.config"; // ADD THIS
+
 import ClientDashboard from "./tabs/client/ClientDashboard";
 import CompanyDashboard from "./tabs/company/CompanyDashboard";
 import FreelancerDashboard from "./tabs/freelancer/FreelancerDashboard";
@@ -21,6 +23,9 @@ import styles from "./dashboard.module.css";
 const Dashboard = () => {
   const { currentRole } = useContext(DashboardContext);
 
+  // Get data for current role
+  const dashboardData = getCompleteDashboardData(currentRole);
+
   /**
    * Render dashboard content based on current role
    * @returns {JSX.Element} Role-specific dashboard component
@@ -28,15 +33,15 @@ const Dashboard = () => {
   const renderDashboardContent = () => {
     switch (currentRole) {
       case "client":
-        return <ClientDashboard />;
+        return <ClientDashboard data={dashboardData} />; // PASS DATA
       case "company":
-        return <CompanyDashboard />;
+        return <CompanyDashboard data={dashboardData} />;
       case "freelancer":
-        return <FreelancerDashboard />;
+        return <FreelancerDashboard data={dashboardData} />;
       case "jobseeker":
-        return <JobseekerDashboard />;
+        return <JobseekerDashboard data={dashboardData} />;
       default:
-        return <ClientDashboard />;
+        return <ClientDashboard data={dashboardData} />;
     }
   };
 

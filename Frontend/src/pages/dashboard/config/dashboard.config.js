@@ -1,10 +1,12 @@
 /**
  * @file dashboard.config.js
- * @description Dashboard configuration for all roles and components
+ * @description Dashboard configuration for all roles and components with complete data structure
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2025-12-19
- *
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
 
 import {
@@ -19,24 +21,29 @@ import {
   Calendar,
   Target,
   ThumbsUp,
-  FileText,
-  MessageSquare,
   UserPlus,
-  CheckCircle,
-  FileCheck,
-  AlertCircle,
   Home,
   Settings,
   Bell,
   HelpCircle,
   LogOut,
-  Layers,
   Award,
   BarChart,
   Mail,
   FolderOpen,
-  Shield,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  Star,
+  MessageSquare,
+  Zap,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  XCircle,
 } from "lucide-react";
+
+// ==================== CORE CONSTANTS ====================
 
 export const ROLES = {
   CLIENT: "client",
@@ -45,7 +52,9 @@ export const ROLES = {
   JOBSEEKER: "jobseeker",
 };
 
-// Role-specific metrics configuration
+// ==================== EXISTING CONFIGURATIONS (UNCHANGED) ====================
+
+// Role-specific metrics configuration (KEEPING EXISTING STRUCTURE)
 export const ROLE_METRICS = {
   [ROLES.CLIENT]: {
     title: "Client Dashboard",
@@ -60,6 +69,9 @@ export const ROLE_METRICS = {
         icon: Briefcase,
         color: "var(--color-accent-pink)",
         details: "3 behind schedule",
+        // NEW FIELDS ADDED:
+        progress: 75,
+        targetValue: "15",
       },
       {
         id: "totalSpend",
@@ -70,6 +82,9 @@ export const ROLE_METRICS = {
         icon: DollarSign,
         color: "var(--color-vivid-pink)",
         details: "Monthly budget: $50k",
+        // NEW FIELDS ADDED:
+        progress: 85,
+        targetValue: "$50,000",
       },
       {
         id: "openPositions",
@@ -80,6 +95,9 @@ export const ROLE_METRICS = {
         icon: Users,
         color: "var(--color-primary)",
         details: "2 urgent hires",
+        // NEW FIELDS ADDED:
+        progress: 60,
+        targetValue: "8",
       },
       {
         id: "avgResponseTime",
@@ -90,6 +108,9 @@ export const ROLE_METRICS = {
         icon: Clock,
         color: "var(--color-accent)",
         details: "Industry avg: 6h",
+        // NEW FIELDS ADDED:
+        progress: 70,
+        targetValue: "3h",
       },
     ],
   },
@@ -106,6 +127,8 @@ export const ROLE_METRICS = {
         icon: Briefcase,
         color: "var(--color-accent-pink)",
         details: "All on track",
+        progress: 100,
+        targetValue: "4",
       },
       {
         id: "earnings",
@@ -116,6 +139,8 @@ export const ROLE_METRICS = {
         icon: DollarSign,
         color: "var(--color-vivid-pink)",
         details: "Target: $10k/mo",
+        progress: 82,
+        targetValue: "$10,000",
       },
       {
         id: "proposalsSent",
@@ -126,6 +151,8 @@ export const ROLE_METRICS = {
         icon: Send,
         color: "var(--color-primary)",
         details: "12% response rate",
+        progress: 80,
+        targetValue: "30",
       },
       {
         id: "successRate",
@@ -136,6 +163,8 @@ export const ROLE_METRICS = {
         icon: TrendingUp,
         color: "var(--color-accent)",
         details: "Platform avg: 85%",
+        progress: 92,
+        targetValue: "95%",
       },
     ],
   },
@@ -152,6 +181,8 @@ export const ROLE_METRICS = {
         icon: Activity,
         color: "var(--color-accent-pink)",
         details: "12 active members",
+        progress: 87,
+        targetValue: "90%",
       },
       {
         id: "hiringPipeline",
@@ -162,6 +193,8 @@ export const ROLE_METRICS = {
         icon: Users,
         color: "var(--color-vivid-pink)",
         details: "5 in final round",
+        progress: 72,
+        targetValue: "25",
       },
       {
         id: "budgetOverview",
@@ -172,6 +205,8 @@ export const ROLE_METRICS = {
         icon: PieChart,
         color: "var(--color-primary)",
         details: "$25k remaining",
+        progress: 68,
+        targetValue: "75%",
       },
       {
         id: "avgHireTime",
@@ -182,6 +217,8 @@ export const ROLE_METRICS = {
         icon: Calendar,
         color: "var(--color-accent)",
         details: "Goal: 10 days",
+        progress: 60,
+        targetValue: "10d",
       },
     ],
   },
@@ -198,6 +235,8 @@ export const ROLE_METRICS = {
         icon: Briefcase,
         color: "var(--color-accent-pink)",
         details: "5 new this week",
+        progress: 60,
+        targetValue: "25",
       },
       {
         id: "interviews",
@@ -208,6 +247,8 @@ export const ROLE_METRICS = {
         icon: Calendar,
         color: "var(--color-vivid-pink)",
         details: "2 scheduled",
+        progress: 80,
+        targetValue: "5",
       },
       {
         id: "skillsMatch",
@@ -218,6 +259,8 @@ export const ROLE_METRICS = {
         icon: Target,
         color: "var(--color-primary)",
         details: "3 skills to improve",
+        progress: 87,
+        targetValue: "95%",
       },
       {
         id: "recommendations",
@@ -228,12 +271,14 @@ export const ROLE_METRICS = {
         icon: ThumbsUp,
         color: "var(--color-accent)",
         details: "Based on profile",
+        progress: 80,
+        targetValue: "15",
       },
     ],
   },
 };
 
-// Sample activity data for RecentActivity component
+// Sample activity data for RecentActivity component (ENHANCED VERSION)
 export const SAMPLE_ACTIVITIES = {
   [ROLES.CLIENT]: [
     {
@@ -244,6 +289,11 @@ export const SAMPLE_ACTIVITIES = {
       user: "sarah.john",
       read: false,
       priority: "high",
+      // NEW FIELDS ADDED:
+      title: "New Proposal Received",
+      timestamp: "2 hours ago",
+      icon: FileText,
+      category: "Hiring",
     },
     {
       id: 2,
@@ -252,6 +302,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "4 hours ago",
       user: "alex.wong",
       read: true,
+      title: "Project Update",
+      timestamp: "4 hours ago",
+      icon: MessageSquare,
+      category: "Communication",
     },
     {
       id: 3,
@@ -259,6 +313,10 @@ export const SAMPLE_ACTIVITIES = {
       description: "Job posting for UX Designer is now live",
       time: "1 day ago",
       read: true,
+      title: "Job Posting Live",
+      timestamp: "1 day ago",
+      icon: Briefcase,
+      category: "Job",
     },
     {
       id: 4,
@@ -268,6 +326,34 @@ export const SAMPLE_ACTIVITIES = {
       user: "dev.team",
       read: true,
       priority: "medium",
+      title: "Project Completed",
+      timestamp: "2 days ago",
+      icon: CheckCircle,
+      category: "Project",
+    },
+    // ADDED MORE ACTIVITIES:
+    {
+      id: 5,
+      type: "payment",
+      description: "Payment of $2,500 sent to freelancer",
+      time: "3 days ago",
+      read: true,
+      title: "Payment Processed",
+      timestamp: "3 days ago",
+      icon: DollarSign,
+      category: "Finance",
+    },
+    {
+      id: 6,
+      type: "review",
+      description: "Freelancer completed milestone review",
+      time: "4 days ago",
+      user: "john.doe",
+      read: false,
+      title: "Milestone Review",
+      timestamp: "4 days ago",
+      icon: Star,
+      category: "Review",
     },
   ],
   [ROLES.FREELANCER]: [
@@ -278,6 +364,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "1 hour ago",
       user: "techcorp.hr",
       read: false,
+      title: "Client Feedback",
+      timestamp: "1 hour ago",
+      icon: MessageSquare,
+      category: "Communication",
     },
     {
       id: 2,
@@ -286,6 +376,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "3 hours ago",
       user: "startup.ceo",
       read: true,
+      title: "Proposal Viewed",
+      timestamp: "3 hours ago",
+      icon: Eye,
+      category: "Proposal",
     },
     {
       id: 3,
@@ -294,6 +388,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "1 day ago",
       read: true,
       priority: "high",
+      title: "Payment Received",
+      timestamp: "1 day ago",
+      icon: DollarSign,
+      category: "Finance",
     },
     {
       id: 4,
@@ -302,6 +400,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "2 days ago",
       user: "jane.doe",
       read: true,
+      title: "New Connection",
+      timestamp: "2 days ago",
+      icon: Users,
+      category: "Network",
     },
   ],
   [ROLES.COMPANY]: [
@@ -313,6 +415,10 @@ export const SAMPLE_ACTIVITIES = {
       user: "john.smith",
       read: false,
       priority: "high",
+      title: "New Application",
+      timestamp: "30 minutes ago",
+      icon: UserPlus,
+      category: "Hiring",
     },
     {
       id: 2,
@@ -321,6 +427,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "2 hours ago",
       user: "emma.jones",
       read: true,
+      title: "Interview Scheduled",
+      timestamp: "2 hours ago",
+      icon: Calendar,
+      category: "Interview",
     },
     {
       id: 3,
@@ -328,6 +438,10 @@ export const SAMPLE_ACTIVITIES = {
       description: "Hiring budget approved for Q4",
       time: "1 day ago",
       read: true,
+      title: "Budget Approved",
+      timestamp: "1 day ago",
+      icon: CheckCircle,
+      category: "Finance",
     },
     {
       id: 4,
@@ -336,6 +450,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "2 days ago",
       read: false,
       priority: "medium",
+      title: "Job Posting Pending",
+      timestamp: "2 days ago",
+      icon: FileText,
+      category: "Job",
     },
   ],
   [ROLES.JOBSEEKER]: [
@@ -346,6 +464,10 @@ export const SAMPLE_ACTIVITIES = {
       time: "1 hour ago",
       user: "tech.company",
       read: true,
+      title: "Application Submitted",
+      timestamp: "1 hour ago",
+      icon: CheckCircle,
+      category: "Application",
     },
     {
       id: 2,
@@ -355,6 +477,10 @@ export const SAMPLE_ACTIVITIES = {
       user: "hr.recruiter",
       read: false,
       priority: "high",
+      title: "Interview Scheduled",
+      timestamp: "3 hours ago",
+      icon: Calendar,
+      category: "Interview",
     },
     {
       id: 3,
@@ -362,6 +488,10 @@ export const SAMPLE_ACTIVITIES = {
       description: "Profile viewed by 5 recruiters today",
       time: "1 day ago",
       read: true,
+      title: "Profile Viewed",
+      timestamp: "1 day ago",
+      icon: Eye,
+      category: "Profile",
     },
     {
       id: 4,
@@ -369,11 +499,15 @@ export const SAMPLE_ACTIVITIES = {
       description: "New job recommendation based on skills",
       time: "2 days ago",
       read: true,
+      title: "Job Recommendation",
+      timestamp: "2 days ago",
+      icon: Star,
+      category: "Recommendation",
     },
   ],
 };
 
-// Sample pending actions for PendingActions component
+// Sample pending actions for PendingActions component (ENHANCED VERSION)
 export const SAMPLE_PENDING_ACTIONS = {
   [ROLES.CLIENT]: [
     {
@@ -386,6 +520,9 @@ export const SAMPLE_PENDING_ACTIONS = {
       category: "Review",
       type: "review",
       assignedTo: "Project Manager",
+      // NEW FIELDS ADDED:
+      icon: AlertCircle,
+      status: "pending",
     },
     {
       id: 2,
@@ -396,6 +533,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: false,
       category: "Payment",
       type: "payment",
+      icon: DollarSign,
+      status: "pending",
     },
     {
       id: 3,
@@ -407,6 +546,21 @@ export const SAMPLE_PENDING_ACTIONS = {
       category: "Message",
       type: "message",
       assignedTo: "You",
+      icon: MessageSquare,
+      status: "completed",
+    },
+    // ADDED MORE ACTIONS:
+    {
+      id: 4,
+      title: "Schedule project kickoff meeting",
+      description: "New website redesign project",
+      priority: "medium",
+      dueDate: "Today",
+      completed: false,
+      category: "Meeting",
+      type: "meeting",
+      icon: Calendar,
+      status: "pending",
     },
   ],
   [ROLES.FREELANCER]: [
@@ -420,6 +574,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       category: "Project",
       type: "update",
       assignedTo: "You",
+      icon: FileText,
+      status: "pending",
     },
     {
       id: 2,
@@ -430,6 +586,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: false,
       category: "Admin",
       type: "deadline",
+      icon: Clock,
+      status: "pending",
     },
     {
       id: 3,
@@ -440,6 +598,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: false,
       category: "Proposal",
       type: "review",
+      icon: Send,
+      status: "pending",
     },
   ],
   [ROLES.COMPANY]: [
@@ -453,6 +613,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       category: "Hiring",
       type: "review",
       assignedTo: "HR Team",
+      icon: FileText,
+      status: "pending",
     },
     {
       id: 2,
@@ -463,6 +625,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: false,
       category: "Team",
       type: "meeting",
+      icon: Calendar,
+      status: "pending",
     },
     {
       id: 3,
@@ -473,6 +637,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: true,
       category: "Finance",
       type: "payment",
+      icon: DollarSign,
+      status: "completed",
     },
   ],
   [ROLES.JOBSEEKER]: [
@@ -486,6 +652,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       category: "Profile",
       type: "update",
       assignedTo: "You",
+      icon: CheckCircle,
+      status: "pending",
     },
     {
       id: 2,
@@ -496,6 +664,8 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: false,
       category: "Interview",
       type: "meeting",
+      icon: Calendar,
+      status: "pending",
     },
     {
       id: 3,
@@ -506,11 +676,13 @@ export const SAMPLE_PENDING_ACTIONS = {
       completed: true,
       category: "Profile",
       type: "update",
+      icon: FileText,
+      status: "completed",
     },
   ],
 };
 
-// Sample job posts for RecentJobPosts component
+// Sample job posts for RecentJobPosts component (ENHANCED VERSION)
 export const SAMPLE_JOB_POSTS = {
   [ROLES.CLIENT]: [
     {
@@ -522,6 +694,11 @@ export const SAMPLE_JOB_POSTS = {
       status: "active",
       posted: "2 days ago",
       priority: "high",
+      // NEW FIELDS ADDED:
+      location: "Remote",
+      skills: ["React", "TypeScript", "Next.js"],
+      duration: "3 months",
+      icon: Briefcase,
     },
     {
       id: 2,
@@ -532,6 +709,39 @@ export const SAMPLE_JOB_POSTS = {
       status: "review",
       posted: "5 days ago",
       priority: "medium",
+      location: "New York, NY",
+      skills: ["Figma", "UI Design", "Prototyping"],
+      duration: "2 months",
+      icon: Users,
+    },
+    // ADDED MORE JOB POSTS:
+    {
+      id: 3,
+      title: "Full Stack Developer",
+      company: "Startup XYZ",
+      proposals: 32,
+      budget: "$10k - $15k",
+      status: "active",
+      posted: "1 week ago",
+      priority: "high",
+      location: "Remote",
+      skills: ["Node.js", "React", "MongoDB"],
+      duration: "6 months",
+      icon: Zap,
+    },
+    {
+      id: 4,
+      title: "DevOps Engineer",
+      company: "Cloud Solutions",
+      proposals: 15,
+      budget: "$12k - $18k",
+      status: "pending",
+      posted: "3 days ago",
+      priority: "medium",
+      location: "San Francisco, CA",
+      skills: ["AWS", "Kubernetes", "Docker"],
+      duration: "4 months",
+      icon: Briefcase,
     },
   ],
   [ROLES.FREELANCER]: [
@@ -544,6 +754,10 @@ export const SAMPLE_JOB_POSTS = {
       status: "active",
       posted: "1 day ago",
       priority: "high",
+      location: "Remote",
+      skills: ["React", "Node.js", "AWS"],
+      duration: "6 months",
+      icon: Zap,
     },
     {
       id: 2,
@@ -554,6 +768,10 @@ export const SAMPLE_JOB_POSTS = {
       status: "review",
       posted: "3 days ago",
       priority: "medium",
+      location: "San Francisco, CA",
+      skills: ["React Native", "iOS", "Android"],
+      duration: "4 months",
+      icon: Briefcase,
     },
   ],
   [ROLES.COMPANY]: [
@@ -566,6 +784,10 @@ export const SAMPLE_JOB_POSTS = {
       status: "active",
       posted: "1 day ago",
       priority: "high",
+      location: "Remote",
+      skills: ["AWS", "Kubernetes", "Terraform"],
+      duration: "Full-time",
+      icon: Zap,
     },
     {
       id: 2,
@@ -576,6 +798,10 @@ export const SAMPLE_JOB_POSTS = {
       status: "draft",
       posted: "4 days ago",
       priority: "medium",
+      location: "New York, NY",
+      skills: ["Product Strategy", "Agile", "Analytics"],
+      duration: "Full-time",
+      icon: Briefcase,
     },
   ],
   [ROLES.JOBSEEKER]: [
@@ -588,6 +814,10 @@ export const SAMPLE_JOB_POSTS = {
       status: "applied",
       posted: "2 days ago",
       priority: "high",
+      location: "Remote",
+      skills: ["React", "TypeScript", "CSS"],
+      duration: "Full-time",
+      icon: Briefcase,
     },
     {
       id: 2,
@@ -598,11 +828,317 @@ export const SAMPLE_JOB_POSTS = {
       status: "saved",
       posted: "5 days ago",
       priority: "medium",
+      location: "Los Angeles, CA",
+      skills: ["Figma", "UI Design", "Prototyping"],
+      duration: "Full-time",
+      icon: Users,
     },
   ],
 };
 
-// Navigation configuration for each role
+// ==================== NEW DATA STRUCTURES (ADDED WITHOUT CHANGING EXISTING) ====================
+
+/**
+ * NEW: Earnings data for freelancer and client dashboards
+ */
+export const EARNINGS_DATA = {
+  [ROLES.CLIENT]: {
+    title: "Project Spending Overview",
+    period: "Last 6 Months",
+    totalSpent: "$42,580",
+    changePercentage: "+8.2%",
+    changeDirection: "up",
+    monthlyData: [
+      { month: "Jan", amount: 6500, projects: 3 },
+      { month: "Feb", amount: 7200, projects: 4 },
+      { month: "Mar", amount: 5800, projects: 2 },
+      { month: "Apr", amount: 8300, projects: 5 },
+      { month: "May", amount: 6900, projects: 3 },
+      { month: "Jun", amount: 8880, projects: 6 },
+    ],
+    byCategory: [
+      { category: "Development", amount: 25000, percentage: 58 },
+      { category: "Design", amount: 12000, percentage: 28 },
+      { category: "Consulting", amount: 3580, percentage: 8 },
+      { category: "Other", amount: 2000, percentage: 5 },
+    ],
+  },
+  [ROLES.FREELANCER]: {
+    title: "Earnings Overview",
+    period: "Last 6 Months",
+    totalEarnings: "$8,250",
+    changePercentage: "+15.5%",
+    changeDirection: "up",
+    monthlyData: [
+      { month: "Jan", earnings: 1200, projects: 1 },
+      { month: "Feb", earnings: 1800, projects: 2 },
+      { month: "Mar", earnings: 2200, projects: 3 },
+      { month: "Apr", earnings: 3000, projects: 4 },
+      { month: "May", earnings: 2500, projects: 3 },
+      { month: "Jun", earnings: 3850, projects: 5 },
+    ],
+    bySource: [
+      { source: "Development", amount: 5200, percentage: 63 },
+      { source: "Design", amount: 2200, percentage: 27 },
+      { source: "Consulting", amount: 850, percentage: 10 },
+    ],
+  },
+  [ROLES.COMPANY]: null, // Company doesn't have earnings data
+  [ROLES.JOBSEEKER]: null, // Jobseeker doesn't have earnings data
+};
+
+/**
+ * NEW: Team data for company dashboard
+ */
+export const TEAM_DATA = {
+  [ROLES.COMPANY]: {
+    totalMembers: 24,
+    activeMembers: 21,
+    departments: [
+      { name: "Engineering", count: 12, active: 11 },
+      { name: "Design", count: 5, active: 4 },
+      { name: "Marketing", count: 4, active: 3 },
+      { name: "Sales", count: 3, active: 3 },
+    ],
+    hiringGoals: {
+      target: 8,
+      current: 3,
+      remaining: 5,
+    },
+  },
+};
+
+/**
+ * NEW: Job applications for jobseeker dashboard
+ */
+export const JOB_APPLICATIONS = {
+  [ROLES.JOBSEEKER]: [
+    {
+      id: 1,
+      title: "Frontend Developer at TechCorp",
+      status: "applied",
+      date: "Dec 15",
+      company: "TechCorp",
+      stage: "Applied",
+      icon: CheckCircle,
+    },
+    {
+      id: 2,
+      title: "UI Designer at CreativeLab",
+      status: "interview",
+      date: "Dec 12",
+      company: "CreativeLab",
+      stage: "Interview Scheduled",
+      icon: Calendar,
+    },
+    {
+      id: 3,
+      title: "Product Manager at StartupXYZ",
+      status: "offer",
+      date: "Dec 10",
+      company: "StartupXYZ",
+      stage: "Offer Received",
+      icon: Award,
+    },
+    {
+      id: 4,
+      title: "Full Stack Developer at WebSolutions",
+      status: "rejected",
+      date: "Dec 5",
+      company: "WebSolutions",
+      stage: "Not Selected",
+      icon: XCircle,
+    },
+  ],
+  [ROLES.FREELANCER]: [
+    {
+      id: 1,
+      title: "React Developer Project",
+      status: "active",
+      date: "Dec 18",
+      client: "TechCorp",
+      stage: "In Progress",
+      icon: Briefcase,
+    },
+    {
+      id: 2,
+      title: "UI Design Contract",
+      status: "pending",
+      date: "Dec 16",
+      client: "DesignStudio",
+      stage: "Proposal Sent",
+      icon: Send,
+    },
+  ],
+};
+
+/**
+ * NEW: Skill analysis for jobseeker and freelancer
+ */
+export const SKILL_ANALYSIS = {
+  [ROLES.JOBSEEKER]: {
+    matchedSkills: ["React", "TypeScript", "CSS", "Git"],
+    missingSkills: ["Next.js", "GraphQL", "Testing"],
+    matchPercentage: 87,
+    recommendations: [
+      "Complete Advanced React Course",
+      "Learn Next.js Framework",
+      "Practice GraphQL Queries",
+    ],
+  },
+  [ROLES.FREELANCER]: {
+    matchedSkills: ["React", "Node.js", "UI/UX Design", "Project Management"],
+    missingSkills: ["AWS Certification", "TypeScript Advanced", "DevOps"],
+    matchPercentage: 92,
+    recommendations: [
+      "Get AWS Certified",
+      "Master TypeScript Advanced Features",
+      "Learn Basic DevOps",
+    ],
+  },
+};
+
+/**
+ * NEW: Performance metrics for all roles
+ */
+export const PERFORMANCE_METRICS = {
+  [ROLES.CLIENT]: {
+    projectCompletionRate: 92,
+    clientSatisfaction: 4.8,
+    onTimeDelivery: 88,
+    budgetAdherence: 94,
+  },
+  [ROLES.FREELANCER]: {
+    projectCompletionRate: 100,
+    clientSatisfaction: 5.0,
+    onTimeDelivery: 95,
+    repeatClients: 4,
+  },
+  [ROLES.COMPANY]: {
+    employeeRetention: 94,
+    hiringSuccessRate: 88,
+    timeToFill: 14,
+    offerAcceptanceRate: 85,
+  },
+  [ROLES.JOBSEEKER]: {
+    applicationResponseRate: 42,
+    interviewConversionRate: 33,
+    skillImprovementRate: 15,
+    profileCompleteness: 78,
+  },
+};
+
+// ==================== HELPER CONFIGURATIONS (NEW) ====================
+
+/**
+ * Priority configuration with colors and icons
+ */
+export const PRIORITY_CONFIG = {
+  high: {
+    label: "High",
+    color: "var(--color-danger)",
+    icon: AlertCircle,
+    bgColor: "var(--color-danger-light)",
+  },
+  medium: {
+    label: "Medium",
+    color: "var(--color-warning)",
+    icon: AlertCircle,
+    bgColor: "var(--color-warning-light)",
+  },
+  low: {
+    label: "Low",
+    color: "var(--color-info)",
+    icon: AlertCircle,
+    bgColor: "var(--color-info-light)",
+  },
+};
+
+/**
+ * Activity type icons mapping
+ */
+export const ACTIVITY_ICONS = {
+  proposal: FileText,
+  message: MessageSquare,
+  job: Briefcase,
+  completion: CheckCircle,
+  connection: Users,
+  payment: DollarSign,
+  interview: Calendar,
+  hiring: UserPlus,
+  review: Star,
+  application: CheckCircle,
+  profile: UserPlus,
+  recommendation: Star,
+  meeting: Calendar,
+  update: FileText,
+};
+
+/**
+ * Status configuration
+ */
+export const STATUS_CONFIG = {
+  active: {
+    label: "Active",
+    color: "var(--color-success)",
+    icon: CheckCircle,
+  },
+  pending: {
+    label: "Pending",
+    color: "var(--color-warning)",
+    icon: Clock,
+  },
+  completed: {
+    label: "Completed",
+    color: "var(--color-info)",
+    icon: CheckCircle,
+  },
+  draft: {
+    label: "Draft",
+    color: "var(--color-secondary)",
+    icon: FileText,
+  },
+  applied: {
+    label: "Applied",
+    color: "var(--color-primary)",
+    icon: CheckCircle,
+  },
+  interview: {
+    label: "Interview",
+    color: "var(--color-accent)",
+    icon: Calendar,
+  },
+  offer: {
+    label: "Offer",
+    color: "var(--color-success)",
+    icon: Award,
+  },
+  rejected: {
+    label: "Rejected",
+    color: "var(--color-danger)",
+    icon: XCircle,
+  },
+};
+
+/**
+ * Metric colors for trends
+ */
+export const METRIC_COLORS = {
+  up: {
+    color: "var(--color-success)",
+    icon: ArrowUp,
+    bgColor: "var(--color-success-light)",
+  },
+  down: {
+    color: "var(--color-danger)",
+    icon: ArrowDown,
+    bgColor: "var(--color-danger-light)",
+  },
+};
+
+// ==================== EXISTING NAVIGATION (UNCHANGED) ====================
+
+// Navigation configuration for each role (EXISTING - UNCHANGED)
 export const ROLE_NAVIGATION = {
   [ROLES.CLIENT]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
@@ -639,7 +1175,7 @@ export const ROLE_NAVIGATION = {
   ],
 };
 
-// Header navigation (common for all roles)
+// Header navigation (common for all roles) (EXISTING - UNCHANGED)
 export const HEADER_NAVIGATION = [
   { id: "notifications", icon: Bell, label: "Notifications", hasBadge: true },
   { id: "help", icon: HelpCircle, label: "Help & Support" },
@@ -647,23 +1183,9 @@ export const HEADER_NAVIGATION = [
   { id: "logout", icon: LogOut, label: "Logout" },
 ];
 
-// Default data when no real data is available
-export const DEFAULT_DATA = {
-  activities: [],
-  pendingActions: [],
-  recentJobs: [],
-  metrics: [],
-};
+// ==================== EXISTING THEME & VISIBILITY (UNCHANGED) ====================
 
-// Export role display names
-export const ROLE_DISPLAY_NAMES = {
-  [ROLES.CLIENT]: "Client",
-  [ROLES.FREELANCER]: "Freelancer",
-  [ROLES.COMPANY]: "Company",
-  [ROLES.JOBSEEKER]: "Job Seeker",
-};
-
-// Theme settings
+// Theme settings (EXISTING - UNCHANGED)
 export const THEME_SETTINGS = {
   light: {
     primaryColor: "var(--color-primary)",
@@ -677,7 +1199,7 @@ export const THEME_SETTINGS = {
   },
 };
 
-// Component visibility configuration by role
+// Component visibility configuration by role (EXISTING - UNCHANGED)
 export const COMPONENT_VISIBILITY = {
   [ROLES.CLIENT]: {
     showMetrics: true,
@@ -717,7 +1239,81 @@ export const COMPONENT_VISIBILITY = {
   },
 };
 
-// Export everything
+// ==================== UTILITY FUNCTIONS (NEW) ====================
+
+/**
+ * Get complete dashboard data for a specific role
+ * @param {string} role - The role identifier
+ * @returns {Object} Complete dashboard data for the role
+ */
+export const getCompleteDashboardData = (role) => {
+  return {
+    // Existing data (unchanged variable names)
+    metrics: ROLE_METRICS[role]?.metrics || [],
+    activities: SAMPLE_ACTIVITIES[role] || [],
+    pendingActions: SAMPLE_PENDING_ACTIONS[role] || [],
+    recentJobPosts: SAMPLE_JOB_POSTS[role] || [],
+
+    // New data structures
+    earningsData: EARNINGS_DATA[role] || null,
+    teamData: TEAM_DATA[role] || null,
+    jobApplications: JOB_APPLICATIONS[role] || [],
+    skillAnalysis: SKILL_ANALYSIS[role] || null,
+    performanceMetrics: PERFORMANCE_METRICS[role] || {},
+
+    // Role info
+    title: ROLE_METRICS[role]?.title || "",
+    description: ROLE_METRICS[role]?.description || "",
+  };
+};
+
+/**
+ * Get metrics for a specific role
+ * @param {string} role - The role identifier
+ * @returns {Array} Metrics array for the role
+ */
+export const getRoleMetrics = (role) => {
+  return ROLE_METRICS[role]?.metrics || [];
+};
+
+/**
+ * Get activities for a specific role
+ * @param {string} role - The role identifier
+ * @returns {Array} Activities array for the role
+ */
+export const getRoleActivities = (role) => {
+  return SAMPLE_ACTIVITIES[role] || [];
+};
+
+/**
+ * Get pending actions for a specific role
+ * @param {string} role - The role identifier
+ * @returns {Array} Pending actions array for the role
+ */
+export const getRolePendingActions = (role) => {
+  return SAMPLE_PENDING_ACTIONS[role] || [];
+};
+
+// ==================== EXISTING DEFAULT DATA (UNCHANGED) ====================
+
+// Default data when no real data is available (EXISTING - UNCHANGED)
+export const DEFAULT_DATA = {
+  activities: [],
+  pendingActions: [],
+  recentJobs: [],
+  metrics: [],
+};
+
+// Export role display names (EXISTING - UNCHANGED)
+export const ROLE_DISPLAY_NAMES = {
+  [ROLES.CLIENT]: "Client",
+  [ROLES.FREELANCER]: "Freelancer",
+  [ROLES.COMPANY]: "Company",
+  [ROLES.JOBSEEKER]: "Job Seeker",
+};
+
+// ==================== EXPORT EVERYTHING ====================
+
 export default {
   ROLES,
   ROLE_METRICS,
@@ -730,4 +1326,19 @@ export default {
   ROLE_DISPLAY_NAMES,
   THEME_SETTINGS,
   COMPONENT_VISIBILITY,
+
+  // New exports
+  EARNINGS_DATA,
+  TEAM_DATA,
+  JOB_APPLICATIONS,
+  SKILL_ANALYSIS,
+  PERFORMANCE_METRICS,
+  PRIORITY_CONFIG,
+  ACTIVITY_ICONS,
+  STATUS_CONFIG,
+  METRIC_COLORS,
+  getCompleteDashboardData,
+  getRoleMetrics,
+  getRoleActivities,
+  getRolePendingActions,
 };

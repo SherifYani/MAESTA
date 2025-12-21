@@ -1,6 +1,6 @@
 /**
  * @file StatsGrid.jsx
- * @description Grid container for stat cards
+ * @description Grid layout for displaying stat cards
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2025-12-19
@@ -10,21 +10,22 @@ import StatCard from "./StatCard";
 import styles from "./StatsGrid.module.css";
 
 /**
- * StatsGrid component for displaying multiple stat cards in a grid
+ * StatsGrid component for displaying metrics in a responsive grid
  * @param {Object} props - Component props
  * @param {Array} props.metrics - Array of metric objects
- * @param {number} [props.columns] - Number of columns (default: auto-fit)
  * @returns {JSX.Element} The rendered stats grid
  */
-const StatsGrid = ({ metrics, columns }) => {
-  const gridStyle = columns
-    ? {
-        gridTemplateColumns: `repeat(${columns}, minmax(240px, 1fr))`,
-      }
-    : {};
+const StatsGrid = ({ metrics = [] }) => {
+  if (!metrics || metrics.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <p>No metrics available</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.statsGrid} style={gridStyle}>
+    <div className={styles.statsGrid}>
       {metrics.map((metric, index) => (
         <StatCard
           key={`${metric.title}-${index}`}

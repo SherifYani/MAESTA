@@ -435,7 +435,6 @@ a {
     --color-submit-pink-1: #9d866f;
   }
 }
-
 /* ==========================================================================
    Selection Styling
    ========================================================================== */
@@ -443,4 +442,65 @@ a {
 ::selection {
   background-color: var(--color-accent-pink);
   color: var(--color-primary-white);
+}
+
+/* ==========================================================================
+   Custom Scrollbar Styling
+   Applied globally - matches light/dark theme aesthetic
+   ========================================================================== */
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-pink) var(--color-muted);
+}
+
+/* Webkit browsers (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-muted-foreground);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-muted);
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vivid-pink);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-select-pink);
+}
+
+/* Corner where horizontal and vertical scrollbars meet */
+::-webkit-scrollbar-corner {
+  background: var(--color-muted);
+}
+
+/* Thin scrollbar variant for smaller containers */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border: 1px solid var(--color-muted);
+}
+
+/* Hidden scrollbar variant (still scrollable) */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

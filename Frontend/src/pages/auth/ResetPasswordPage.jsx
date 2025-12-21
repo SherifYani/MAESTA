@@ -8,7 +8,6 @@ import {
   getPasswordStrengthScore,
   getPasswordStrengthText,
   isFormValid,
-  getValidationState,
   debounceValidation,
 } from "../../utils/form-validation";
 import "../../styles/shared/_form-base.css";

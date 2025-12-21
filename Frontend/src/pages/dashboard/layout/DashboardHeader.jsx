@@ -77,7 +77,7 @@ const DashboardHeader = () => {
         {/* User Profile */}
         <div className={styles.userProfile}>
           <div className={styles.userAvatar}>
-            <span className={styles.avatarText}>JD</span>
+            <span className={styles.avatarText}>ST</span>
           </div>
           <div className={styles.userInfo}>
             <span className={styles.userName}>Sherif Talaat</span>

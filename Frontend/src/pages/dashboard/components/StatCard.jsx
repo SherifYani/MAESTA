@@ -2,8 +2,12 @@
  * @file StatCard.jsx
  * @description Reusable stat card component for displaying metrics with trends
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2025-12-19
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
+ * @fix Fixed icon rendering issue - now properly renders React components
  */
 
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
@@ -15,7 +19,7 @@ import styles from './StatCard.module.css';
  * @param {string} props.title - Card title
  * @param {string|number} props.value - Main value to display
  * @param {string} props.change - Change text (e.g., "+12 today")
- * @param {string} props.icon - Icon to display
+ * @param {React.ComponentType} props.icon - Icon component (Lucide React component)
  * @param {string} props.trendType - Type of trend ('positive', 'negative', 'neutral')
  * @param {string} [props.description] - Optional description
  * @returns {JSX.Element} The rendered stat card
@@ -24,7 +28,7 @@ const StatCard = ({
   title, 
   value, 
   change, 
-  icon, 
+  icon: IconComponent, // Rename to clarify it's a component
   trendType = 'positive',
   description 
 }) => {
@@ -45,10 +49,11 @@ const StatCard = ({
   };
 
   return (
-    <div className={styles.statCard}>
+    <div className={styles.statCard} data-testid="stat-card">
       <div className={styles.cardHeader}>
         <div className={styles.iconContainer}>
-          <span className={styles.icon}>{icon}</span>
+          {/* Render the icon as a component, not as JSX child */}
+          {IconComponent && <IconComponent className={styles.icon} size={24} />}
         </div>
         <div className={styles.trendIndicator}>
           {getTrendIcon(trendType)}

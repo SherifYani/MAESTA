@@ -1,19 +1,29 @@
 /**
  * @file JobseekerDashboard.module.css
- * @description CSS Module for JobseekerDashboard component
+ * @description CSS Module for JobseekerDashboard component with premium design system
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 2025-12-12
+ * @version 2.0.0
+ * @date 2025-12-19
  *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
+
+/* ==========================================================================
+   Dashboard Container
+   ========================================================================== */
 
 .jobseekerDashboard {
   padding: var(--space-6);
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
+  width: 100%;
 }
 
-/* Header */
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -33,13 +43,15 @@
   color: var(--color-foreground);
   margin: 0 0 var(--space-2) 0;
   line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-lg);
   color: var(--color-muted-foreground);
   margin: 0;
   line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
 }
 
 .headerActions {
@@ -48,21 +60,35 @@
   margin-left: var(--space-4);
 }
 
-/* Metrics Section */
+/* ==========================================================================
+   Metrics Section
+   ========================================================================== */
+
 .metricsSection {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
-/* Quick Stats */
+/* ==========================================================================
+   Quick Stats Cards
+   ========================================================================== */
+
 .quickStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .quickStatCard {
   padding: var(--space-4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.quickStatCard:hover {
+  border-color: var(--color-ring);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-translucent-white-3);
 }
 
 .quickStatContent {
@@ -72,15 +98,22 @@
 }
 
 .quickStatIcon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   color: var(--color-accent-pink);
   flex-shrink: 0;
+  padding: var(--space-2);
+  background: linear-gradient(
+    135deg,
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
+  );
+  border-radius: var(--radius-lg);
 }
 
 .quickStatValue {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-foreground);
   margin: 0 0 var(--space-1) 0;
   line-height: 1;
@@ -91,9 +124,13 @@
   color: var(--color-muted-foreground);
   margin: 0;
   line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
 }
 
-/* Content Grid */
+/* ==========================================================================
+   Content Grid Layout
+   ========================================================================== */
+
 .contentGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -113,16 +150,32 @@
   gap: var(--space-6);
 }
 
-/* Cards */
+/* ==========================================================================
+   Dashboard Cards
+   ========================================================================== */
+
 .activityCard,
 .actionsCard,
 .jobsCard,
 .statusCard,
 .skillsCard {
   height: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Status Card */
+.activityCard:hover,
+.actionsCard:hover,
+.jobsCard:hover,
+.statusCard:hover,
+.skillsCard:hover {
+  border-color: var(--color-ring);
+  box-shadow: 0 4px 12px var(--color-translucent-white-3);
+}
+
+/* ==========================================================================
+   Application Status Card
+   ========================================================================== */
+
 .statusContent {
   padding: var(--space-2) 0;
 }
@@ -133,6 +186,14 @@
   align-items: center;
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.statusItem:hover {
+  background-color: var(--color-muted);
+  margin: 0 calc(-1 * var(--space-4));
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
 }
 
 .statusItem:last-child {
@@ -141,21 +202,26 @@
 
 .statusLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-muted-foreground);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
 }
 
 .statusCount {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-foreground);
-  background-color: var(--color-muted);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+  background-color: var(--color-radial-pink-1);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
-  min-width: 40px;
+  min-width: 48px;
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
-/* Skills Card */
+/* ==========================================================================
+   Skill Development Card
+   ========================================================================== */
+
 .skillsContent {
   padding: var(--space-2) 0;
 }
@@ -164,14 +230,20 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.skillItem:hover {
+  background-color: var(--color-muted);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
 }
 
 .skillItem:last-child {
   margin-bottom: 0;
-  padding-bottom: 0;
   border-bottom: none;
 }
 
@@ -179,12 +251,12 @@
   font-size: var(--font-size-sm);
   color: var(--color-foreground);
   font-weight: var(--font-weight-medium);
-  min-width: 120px;
+  min-width: 140px;
 }
 
 .skillProgress {
   flex: 1;
-  height: 6px;
+  height: 8px;
   background-color: var(--color-muted);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -199,58 +271,77 @@
     var(--color-vivid-pink)
   );
   border-radius: var(--radius-full);
-  transition: width 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.skillFill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-translucent-white-1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
 }
 
 .skillPercentage {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-foreground);
-  min-width: 40px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+  min-width: 48px;
   text-align: right;
 }
 
-/* Skill Level Colors */
-.skillFill[style*="width: 8"],
-.skillFill[style*="width: 9"],
-.skillFill[style*="width: 10"] {
+/* Skill Level Color Variations - Using Design System Colors */
+.skillItem[data-skill-level="expert"] .skillFill {
   background: linear-gradient(
     90deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
+    var(--color-chart-2),
+    var(--color-chart-3)
   );
 }
 
-.skillFill[style*="width: 6"],
-.skillFill[style*="width: 7"] {
+.skillItem[data-skill-level="advanced"] .skillFill {
   background: linear-gradient(
     90deg,
-    var(--color-secondary),
-    var(--color-accent)
+    var(--color-chart-3),
+    var(--color-chart-4)
   );
 }
 
-.skillFill[style*="width: 4"],
-.skillFill[style*="width: 5"] {
+.skillItem[data-skill-level="intermediate"] .skillFill {
   background: linear-gradient(
     90deg,
-    var(--color-muted),
-    var(--color-secondary)
+    var(--color-chart-4),
+    var(--color-accent-pink)
   );
 }
 
-.skillFill[style*="width: 0"],
-.skillFill[style*="width: 1"],
-.skillFill[style*="width: 2"],
-.skillFill[style*="width: 3"] {
-  background: linear-gradient(
-    90deg,
-    var(--color-destructive),
-    var(--color-muted)
-  );
+.skillItem[data-skill-level="beginner"] .skillFill {
+  background: linear-gradient(90deg, var(--color-chart-5), var(--color-muted));
 }
 
-/* Responsive Design */
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1280px) {
+  .jobseekerDashboard {
+    padding: var(--space-4);
+  }
+
+  .contentGrid {
+    gap: var(--space-4);
+  }
+}
+
 @media (max-width: 1024px) {
   .contentGrid {
     grid-template-columns: 1fr;
@@ -260,6 +351,7 @@
   .header {
     flex-direction: column;
     gap: var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   .headerActions {
@@ -290,7 +382,7 @@
 
   .header {
     padding-bottom: var(--space-4);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   .title {
@@ -298,11 +390,12 @@
   }
 
   .subtitle {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
   }
 
   .quickStats {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 
   .headerActions {
@@ -311,6 +404,11 @@
 
   .headerActions button {
     width: 100%;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    gap: var(--space-4);
   }
 
   .statusItem {
@@ -322,33 +420,105 @@
   .statusCount {
     align-self: flex-end;
   }
+
+  .skillLabel {
+    min-width: 120px;
+  }
 }
 
-/* Dark theme adjustments */
-.dark .statusCount {
-  background-color: var(--color-card);
+@media (max-width: 480px) {
+  .jobseekerDashboard {
+    padding: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .quickStatValue {
+    font-size: var(--font-size-lg);
+  }
+
+  .statusCount {
+    font-size: var(--font-size-base);
+    min-width: 40px;
+  }
+
+  .skillLabel {
+    min-width: 100px;
+  }
+
+  .skillPercentage {
+    min-width: 40px;
+  }
 }
 
-.dark .skillProgress {
-  background-color: var(--color-card);
-}
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+  .quickStatCard,
+  .activityCard,
+  .actionsCard,
+  .jobsCard,
+  .statusCard,
+  .skillsCard,
+  .statusItem,
+  .skillItem,
   .skillFill {
     transition: none;
   }
+
+  .quickStatCard:hover,
+  .activityCard:hover,
+  .actionsCard:hover,
+  .jobsCard:hover,
+  .statusCard:hover,
+  .skillsCard:hover {
+    transform: none;
+  }
+
+  .statusItem:hover,
+  .skillItem:hover {
+    background-color: var(--color-muted);
+    margin: 0;
+    padding: var(--space-3) 0;
+  }
+
+  .skillFill::after {
+    animation: none;
+  }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
-  .skillItem,
-  .statusItem {
+  .header {
     border-bottom: 2px solid var(--color-foreground);
   }
 
-  .skillFill {
-    background: var(--color-accent-pink);
-    height: 8px;
+  .statusItem,
+  .skillItem {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .statusCount {
+    border: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

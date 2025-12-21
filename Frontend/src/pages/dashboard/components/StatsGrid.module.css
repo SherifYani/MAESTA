@@ -1,27 +1,95 @@
 /**
  * @file StatsGrid.module.css
- * @description CSS Module for StatsGrid component
+ * @description CSS Module for StatsGrid component with premium design system
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
+
+/* ==========================================================================
+   Stats Grid Container
+   ========================================================================== */
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-6);
+  width: 100%;
 }
 
-/* Responsive Design */
+/* ==========================================================================
+   Responsive Grid Layout
+   ========================================================================== */
+
+@media (max-width: 1280px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-4);
+  }
+}
+
 @media (max-width: 768px) {
   .statsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 }
 
 @media (max-width: 480px) {
   .statsGrid {
-    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+  color: var(--color-muted-foreground);
+  grid-column: 1 / -1;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+}
+
+.emptyState p {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .statsGrid {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .emptyState {
+    border: 2px solid var(--color-foreground);
   }
 }

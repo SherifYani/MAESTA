@@ -1,200 +1,121 @@
 /**
  * @file RecentActivity.jsx
- * @description Timeline-style activity feed component for dashboard.
- *             Shows new proposals, messages, job updates with icons,
- *             descriptions, timestamps, and user mentions.
+ * @description Recent activity feed component
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2025-12-19
- *
  */
 
-import PropTypes from "prop-types";
 import {
-  MessageSquare,
-  Briefcase,
-  UserPlus,
-  CheckCircle,
-  FileText,
   Clock,
+  CheckCircle,
+  AlertCircle,
+  FileText,
+  MessageSquare,
+  Bell,
 } from "lucide-react";
 import styles from "./RecentActivity.module.css";
 
 /**
- * Icon mapping for activity types
+ * Get activity icon based on type
+ * @param {string} type - Activity type
+ * @returns {JSX.Element} Icon component
  */
-const ACTIVITY_ICONS = {
-  proposal: FileText,
-  message: MessageSquare,
-  job: Briefcase,
-  connection: UserPlus,
-  completion: CheckCircle,
-  default: Clock,
+const getActivityIcon = (type) => {
+  switch (type) {
+    case "success":
+      return <CheckCircle className={styles.iconSuccess} size={20} />;
+    case "warning":
+      return <AlertCircle className={styles.iconWarning} size={20} />;
+    case "info":
+      return <FileText className={styles.iconInfo} size={20} />;
+    case "message":
+      return <MessageSquare className={styles.iconMessage} size={20} />;
+    case "notification":
+      return <Bell className={styles.iconNotification} size={20} />;
+    default:
+      return <FileText className={styles.iconDefault} size={20} />;
+  }
 };
 
 /**
- * Color mapping for activity types
+ * Format timestamp to relative time
+ * @param {string} timestamp - ISO timestamp
+ * @returns {string} Relative time string
  */
-const ACTIVITY_COLORS = {
-  proposal: "var(--color-accent-pink)",
-  message: "var(--color-primary)",
-  job: "var(--color-vivid-pink)",
-  connection: "var(--color-primary)",
-  completion: "var(--color-accent)",
-  default: "var(--color-muted-foreground)",
-};
+const formatTime = (timestamp) => {
+  const now = new Date();
+  const activityTime = new Date(timestamp);
+  const diffInHours = Math.floor((now - activityTime) / (1000 * 60 * 60));
 
-/**
- * Activity item component
- * @param {Object} props - Component props
- * @param {Object} props.activity - Activity data object
- * @returns {JSX.Element} Rendered activity item
- */
-const ActivityItem = ({ activity }) => {
-  const IconComponent = ACTIVITY_ICONS[activity.type] || ACTIVITY_ICONS.default;
-  const iconColor = ACTIVITY_COLORS[activity.type] || ACTIVITY_COLORS.default;
-
-  return (
-    <li className={styles.activityItem} data-read={activity.read}>
-      <div className={styles.activityIcon} style={{ color: iconColor }}>
-        <IconComponent size={16} />
-      </div>
-
-      <div className={styles.activityContent}>
-        <p className={styles.activityDescription}>
-          {activity.description}
-          {activity.user && (
-            <span className={styles.userMention}> @{activity.user}</span>
-          )}
-        </p>
-
-        <div className={styles.activityMeta}>
-          <time className={styles.activityTime}>{activity.time}</time>
-
-          {activity.priority && (
-            <span
-              className={`${styles.priorityBadge} ${
-                styles[activity.priority]
-              }`}>
-              {activity.priority}
-            </span>
-          )}
-        </div>
-      </div>
-    </li>
-  );
-};
-
-ActivityItem.propTypes = {
-  activity: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    type: PropTypes.oneOf([
-      "proposal",
-      "message",
-      "job",
-      "connection",
-      "completion",
-    ]),
-    description: PropTypes.string.isRequired,
-    time: PropTypes.string.isRequired,
-    user: PropTypes.string,
-    read: PropTypes.bool,
-    priority: PropTypes.oneOf(["low", "medium", "high"]),
-  }).isRequired,
+  if (diffInHours < 1) return "Just now";
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
+  return activityTime.toLocaleDateString();
 };
 
 /**
  * RecentActivity component
  * @param {Object} props - Component props
- * @param {Array<Object>} props.activities - Array of activity objects
- * @param {string} props.title - Component title (optional)
- * @returns {JSX.Element} Rendered activity feed
+ * @param {Array} props.activities - Array of activity objects
+ * @param {number} [props.limit] - Maximum number of activities to show
+ * @returns {JSX.Element} The rendered activity feed
  */
-const RecentActivity = ({ activities = [], title = "Recent Activity" }) => {
-  const unreadCount = activities.filter((activity) => !activity.read).length;
+const RecentActivity = ({ activities = [], limit = 6 }) => {
+  const displayedActivities = activities.slice(0, limit);
+
+  if (activities.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <FileText size={48} className={styles.emptyIcon} />
+        <h3>No recent activity</h3>
+        <p>Your activity will appear here</p>
+      </div>
+    );
+  }
 
   return (
-    <section className={styles.recentActivity}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-
-        {unreadCount > 0 && (
-          <span className={styles.unreadBadge}>{unreadCount} new</span>
-        )}
-      </header>
-
-      <div className={styles.content}>
-        {activities.length > 0 ? (
-          <ul className={styles.activityList}>
-            {activities.map((activity) => (
-              <ActivityItem key={activity.id} activity={activity} />
-            ))}
-          </ul>
-        ) : (
-          <div className={styles.emptyState}>
-            <p className={styles.emptyText}>No recent activity</p>
-            <p className={styles.emptySubtext}>
-              Updates will appear here as they happen
-            </p>
-          </div>
-        )}
+    <div className={styles.recentActivity}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Recent Activity</h2>
+        <span className={styles.activityCount}>
+          {activities.length} activities
+        </span>
       </div>
-    </section>
+
+      <div className={styles.activityList}>
+        {displayedActivities.map((activity, index) => (
+          <div key={`${activity.id || index}`} className={styles.activityItem}>
+            <div className={styles.activityIcon}>
+              {getActivityIcon(activity.type)}
+            </div>
+
+            <div className={styles.activityContent}>
+              <p className={styles.activityText}>{activity.text}</p>
+
+              <div className={styles.activityMeta}>
+                <span className={styles.timestamp}>
+                  <Clock size={12} />
+                  {formatTime(activity.timestamp)}
+                </span>
+
+                {activity.status && (
+                  <span
+                    className={`${styles.status} ${styles[activity.status]}`}>
+                    {activity.status}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {activities.length > limit && (
+        <button className={styles.viewAllButton}>View all activities</button>
+      )}
+    </div>
   );
 };
 
-RecentActivity.propTypes = {
-  /** Array of activity objects */
-  activities: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      type: PropTypes.oneOf([
-        "proposal",
-        "message",
-        "job",
-        "connection",
-        "completion",
-      ]),
-      description: PropTypes.string.isRequired,
-      time: PropTypes.string.isRequired,
-      user: PropTypes.string,
-      read: PropTypes.bool,
-      priority: PropTypes.oneOf(["low", "medium", "high"]),
-    })
-  ),
-  /** Component title */
-  title: PropTypes.string,
-};
-
-RecentActivity.defaultProps = {
-  activities: [],
-  title: "Recent Activity",
-};
-
 export default RecentActivity;
-
-/**
- * @example
- * // Usage example:
- * const activities = [
- *   {
- *     id: 1,
- *     type: 'proposal',
- *     description: 'New proposal received for React Developer position',
- *     time: '2 hours ago',
- *     user: 'john.doe',
- *     read: false,
- *     priority: 'high'
- *   },
- *   {
- *     id: 2,
- *     type: 'message',
- *     description: 'New message from project manager',
- *     time: '4 hours ago',
- *     user: 'jane.smith',
- *     read: true
- *   }
- * ];
- *
- * <RecentActivity activities={activities} title="Latest Updates" />
- */

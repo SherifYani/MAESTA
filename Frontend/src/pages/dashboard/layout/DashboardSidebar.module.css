@@ -2,6 +2,7 @@
  * @file DashboardSidebar.module.css
  * @description Sidebar styles for the dashboard
  * @author Sherif Talaat
+ * @version 1.1.0
  * @date 2025-12-19
  */
 
@@ -51,7 +52,7 @@
 .brandTitle {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-foreground);
+  color: var(--color-accent-pink);
   margin: 0;
 }
 
@@ -136,11 +137,12 @@
 
 .navLink:hover {
   background-color: var(--color-muted);
+  color: var(--color-accent-pink);
 }
 
 .navLink.active {
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-translucent-white-1);
+  color: var(--color-accent-pink);
 }
 
 .navIcon {
@@ -176,6 +178,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  color: var(--color-translucent-white-4);
 }
 
 .roleButton {
@@ -185,6 +188,7 @@
   border: 1px solid var(--color-border);
   padding: var(--space-3);
   border-radius: var(--radius-sm);
+  color: var(--color-primary-white);
   cursor: pointer;
   transition: all 0.2s;
   gap: var(--space-3);
@@ -193,12 +197,13 @@
 
 .roleButton:hover {
   background-color: var(--color-muted);
+  color: var(--color-accent-pink);
   border-color: var(--color-primary);
 }
 
 .roleButton.active {
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-translucent-white-1);
+  color: var(--color-accent-pink);
   border-color: var(--color-primary);
 }
 
@@ -236,8 +241,8 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--color-translucent-white-1);
+  color: var(--color-accent-pink);
   display: flex;
   align-items: center;
   justify-content: center;

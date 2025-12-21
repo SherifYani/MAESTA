@@ -22,6 +22,7 @@ import {
   SAMPLE_PENDING_ACTIONS,
   SAMPLE_JOB_POSTS,
 } from "../../config/dashboard.config";
+import config from "../../config/dashboard.config";
 import { Plus, Users, DollarSign, Calendar } from "lucide-react";
 import styles from "./ClientDashboard.module.css";
 
@@ -30,7 +31,6 @@ import styles from "./ClientDashboard.module.css";
  * @returns {JSX.Element} Rendered client dashboard
  */
 const ClientDashboard = () => {
-  const { currentRole } = useContext(DashboardContext);
 
   // Get role-specific data
   const metrics = ROLE_METRICS[ROLES.CLIENT]?.metrics || [];

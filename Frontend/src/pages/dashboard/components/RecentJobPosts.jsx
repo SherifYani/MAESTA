@@ -1,112 +1,114 @@
 /**
  * @file RecentJobPosts.jsx
- * @description Component displaying recent job posts with proposals
+ * @description Recent job posts component for dashboard
  * @author Sherif Talaat
  * @version 1.0.0
- * @date 2025-12-20
+ * @date 2025-12-19
  */
 
-import { Calendar, Users, DollarSign } from "lucide-react";
+import { DollarSign, MapPin, Clock, Users, Briefcase } from "lucide-react";
 import styles from "./RecentJobPosts.module.css";
 
 /**
- * Job post item component
- * @param {Object} props - Component props
- * @param {string} props.title - Job title
- * @param {number} props.proposals - Number of proposals
- * @param {string} props.status - Job status
- * @param {string} props.date - Posted date
- * @param {string} props.budget - Job budget
- * @returns {JSX.Element} The rendered job post item
+ * Get status badge class based on status
+ * @param {string} status - Job status
+ * @returns {string} CSS class name
  */
-const JobPostItem = ({ title, proposals, status, date, budget }) => {
-  return (
-    <div className={styles.jobItem}>
-      <div className={styles.jobHeader}>
-        <h4 className={styles.jobTitle}>{title}</h4>
-        <span
-          className={`${styles.statusBadge} ${styles[status.toLowerCase()]}`}>
-          {status}
-        </span>
-      </div>
-
-      <div className={styles.jobDetails}>
-        <div className={styles.detailItem}>
-          <Users className={styles.detailIcon} size={16} />
-          <span className={styles.detailText}>{proposals} proposals</span>
-        </div>
-
-        <div className={styles.detailItem}>
-          <Calendar className={styles.detailIcon} size={16} />
-          <span className={styles.detailText}>{date}</span>
-        </div>
-
-        <div className={styles.detailItem}>
-          <DollarSign className={styles.detailIcon} size={16} />
-          <span className={styles.detailText}>{budget}</span>
-        </div>
-      </div>
-
-      <div className={styles.jobActions}>
-        <button className={styles.viewButton}>View Details</button>
-        <button className={styles.reviewButton}>Review Proposals</button>
-      </div>
-    </div>
-  );
+const getStatusClass = (status) => {
+  switch (status?.toLowerCase()) {
+    case "active":
+      return styles.statusActive;
+    case "pending":
+      return styles.statusPending;
+    case "closed":
+      return styles.statusClosed;
+    case "draft":
+      return styles.statusDraft;
+    default:
+      return styles.statusDefault;
+  }
 };
 
 /**
- * RecentJobPosts component showing latest job posts
- * @returns {JSX.Element} The rendered recent job posts section
+ * RecentJobPosts component
+ * @param {Object} props - Component props
+ * @param {Array} props.jobs - Array of job post objects
+ * @returns {JSX.Element} The rendered job posts
  */
-const RecentJobPosts = () => {
-  const recentJobs = [
-    {
-      id: 1,
-      title: "Senior React Developer",
-      proposals: 23,
-      status: "Active",
-      date: "Posted 2 days ago",
-      budget: "$5,000 - $8,000",
-    },
-    {
-      id: 2,
-      title: "UI/UX Designer",
-      proposals: 18,
-      status: "Active",
-      date: "Posted 1 week ago",
-      budget: "$3,000 - $5,000",
-    },
-    {
-      id: 3,
-      title: "Content Writer (Slight)",
-      proposals: 31,
-      status: "Review",
-      date: "Posted 3 days ago",
-      budget: "$1,000 - $2,000",
-    },
-  ];
+const RecentJobPosts = ({ jobs = [] }) => {
+  if (jobs.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <Briefcase size={48} className={styles.emptyIcon} />
+        <h3>No job posts yet</h3>
+        <p>Create your first job post to get started</p>
+        <button className={styles.createJobButton}>Create Job Post</button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.recentJobPosts}>
-      <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>
-          Recent Job Posts
-          <span className={styles.sectionSubtitle}>Your latest positions</span>
-        </h3>
-        <button className={styles.viewAllButton}>View All →</button>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Recent Job Posts</h2>
+        <button className={styles.viewAllButton}>View All</button>
       </div>
 
-      <div className={styles.jobsList}>
-        {recentJobs.map((job) => (
-          <JobPostItem
-            key={job.id}
-            title={job.title}
-            proposals={job.proposals}
-            status={job.status}
-            date={job.date}
-            budget={job.budget}
-          />
+      <div className={styles.jobsGrid}>
+        {jobs.map((job) => (
+          <div key={job.id} className={styles.jobCard}>
+            <div className={styles.jobHeader}>
+              <div className={styles.jobTitleSection}>
+                <h3 className={styles.jobTitle}>{job.title}</h3>
+                <span
+                  className={`${styles.statusBadge} ${getStatusClass(
+                    job.status
+                  )}`}>
+                  {job.status}
+                </span>
+              </div>
+
+              <div className={styles.jobMeta}>
+                <span className={styles.metaItem}>
+                  <Clock size={14} />
+                  Posted {job.postedDate}
+                </span>
+
+                <span className={styles.metaItem}>
+                  <Users size={14} />
+                  {job.applicants} applicants
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.jobDetails}>
+              <div className={styles.detailRow}>
+                <span className={styles.detailItem}>
+                  <DollarSign size={16} />
+                  {job.budget}
+                </span>
+
+                <span className={styles.detailItem}>
+                  <MapPin size={16} />
+                  {job.location}
+                </span>
+
+                <span className={styles.detailItem}>
+                  <Briefcase size={16} />
+                  {job.category}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.jobDescription}>
+              <p>{job.description}</p>
+            </div>
+
+            <div className={styles.jobActions}>
+              <button className={styles.viewButton}>View Details</button>
+              <button className={styles.editButton}>Edit Post</button>
+            </div>
+          </div>
         ))}
       </div>
     </div>

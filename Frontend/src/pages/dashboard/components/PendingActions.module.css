@@ -1,115 +1,123 @@
 /**
  * @file PendingActions.module.css
- * @description CSS Module for PendingActions component
- *             To-do list with checkboxes, priority indicators, and progress tracking
+ * @description CSS Module for PendingActions component with premium design system
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
+
+/* ==========================================================================
+   Pending Actions Container
+   ========================================================================== */
 
 .pendingActions {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  height: 100%;
 }
 
 .pendingActions:hover {
   border-color: var(--color-ring);
+  box-shadow: 0 4px 16px var(--color-translucent-white-3);
 }
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
 
 .header {
   padding: var(--space-6);
   border-bottom: 1px solid var(--color-border);
-}
-
-.headerTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
+  background: linear-gradient(
+    135deg,
+    var(--color-card) 0%,
+    var(--color-sidebar) 100%
+  );
 }
 
 .title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   color: var(--color-foreground);
-  margin: 0;
+  margin: 0 0 var(--space-4) 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
 }
 
-.stats {
-  display: flex;
-  gap: var(--space-4);
-}
+/* ==========================================================================
+   Progress Tracking
+   ========================================================================== */
 
-.statItem {
+.progress {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-width: 60px;
-}
-
-.statNumber {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-foreground);
-  line-height: 1;
-}
-
-.statLabel {
-  font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: var(--space-1);
-}
-
-.filterTabs {
-  display: flex;
   gap: var(--space-2);
-  background-color: var(--color-muted);
-  border-radius: var(--radius-md);
-  padding: var(--space-1);
 }
 
-.filterTab {
-  flex: 1;
-  padding: var(--space-2) var(--space-3);
-  background: none;
-  border: none;
-  border-radius: var(--radius-sm);
+.progressText {
+  display: flex;
+  justify-content: space-between;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
   color: var(--color-muted-foreground);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: var(--font-weight-medium);
 }
 
-.filterTab:hover {
-  color: var(--color-foreground);
-  background-color: var(--color-background);
+.progressBar {
+  height: 6px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
 }
 
-.filterTab.active {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.progressFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.content {
-  flex: 1;
-  padding: var(--space-2) 0;
-  overflow-y: auto;
-  max-height: 400px;
+.progressFill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-translucent-white-1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
 }
+
+/* ==========================================================================
+   Actions List
+   ========================================================================== */
 
 .actionsList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  flex: 1;
+  overflow-y: auto;
 }
+
+/* ==========================================================================
+   Action Item
+   ========================================================================== */
 
 .actionItem {
   display: flex;
@@ -117,8 +125,8 @@
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
   border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .actionItem:hover {
@@ -129,36 +137,64 @@
   border-bottom: none;
 }
 
-.actionItem[data-completed="true"] {
+.actionItem.completed {
   opacity: 0.7;
+  background-color: var(--color-muted);
 }
 
-.actionItem[data-completed="true"] .actionTitle {
+.actionItem.completed .actionTitle {
   text-decoration: line-through;
   color: var(--color-muted-foreground);
 }
 
-.checkboxButton {
+.actionItem.completed .checkbox {
+  background-color: var(--color-chart-2);
+  border-color: var(--color-chart-2);
+}
+
+/* ==========================================================================
+   Checkbox
+   ========================================================================== */
+
+.checkbox {
   flex-shrink: 0;
   background: none;
-  border: none;
+  border: 2px solid var(--color-border);
   padding: var(--space-1);
   cursor: pointer;
   border-radius: var(--radius-full);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-1);
 }
 
-.checkboxButton:hover {
-  background-color: var(--color-muted);
-}
-
-.checkboxIcon {
-  transition: transform 0.2s ease;
-}
-
-.checkboxButton:hover .checkboxIcon {
+.checkbox:hover {
+  background-color: var(--color-accent-pink);
+  border-color: var(--color-accent-pink);
   transform: scale(1.1);
 }
+
+.checkbox:active {
+  transform: scale(0.95);
+}
+
+.checkIcon {
+  color: var(--color-primary-white);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.actionItem.completed .checkIcon {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Action Content
+   ========================================================================== */
 
 .actionContent {
   flex: 1;
@@ -170,20 +206,54 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-2);
+  gap: var(--space-2);
 }
 
 .actionTitle {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-foreground);
   margin: 0;
   line-height: var(--line-height-tight);
+  flex: 1;
 }
+
+/* ==========================================================================
+   Action Metadata
+   ========================================================================== */
 
 .actionMeta {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.priority {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-muted);
+}
+
+.priorityHigh {
+  color: var(--color-chart-5);
+}
+
+.priorityMedium {
+  color: var(--color-chart-3);
+}
+
+.priorityLow {
+  color: var(--color-chart-4);
+}
+
+.priorityDefault {
+  color: var(--color-muted-foreground);
 }
 
 .dueDate {
@@ -195,130 +265,103 @@
   white-space: nowrap;
 }
 
-.dueDate svg {
-  flex-shrink: 0;
-}
-
-.priorityBadge {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  white-space: nowrap;
-}
+/* ==========================================================================
+   Action Description
+   ========================================================================== */
 
 .actionDescription {
   font-size: var(--font-size-sm);
   color: var(--color-muted-foreground);
-  margin: 0 0 var(--space-2) 0;
-  line-height: var(--line-height-tight);
+  margin: 0 0 var(--space-3) 0;
+  line-height: var(--line-height-normal);
 }
 
-.actionFooter {
+/* ==========================================================================
+   Action Buttons
+   ========================================================================== */
+
+.actionButtons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: var(--space-2);
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
-.categoryTag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
+.actionButton {
+  padding: var(--space-1) var(--space-3);
   font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
-  background-color: var(--color-muted);
-  padding: 2px var(--space-2);
+  font-weight: var(--font-weight-medium);
   border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.categoryTag svg {
-  flex-shrink: 0;
+.actionButton:first-of-type {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
 }
 
-.assignedTo {
-  font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
+.actionButton:first-of-type:hover {
+  background-color: var(--color-vivid-pink);
+  transform: translateY(-1px);
 }
+
+.actionButton:not(:first-of-type) {
+  background-color: transparent;
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+.actionButton:not(:first-of-type):hover {
+  background-color: var(--color-muted);
+  border-color: var(--color-ring);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
 
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-8) var(--space-4);
+  padding: var(--space-12) var(--space-4);
   text-align: center;
   color: var(--color-muted-foreground);
+  height: 100%;
 }
 
-.emptyState svg {
-  margin-bottom: var(--space-3);
+.emptyIcon {
+  margin-bottom: var(--space-4);
   opacity: 0.5;
+  color: var(--color-accent-pink);
 }
 
-.emptyText {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+.emptyState h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-foreground);
-  margin-bottom: var(--space-1);
+  margin: 0 0 var(--space-1) 0;
 }
 
-.emptySubtext {
+.emptyState p {
   font-size: var(--font-size-sm);
   opacity: 0.8;
+  margin: 0;
 }
 
-.footer {
-  padding: var(--space-4) var(--space-6);
-  border-top: 1px solid var(--color-border);
-}
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
 
-.progressBar {
-  height: 4px;
-  background-color: var(--color-muted);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  margin-bottom: var(--space-2);
-}
-
-.progressFill {
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
-  border-radius: var(--radius-full);
-  transition: width 0.3s ease;
-}
-
-.progressText {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .pendingActions {
-    border-radius: var(--radius-md);
-  }
-
   .header {
     padding: var(--space-4);
   }
 
-  .headerTop {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-3);
-  }
-
-  .stats {
-    width: 100%;
-    justify-content: space-around;
+  .title {
+    font-size: var(--font-size-lg);
   }
 
   .actionItem {
@@ -327,8 +370,8 @@
 
   .actionHeader {
     flex-direction: column;
-    gap: var(--space-2);
     align-items: flex-start;
+    gap: var(--space-2);
   }
 
   .actionMeta {
@@ -336,60 +379,89 @@
     justify-content: space-between;
   }
 
-  .footer {
-    padding: var(--space-3) var(--space-4);
+  .actionButtons {
+    width: 100%;
+  }
+
+  .actionButton {
+    flex: 1;
+    min-width: 120px;
   }
 }
 
-@media (min-width: 1024px) {
-  .content {
-    max-height: 450px;
+@media (max-width: 480px) {
+  .actionItem {
+    padding: var(--space-3);
+  }
+
+  .actionMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .actionButton {
+    width: 100%;
   }
 }
 
-/* Dark theme adjustments */
-.dark .filterTab.active {
-  background-color: var(--color-card);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.dark .categoryTag {
-  background-color: var(--color-card);
-}
-
-/* Accessibility improvements */
-.checkboxButton:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
-}
-
-.actionItem:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: -2px;
-}
-
-.filterTab:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
-}
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .pendingActions,
-  .checkboxIcon,
-  .progressFill,
   .actionItem,
-  .filterTab {
+  .checkbox,
+  .progressFill,
+  .actionButton {
     transition: none;
+  }
+
+  .checkbox:hover {
+    transform: none;
+  }
+
+  .actionButton:hover {
+    transform: none;
+  }
+
+  .progressFill::after {
+    animation: none;
   }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
-  .actionItem[data-completed="true"] {
-    opacity: 0.5;
+  .actionItem {
+    border-bottom: 2px solid var(--color-foreground);
   }
 
-  .progressFill {
-    background: var(--color-accent-pink);
+  .actionItem:last-child {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .header {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .checkbox {
+    border: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

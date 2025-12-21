@@ -1,19 +1,29 @@
 /**
  * @file ClientDashboard.module.css
- * @description CSS Module for ClientDashboard component
+ * @description CSS Module for ClientDashboard component with premium design system
  * @author Sherif Talaat
  * @version 2.0.0
- * @date 2025-12-19
+ * @date 2025-12-20
  *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
+
+/* ==========================================================================
+   Dashboard Container
+   ========================================================================== */
 
 .clientDashboard {
   padding: var(--space-6);
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
+  width: 100%;
 }
 
-/* Header */
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -33,13 +43,15 @@
   color: var(--color-foreground);
   margin: 0 0 var(--space-2) 0;
   line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-lg);
   color: var(--color-muted-foreground);
   margin: 0;
   line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
 }
 
 .headerActions {
@@ -48,21 +60,35 @@
   margin-left: var(--space-4);
 }
 
-/* Metrics Section */
+/* ==========================================================================
+   Metrics Section
+   ========================================================================== */
+
 .metricsSection {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
-/* Quick Stats */
+/* ==========================================================================
+   Quick Stats Cards
+   ========================================================================== */
+
 .quickStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .quickStatCard {
   padding: var(--space-4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.quickStatCard:hover {
+  border-color: var(--color-ring);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-translucent-white-3);
 }
 
 .quickStatContent {
@@ -72,15 +98,22 @@
 }
 
 .quickStatIcon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   color: var(--color-accent-pink);
   flex-shrink: 0;
+  padding: var(--space-2);
+  background: linear-gradient(
+    135deg,
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
+  );
+  border-radius: var(--radius-lg);
 }
 
 .quickStatValue {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-foreground);
   margin: 0 0 var(--space-1) 0;
   line-height: 1;
@@ -91,9 +124,13 @@
   color: var(--color-muted-foreground);
   margin: 0;
   line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
 }
 
-/* Content Grid */
+/* ==========================================================================
+   Content Grid Layout
+   ========================================================================== */
+
 .contentGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -113,16 +150,32 @@
   gap: var(--space-6);
 }
 
-/* Cards */
+/* ==========================================================================
+   Dashboard Cards
+   ========================================================================== */
+
 .activityCard,
 .actionsCard,
 .jobsCard,
 .budgetCard,
 .pipelineCard {
   height: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Budget Card */
+.activityCard:hover,
+.actionsCard:hover,
+.jobsCard:hover,
+.budgetCard:hover,
+.pipelineCard:hover {
+  border-color: var(--color-ring);
+  box-shadow: 0 4px 12px var(--color-translucent-white-3);
+}
+
+/* ==========================================================================
+   Budget Card
+   ========================================================================== */
+
 .budgetContent {
   padding: var(--space-2) 0;
 }
@@ -131,18 +184,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border);
 }
 
 .budgetMetric:last-child {
   border-bottom: none;
+  margin-bottom: var(--space-2);
 }
 
 .budgetLabel {
   font-size: var(--font-size-sm);
   color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
 }
 
 .budgetValue {
@@ -152,11 +207,12 @@
 }
 
 .budgetProgress {
-  height: 6px;
+  height: 8px;
   background-color: var(--color-muted);
   border-radius: var(--radius-full);
   margin: var(--space-4) 0;
   overflow: hidden;
+  position: relative;
 }
 
 .progressBar {
@@ -167,7 +223,24 @@
     var(--color-vivid-pink)
   );
   border-radius: var(--radius-full);
-  transition: width 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progressBar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-translucent-white-1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
 }
 
 .budgetNote {
@@ -175,9 +248,13 @@
   color: var(--color-muted-foreground);
   text-align: center;
   margin: var(--space-2) 0 0 0;
+  font-weight: var(--font-weight-medium);
 }
 
-/* Pipeline Card */
+/* ==========================================================================
+   Talent Pipeline Card
+   ========================================================================== */
+
 .pipelineContent {
   padding: var(--space-2) 0;
 }
@@ -188,6 +265,14 @@
   align-items: center;
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.pipelineStage:hover {
+  background-color: var(--color-muted);
+  margin: 0 calc(-1 * var(--space-4));
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
 }
 
 .pipelineStage:last-child {
@@ -196,32 +281,48 @@
 
 .stageLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-muted-foreground);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
 }
 
 .stageCount {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-foreground);
-  background-color: var(--color-muted);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+  background-color: var(--color-radial-pink-1);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
-  min-width: 40px;
+  min-width: 48px;
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
-/* Responsive Design */
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1280px) {
+  .clientDashboard {
+    padding: var(--space-4);
+  }
+
+  .contentGrid {
+    gap: var(--space-4);
+  }
+}
+
 @media (max-width: 1024px) {
   .contentGrid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
-  
+
   .header {
     flex-direction: column;
     gap: var(--space-4);
+    margin-bottom: var(--space-6);
   }
-  
+
   .headerActions {
     margin-left: 0;
     width: 100%;
@@ -233,41 +334,123 @@
   .clientDashboard {
     padding: var(--space-4);
   }
-  
+
   .header {
     padding-bottom: var(--space-4);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-6);
   }
-  
+
   .title {
     font-size: var(--font-size-xl);
   }
-  
+
   .subtitle {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
   }
-  
+
   .quickStats {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
-  
+
   .headerActions {
     flex-direction: column;
   }
-  
+
   .headerActions button {
     width: 100%;
   }
+
+  .leftColumn,
+  .rightColumn {
+    gap: var(--space-4);
+  }
 }
 
-/* Dark theme adjustments */
-.dark .stageCount {
-  background-color: var(--color-card);
+@media (max-width: 480px) {
+  .clientDashboard {
+    padding: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .quickStatValue {
+    font-size: var(--font-size-lg);
+  }
+
+  .budgetValue {
+    font-size: var(--font-size-lg);
+  }
+
+  .stageCount {
+    font-size: var(--font-size-base);
+    min-width: 40px;
+  }
 }
 
-/* Accessibility */
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
+  .quickStatCard,
+  .activityCard,
+  .actionsCard,
+  .jobsCard,
+  .budgetCard,
+  .pipelineCard,
+  .pipelineStage,
   .progressBar {
     transition: none;
+  }
+
+  .quickStatCard:hover,
+  .activityCard:hover,
+  .actionsCard:hover,
+  .jobsCard:hover,
+  .budgetCard:hover,
+  .pipelineCard:hover {
+    transform: none;
+  }
+
+  .progressBar::after {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .pipelineStage {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .stageCount {
+    border: 2px solid var(--color-foreground);
+  }
+
+  .budgetMetric {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

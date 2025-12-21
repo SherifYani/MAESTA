@@ -1,11 +1,9 @@
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import FormInput from "../../components/forms/FormInput";
 import {
-  validateRequired,
   isFormValid,
-  getValidationState,
 } from "../../utils/form-validation";
 import { useResendTimer } from "../../hooks/useResendTimer";
 import "../../styles/shared/_form-base.css";

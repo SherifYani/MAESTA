@@ -10,6 +10,7 @@ import React, { useState, createContext, useEffect } from "react";
 import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
 import styles from "./DashboardLayout.module.css";
+import { Outlet } from "react-router-dom";
 
 /**
  * Dashboard context for managing theme and role state
@@ -26,11 +27,44 @@ export const DashboardContext = createContext();
 const DashboardLayout = ({ children }) => {
   const [currentRole, setCurrentRole] = useState("client");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [themeInitialized, setThemeInitialized] = useState(false);
 
-  // Get theme from body class (following your globals.css structure)
-  const [isDarkTheme, setIsDarkTheme] = useState(
-    document.body.classList.contains("dark")
-  );
+  /**
+   * Initialize theme from localStorage or system preference
+   * @function
+   */
+  const initializeTheme = () => {
+    // Check localStorage first
+    const savedTheme = localStorage.getItem("dashboard-theme");
+
+    if (savedTheme) {
+      // Use saved preference
+      const isDark = savedTheme === "dark";
+      setIsDarkTheme(isDark);
+      if (isDark) {
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
+      }
+    } else {
+      // No saved preference, check system preference
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setIsDarkTheme(systemPrefersDark);
+      if (systemPrefersDark) {
+        document.body.classList.add("dark");
+      }
+      // Save system preference for consistency
+      localStorage.setItem(
+        "dashboard-theme",
+        systemPrefersDark ? "dark" : "light"
+      );
+    }
+
+    setThemeInitialized(true);
+  };
 
   /**
    * Toggle between light and dark themes
@@ -50,15 +84,44 @@ const DashboardLayout = ({ children }) => {
     localStorage.setItem("dashboard-theme", newTheme ? "dark" : "light");
   };
 
-  // Load saved theme preference on mount
+  // Load theme on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem("dashboard-theme");
-    if (savedTheme === "dark") {
-      setIsDarkTheme(true);
-      document.body.classList.add("dark");
-    }
+    initializeTheme();
   }, []);
 
+  // Optional: Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleSystemThemeChange = (e) => {
+      // Only change if user hasn't set a preference
+      const savedTheme = localStorage.getItem("dashboard-theme");
+      if (!savedTheme) {
+        setIsDarkTheme(e.matches);
+        if (e.matches) {
+          document.body.classList.add("dark");
+        } else {
+          document.body.classList.remove("dark");
+        }
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+    return () =>
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+  }, []);
+
+  // Prevent flash of wrong theme by not rendering until theme is initialized
+  if (!themeInitialized) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  // In the return section of DashboardLayout.jsx:
   return (
     <DashboardContext.Provider
       value={{
@@ -75,9 +138,15 @@ const DashboardLayout = ({ children }) => {
         <div
           className={`${styles.mainContent} ${
             sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
-          }`}>
+          }`}
+          style={{
+            marginLeft: sidebarOpen ? "270px" : "50px",
+            width: sidebarOpen ? "calc(100% - 270px)" : "100%",
+          }}>
           <DashboardHeader />
-          <main className={styles.content}>{children}</main>
+          <main className={styles.content}>
+            <Outlet />
+          </main>
         </div>
       </div>
     </DashboardContext.Provider>

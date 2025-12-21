@@ -8,21 +8,11 @@
 
 import React, { useContext } from "react";
 import {
-  Home,
   Briefcase,
   Users,
-  Send,
-  DollarSign,
   UserPlus,
-  Settings,
-  BarChart,
-  Mail,
-  FolderOpen,
-  Award,
   ChevronLeft,
   ChevronRight,
-  LogOut,
-  HelpCircle,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
 import {
@@ -68,7 +58,7 @@ const DashboardSidebar = ({ isOpen, onToggle }) => {
       className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}>
       <div className={styles.sidebarHeader}>
         <div className={styles.brand}>
-          <h1 className={styles.brandTitle}>TalentPro</h1>
+          <h1 className={styles.brandTitle}>MAESTA</h1>
           <span className={styles.brandSubtitle}>Dashboard</span>
         </div>
         <button
@@ -102,6 +92,28 @@ const DashboardSidebar = ({ isOpen, onToggle }) => {
           </ul>
         </div>
 
+        {/* Role Switcher */}
+        <div className={styles.navSection}>
+          <h3 className={styles.navSectionTitle}>Switch Role</h3>
+          <div className={styles.roleSelector}>
+            {ROLE_SWITCHER_CONFIG.map((role) => {
+              const IconComponent = role.icon;
+              return (
+                <button
+                  key={role.id}
+                  className={`${styles.roleButton} ${
+                    currentRole === role.id ? styles.active : ""
+                  }`}
+                  onClick={() => handleRoleChange(role.id)}
+                  title={`Switch to ${role.label}`}>
+                  <IconComponent className={styles.roleIcon} size={18} />
+                  <span className={styles.roleLabel}>{role.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Settings & Help */}
         <div className={styles.navSection}>
           <h3 className={styles.navSectionTitle}>Settings</h3>
@@ -133,10 +145,10 @@ const DashboardSidebar = ({ isOpen, onToggle }) => {
       <div className={styles.sidebarFooter}>
         <div className={styles.userProfile}>
           <div className={styles.userAvatar}>
-            <span className={styles.avatarText}>JD</span>
+            <span className={styles.avatarText}>ST</span>
           </div>
           <div className={styles.userInfo}>
-            <span className={styles.userName}>John Doe</span>
+            <span className={styles.userName}>Sheif Talaat</span>
             <span className={styles.userRole}>
               {ROLE_DISPLAY_NAMES[currentRole] || "Client"}
             </span>
