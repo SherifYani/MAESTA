@@ -1,9 +1,12 @@
 /**
  * @file PendingActions.jsx
- * @description Interactive pending actions/tasks component
+ * @description Interactive pending actions/tasks component - NO internal card wrapper
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-21
  */
 
 import { Check, Clock, AlertTriangle, Calendar } from "lucide-react";
@@ -11,11 +14,7 @@ import { useState } from "react";
 import styles from "./PendingActions.module.css";
 
 /**
- * PendingActions component
- * @param {Object} props - Component props
- * @param {Array} props.actions - Array of action objects
- * @param {Function} props.onActionComplete - Callback when action is completed
- * @returns {JSX.Element} The rendered actions list
+ * PendingActions component - renders list only, no card wrapper
  */
 const PendingActions = ({ actions = [], onActionComplete }) => {
   const [completedActions, setCompletedActions] = useState(new Set());
@@ -67,22 +66,21 @@ const PendingActions = ({ actions = [], onActionComplete }) => {
   }
 
   return (
-    <div className={styles.pendingActions}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Pending Actions</h2>
-        <div className={styles.progress}>
-          <span className={styles.progressText}>
-            {completedCount} of {totalCount} completed
-          </span>
-          <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${progressPercentage}%` }}
-            />
-          </div>
+    <div className={styles.pendingActionsContent}>
+      {/* Progress tracking at top */}
+      <div className={styles.progress}>
+        <span className={styles.progressText}>
+          {completedCount} of {totalCount} completed
+        </span>
+        <div className={styles.progressBar}>
+          <div
+            className={styles.progressFill}
+            style={{ width: `${progressPercentage}%` }}
+          />
         </div>
       </div>
 
+      {/* Actions list */}
       <div className={styles.actionsList}>
         {actions.map((action) => {
           const isCompleted = completedActions.has(action.id);

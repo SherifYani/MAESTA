@@ -1,9 +1,12 @@
 /**
  * @file RecentActivity.jsx
- * @description Recent activity feed component
+ * @description Recent activity feed component - NO internal card wrapper
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-21
  */
 
 import {
@@ -18,8 +21,6 @@ import styles from "./RecentActivity.module.css";
 
 /**
  * Get activity icon based on type
- * @param {string} type - Activity type
- * @returns {JSX.Element} Icon component
  */
 const getActivityIcon = (type) => {
   switch (type) {
@@ -40,8 +41,6 @@ const getActivityIcon = (type) => {
 
 /**
  * Format timestamp to relative time
- * @param {string} timestamp - ISO timestamp
- * @returns {string} Relative time string
  */
 const formatTime = (timestamp) => {
   const now = new Date();
@@ -55,11 +54,7 @@ const formatTime = (timestamp) => {
 };
 
 /**
- * RecentActivity component
- * @param {Object} props - Component props
- * @param {Array} props.activities - Array of activity objects
- * @param {number} [props.limit] - Maximum number of activities to show
- * @returns {JSX.Element} The rendered activity feed
+ * RecentActivity component - renders list only, no card wrapper
  */
 const RecentActivity = ({ activities = [], limit = 6 }) => {
   const displayedActivities = activities.slice(0, limit);
@@ -75,41 +70,31 @@ const RecentActivity = ({ activities = [], limit = 6 }) => {
   }
 
   return (
-    <div className={styles.recentActivity}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Recent Activity</h2>
-        <span className={styles.activityCount}>
-          {activities.length} activities
-        </span>
-      </div>
+    <div className={styles.activityList}>
+      {displayedActivities.map((activity, index) => (
+        <div key={`${activity.id || index}`} className={styles.activityItem}>
+          <div className={styles.activityIcon}>
+            {getActivityIcon(activity.type)}
+          </div>
 
-      <div className={styles.activityList}>
-        {displayedActivities.map((activity, index) => (
-          <div key={`${activity.id || index}`} className={styles.activityItem}>
-            <div className={styles.activityIcon}>
-              {getActivityIcon(activity.type)}
-            </div>
+          <div className={styles.activityContent}>
+            <p className={styles.activityText}>{activity.text}</p>
 
-            <div className={styles.activityContent}>
-              <p className={styles.activityText}>{activity.text}</p>
+            <div className={styles.activityMeta}>
+              <span className={styles.timestamp}>
+                <Clock size={12} />
+                {formatTime(activity.timestamp)}
+              </span>
 
-              <div className={styles.activityMeta}>
-                <span className={styles.timestamp}>
-                  <Clock size={12} />
-                  {formatTime(activity.timestamp)}
+              {activity.status && (
+                <span className={`${styles.status} ${styles[activity.status]}`}>
+                  {activity.status}
                 </span>
-
-                {activity.status && (
-                  <span
-                    className={`${styles.status} ${styles[activity.status]}`}>
-                    {activity.status}
-                  </span>
-                )}
-              </div>
+              )}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
 
       {activities.length > limit && (
         <button className={styles.viewAllButton}>View all activities</button>

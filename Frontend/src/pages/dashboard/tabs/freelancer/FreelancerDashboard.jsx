@@ -1,63 +1,155 @@
 /**
- * @file FreelancerDashboard.jsx
- * @description Freelancer-specific dashboard with metrics, activities, and job posts
+ * @file FreelancerDashboard.jsx - Enhanced Version
+ * @description Freelancer-specific dashboard with metrics, activities, and job posts - Similar to ClientDashboard
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 3.0.0
  * @date 2025-12-19
  *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-21
  */
 
-import { useContext } from "react";
-import { DashboardContext } from "../../layout/DashboardLayout";
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
-import RecentJobPosts from "../../components/RecentJobPosts";
 import PendingActions from "../../components/PendingActions";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import Badge from "../../components/ui/Badge";
 import {
   ROLES,
-  ROLE_METRICS,
   SAMPLE_ACTIVITIES,
   SAMPLE_PENDING_ACTIONS,
   SAMPLE_JOB_POSTS,
+  EARNINGS_DATA,
+  PERFORMANCE_METRICS,
+  SKILL_ANALYSIS,
 } from "../../config/dashboard.config";
-import { Plus, TrendingUp, Award, Zap } from "lucide-react";
+import {
+  Plus,
+  TrendingUp,
+  Award,
+  Zap,
+  DollarSign,
+  Briefcase,
+  Clock,
+  Target,
+  BarChart3,
+  CheckCircle,
+  ArrowUpRight,
+  MapPin,
+  Users,
+} from "lucide-react";
 import styles from "./FreelancerDashboard.module.css";
 
 /**
- * FreelancerDashboard component
- * @returns {JSX.Element} Rendered freelancer dashboard
+ * Compact Job Post Card Component
+ */
+const CompactJobCard = ({ job, onClick }) => (
+  <div className={styles.compactJobCard} onClick={() => onClick?.(job.id)}>
+    <div className={styles.jobCardHeader}>
+      <div className={styles.jobCardTitle}>
+        <Briefcase size={16} className={styles.jobCardIcon} />
+        <h4>{job.title}</h4>
+      </div>
+      <Badge
+        variant={job.status?.toLowerCase() === "active" ? "active" : "pending"}>
+        {job.status}
+      </Badge>
+    </div>
+
+    <div className={styles.jobCardMeta}>
+      <span className={styles.jobMetaItem}>
+        {job.budget}
+      </span>
+      <span className={styles.jobMetaItem}>
+        <MapPin size={14} />
+        {job.location}
+      </span>
+      <span className={styles.jobMetaItem}>
+        <Users size={14} />
+        {job.applicants} applicants
+      </span>
+    </div>
+  </div>
+);
+
+/**
+ * Enhanced FreelancerDashboard - Similar to ClientDashboard
  */
 const FreelancerDashboard = () => {
-  const { currentRole } = useContext(DashboardContext);
-
-  // Get role-specific data
-  const metrics = ROLE_METRICS[ROLES.FREELANCER]?.metrics || [];
+  // Get all role-specific data from dashboard.config.js
   const activities = SAMPLE_ACTIVITIES[ROLES.FREELANCER] || [];
   const pendingActions = SAMPLE_PENDING_ACTIONS[ROLES.FREELANCER] || [];
   const jobPosts = SAMPLE_JOB_POSTS[ROLES.FREELANCER] || [];
+  const earningsData = EARNINGS_DATA[ROLES.FREELANCER];
+  const performanceMetrics = PERFORMANCE_METRICS[ROLES.FREELANCER];
+  const skillAnalysis = SKILL_ANALYSIS[ROLES.FREELANCER];
 
+  // Calculate earnings metrics
+  const currentMonthEarnings =
+    earningsData?.monthlyData?.[earningsData.monthlyData.length - 1]
+      ?.earnings || 3850;
+  const projectedTotal = earningsData?.totalEarnings || "$9,200";
+
+  // Calculate progress for earnings
+  const monthlyTarget = 5000; // Example monthly target
+  const earningsProgress = Math.min(
+    100,
+    Math.round((currentMonthEarnings / monthlyTarget) * 100)
+  );
+
+  // Calculate quick stats
+  const clientSatisfaction = performanceMetrics?.clientSatisfaction || 4.8;
+
+  // Quick Insights Metrics for StatsGrid
+  const quickInsightsMetrics = [
+    {
+      title: "Monthly Earnings",
+      value: `$${currentMonthEarnings.toLocaleString()}`,
+      change: "vs. last month",
+      icon: DollarSign,
+      trendType: "positive",
+      description: "Current month earnings",
+    },
+    {
+      title: "Client Satisfaction",
+      value: `${clientSatisfaction}/5`,
+      change: "from client reviews",
+      icon: Award,
+      trendType: "positive",
+      description: "Average client rating",
+    },
+    {
+      title: "On-Time Delivery",
+      value: `${performanceMetrics?.onTimeDelivery || 96}%`,
+      change: "project completion rate",
+      icon: Clock,
+      trendType: "positive",
+      description: "Projects delivered on time",
+    },
+    {
+      title: "Repeat Clients",
+      value: `${performanceMetrics?.repeatClients || 8}`,
+      change: "loyal client count",
+      icon: Users,
+      trendType: "positive",
+      description: "Returning clients",
+    },
+  ];
+
+  // Event handlers
   const handleActionToggle = (id, completed) => {
     console.log(
       `Action ${id} toggled to ${completed ? "completed" : "pending"}`
     );
-    // In a real app, you would update state or make an API call
-  };
-
-  const handleActionClick = (id) => {
-    console.log(`Action ${id} clicked`);
-    // In a real app, you would navigate or show details
   };
 
   const handleJobClick = (jobId) => {
     console.log(`Job ${jobId} clicked`);
-    // Navigate to job details
   };
 
   const handleQuickAction = (action) => {
     console.log(`Quick action: ${action}`);
-    // Handle quick action
   };
 
   return (
@@ -87,116 +179,307 @@ const FreelancerDashboard = () => {
         </div>
       </header>
 
-      {/* Metrics Section */}
-      <section className={styles.metricsSection}>
-        <StatsGrid metrics={metrics} />
+      {/* Quick Insights Section using StatsGrid */}
+      <section className={styles.quickInsightsSection}>
+        <StatsGrid metrics={quickInsightsMetrics} />
       </section>
 
-      {/* Quick Stats Cards */}
-      <div className={styles.quickStats}>
-        <Card className={styles.quickStatCard}>
-          <div className={styles.quickStatContent}>
-            <Award className={styles.quickStatIcon} />
-            <div>
-              <h3 className={styles.quickStatValue}>Top Rated</h3>
-              <p className={styles.quickStatLabel}>Platform ranking</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className={styles.quickStatCard}>
-          <div className={styles.quickStatContent}>
-            <TrendingUp className={styles.quickStatIcon} />
-            <div>
-              <h3 className={styles.quickStatValue}>98%</h3>
-              <p className={styles.quickStatLabel}>Client satisfaction</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
+      {/* Main Content Grid - 2 Column Layout */}
       <div className={styles.contentGrid}>
-        {/* Left Column */}
+        {/* Left Column - Activities, Pending Actions & Profile */}
         <div className={styles.leftColumn}>
+          {/* Recent Activity with Card Wrapper */}
           <Card
             title="Recent Activity"
             subtitle="Your latest updates and notifications"
-            className={styles.activityCard}>
-            <RecentActivity activities={activities} title="" />
+            className={styles.activityCard}
+            action={
+              <Button variant="ghost" size="small">
+                View All <ArrowUpRight size={14} />
+              </Button>
+            }>
+            <RecentActivity activities={activities} limit={5} />
           </Card>
 
+          {/* Pending Actions with Card Wrapper */}
           <Card
             title="Pending Actions"
-            subtitle="Tasks requiring your attention"
-            className={styles.actionsCard}>
+            subtitle={`${pendingActions.length} tasks requiring your attention`}
+            className={styles.actionsCard}
+            action={
+              <Badge variant="warning">{pendingActions.length} pending</Badge>
+            }>
             <PendingActions
               actions={pendingActions}
-              onActionToggle={handleActionToggle}
-              onActionClick={handleActionClick}
-              title=""
-            />
-          </Card>
-        </div>
-
-        {/* Right Column */}
-        <div className={styles.rightColumn}>
-          <Card
-            title="Recommended Jobs"
-            subtitle="Matches based on your profile"
-            footer={
-              <Button variant="ghost" size="small">
-                View All Jobs
-              </Button>
-            }
-            className={styles.jobsCard}>
-            <RecentJobPosts
-              jobs={jobPosts}
-              onJobClick={handleJobClick}
-              title=""
+              onActionComplete={handleActionToggle}
             />
           </Card>
 
-          <Card
-            title="Earnings Overview"
-            subtitle="This month's earnings and projections"
-            className={styles.earningsCard}>
-            <div className={styles.earningsContent}>
-              <div className={styles.earningsMetric}>
-                <span className={styles.earningsLabel}>Current Month</span>
-                <span className={styles.earningsValue}>$3,850</span>
-              </div>
-              <div className={styles.earningsMetric}>
-                <span className={styles.earningsLabel}>Projected Total</span>
-                <span className={styles.earningsValue}>$9,200</span>
-              </div>
-              <div className={styles.earningsProgress}>
-                <div className={styles.progressBar} style={{ width: "68%" }} />
-              </div>
-              <p className={styles.earningsNote}>
-                On track to exceed monthly target by 15%
-              </p>
-            </div>
-          </Card>
-
+          {/* Profile Completeness - Compact View */}
           <Card
             title="Profile Completeness"
             subtitle="Improve your profile visibility"
             className={styles.profileCard}>
             <div className={styles.profileContent}>
               <div className={styles.profileProgress}>
-                <div className={styles.progressCircle} data-percentage="85">
-                  <span className={styles.progressText}>85%</span>
+                <div
+                  className={styles.progressCircle}
+                  style={{
+                    "--progress-percentage": `${
+                      skillAnalysis?.matchPercentage || 85
+                    }%`,
+                  }}>
+                  <span className={styles.progressText}>
+                    {skillAnalysis?.matchPercentage || 85}%
+                  </span>
                 </div>
               </div>
               <div className={styles.profileTips}>
-                <h4 className={styles.tipsTitle}>Quick tips:</h4>
-                <ul className={styles.tipsList}>
-                  <li>Add portfolio projects</li>
-                  <li>Complete skill assessments</li>
-                  <li>Request client reviews</li>
-                </ul>
+                <div className={styles.kpiGrid}>
+                  {skillAnalysis?.recommendations ? (
+                    skillAnalysis.recommendations
+                      .slice(0, 3)
+                      .map((tip, index) => (
+                        <div key={index} className={styles.kpiItem}>
+                          <div className={styles.kpiIconWrapper}>
+                            <CheckCircle size={20} />
+                          </div>
+                          <div className={styles.kpiContent}>
+                            <span className={styles.kpiLabel}>
+                              Tip {index + 1}
+                            </span>
+                            <span className={styles.kpiValueSmall}>{tip}</span>
+                          </div>
+                        </div>
+                      ))
+                  ) : (
+                    <>
+                      <div className={styles.kpiItem}>
+                        <div className={styles.kpiIconWrapper}>
+                          <CheckCircle size={20} />
+                        </div>
+                        <div className={styles.kpiContent}>
+                          <span className={styles.kpiLabel}>Tip 1</span>
+                          <span className={styles.kpiValueSmall}>
+                            Add portfolio projects
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.kpiItem}>
+                        <div className={styles.kpiIconWrapper}>
+                          <CheckCircle size={20} />
+                        </div>
+                        <div className={styles.kpiContent}>
+                          <span className={styles.kpiLabel}>Tip 2</span>
+                          <span className={styles.kpiValueSmall}>
+                            Complete skill assessments
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.kpiItem}>
+                        <div className={styles.kpiIconWrapper}>
+                          <CheckCircle size={20} />
+                        </div>
+                        <div className={styles.kpiContent}>
+                          <span className={styles.kpiLabel}>Tip 3</span>
+                          <span className={styles.kpiValueSmall}>
+                            Request client reviews
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Column - Jobs, Earnings & Performance */}
+        <div className={styles.rightColumn}>
+          {/* Compact Job Posts */}
+          <Card
+            title="Recommended Jobs"
+            subtitle={`${jobPosts.length} matches based on your profile`}
+            className={styles.jobsCard}
+            action={
+              <Button variant="ghost" size="small">
+                View All <ArrowUpRight size={14} />
+              </Button>
+            }>
+            <div className={styles.compactJobsList}>
+              {jobPosts.slice(0, 4).map((job) => (
+                <CompactJobCard
+                  key={job.id}
+                  job={job}
+                  onClick={handleJobClick}
+                />
+              ))}
+            </div>
+          </Card>
+
+          {/* Earnings Overview - Compact View */}
+          <Card
+            title="Earnings Overview"
+            subtitle={`Monthly target: $${monthlyTarget.toLocaleString()}`}
+            className={styles.earningsCard}>
+            <div className={styles.earningsContent}>
+              <div className={styles.earningsStats}>
+                <div className={styles.earningsStat}>
+                  <span className={styles.earningsStatLabel}>This Month</span>
+                  <span className={styles.earningsStatValue}>
+                    ${currentMonthEarnings.toLocaleString()}
+                  </span>
+                </div>
+                <div className={styles.earningsStat}>
+                  <span className={styles.earningsStatLabel}>Projected</span>
+                  <span className={styles.earningsStatValue}>
+                    {typeof projectedTotal === "string"
+                      ? projectedTotal
+                      : `$${projectedTotal.toLocaleString()}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.earningsProgress}>
+                <div className={styles.earningsProgressHeader}>
+                  <span className={styles.earningsProgressLabel}>
+                    Target Progress
+                  </span>
+                  <span className={styles.earningsProgressValue}>
+                    {earningsProgress}%
+                  </span>
+                </div>
+                <div className={styles.earningsProgressBar}>
+                  <div
+                    className={styles.progressFill}
+                    style={{ width: `${earningsProgress}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.earningsInsights}>
+                <div className={styles.earningsInsight}>
+                  <DollarSign size={16} />
+                  <span>
+                    Remaining: $
+                    {(monthlyTarget - currentMonthEarnings).toLocaleString()}
+                  </span>
+                </div>
+                <div className={styles.earningsInsight}>
+                  <TrendingUp size={16} />
+                  <span>
+                    {earningsData?.changePercentage || "+12.5%"} vs last month
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Performance Metrics - Compact View */}
+          <Card
+            title="Performance Metrics"
+            subtitle="Your freelancer success indicators"
+            className={styles.metricsCard}>
+            <div className={styles.kpiGrid}>
+              {performanceMetrics &&
+                Object.entries(performanceMetrics).map(([key, value]) => {
+                  const metricConfig = {
+                    projectCompletionRate: {
+                      label: "Completion",
+                      icon: CheckCircle,
+                      color: "success",
+                    },
+                    clientSatisfaction: {
+                      label: "Satisfaction",
+                      icon: Award,
+                      color: "success",
+                    },
+                    onTimeDelivery: {
+                      label: "On-Time",
+                      icon: Clock,
+                      color: "success",
+                    },
+                    repeatClients: {
+                      label: "Repeat",
+                      icon: Users,
+                      color: "warning",
+                    },
+                    proposalAcceptance: {
+                      label: "Proposals",
+                      icon: Target,
+                      color: "success",
+                    },
+                  };
+
+                  const config = metricConfig[key];
+                  if (!config) return null;
+
+                  const displayValue =
+                    key === "clientSatisfaction"
+                      ? `${value.toFixed(1)}/5`
+                      : `${value}${key === "repeatClients" ? "" : "%"}`;
+
+                  const Icon = config.icon;
+
+                  return (
+                    <div key={key} className={styles.kpiItem}>
+                      <div className={styles.kpiIconWrapper}>
+                        <Icon size={20} />
+                      </div>
+                      <div className={styles.kpiContent}>
+                        <span className={styles.kpiLabel}>{config.label}</span>
+                        <span className={styles.kpiValue}>{displayValue}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </Card>
+
+          {/* Quick Actions Panel */}
+          <Card
+            title="Quick Actions"
+            subtitle="Common freelancer tasks"
+            className={styles.quickActionsCard}>
+            <div className={styles.quickActionsList}>
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction("post-proposal")}>
+                <Briefcase size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>New Proposal</span>
+                  <span className={styles.quickActionDesc}>
+                    Submit a proposal
+                  </span>
+                </div>
+              </button>
+
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction("update-profile")}>
+                <Users size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>
+                    Update Profile
+                  </span>
+                  <span className={styles.quickActionDesc}>
+                    Enhance your profile
+                  </span>
+                </div>
+              </button>
+
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction("view-insights")}>
+                <BarChart3 size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>View Insights</span>
+                  <span className={styles.quickActionDesc}>
+                    Analytics & trends
+                  </span>
+                </div>
+              </button>
             </div>
           </Card>
         </div>

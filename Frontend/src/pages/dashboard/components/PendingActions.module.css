@@ -1,55 +1,22 @@
 /**
  * @file PendingActions.module.css
- * @description CSS Module for PendingActions component with premium design system
+ * @description CSS Module for PendingActions component - NO card container
  * @author Sherif Talaat
  * @version 2.0.0
  * @date 2025-12-19
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-20
+ * @last-modified-date 2025-12-21
  */
 
 /* ==========================================================================
-   Pending Actions Container
+   Pending Actions Content - Direct rendering, no card wrapper
    ========================================================================== */
 
-.pendingActions {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+.pendingActionsContent {
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  height: 100%;
-}
-
-.pendingActions:hover {
-  border-color: var(--color-ring);
-  box-shadow: 0 4px 16px var(--color-translucent-white-3);
-}
-
-/* ==========================================================================
-   Header Section
-   ========================================================================== */
-
-.header {
-  padding: var(--space-6);
-  border-bottom: 1px solid var(--color-border);
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-sidebar) 100%
-  );
-}
-
-.title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-foreground);
-  margin: 0 0 var(--space-4) 0;
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
+  gap: var(--space-4);
 }
 
 /* ==========================================================================
@@ -60,6 +27,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .progressText {
@@ -111,8 +80,9 @@
    ========================================================================== */
 
 .actionsList {
-  flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 /* ==========================================================================
@@ -123,18 +93,14 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
 .actionItem:hover {
   background-color: var(--color-muted);
-}
-
-.actionItem:last-child {
-  border-bottom: none;
 }
 
 .actionItem.completed {
@@ -329,7 +295,6 @@
   padding: var(--space-12) var(--space-4);
   text-align: center;
   color: var(--color-muted-foreground);
-  height: 100%;
 }
 
 .emptyIcon {
@@ -356,14 +321,6 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-  .header {
-    padding: var(--space-4);
-  }
-
-  .title {
-    font-size: var(--font-size-lg);
-  }
-
   .actionItem {
     padding: var(--space-3) var(--space-4);
   }
@@ -414,7 +371,6 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .pendingActions,
   .actionItem,
   .checkbox,
   .progressFill,
@@ -437,19 +393,15 @@
 
 @media (prefers-contrast: high) {
   .actionItem {
-    border-bottom: 2px solid var(--color-foreground);
-  }
-
-  .actionItem:last-child {
-    border-bottom: 2px solid var(--color-foreground);
-  }
-
-  .header {
-    border-bottom: 2px solid var(--color-foreground);
+    border: 1px solid var(--color-foreground);
   }
 
   .checkbox {
     border: 2px solid var(--color-foreground);
+  }
+
+  .progress {
+    border-bottom: 2px solid var(--color-foreground);
   }
 }
 

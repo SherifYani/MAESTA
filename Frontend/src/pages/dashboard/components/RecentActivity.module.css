@@ -1,67 +1,16 @@
 /**
  * @file RecentActivity.module.css
- * @description CSS Module for RecentActivity component with premium design system
+ * @description CSS Module for RecentActivity component - NO card container
  * @author Sherif Talaat
  * @version 2.0.0
  * @date 2025-12-19
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-20
+ * @last-modified-date 2025-12-21
  */
 
 /* ==========================================================================
-   Recent Activity Container
-   ========================================================================== */
-
-.recentActivity {
-  background-color: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.recentActivity:hover {
-  border-color: var(--color-ring);
-  box-shadow: 0 4px 16px var(--color-translucent-white-3);
-}
-
-/* ==========================================================================
-   Header Section
-   ========================================================================== */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-foreground);
-  margin: 0;
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
-}
-
-.activityCount {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-muted-foreground);
-  background-color: var(--color-muted);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-full);
-}
-
-/* ==========================================================================
-   Activity List
+   Activity List - Direct rendering, no card wrapper
    ========================================================================== */
 
 .activityList {
@@ -237,7 +186,6 @@
   padding: var(--space-12) var(--space-4);
   text-align: center;
   color: var(--color-muted-foreground);
-  height: 100%;
 }
 
 .emptyIcon {
@@ -264,19 +212,6 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-  .recentActivity {
-    padding: var(--space-4);
-  }
-
-  .header {
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-3);
-  }
-
-  .title {
-    font-size: var(--font-size-lg);
-  }
-
   .activityItem {
     padding: var(--space-2);
   }
@@ -293,10 +228,6 @@
 }
 
 @media (max-width: 480px) {
-  .recentActivity {
-    padding: var(--space-3);
-  }
-
   .activityMeta {
     flex-direction: column;
     align-items: flex-start;
@@ -313,7 +244,6 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .recentActivity,
   .activityItem,
   .viewAllButton {
     transition: none;
@@ -329,14 +259,6 @@
 }
 
 @media (prefers-contrast: high) {
-  .recentActivity {
-    border: 2px solid var(--color-foreground);
-  }
-
-  .header {
-    border-bottom: 2px solid var(--color-foreground);
-  }
-
   .activityIcon {
     border: 2px solid var(--color-foreground);
   }
@@ -351,11 +273,6 @@
    ========================================================================== */
 
 @media print {
-  .recentActivity {
-    border: 1px solid #000;
-    box-shadow: none !important;
-  }
-
   .activityItem:hover {
     background-color: transparent !important;
     transform: none !important;

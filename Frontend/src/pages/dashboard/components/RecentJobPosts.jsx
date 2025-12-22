@@ -1,115 +1,239 @@
 /**
  * @file RecentJobPosts.jsx
- * @description Recent job posts component for dashboard
+ * @description Component for displaying recent job posts with design system compliance
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 3.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
  */
 
-import { DollarSign, MapPin, Clock, Users, Briefcase } from "lucide-react";
+import {
+  Briefcase,
+  MapPin,
+  DollarSign,
+  Clock,
+  Users,
+  CheckCircle,
+} from "lucide-react";
 import styles from "./RecentJobPosts.module.css";
 
 /**
- * Get status badge class based on status
- * @param {string} status - Job status
- * @returns {string} CSS class name
- */
-const getStatusClass = (status) => {
-  switch (status?.toLowerCase()) {
-    case "active":
-      return styles.statusActive;
-    case "pending":
-      return styles.statusPending;
-    case "closed":
-      return styles.statusClosed;
-    case "draft":
-      return styles.statusDraft;
-    default:
-      return styles.statusDefault;
-  }
-};
-
-/**
  * RecentJobPosts component
- * @param {Object} props - Component props
- * @param {Array} props.jobs - Array of job post objects
- * @returns {JSX.Element} The rendered job posts
+ * @param {Object} props
+ * @param {Array} props.jobs - Array of job objects
+ * @param {Function} props.onJobClick - Function to handle job click
+ * @param {string} props.title - Optional custom title
+ * @returns {JSX.Element} Rendered job posts list
  */
-const RecentJobPosts = ({ jobs = [] }) => {
-  if (jobs.length === 0) {
+const RecentJobPosts = ({
+  jobs = [],
+  onJobClick,
+  title = "Recent Job Posts",
+}) => {
+  const handleJobClick = (jobId) => {
+    if (onJobClick) {
+      onJobClick(jobId);
+    }
+  };
+
+  // Get status configuration with design system colors
+  const getStatusConfig = (status) => {
+    const configs = {
+      active: {
+        label: "Active",
+        color: "var(--color-primary)",
+        bgColor: "var(--color-light-pink)",
+        icon: CheckCircle,
+      },
+      draft: {
+        label: "Draft",
+        color: "var(--color-muted-foreground)",
+        bgColor: "var(--color-muted)",
+        icon: Briefcase,
+      },
+      pending: {
+        label: "Pending",
+        color: "var(--color-warning)",
+        bgColor: "var(--color-warning-light)",
+        icon: Clock,
+      },
+      review: {
+        label: "In Review",
+        color: "var(--color-accent)",
+        bgColor: "var(--color-accent-light)",
+        icon: Clock,
+      },
+      applied: {
+        label: "Applied",
+        color: "var(--color-primary)",
+        bgColor: "var(--color-primary-light)",
+        icon: CheckCircle,
+      },
+      saved: {
+        label: "Saved",
+        color: "var(--color-accent-pink)",
+        bgColor: "var(--color-light-pink)",
+        icon: Briefcase,
+      },
+    };
+
+    return configs[status] || configs.active;
+  };
+
+  // Get priority badge with design system colors
+  const getPriorityBadge = (priority) => {
+    const configs = {
+      high: {
+        label: "High",
+        color: "var(--color-destructive)",
+        bgColor: "var(--color-destructive-light)",
+      },
+      medium: {
+        label: "Medium",
+        color: "var(--color-warning)",
+        bgColor: "var(--color-warning-light)",
+      },
+      low: {
+        label: "Low",
+        color: "var(--color-info)",
+        bgColor: "var(--color-info-light)",
+      },
+    };
+
+    const config = configs[priority] || configs.medium;
+
     return (
-      <div className={styles.emptyState}>
-        <Briefcase size={48} className={styles.emptyIcon} />
-        <h3>No job posts yet</h3>
-        <p>Create your first job post to get started</p>
-        <button className={styles.createJobButton}>Create Job Post</button>
+      <span
+        className={styles.priorityBadge}
+        style={{
+          color: config.color,
+          backgroundColor: config.bgColor,
+        }}>
+        {config.label}
+      </span>
+    );
+  };
+
+  if (!jobs || jobs.length === 0) {
+    return (
+      <div className={styles.recentJobPosts}>
+        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.noJobs}>
+          <Briefcase className={styles.noJobsIcon} />
+          <p className={styles.noJobsText}>No job posts available</p>
+          <p className={styles.noJobsSubtext}>
+            Check back later for new opportunities
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className={styles.recentJobPosts}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Recent Job Posts</h2>
-        <button className={styles.viewAllButton}>View All</button>
-      </div>
+      <div className={styles.jobsList}>
+        {jobs.map((job) => {
+          const statusConfig = getStatusConfig(job.status);
+          const Icon = job.icon || Briefcase;
 
-      <div className={styles.jobsGrid}>
-        {jobs.map((job) => (
-          <div key={job.id} className={styles.jobCard}>
-            <div className={styles.jobHeader}>
-              <div className={styles.jobTitleSection}>
-                <h3 className={styles.jobTitle}>{job.title}</h3>
-                <span
-                  className={`${styles.statusBadge} ${getStatusClass(
-                    job.status
-                  )}`}>
-                  {job.status}
-                </span>
+          return (
+            <div
+              key={job.id}
+              className={styles.jobCard}
+              onClick={() => handleJobClick(job.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleJobClick(job.id);
+                  e.preventDefault();
+                }
+              }}>
+              <div className={styles.jobHeader}>
+                <div className={styles.jobIconContainer}>
+                  <Icon className={styles.jobIcon} />
+                </div>
+                <div className={styles.jobInfo}>
+                  <h4 className={styles.jobTitle}>{job.title}</h4>
+                  <div className={styles.jobMeta}>
+                    <span className={styles.companyName}>{job.company}</span>
+                    {job.location && (
+                      <>
+                        <span className={styles.metaSeparator}>•</span>
+                        <span className={styles.jobLocation}>
+                          <MapPin className={styles.metaIcon} size={14} />
+                          {job.location}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.jobStatus}>
+                  <span
+                    className={styles.statusBadge}
+                    style={{
+                      color: statusConfig.color,
+                      backgroundColor: statusConfig.bgColor,
+                    }}>
+                    <statusConfig.icon
+                      className={styles.statusIcon}
+                      size={12}
+                    />
+                    {statusConfig.label}
+                  </span>
+                  {job.priority && getPriorityBadge(job.priority)}
+                </div>
               </div>
 
-              <div className={styles.jobMeta}>
-                <span className={styles.metaItem}>
-                  <Clock size={14} />
-                  Posted {job.postedDate}
-                </span>
+              <div className={styles.jobDetails}>
+                <div className={styles.detailRow}>
+                  <div className={styles.detailItem}>
+                    <DollarSign className={styles.detailIcon} size={16} />
+                    <span className={styles.detailLabel}>Budget:</span>
+                    <span className={styles.detailValue}>{job.budget}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <Users className={styles.detailIcon} size={16} />
+                    <span className={styles.detailLabel}>Proposals:</span>
+                    <span className={styles.detailValue}>{job.proposals}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <Clock className={styles.detailIcon} size={16} />
+                    <span className={styles.detailLabel}>Posted:</span>
+                    <span className={styles.detailValue}>{job.posted}</span>
+                  </div>
+                </div>
 
-                <span className={styles.metaItem}>
-                  <Users size={14} />
-                  {job.applicants} applicants
-                </span>
+                {job.skills && job.skills.length > 0 && (
+                  <div className={styles.skillsContainer}>
+                    <div className={styles.skillsLabel}>Required Skills:</div>
+                    <div className={styles.skillsList}>
+                      {job.skills.slice(0, 3).map((skill, index) => (
+                        <span key={index} className={styles.skillTag}>
+                          {skill}
+                        </span>
+                      ))}
+                      {job.skills.length > 3 && (
+                        <span className={styles.moreSkills}>
+                          +{job.skills.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {job.duration && (
+                  <div className={styles.durationBadge}>
+                    <Clock className={styles.durationIcon} size={12} />
+                    {job.duration}
+                  </div>
+                )}
               </div>
             </div>
-
-            <div className={styles.jobDetails}>
-              <div className={styles.detailRow}>
-                <span className={styles.detailItem}>
-                  <DollarSign size={16} />
-                  {job.budget}
-                </span>
-
-                <span className={styles.detailItem}>
-                  <MapPin size={16} />
-                  {job.location}
-                </span>
-
-                <span className={styles.detailItem}>
-                  <Briefcase size={16} />
-                  {job.category}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.jobDescription}>
-              <p>{job.description}</p>
-            </div>
-
-            <div className={styles.jobActions}>
-              <button className={styles.viewButton}>View Details</button>
-              <button className={styles.editButton}>Edit Post</button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

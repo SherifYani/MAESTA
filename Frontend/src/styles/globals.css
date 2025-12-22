@@ -93,33 +93,21 @@
   --color-primary: oklch(0.145 0 0);
   --color-primary-foreground: oklch(0.94 0.005 78); /* matched to card */
 
-  --color-secondary: oklch(
-    0.76 0.01 75
-  ); /* darkened 6%, increased chroma for presence */
+  --color-secondary: oklch(0.76 0.01 75);
   --color-secondary-foreground: oklch(0.145 0 0);
 
-  --color-muted: oklch(
-    0.78 0.01 75
-  ); /* darkened 6%, increased chroma for clarity */
-  --color-muted-foreground: oklch(0.38 0 0); /* darkened for readability */
+  --color-muted: oklch(0.78 0.01 75);
+  --color-muted-foreground: oklch(0.38 0 0);
 
-  --color-accent: oklch(
-    0.8 0.02 72
-  ); /* darkened 8%, doubled chroma for confident gold tone */
+  --color-accent: oklch(0.8 0.02 72);
   --color-accent-foreground: oklch(0.145 0 0);
 
-  --color-destructive: oklch(0.92 0.1 25); /* Darkened from 0.95 */
+  --color-destructive: oklch(0.92 0.1 25);
   --color-destructive-foreground: oklch(0.4 0.2 25);
 
-  --color-border: oklch(
-    0.76 0.01 75
-  ); /* darkened 8% for definition and structure */
-  --color-input: oklch(
-    0.88 0.008 76
-  ); /* darkened 4%, increased chroma for clarity */
-  --color-ring: oklch(
-    0.54 0.02 72
-  ); /* darkened and increased chroma for focus visibility */
+  --color-border: oklch(0.76 0.01 75);
+  --color-input: oklch(0.88 0.008 76);
+  --color-ring: oklch(0.54 0.02 72);
 
   /* Chart Colors */
   --color-chart-1: oklch(0.488 0.243 264.376);
@@ -129,15 +117,13 @@
   --color-chart-5: oklch(0.645 0.246 16.439);
 
   /* Sidebar Colors - Strengthened contrast */
-  --color-sidebar: oklch(0.89 0.006 78); /* darkened 4% for definition */
+  --color-sidebar: oklch(0.89 0.006 78);
   --color-sidebar-foreground: oklch(0.145 0 0);
   --color-sidebar-primary: oklch(0.488 0.243 264.376);
   --color-sidebar-primary-foreground: oklch(0.94 0.005 78);
-  --color-sidebar-accent: oklch(0.76 0.01 75); /* darkened for structure */
+  --color-sidebar-accent: oklch(0.76 0.01 75);
   --color-sidebar-accent-foreground: oklch(0.145 0 0);
-  --color-sidebar-border: oklch(
-    0.76 0.01 75
-  ); /* darkened for clear separation */
+  --color-sidebar-border: oklch(0.76 0.01 75);
   --color-sidebar-ring: oklch(0.54 0.02 72);
 
   /* ========================================================================
@@ -146,59 +132,40 @@
      ======================================================================== */
 
   /* Primary Base Colors - Strengthened for confidence */
-  --color-primary-black: #f5f5f0; /* warmer white with slight cream tone */
+  --color-primary-black: #f5f5f0;
   --color-primary-white: #1a1a1a;
 
   /* MAESTA Metallic Accent Palette - Deeper bronze/gold for presence */
-  --color-accent-pink: #b8945f; /* deeper bronze, increased saturation */
-  --color-vivid-pink: #c9a152; /* richer gold, more confident */
-  --color-light-pink: #ede4ce; /* warmer cream, less washed out */
+  --color-accent-pink: #b8945f;
+  --color-vivid-pink: #c9a152;
+  --color-light-pink: #ede4ce;
 
   /* Radial Gradients - Increased opacity for depth */
-  --color-radial-pink-1: rgb(
-    184 148 95 / 0.12
-  ); /* doubled opacity for presence */
-  --color-radial-pink-2: rgb(201 161 82 / 0.08); /* increased for visibility */
-  --color-radial-pink-3: rgb(
-    201 161 82 / 0.05
-  ); /* increased for subtle depth */
+  --color-radial-pink-1: rgb(184 148 95 / 0.12);
+  --color-radial-pink-2: rgb(201 161 82 / 0.08);
+  --color-radial-pink-3: rgb(201 161 82 / 0.05);
 
   /* Translucent White Overlays - Adjusted for new darker base */
-  --color-translucent-white-1: rgb(
-    0 0 0 / 0.06
-  ); /* increased for layering clarity */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
   --color-translucent-white-2: rgb(0 0 0 / 0.1); /* increased for definition */
-  --color-translucent-white-3: rgb(
-    0 0 0 / 0.04
-  ); /* increased for subtle separation */
-  --color-translucent-white-4: rgb(
-    0 0 0 / 0.78
-  ); /* increased for strong overlays */
-  --color-translucent-white-5: rgb(
-    0 0 0 / 0.65
-  ); /* increased for mid-weight overlays */
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
 
   /* Translucent Black - Adjusted for stronger base colors */
-  --color-translucent-black-1: rgb(
-    255 255 255 / 0.88
-  ); /* reduced for balance */
-
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
   /* Interactive Elements - Deeper for confidence */
-  --color-select-pink: #a67c3d; /* deeper brown-gold for clarity */
-  --color-submit-pink-1: #b8945f; /* matched to accent */
-  --color-submit-pink-2: #c9a152; /* matched to vivid */
+  --color-select-pink: #a67c3d;
+  --color-submit-pink-1: #b8945f;
+  --color-submit-pink-2: #c9a152;
 
   /* Shadow & Effects - Increased opacity for depth */
-  --color-shadow-pink: rgba(184, 148, 95, 0.2); /* increased for definition */
+  --color-shadow-pink: rgba(184, 148, 95, 0.2);
   --color-transparent: transparent;
 
   /* Interactive States - Adjusted for new base values */
-  --color-input-hover: oklch(
-    0.91 0.008 76
-  ); /* darkened for visible hover state */
-  --color-accent-hover: oklch(
-    0.86 0.015 72
-  ); /* darkened for clear interaction */
+  --color-input-hover: oklch(0.91 0.008 76);
+  --color-accent-hover: oklch(0.86 0.015 72);
 }
 
 /* ==========================================================================
@@ -208,41 +175,33 @@
 
 .dark {
   /* Core UI Colors - Warmer base, reduced cold blue tones */
-  --color-background: oklch(
-    0.15 0.008 285
-  ); /* warmer hue shift from 265° to 285°, increased chroma for warmth */
-  --color-foreground: oklch(
-    0.92 0.006 80
-  ); /* slightly warmer foreground tone */
+  --color-background: oklch(0.15 0.008 285);
+  --color-foreground: oklch(0.92 0.006 80);
 
-  --color-card: oklch(0.18 0.009 285); /* warmer, more grounded surface */
+  --color-card: oklch(0.18 0.009 285);
   --color-card-foreground: oklch(0.93 0.006 80);
 
-  --color-popover: oklch(0.2 0.009 285); /* warmer elevation */
+  --color-popover: oklch(0.2 0.009 285);
   --color-popover-foreground: oklch(0.93 0.006 80);
 
-  --color-primary: oklch(0.9 0.006 80); /* warmer primary tone */
+  --color-primary: oklch(0.9 0.006 80);
   --color-primary-foreground: oklch(0.15 0.008 285);
 
-  --color-secondary: oklch(
-    0.26 0.008 285
-  ); /* warmer, more bronze-toned secondary */
+  --color-secondary: oklch(0.26 0.008 285);
   --color-secondary-foreground: oklch(0.92 0.006 80);
 
-  --color-muted: oklch(0.29 0.008 285); /* warmer muted tone, grounded */
-  --color-muted-foreground: oklch(
-    0.68 0.006 80
-  ); /* darkened for better hierarchy */
+  --color-muted: oklch(0.29 0.008 285);
+  --color-muted-foreground: oklch(0.68 0.006 80);
 
-  --color-accent: oklch(0.26 0.008 285); /* warmer accent base, not cold gray */
+  --color-accent: oklch(0.26 0.008 285);
   --color-accent-foreground: oklch(0.92 0.006 80);
 
-  --color-destructive: oklch(0.4 0.1 25); /* Lightened from 0.35 */
+  --color-destructive: oklch(0.4 0.1 25);
   --color-destructive-foreground: oklch(0.93 0.1 25);
 
-  --color-border: oklch(0.29 0.008 285); /* warmer borders for definition */
-  --color-input: oklch(0.22 0.008 285); /* warmer input fields */
-  --color-ring: oklch(0.58 0.008 78); /* warmer focus ring, bronze-toned */
+  --color-border: oklch(0.29 0.008 285);
+  --color-input: oklch(0.22 0.008 285);
+  --color-ring: oklch(0.58 0.008 78);
 
   /* Chart Colors - Enhanced visibility in dark mode */
   --color-chart-1: oklch(0.72 0.22 264.376);
@@ -252,13 +211,13 @@
   --color-chart-5: oklch(0.72 0.23 16.439);
 
   /* Sidebar Colors - Warmer, more grounded */
-  --color-sidebar: oklch(0.17 0.008 285); /* warmer sidebar base */
+  --color-sidebar: oklch(0.17 0.008 285);
   --color-sidebar-foreground: oklch(0.92 0.006 80);
   --color-sidebar-primary: oklch(0.72 0.22 264.376);
   --color-sidebar-primary-foreground: oklch(0.17 0.008 285);
-  --color-sidebar-accent: oklch(0.26 0.008 285); /* warmer accent areas */
+  --color-sidebar-accent: oklch(0.26 0.008 285);
   --color-sidebar-accent-foreground: oklch(0.92 0.006 80);
-  --color-sidebar-border: oklch(0.29 0.008 285); /* warmer borders */
+  --color-sidebar-border: oklch(0.29 0.008 285);
   --color-sidebar-ring: oklch(0.58 0.008 78);
 
   /* ========================================================================
@@ -267,49 +226,49 @@
      ======================================================================== */
 
   /* Primary Base Colors - Deep warm tones, not cold black */
-  --color-primary-black: #0d0d0e; /* slightly warmer than pure black */
+  --color-primary-black: #0d0d0e;
   --color-primary-white: #f5f5f7;
 
   /* MAESTA Metallic Accent Palette - Warm bronze/copper instead of silver */
-  --color-accent-pink: #9d866f; /* warm bronze/taupe, replaces cold silver */
-  --color-vivid-pink: #b39a7e; /* deeper warm metallic, replaces bright silver */
-  --color-light-pink: #2d2a26; /* warm deep graphite, replaces cold gray */
+  --color-accent-pink: #9d866f;
+  --color-vivid-pink: #b39a7e;
+  --color-light-pink: #2d2a26;
 
   /* Radial Gradients - Warm bronze glow instead of silver */
   --color-radial-pink-1: rgb(
     157 134 111 / 0.14
   ); /* warm bronze glow, increased opacity */
-  --color-radial-pink-2: rgb(179 154 126 / 0.1); /* warm metallic glow */
-  --color-radial-pink-3: rgb(179 154 126 / 0.06); /* subtle warm depth */
+  --color-radial-pink-2: rgb(179 154 126 / 0.1);
+  --color-radial-pink-3: rgb(179 154 126 / 0.06);
 
   /* Translucent White Overlays - Reduced for eye comfort in dark mode */
-  --color-translucent-white-1: rgba(255, 255, 255, 0.07); /* reduced glare */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
   --color-translucent-white-2: rgba(255, 255, 255, 0.85);
-  --color-translucent-white-3: rgb(255 255 255 / 0.04); /* reduced reflection */
+  --color-translucent-white-3: rgb(255 255 255 / 0.04);
   --color-translucent-white-4: rgba(255, 255, 255, 0.92);
   --color-translucent-white-5: rgba(255, 255, 255, 0.75);
 
   /* Translucent Black - Warmer overlay for depth */
-  --color-translucent-black-1: rgba(13, 13, 14, 0.42); /* warmer dark overlay */
+  --color-translucent-black-1: rgba(13, 13, 14, 0.42);
 
   /* Interactive Elements - Warm bronze tones, not cold gray */
-  --color-select-pink: #887561; /* warm bronze for selection, replaces cold gray */
-  --color-submit-pink-1: #9d866f; /* warm metallic button */
-  --color-submit-pink-2: #b39a7e; /* warm accent button */
+  --color-select-pink: #887561;
+  --color-submit-pink-1: #9d866f;
+  --color-submit-pink-2: #b39a7e;
 
   /* Shadow & Effects - Warm shadows for cohesion */
-  --color-shadow-pink: rgba(157, 134, 111, 0.28); /* warm bronze shadow */
+  --color-shadow-pink: rgba(157, 134, 111, 0.28);
 
   /* Interactive States - Warmer hover states */
-  --color-input-hover: oklch(0.24 0.009 285); /* warmer hover */
-  --color-accent-hover: oklch(0.31 0.009 285); /* warmer, more visible hover */
+  --color-input-hover: oklch(0.24 0.009 285);
+  --color-accent-hover: oklch(0.31 0.009 285);
 
   /* Dark theme gradients - Warmer progression */
   --gradient-registration: linear-gradient(
     135deg,
     var(--color-primary-black) 0%,
     oklch(0.15 0.008 285) 30%,
-    /* warmer stops throughout */ oklch(0.18 0.009 285) 60%,
+    oklch(0.18 0.009 285) 60%,
     oklch(0.15 0.008 285) 80%,
     var(--color-primary-black) 100%
   );
@@ -318,7 +277,7 @@
     135deg,
     var(--color-primary-black) 0%,
     oklch(0.15 0.008 285) 25%,
-    /* warmer gradient progression */ oklch(0.22 0.008 285) 40%,
+    oklch(0.22 0.008 285) 40%,
     oklch(0.15 0.008 285) 60%,
     var(--color-primary-black) 100%
   );

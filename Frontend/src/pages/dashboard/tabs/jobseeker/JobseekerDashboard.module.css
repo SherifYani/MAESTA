@@ -1,12 +1,12 @@
 /**
- * @file JobseekerDashboard.module.css
- * @description CSS Module for JobseekerDashboard component with premium design system
+ * @file JobseekerDashboard.module.css - Enhanced Version
+ * @description CSS Module for JobseekerDashboard component with similar styling to ClientDashboard
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 3.0.0
  * @date 2025-12-19
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-20
+ * @last-modified-date 2025-12-21
  */
 
 /* ==========================================================================
@@ -18,6 +18,18 @@
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
@@ -65,70 +77,15 @@
    ========================================================================== */
 
 .metricsSection {
+  margin-bottom: var(--space-6);
+}
+
+.quickInsightsSection {
   margin-bottom: var(--space-8);
 }
 
 /* ==========================================================================
-   Quick Stats Cards
-   ========================================================================== */
-
-.quickStats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.quickStatCard {
-  padding: var(--space-4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.quickStatCard:hover {
-  border-color: var(--color-ring);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--color-translucent-white-3);
-}
-
-.quickStatContent {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.quickStatIcon {
-  width: 48px;
-  height: 48px;
-  color: var(--color-accent-pink);
-  flex-shrink: 0;
-  padding: var(--space-2);
-  background: linear-gradient(
-    135deg,
-    var(--color-radial-pink-1),
-    var(--color-radial-pink-2)
-  );
-  border-radius: var(--radius-lg);
-}
-
-.quickStatValue {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-foreground);
-  margin: 0 0 var(--space-1) 0;
-  line-height: 1;
-}
-
-.quickStatLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-muted-foreground);
-  margin: 0;
-  line-height: var(--line-height-tight);
-  font-weight: var(--font-weight-medium);
-}
-
-/* ==========================================================================
-   Content Grid Layout
+   Content Grid Layout - 2 Column
    ========================================================================== */
 
 .contentGrid {
@@ -136,14 +93,10 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
   margin-top: var(--space-6);
+  align-items: start;
 }
 
-.leftColumn {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
+.leftColumn,
 .rightColumn {
   display: flex;
   flex-direction: column;
@@ -151,112 +104,268 @@
 }
 
 /* ==========================================================================
-   Dashboard Cards
+   Dashboard Cards - Fixed Height Issues
    ========================================================================== */
 
 .activityCard,
 .actionsCard,
 .jobsCard,
 .statusCard,
-.skillsCard {
-  height: 100%;
+.skillsCard,
+.metricsCard,
+.quickActionsCard {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: fit-content;
+}
+
+.activityCard {
+  min-height: 280px;
+}
+
+.actionsCard {
+  min-height: 320px;
+}
+
+.statusCard {
+  min-height: 200px;
+}
+
+.skillsCard {
+  min-height: 240px;
+}
+
+.jobsCard {
+  min-height: 260px;
+}
+
+.metricsCard {
+  height: 200px;
+}
+
+.quickActionsCard {
+  height: 180px;
 }
 
 .activityCard:hover,
 .actionsCard:hover,
 .jobsCard:hover,
 .statusCard:hover,
-.skillsCard:hover {
+.skillsCard:hover,
+.metricsCard:hover,
+.quickActionsCard:hover {
   border-color: var(--color-ring);
-  box-shadow: 0 4px 12px var(--color-translucent-white-3);
+  box-shadow: 0 4px 16px var(--color-translucent-white-3);
 }
 
 /* ==========================================================================
-   Application Status Card
+   Compact Job Posts
    ========================================================================== */
 
-.statusContent {
+.compactJobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   padding: var(--space-2) 0;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.statusItem {
+.compactJobsList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.compactJobsList::-webkit-scrollbar-track {
+  background: var(--color-muted);
+}
+
+.compactJobsList::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.compactJobCard {
+  width: 99%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.compactJobCard:hover {
+  background-color: var(--color-sidebar);
+  border-color: var(--color-accent-pink);
+  transform: translateX(5px);
+}
+
+.jobCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.2s ease;
+  margin-bottom: var(--space-2);
+  gap: var(--space-2);
 }
 
-.statusItem:hover {
-  background-color: var(--color-muted);
-  margin: 0 calc(-1 * var(--space-4));
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+.jobCardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
 }
 
-.statusItem:last-child {
-  border-bottom: none;
-}
-
-.statusLabel {
+.jobCardTitle h4 {
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-foreground);
-  font-weight: var(--font-weight-medium);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.statusCount {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+.jobCardIcon {
   color: var(--color-accent-pink);
-  background-color: var(--color-radial-pink-1);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  min-width: 48px;
-  text-align: center;
-  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.jobCardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.jobMetaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.jobMetaItem svg {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
-   Skill Development Card
+   KPI Grid
    ========================================================================== */
 
-.skillsContent {
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  height: 100%;
+}
+
+.kpiItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s ease;
+}
+
+.kpiItem:hover {
+  background-color: var(--color-sidebar);
+  transform: translateX(4px);
+}
+
+.kpiIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiIconWrapper svg {
+  color: var(--color-accent-pink);
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.kpiLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpiValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Skills Development Card
+   ========================================================================== */
+
+.skillsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
   padding: var(--space-2) 0;
 }
 
 .skillItem {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.2s ease;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s ease;
 }
 
 .skillItem:hover {
-  background-color: var(--color-muted);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  background-color: var(--color-sidebar);
+  transform: translateX(4px);
 }
 
-.skillItem:last-child {
-  margin-bottom: 0;
-  border-bottom: none;
+.skillHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .skillLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-foreground);
   font-weight: var(--font-weight-medium);
-  min-width: 140px;
+  color: var(--color-foreground);
+}
+
+.skillPercentage {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
 }
 
 .skillProgress {
-  flex: 1;
-  height: 8px;
+  height: 6px;
   background-color: var(--color-muted);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -291,15 +400,7 @@
   animation: shimmer 2s infinite;
 }
 
-.skillPercentage {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-pink);
-  min-width: 48px;
-  text-align: right;
-}
-
-/* Skill Level Color Variations - Using Design System Colors */
+/* Skill Level Color Variations */
 .skillItem[data-skill-level="expert"] .skillFill {
   background: linear-gradient(
     90deg,
@@ -328,17 +429,93 @@
   background: linear-gradient(90deg, var(--color-chart-5), var(--color-muted));
 }
 
+.skillLevel {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-1);
+}
+
+/* ==========================================================================
+   Quick Actions Panel
+   ========================================================================== */
+
+.quickActionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  height: 100%;
+}
+
+.quickActionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  flex: 1;
+}
+
+.quickActionItem:hover {
+  background-color: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.quickActionItem svg {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+.quickActionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.quickActionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.quickActionDesc {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
 
-@media (max-width: 1280px) {
-  .jobseekerDashboard {
-    padding: var(--space-4);
+@media (max-width: 1200px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 
-  .contentGrid {
+  .leftColumn,
+  .rightColumn {
     gap: var(--space-4);
+  }
+
+  /* Reset heights on mobile */
+  .activityCard,
+  .actionsCard,
+  .statusCard,
+  .skillsCard,
+  .jobsCard,
+  .metricsCard,
+  .quickActionsCard {
+    height: auto !important;
+    min-height: auto !important;
   }
 }
 
@@ -360,18 +537,8 @@
     justify-content: flex-start;
   }
 
-  .skillItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-
-  .skillProgress {
-    width: 100%;
-  }
-
-  .skillPercentage {
-    align-self: flex-end;
+  .kpiGrid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -393,11 +560,6 @@
     font-size: var(--font-size-base);
   }
 
-  .quickStats {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-  }
-
   .headerActions {
     flex-direction: column;
   }
@@ -406,23 +568,18 @@
     width: 100%;
   }
 
-  .leftColumn,
-  .rightColumn {
-    gap: var(--space-4);
+  .compactJobsList {
+    max-height: none;
   }
 
-  .statusItem {
+  .skillHeader {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-2);
+    gap: var(--space-1);
   }
 
-  .statusCount {
+  .skillPercentage {
     align-self: flex-end;
-  }
-
-  .skillLabel {
-    min-width: 120px;
   }
 }
 
@@ -439,21 +596,24 @@
     font-size: var(--font-size-sm);
   }
 
-  .quickStatValue {
-    font-size: var(--font-size-lg);
-  }
-
-  .statusCount {
+  .kpiValue {
     font-size: var(--font-size-base);
-    min-width: 40px;
   }
 
-  .skillLabel {
-    min-width: 100px;
+  .compactJobCard {
+    padding: var(--space-2);
   }
 
-  .skillPercentage {
-    min-width: 40px;
+  .jobCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jobCardMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    width: 100%;
   }
 }
 
@@ -462,32 +622,38 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .quickStatCard,
+  .jobseekerDashboard,
   .activityCard,
   .actionsCard,
-  .jobsCard,
   .statusCard,
   .skillsCard,
-  .statusItem,
+  .jobsCard,
+  .metricsCard,
+  .quickActionsCard,
+  .kpiItem,
+  .quickActionItem,
+  .compactJobCard,
   .skillItem,
   .skillFill {
     transition: none;
+    animation: none;
   }
 
-  .quickStatCard:hover,
   .activityCard:hover,
   .actionsCard:hover,
-  .jobsCard:hover,
   .statusCard:hover,
-  .skillsCard:hover {
+  .skillsCard:hover,
+  .jobsCard:hover,
+  .metricsCard:hover,
+  .quickActionsCard:hover {
     transform: none;
   }
 
-  .statusItem:hover,
+  .kpiItem:hover,
+  .quickActionItem:hover,
+  .compactJobCard:hover,
   .skillItem:hover {
-    background-color: var(--color-muted);
-    margin: 0;
-    padding: var(--space-3) 0;
+    transform: none;
   }
 
   .skillFill::after {
@@ -500,12 +666,12 @@
     border-bottom: 2px solid var(--color-foreground);
   }
 
-  .statusItem,
+  .kpiItem,
   .skillItem {
-    border-bottom: 2px solid var(--color-foreground);
+    border: 1px solid var(--color-foreground);
   }
 
-  .statusCount {
+  .quickActionItem {
     border: 2px solid var(--color-foreground);
   }
 }
