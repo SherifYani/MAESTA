@@ -2,11 +2,11 @@
  * @file dashboard.config.js
  * @description Dashboard configuration for all roles and components with complete data structure
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-19
- * 
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-20
+ * @last-modified-date 2025-12-21
  */
 
 import {
@@ -15,6 +15,7 @@ import {
   Users,
   Clock,
   Send,
+  Bookmark,
   TrendingUp,
   Activity,
   PieChart,
@@ -50,11 +51,12 @@ export const ROLES = {
   FREELANCER: "freelancer",
   COMPANY: "company",
   JOBSEEKER: "jobseeker",
+  ADMIN: "admin",
 };
 
-// ==================== EXISTING CONFIGURATIONS (UNCHANGED) ====================
+// ==================== EXISTING CONFIGURATIONS ====================
 
-// Role-specific metrics configuration (KEEPING EXISTING STRUCTURE)
+// Role-specific metrics configuration 
 export const ROLE_METRICS = {
   [ROLES.CLIENT]: {
     title: "Client Dashboard",
@@ -69,7 +71,6 @@ export const ROLE_METRICS = {
         icon: Briefcase,
         color: "var(--color-accent-pink)",
         details: "3 behind schedule",
-        // NEW FIELDS ADDED:
         progress: 75,
         targetValue: "15",
       },
@@ -82,7 +83,6 @@ export const ROLE_METRICS = {
         icon: DollarSign,
         color: "var(--color-vivid-pink)",
         details: "Monthly budget: $50k",
-        // NEW FIELDS ADDED:
         progress: 85,
         targetValue: "$50,000",
       },
@@ -95,7 +95,6 @@ export const ROLE_METRICS = {
         icon: Users,
         color: "var(--color-primary)",
         details: "2 urgent hires",
-        // NEW FIELDS ADDED:
         progress: 60,
         targetValue: "8",
       },
@@ -108,7 +107,6 @@ export const ROLE_METRICS = {
         icon: Clock,
         color: "var(--color-accent)",
         details: "Industry avg: 6h",
-        // NEW FIELDS ADDED:
         progress: 70,
         targetValue: "3h",
       },
@@ -276,9 +274,59 @@ export const ROLE_METRICS = {
       },
     ],
   },
+  [ROLES.ADMIN]: {
+    title: "Admin Dashboard",
+    description: "System administration and management",
+    metrics: [
+      {
+        id: "totalUsers",
+        label: "Total Users",
+        value: "1,248",
+        change: "+124",
+        trend: "up",
+        icon: Users,
+        color: "var(--color-accent-pink)",
+        progress: 85,
+        targetValue: "1,500",
+      },
+      {
+        id: "activeJobs",
+        label: "Active Jobs",
+        value: "342",
+        change: "+28",
+        trend: "up",
+        icon: Briefcase,
+        color: "var(--color-vivid-pink)",
+        progress: 68,
+        targetValue: "500",
+      },
+      {
+        id: "pendingReviews",
+        label: "Pending Reviews",
+        value: "18",
+        change: "-5",
+        trend: "down",
+        icon: AlertCircle,
+        color: "var(--color-primary)",
+        progress: 25,
+        targetValue: "0",
+      },
+      {
+        id: "revenue",
+        label: "Revenue",
+        value: "$12,580",
+        change: "+15.2%",
+        trend: "up",
+        icon: DollarSign,
+        color: "var(--color-accent)",
+        progress: 75,
+        targetValue: "$15,000",
+      },
+    ],
+  },
 };
 
-// Sample activity data for RecentActivity component (ENHANCED VERSION)
+// Sample activity data for RecentActivity component
 export const SAMPLE_ACTIVITIES = {
   [ROLES.CLIENT]: [
     {
@@ -505,9 +553,34 @@ export const SAMPLE_ACTIVITIES = {
       category: "Recommendation",
     },
   ],
+  [ROLES.ADMIN]: [
+    {
+      id: 1,
+      type: "user",
+      description: "New user registered: John Doe",
+      time: "10 minutes ago",
+      user: "system",
+      read: false,
+      title: "New User Registration",
+      timestamp: "10 minutes ago",
+      icon: UserPlus,
+      category: "Users",
+    },
+    {
+      id: 2,
+      type: "job",
+      description: "New job posted: Senior Developer at TechCorp",
+      time: "1 hour ago",
+      read: false,
+      title: "New Job Post",
+      timestamp: "1 hour ago",
+      icon: Briefcase,
+      category: "Jobs",
+    },
+  ],
 };
 
-// Sample pending actions for PendingActions component (ENHANCED VERSION)
+// Sample pending actions for PendingActions component
 export const SAMPLE_PENDING_ACTIONS = {
   [ROLES.CLIENT]: [
     {
@@ -682,7 +755,7 @@ export const SAMPLE_PENDING_ACTIONS = {
   ],
 };
 
-// Sample job posts for RecentJobPosts component (ENHANCED VERSION)
+// Sample job posts for RecentJobPosts component
 export const SAMPLE_JOB_POSTS = {
   [ROLES.CLIENT]: [
     {
@@ -836,7 +909,7 @@ export const SAMPLE_JOB_POSTS = {
   ],
 };
 
-// ==================== NEW DATA STRUCTURES (ADDED WITHOUT CHANGING EXISTING) ====================
+// ==================== NEW DATA STRUCTURES ====================
 
 /**
  * NEW: Earnings data for freelancer and client dashboards
@@ -1136,9 +1209,8 @@ export const METRIC_COLORS = {
   },
 };
 
-// ==================== EXISTING NAVIGATION (UNCHANGED) ====================
+// ==================== EXISTING NAVIGATION ====================
 
-// Navigation configuration for each role (EXISTING - UNCHANGED)
 export const ROLE_NAVIGATION = {
   [ROLES.CLIENT]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
@@ -1163,19 +1235,69 @@ export const ROLE_NAVIGATION = {
   ],
   [ROLES.JOBSEEKER]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    { id: "jobs", label: "Jobs", icon: Briefcase, path: "/jobs" },
+    // {
+    //   id: "profile",
+    //   label: "Profile",
+    //   icon: UserPlus,
+    //   path: "/dashboard/profile",
+    // },
+    {
+      id: "saved-jobs",
+      label: "Saved Jobs",
+      icon: Bookmark,
+      path: "/dashboard/saved-jobs",
+    },
     {
       id: "applications",
       label: "Applications",
       icon: FolderOpen,
-      path: "/applications",
+      path: "/dashboard/applications",
     },
-    { id: "profile", label: "Profile", icon: UserPlus, path: "/profile" },
-    { id: "skills", label: "Skills", icon: Award, path: "/skills" },
+    {
+      id: "recommended-jobs",
+      label: "Recommended Jobs",
+      icon: Briefcase,
+      path: "/dashboard/recommended-jobs",
+    },
+    { id: "skills", label: "Skills", icon: Award, path: "/dashboard/skills" },
+  ],
+  [ROLES.ADMIN]: [
+    { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
+    {
+      id: "users",
+      label: "User Management",
+      icon: Users,
+      path: "/admin/users",
+    },
+    {
+      id: "jobs",
+      label: "Job Management",
+      icon: Briefcase,
+      path: "/admin/jobs",
+    },
+    {
+      id: "content",
+      label: "Content Moderation",
+      icon: FileText,
+      path: "/admin/content",
+    },
+    {
+      id: "payments",
+      label: "Payments",
+      icon: DollarSign,
+      path: "/admin/payments",
+    },
+    { id: "reports", label: "Reports", icon: BarChart, path: "/admin/reports" },
+    {
+      id: "staff",
+      label: "Staff Management",
+      icon: UserPlus,
+      path: "/admin/staff",
+    },
   ],
 };
 
-// Header navigation (common for all roles) (EXISTING - UNCHANGED)
+// Header navigation (common for all roles)
 export const HEADER_NAVIGATION = [
   { id: "notifications", icon: Bell, label: "Notifications", hasBadge: true },
   { id: "help", icon: HelpCircle, label: "Help & Support" },
@@ -1183,9 +1305,9 @@ export const HEADER_NAVIGATION = [
   { id: "logout", icon: LogOut, label: "Logout" },
 ];
 
-// ==================== EXISTING THEME & VISIBILITY (UNCHANGED) ====================
+// ==================== EXISTING THEME & VISIBILITY ====================
 
-// Theme settings (EXISTING - UNCHANGED)
+// Theme settings 
 export const THEME_SETTINGS = {
   light: {
     primaryColor: "var(--color-primary)",
@@ -1199,7 +1321,7 @@ export const THEME_SETTINGS = {
   },
 };
 
-// Component visibility configuration by role (EXISTING - UNCHANGED)
+// Component visibility configuration by role
 export const COMPONENT_VISIBILITY = {
   [ROLES.CLIENT]: {
     showMetrics: true,
@@ -1237,9 +1359,19 @@ export const COMPONENT_VISIBILITY = {
     showApplications: true,
     showTeamActivity: false,
   },
+  [ROLES.ADMIN]: {
+    showMetrics: true,
+    showRecentActivity: true,
+    showRecentJobPosts: false, // Admins don't see job posts
+    showPendingActions: true,
+    showEarnings: false,
+    showApplications: false,
+    showTeamActivity: false,
+    showAdminControls: true,
+  },
 };
 
-// ==================== UTILITY FUNCTIONS (NEW) ====================
+// ==================== UTILITY FUNCTIONS ====================
 
 /**
  * Get complete dashboard data for a specific role
@@ -1248,7 +1380,7 @@ export const COMPONENT_VISIBILITY = {
  */
 export const getCompleteDashboardData = (role) => {
   return {
-    // Existing data (unchanged variable names)
+    // Existing data 
     metrics: ROLE_METRICS[role]?.metrics || [],
     activities: SAMPLE_ACTIVITIES[role] || [],
     pendingActions: SAMPLE_PENDING_ACTIONS[role] || [],
@@ -1294,9 +1426,9 @@ export const getRolePendingActions = (role) => {
   return SAMPLE_PENDING_ACTIONS[role] || [];
 };
 
-// ==================== EXISTING DEFAULT DATA (UNCHANGED) ====================
+// ==================== EXISTING DEFAULT DATA ====================
 
-// Default data when no real data is available (EXISTING - UNCHANGED)
+// Default data when no real data is available
 export const DEFAULT_DATA = {
   activities: [],
   pendingActions: [],
@@ -1304,12 +1436,13 @@ export const DEFAULT_DATA = {
   metrics: [],
 };
 
-// Export role display names (EXISTING - UNCHANGED)
+// Export role display names
 export const ROLE_DISPLAY_NAMES = {
   [ROLES.CLIENT]: "Client",
   [ROLES.FREELANCER]: "Freelancer",
   [ROLES.COMPANY]: "Company",
   [ROLES.JOBSEEKER]: "Job Seeker",
+  [ROLES.ADMIN]: "Administrator",
 };
 
 // ==================== EXPORT EVERYTHING ====================

@@ -2,28 +2,23 @@
  * @file JobseekerDashboard.jsx - Enhanced Version
  * @description Jobseeker-specific dashboard with metrics, activities, and job posts - Similar to ClientDashboard
  * @author Sherif Talaat
- * @version 3.0.0
- * @date 2025-12-19
+ * @version 4.0.0
+ * @date 2025-12-23
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-21
+ * @last-modified-date 2025-12-23
+ * @changes Added SRS-required components: ProfileSummary, SavedJobs, DetailedApplications
  */
 
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
+import ProfileSummary from "./components/ProfileSummary/ProfileSummary";
+import SavedJobs from "./components/SavedJobs/SavedJobs";
+import DetailedApplications from "./components/DetailedApplications/DetailedApplications";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
-import {
-  ROLES,
-  SAMPLE_ACTIVITIES,
-  SAMPLE_PENDING_ACTIONS,
-  SAMPLE_JOB_POSTS,
-  JOB_APPLICATIONS,
-  SKILL_ANALYSIS,
-  PERFORMANCE_METRICS,
-} from "../../config/dashboard.config";
 import {
   Search,
   Target,
@@ -37,6 +32,7 @@ import {
   ArrowUpRight,
   MapPin,
   FileText,
+  Plus,
 } from "lucide-react";
 import styles from "./JobseekerDashboard.module.css";
 
@@ -57,9 +53,7 @@ const CompactJobCard = ({ job, onClick }) => (
     </div>
 
     <div className={styles.jobCardMeta}>
-      <span className={styles.jobMetaItem}>
-        {job.budget}
-      </span>
+      <span className={styles.jobMetaItem}>{job.budget}</span>
       <span className={styles.jobMetaItem}>
         <MapPin size={14} />
         {job.location}
@@ -73,132 +67,159 @@ const CompactJobCard = ({ job, onClick }) => (
 );
 
 /**
- * Enhanced JobseekerDashboard - Similar to ClientDashboard
+ * Enhanced JobseekerDashboard with SRS-required components
  */
-const JobseekerDashboard = () => {
-  // Get all role-specific data from dashboard.config.js
-  const activities = SAMPLE_ACTIVITIES[ROLES.JOBSEEKER] || [];
-  const pendingActions = SAMPLE_PENDING_ACTIONS[ROLES.JOBSEEKER] || [];
-  const jobPosts = SAMPLE_JOB_POSTS[ROLES.JOBSEEKER] || [];
-  const jobApplications = JOB_APPLICATIONS[ROLES.JOBSEEKER] || [];
-  const skillAnalysis = SKILL_ANALYSIS[ROLES.JOBSEEKER];
-  const performanceMetrics = PERFORMANCE_METRICS[ROLES.JOBSEEKER];
+const JobseekerDashboard = ({ data }) => {
+  // Get all role-specific data from props
+  const activities = data?.activities || [];
+  const pendingActions = data?.pendingActions || [];
+  const recentJobPosts = data?.recentJobPosts || [];
+  const jobApplications = data?.jobApplications || [];
+  const skillAnalysis = data?.skillAnalysis || {};
+  const performanceMetrics = data?.performanceMetrics || {};
+  const metrics = data?.metrics || [];
 
-  // Calculate application status counts
-  const getApplicationStatusCounts = () => {
+  // Create user data for ProfileSummary from available data
+  const userData = {
+    name: "John Doe", // Would come from user profile in real app
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    location: "New York, NY",
+    avatar: null,
+    completionPercentage: skillAnalysis?.matchPercentage || 78,
+    title: "Senior Frontend Developer",
+    status: "active",
+    skills: skillAnalysis?.matchedSkills || [
+      "React",
+      "TypeScript",
+      "CSS",
+      "Git",
+    ],
+    verified: true,
+  };
+
+  // Create saved jobs data (would come from backend in real app)
+  const savedJobsData = [
+    {
+      id: 1,
+      title: "Senior Frontend Developer",
+      company: "TechCorp",
+      location: "Remote",
+      salary: "$120,000 - $150,000",
+      dateSaved: "2024-01-15",
+      jobType: "Full-time",
+      status: "active",
+      matchScore: skillAnalysis?.matchPercentage || 92,
+    },
+    {
+      id: 2,
+      title: "UI/UX Designer",
+      company: "CreativeStudio",
+      location: "New York, NY",
+      salary: "$90,000 - $110,000",
+      dateSaved: "2024-01-12",
+      jobType: "Full-time",
+      status: "active",
+      matchScore: 85,
+    },
+    {
+      id: 3,
+      title: "React Native Developer",
+      company: "MobileFirst",
+      location: "San Francisco, CA",
+      salary: "$110,000 - $130,000",
+      dateSaved: "2024-01-10",
+      jobType: "Contract",
+      status: "expired",
+      matchScore: 78,
+    },
+  ];
+
+  // Calculate application status counts for DetailedApplications
+  const calculateApplicationStats = () => {
     if (jobApplications.length > 0) {
-      const counts = {
-        submitted: 0,
-        underReview: 0,
-        interview: 0,
-        offers: 0,
+      const stats = {
+        total: jobApplications.length,
+        underReview: jobApplications.filter((app) => app.status === "applied")
+          .length,
+        interview: jobApplications.filter((app) => app.status === "interview")
+          .length,
+        offers: jobApplications.filter((app) => app.status === "offer").length,
+        rejected: jobApplications.filter((app) => app.status === "rejected")
+          .length,
       };
-
-      jobApplications.forEach((app) => {
-        switch (app.status) {
-          case "applied":
-            counts.submitted++;
-            counts.underReview++;
-            break;
-          case "interview":
-            counts.interview++;
-            break;
-          case "offer":
-            counts.offers++;
-            break;
-          default:
-            counts.submitted++;
-        }
-      });
-
-      return counts;
+      return stats;
     }
 
-    // Fallback to original data
+    // Fallback stats
     return {
-      submitted: 15,
-      underReview: 8,
-      interview: 4,
+      total: 4,
+      underReview: 1,
+      interview: 1,
       offers: 1,
+      rejected: 1,
     };
   };
 
-  const applicationCounts = getApplicationStatusCounts();
-  const totalApplications =
-    applicationCounts.submitted +
-    applicationCounts.underReview +
-    applicationCounts.interview +
-    applicationCounts.offers;
-
-  // Calculate skill data
-  const getSkillData = () => {
-    if (skillAnalysis?.matchedSkills) {
-      const allSkills = [
-        ...(skillAnalysis.matchedSkills || []),
-        ...(skillAnalysis.missingSkills || []),
-      ];
-
-      return allSkills.slice(0, 4).map((skill, index) => ({
-        label: skill,
-        percentage: skillAnalysis.matchedSkills?.includes(skill) ? 85 : 60,
-        level: skillAnalysis.matchedSkills?.includes(skill)
-          ? "expert"
-          : "intermediate",
-      }));
-    }
-
-    // Fallback to original data
-    return [
-      { label: "React 19", percentage: 85, level: "expert" },
-      { label: "TypeScript", percentage: 70, level: "advanced" },
-      { label: "UI/UX Design", percentage: 60, level: "intermediate" },
-      { label: "Project Mgmt", percentage: 45, level: "beginner" },
-    ];
-  };
-
-  const skillData = getSkillData();
-
-  // Calculate quick stats
-  const profileMatch = skillAnalysis?.matchPercentage || 87;
+  const applicationStats = calculateApplicationStats();
 
   // Quick Insights Metrics for StatsGrid
-  const quickInsightsMetrics = [
-    {
-      title: "Total Applications",
-      value: totalApplications,
-      change: "active applications",
-      icon: FileText,
-      trendType: "positive",
-      description: "Submitted job applications",
-    },
-    {
-      title: "Interview Rate",
-      value: `${
-        Math.round((applicationCounts.interview / totalApplications) * 100) ||
-        20
-      }%`,
-      change: "of applications",
-      icon: Target,
-      trendType: "positive",
-      description: "Applications to interview",
-    },
-    {
-      title: "Profile Match",
-      value: `${profileMatch}%`,
-      change: "with job requirements",
-      icon: Award,
-      trendType: "positive",
-      description: "Job match score",
-    },
-    {
-      title: "Response Time",
-      value: `${performanceMetrics?.responseTime || "2.5"}d`,
-      change: "average response",
-      icon: Clock,
-      trendType: "positive",
-      description: "Average response time",
-    },
-  ];
+  const quickInsightsMetrics =
+    metrics.length > 0
+      ? metrics
+      : [
+          {
+            title: "Total Applications",
+            value: applicationStats.total,
+            change: "active applications",
+            icon: FileText,
+            trendType: "positive",
+            description: "Submitted job applications",
+          },
+          {
+            title: "Interview Rate",
+            value: `${
+              Math.round(
+                (applicationStats.interview / applicationStats.total) * 100
+              ) || 25
+            }%`,
+            change: "of applications",
+            icon: Target,
+            trendType: "positive",
+            description: "Applications to interview",
+          },
+          {
+            title: "Profile Match",
+            value: `${skillAnalysis?.matchPercentage || 87}%`,
+            change: "with job requirements",
+            icon: Award,
+            trendType: "positive",
+            description: "Job match score",
+          },
+          {
+            title: "Response Time",
+            value: `${performanceMetrics?.responseTime || "2.5"}d`,
+            change: "average response",
+            icon: Clock,
+            trendType: "positive",
+            description: "Average response time",
+          },
+        ];
+
+  // Skill data for Skill Development card
+  const skillData = skillAnalysis?.matchedSkills
+    ? skillAnalysis.matchedSkills.slice(0, 4).map((skill, index) => ({
+        label: skill,
+        percentage: 60 + index * 10, // Simulated progress
+        level:
+          index === 0 ? "expert" : index === 1 ? "advanced" : "intermediate",
+      }))
+    : [
+        { label: "React 19", percentage: 85, level: "expert" },
+        { label: "TypeScript", percentage: 70, level: "advanced" },
+        { label: "UI/UX Design", percentage: 60, level: "intermediate" },
+        { label: "Project Mgmt", percentage: 45, level: "beginner" },
+      ];
 
   // Event handlers
   const handleActionToggle = (id, completed) => {
@@ -213,6 +234,22 @@ const JobseekerDashboard = () => {
 
   const handleQuickAction = (action) => {
     console.log(`Quick action: ${action}`);
+  };
+
+  const handleRemoveJob = (jobId) => {
+    console.log(`Remove saved job ${jobId}`);
+  };
+
+  const handleViewJob = (jobId) => {
+    console.log(`View job details ${jobId}`);
+  };
+
+  const handleViewApplication = (applicationId) => {
+    console.log(`View application ${applicationId}`);
+  };
+
+  const handleWithdrawApplication = (applicationId) => {
+    console.log(`Withdraw application ${applicationId}`);
   };
 
   return (
@@ -242,15 +279,13 @@ const JobseekerDashboard = () => {
         </div>
       </header>
 
-      {/* Quick Insights Section using StatsGrid */}
-      <section className={styles.quickInsightsSection}>
-        <StatsGrid metrics={quickInsightsMetrics} />
-      </section>
-
-      {/* Main Content Grid - 2 Column Layout */}
+      {/* Main Content Grid - 2 Column Layout with SRS Components */}
       <div className={styles.contentGrid}>
-        {/* Left Column - Activities, Pending Actions & Application Status */}
+        {/* Left Column - Profile, Activities, & Pending Actions */}
         <div className={styles.leftColumn}>
+          {/* ProfileSummary Component (FR-701.2) */}
+          <ProfileSummary user={userData} />
+
           {/* Recent Activity with Card Wrapper */}
           <Card
             title="Recent Activity"
@@ -277,66 +312,29 @@ const JobseekerDashboard = () => {
               onActionComplete={handleActionToggle}
             />
           </Card>
-
-          {/* Application Status - Compact View */}
-          <Card
-            title="Application Status"
-            subtitle="Breakdown of your job applications"
-            className={styles.statusCard}>
-            <div className={styles.kpiGrid}>
-              {Object.entries(applicationCounts).map(
-                ([status, count], index) => {
-                  const statusConfig = {
-                    submitted: { label: "Submitted", icon: FileText },
-                    underReview: { label: "Review", icon: Clock },
-                    interview: { label: "Interview", icon: Target },
-                    offers: { label: "Offers", icon: Award },
-                  };
-
-                  const config = statusConfig[status];
-                  if (!config) return null;
-
-                  const Icon = config.icon;
-
-                  return (
-                    <div key={index} className={styles.kpiItem}>
-                      <div className={styles.kpiIconWrapper}>
-                        <Icon size={20} />
-                      </div>
-                      <div className={styles.kpiContent}>
-                        <span className={styles.kpiLabel}>{config.label}</span>
-                        <span className={styles.kpiValue}>{count}</span>
-                      </div>
-                    </div>
-                  );
-                }
-              )}
-            </div>
-          </Card>
         </div>
 
-        {/* Right Column - Jobs, Skills & Performance */}
+        {/* Right Column - Saved Jobs, Applications, & Insights */}
         <div className={styles.rightColumn}>
-          {/* Compact Job Posts */}
-          <Card
-            title="Recommended Jobs"
-            subtitle={`${jobPosts.length} matches based on your profile`}
-            className={styles.jobsCard}
-            action={
-              <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
-              </Button>
-            }>
-            <div className={styles.compactJobsList}>
-              {jobPosts.slice(0, 4).map((job) => (
-                <CompactJobCard
-                  key={job.id}
-                  job={job}
-                  onClick={handleJobClick}
-                />
-              ))}
-            </div>
-          </Card>
+          {/* SavedJobs Component (FR-701.5) */}
+          <SavedJobs
+            jobs={savedJobsData}
+            onRemoveJob={handleRemoveJob}
+            onViewJob={handleViewJob}
+          />
+
+          {/* DetailedApplications Component (FR-701.4) */}
+          <DetailedApplications
+            applications={jobApplications}
+            stats={applicationStats}
+            onViewApplication={handleViewApplication}
+            onWithdrawApplication={handleWithdrawApplication}
+          />
+
+          {/* Quick Stats Section using StatsGrid */}
+          <section className={styles.quickStatsSection}>
+            <StatsGrid metrics={quickInsightsMetrics} />
+          </section>
 
           {/* Skill Development - Compact View */}
           <Card
@@ -366,60 +364,6 @@ const JobseekerDashboard = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </Card>
-
-          {/* Performance Metrics - Compact View */}
-          <Card
-            title="Job Search Metrics"
-            subtitle="Your job search performance indicators"
-            className={styles.metricsCard}>
-            <div className={styles.kpiGrid}>
-              {performanceMetrics &&
-                Object.entries(performanceMetrics).map(([key, value]) => {
-                  const metricConfig = {
-                    responseTime: {
-                      label: "Response",
-                      icon: Clock,
-                      format: (v) => `${v}d`,
-                    },
-                    profileCompleteness: {
-                      label: "Profile",
-                      icon: CheckCircle,
-                      format: (v) => `${v}%`,
-                    },
-                    applicationSuccess: {
-                      label: "Success",
-                      icon: Target,
-                      format: (v) => `${v}%`,
-                    },
-                    interviewRate: {
-                      label: "Interview",
-                      icon: Users,
-                      format: (v) => `${v}%`,
-                    },
-                  };
-
-                  const config = metricConfig[key];
-                  if (!config) return null;
-
-                  const displayValue = config.format
-                    ? config.format(value)
-                    : value;
-                  const Icon = config.icon;
-
-                  return (
-                    <div key={key} className={styles.kpiItem}>
-                      <div className={styles.kpiIconWrapper}>
-                        <Icon size={20} />
-                      </div>
-                      <div className={styles.kpiContent}>
-                        <span className={styles.kpiLabel}>{config.label}</span>
-                        <span className={styles.kpiValue}>{displayValue}</span>
-                      </div>
-                    </div>
-                  );
-                })}
             </div>
           </Card>
 

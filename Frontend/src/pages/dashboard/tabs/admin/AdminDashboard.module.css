@@ -1,0 +1,507 @@
+/**
+ * @file AdminDashboard.module.css
+ * @description CSS Module for AdminDashboard with enhanced layout and tables
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-22
+ */
+
+/* ==========================================================================
+   Dashboard Container
+   ========================================================================== */
+
+.adminDashboard {
+  padding: var(--space-6);
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: var(--space-4);
+}
+
+/* ==========================================================================
+   Stats Section
+   ========================================================================== */
+
+.quickStatsSection {
+  margin-bottom: var(--space-8);
+}
+
+/* ==========================================================================
+   Content Grid Layout - 2 Column
+   ========================================================================== */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  align-items: start;
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ==========================================================================
+   Dashboard Cards
+   ========================================================================== */
+
+.userCard,
+.jobCard,
+.moderationCard,
+.activityCard,
+.quickActionsCard {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: fit-content;
+}
+
+.userCard {
+  min-height: 420px;
+}
+
+.jobCard {
+  min-height: 380px;
+}
+
+.moderationCard {
+  min-height: 320px;
+}
+
+.activityCard {
+  min-height: 320px;
+}
+
+.quickActionsCard {
+  min-height: 280px;
+}
+
+.userCard:hover,
+.jobCard:hover,
+.moderationCard:hover,
+.activityCard:hover,
+.quickActionsCard:hover {
+  border-color: var(--color-ring);
+  box-shadow: 0 4px 16px var(--color-translucent-white-3);
+}
+
+/* ==========================================================================
+   Admin Data Tables
+   ========================================================================== */
+
+.dataTable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tableHeader h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.tableActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tableContainer {
+  flex: 1;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.tableContainer table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.tableContainer thead {
+  background-color: var(--color-muted);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.tableContainer th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.tableContainer td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tableContainer tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.tableContainer tbody tr:hover {
+  background-color: var(--color-sidebar);
+}
+
+.tableContainer tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Action buttons in table */
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-start;
+}
+
+.actionButtons button {
+  padding: var(--space-1);
+  min-width: auto;
+}
+
+.actionButtons button:hover {
+  background-color: var(--color-muted);
+  color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Quick Admin Actions
+   ========================================================================== */
+
+.quickActionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  height: 100%;
+}
+
+.quickActionsList button {
+  justify-content: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quickActionsList button:hover {
+  background-color: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.quickActionsList svg {
+  color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Scrollbar for Table Container
+   ========================================================================== */
+
+.tableContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1400px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .leftColumn,
+  .rightColumn {
+    gap: var(--space-5);
+  }
+
+  /* Reset heights on medium screens */
+  .userCard,
+  .jobCard,
+  .moderationCard,
+  .activityCard,
+  .quickActionsCard {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .headerActions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .adminDashboard {
+    padding: var(--space-4);
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .tableActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .headerActions button {
+    width: 100%;
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .tableContainer {
+    border: none;
+    border-radius: 0;
+  }
+
+  .tableContainer table {
+    min-width: 100%;
+  }
+
+  .tableContainer th,
+  .tableContainer td {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  .actionButtons {
+    gap: var(--space-1);
+  }
+
+  .quickActionsList button {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .adminDashboard {
+    padding: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .tableContainer th {
+    font-size: var(--font-size-xs);
+    padding: var(--space-2);
+  }
+
+  .tableContainer td {
+    padding: var(--space-2);
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actionButtons button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .adminDashboard,
+  .userCard,
+  .jobCard,
+  .moderationCard,
+  .activityCard,
+  .quickActionsCard,
+  .tableContainer tbody tr,
+  .quickActionsList button {
+    transition: none;
+    animation: none;
+  }
+
+  .userCard:hover,
+  .jobCard:hover,
+  .moderationCard:hover,
+  .activityCard:hover,
+  .quickActionsCard:hover,
+  .tableContainer tbody tr:hover,
+  .quickActionsList button:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .tableHeader {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .tableContainer {
+    border: 2px solid var(--color-foreground);
+  }
+
+  .tableContainer thead {
+    background-color: var(--color-background);
+  }
+
+  .tableContainer th,
+  .tableContainer td {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .quickActionsList button {
+    border: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .adminDashboard {
+    padding: 0;
+    max-width: none;
+  }
+
+  .headerActions,
+  .tableActions,
+  .actionButtons,
+  .quickActionsList button {
+    display: none;
+  }
+
+  .tableContainer {
+    overflow: visible;
+    border: 1px solid #000;
+  }
+
+  .tableContainer table {
+    min-width: 100%;
+  }
+
+  .tableContainer th {
+    background-color: #f0f0f0 !important;
+    color: #000 !important;
+  }
+
+  .tableContainer td {
+    color: #000 !important;
+  }
+}

@@ -13,6 +13,7 @@ import {
   UserPlus,
   ChevronLeft,
   ChevronRight,
+  Shield,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
 import {
@@ -28,8 +29,9 @@ import styles from "./DashboardSidebar.module.css";
 const ROLE_SWITCHER_CONFIG = [
   { id: "client", label: "Client", icon: Briefcase },
   { id: "freelancer", label: "Freelancer", icon: UserPlus },
-  { id: "company", label: "Company", icon: Users },
+  { id: "company", label: "Employer", icon: Users },
   { id: "jobseeker", label: "Job Seeker", icon: Briefcase },
+  { id: "admin", label: "Admin", icon: Shield }, 
 ];
 
 /**

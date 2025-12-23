@@ -1,0 +1,241 @@
+/**
+ * @file SavedJobs.module.css
+ * @description Contains all styles for the SavedJobs component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-23
+ */
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-4);
+}
+
+.emptyTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-foreground);
+}
+
+.emptyDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-4) 0;
+  max-width: 300px;
+}
+
+/* Jobs List */
+.jobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.jobItem {
+  padding: var(--space-4);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jobItem:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+  transform: translateY(-1px);
+}
+
+.jobItem.expired {
+  opacity: 0.7;
+}
+
+.jobItem.expired:hover {
+  opacity: 1;
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.jobInfo {
+  flex: 1;
+}
+
+.jobTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-1) 0;
+  color: var(--color-foreground);
+}
+
+.jobCompany {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.jobActions {
+  margin-left: var(--space-2);
+}
+
+.bookmarkButton {
+  background: none;
+  border: none;
+  padding: var(--space-1);
+  cursor: pointer;
+  color: var(--color-accent-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.bookmarkButton:hover {
+  background: var(--color-muted);
+  color: var(--color-vivid-pink);
+}
+
+.bookmarkIcon {
+  fill: currentColor;
+}
+
+/* Job Details */
+.jobDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.detailIcon {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+.detailText {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+}
+
+/* Job Footer */
+.jobFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.typeBadge {
+  font-size: var(--font-size-xs);
+}
+
+.matchScore {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  margin: 0 var(--space-3);
+}
+
+.matchLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.matchValue {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent-pink);
+  min-width: 30px;
+}
+
+.matchBar {
+  flex: 1;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  max-width: 100px;
+}
+
+.matchFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.viewButton {
+  font-size: var(--font-size-xs);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .jobFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .matchScore {
+    width: 100%;
+    margin: var(--space-2) 0;
+  }
+
+  .viewButton {
+    align-self: stretch;
+  }
+
+  .jobDetails {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

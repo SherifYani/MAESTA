@@ -76,13 +76,14 @@ const CompactJobCard = ({ job, onClick }) => (
 /**
  * Enhanced CompanyDashboard - Similar to ClientDashboard
  */
-const CompanyDashboard = () => {
+const CompanyDashboard = ({ data }) => {
   // Get all role-specific data from dashboard.config.js
-  const activities = SAMPLE_ACTIVITIES[ROLES.COMPANY] || [];
-  const pendingActions = SAMPLE_PENDING_ACTIONS[ROLES.COMPANY] || [];
-  const jobPosts = SAMPLE_JOB_POSTS[ROLES.COMPANY] || [];
-  const teamData = TEAM_DATA[ROLES.COMPANY];
-  const performanceMetrics = PERFORMANCE_METRICS[ROLES.COMPANY];
+  
+  const activities = data.activities;
+  const pendingActions = data.pendingActions;
+  const jobPosts = data.recentJobPosts;
+  const teamData = data.teamData;
+  const performanceMetrics = data.performanceMetrics;
 
   // Calculate quick stats
   const totalEmployees = teamData?.totalMembers || 42;

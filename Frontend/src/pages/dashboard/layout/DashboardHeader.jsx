@@ -26,6 +26,7 @@ const DashboardHeader = () => {
       company: "Company",
       freelancer: "Freelancer",
       jobseeker: "Job Seeker",
+      admin: "Administrator",
     };
     return roleMap[role] || "Client";
   };

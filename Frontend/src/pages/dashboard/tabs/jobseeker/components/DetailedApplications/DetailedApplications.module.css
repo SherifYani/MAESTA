@@ -1,0 +1,242 @@
+/**
+ * @file DetailedApplications.module.css
+ * @description Contains all styles for the DetailedApplications component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-23
+ */
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.statsSummary {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-1);
+}
+
+.statValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+}
+
+/* Applications Table */
+.applicationsTable {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1.5fr 1fr;
+  background: var(--color-muted);
+  height: 48px;
+  align-items: center;
+  padding: 0 var(var(--space-3));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tableCell {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  padding: var(--space-2);
+}
+
+.tableBody {
+  background: var(--color-card);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1.5fr 1fr;
+  align-items: center;
+  padding: var(--space-3) var(var(--space-3));
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 72px;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background: var(--color-muted);
+}
+
+/* Job Info Cell */
+.jobInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.jobTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.companyInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.companyName {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+/* Date Info Cell */
+.dateInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dateText {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+}
+
+/* Status Cell */
+.statusBadge {
+  margin-bottom: var(--space-1);
+}
+
+.timeline {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin-top: var(--space-1);
+}
+
+/* Next Step Cell */
+.nextStep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nextStepLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.nextStepText {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Actions Cell */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.actionButton {
+  font-size: var(--font-size-xs);
+}
+
+.chevronIcon {
+  color: var(--color-muted-foreground);
+  margin-left: var(--space-2);
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-4);
+}
+
+.emptyTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-foreground);
+}
+
+.emptyDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-4) 0;
+  max-width: 300px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .applicationsTable {
+    overflow-x: auto;
+  }
+
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
+    min-width: 1000px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statsSummary {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .statItem {
+    min-width: auto;
+  }
+}

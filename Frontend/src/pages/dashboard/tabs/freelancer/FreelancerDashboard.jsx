@@ -16,15 +16,6 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import {
-  ROLES,
-  SAMPLE_ACTIVITIES,
-  SAMPLE_PENDING_ACTIONS,
-  SAMPLE_JOB_POSTS,
-  EARNINGS_DATA,
-  PERFORMANCE_METRICS,
-  SKILL_ANALYSIS,
-} from "../../config/dashboard.config";
-import {
   Plus,
   TrendingUp,
   Award,
@@ -76,14 +67,15 @@ const CompactJobCard = ({ job, onClick }) => (
 /**
  * Enhanced FreelancerDashboard - Similar to ClientDashboard
  */
-const FreelancerDashboard = () => {
+const FreelancerDashboard = ({ data }) => {
   // Get all role-specific data from dashboard.config.js
-  const activities = SAMPLE_ACTIVITIES[ROLES.FREELANCER] || [];
-  const pendingActions = SAMPLE_PENDING_ACTIONS[ROLES.FREELANCER] || [];
-  const jobPosts = SAMPLE_JOB_POSTS[ROLES.FREELANCER] || [];
-  const earningsData = EARNINGS_DATA[ROLES.FREELANCER];
-  const performanceMetrics = PERFORMANCE_METRICS[ROLES.FREELANCER];
-  const skillAnalysis = SKILL_ANALYSIS[ROLES.FREELANCER];
+
+  const activities = data.activities;
+  const pendingActions = data.pendingActions;
+  const jobPosts = data.recentJobPosts;
+  const earningsData = data.earningsData;
+  const performanceMetrics = data.performanceMetrics;
+  const skillAnalysis = data.skillAnalysis;
 
   // Calculate earnings metrics
   const currentMonthEarnings =

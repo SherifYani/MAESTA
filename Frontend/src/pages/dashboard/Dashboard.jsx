@@ -14,6 +14,7 @@ import ClientDashboard from "./tabs/client/ClientDashboard";
 import CompanyDashboard from "./tabs/company/CompanyDashboard";
 import FreelancerDashboard from "./tabs/freelancer/FreelancerDashboard";
 import JobseekerDashboard from "./tabs/jobseeker/JobseekerDashboard";
+import AdminDashboard from "./tabs/admin/AdminDashboard";
 import styles from "./dashboard.module.css";
 
 /**
@@ -33,18 +34,19 @@ const Dashboard = () => {
   const renderDashboardContent = () => {
     switch (currentRole) {
       case "client":
-        return <ClientDashboard data={dashboardData} />; // PASS DATA
+        return <ClientDashboard data={dashboardData} />;
       case "company":
         return <CompanyDashboard data={dashboardData} />;
       case "freelancer":
         return <FreelancerDashboard data={dashboardData} />;
       case "jobseeker":
         return <JobseekerDashboard data={dashboardData} />;
+      case "admin":
+        return <AdminDashboard data={dashboardData} />;
       default:
         return <ClientDashboard data={dashboardData} />;
     }
   };
-
   return (
     <div className={styles.dashboardContainer}>{renderDashboardContent()}</div>
   );

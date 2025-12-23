@@ -15,11 +15,6 @@ import Badge from "../../components/ui/Badge";
 import {
   ROLES,
   ROLE_METRICS,
-  SAMPLE_ACTIVITIES,
-  SAMPLE_PENDING_ACTIONS,
-  SAMPLE_JOB_POSTS,
-  EARNINGS_DATA,
-  PERFORMANCE_METRICS,
 } from "../../config/dashboard.config";
 import {
   Plus,
@@ -71,13 +66,13 @@ const CompactJobCard = ({ job, onClick }) => (
 /**
  * Enhanced ClientDashboard - Clean, No Nested Cards
  */
-const ClientDashboard = () => {
+const ClientDashboard = ({ data }) => {
   // Get all role-specific data from dashboard.config.js
-  const activities = SAMPLE_ACTIVITIES[ROLES.CLIENT] || [];
-  const pendingActions = SAMPLE_PENDING_ACTIONS[ROLES.CLIENT] || [];
-  const jobPosts = SAMPLE_JOB_POSTS[ROLES.CLIENT] || [];
-  const earningsData = EARNINGS_DATA[ROLES.CLIENT];
-  const performanceMetrics = PERFORMANCE_METRICS[ROLES.CLIENT];
+  const activities = data.activities;
+  const pendingActions = data.pendingActions;
+  const jobPosts = data.recentJobPosts;
+  const earningsData = data.earningsData;
+  const performanceMetrics = data.performanceMetrics;
 
   // Calculate budget data
   const budgetSpent = earningsData?.totalSpent || "$42,580";
