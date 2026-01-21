@@ -5,91 +5,17 @@
  * @date 11-12-2025
  *
  * @last-modified-by Sherif Talaat (Code Refactoring)
- * @last-modified-date 18-12-2025
+ * @last-modified-date 20-1-2026
  *
  * @changes
- * - Replaced all hard-coded color values with CSS variables from globals.css
- * - Aligned with MAESTA bronze/champagne gold color palette
- * - Maintained existing layout, spacing, and BEM structure
- * - Used chart colors (--color-chart-1 through --color-chart-5) for semantic indicators:
- *   • chart-1 (blue-purple): Intermediate/In-progress/HR Manager
- *   • chart-2 (green): Expert/Open/Verified
- *   • chart-3 (yellow-green): Rating badges
- *   • chart-4 (purple): Applied status
- *   • chart-5 (orange-red): Admin role/Critical items
- * - Main brand colors (bronze/gold) reserved for primary UI elements
+ * - removed the Styles for Navigation section 
+ * - removed the background styles for profile section
  */
 
 /* Block: profile */
 .profile {
   min-height: 100vh;
-  background: radial-gradient(
-      75rem 37.5rem at 10% 10%,
-      var(--color-radial-pink-1),
-      transparent 8%
-    ),
-    radial-gradient(
-      62.5rem 31.25rem at 90% 90%,
-      var(--color-radial-pink-2),
-      transparent 10%
-    ),
-    linear-gradient(
-      180deg,
-      var(--color-primary-black) 0%,
-      var(--color-card) 100%
-    );
   color: var(--color-primary-white);
-}
-
-/* Element: profile__nav */
-.profile__nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 2rem;
-  background: linear-gradient(
-    180deg,
-    var(--color-translucent-black-1),
-    var(--color-translucent-white-3)
-  );
-  backdrop-filter: blur(0.5rem);
-  border-bottom: 1px solid var(--color-radial-pink-3);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.profile__logo {
-  font-size: 1.75rem;
-  font-weight: 900;
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-decoration: none;
-}
-
-.profile__nav-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.profile__nav-links a {
-  color: var(--color-primary-white);
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.profile__nav-links a:hover {
-  color: var(--color-accent-pink);
-  background: var(--color-radial-pink-3);
 }
 
 /* Element: profile__content */

@@ -1,31 +1,65 @@
 /**
- * @file JobseekerDashboard.module.css - Enhanced Version
- * @description CSS Module for JobseekerDashboard component with similar styling to ClientDashboard
- * @author Sherif Talaat
- * @version 3.0.0
- * @date 2025-12-19
- *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-21
+ * @file JobseekerDashboard.module.css - Ultra Modern Enhanced Version
+ * @description Modern single-column layout with smart card grouping, premium animations
+ * @author Sherif Talaat (Enhanced)
+ * @version 6.0.0
+ * @date 2026-01-20
  */
 
 /* ==========================================================================
-   Dashboard Container
+   Dashboard Container - Premium Modern Design
    ========================================================================== */
 
 .jobseekerDashboard {
-  padding: var(--space-6);
-  max-width: 1600px;
+  padding: var(--space-8) var(--space-6);
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  animation: fadeIn 0.3s ease-in;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  min-height: 100vh;
 }
 
-@keyframes fadeIn {
+/* Animated gradient background */
+.jobseekerDashboard::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 20% 30%, var(--color-radial-pink-1) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, var(--color-radial-pink-2) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, var(--color-radial-pink-3) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
+  }
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -33,7 +67,7 @@
 }
 
 /* ==========================================================================
-   Header Section
+   Hero Header - Premium Glassmorphism
    ========================================================================== */
 
 .header {
@@ -41,171 +75,1236 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-8);
-  padding-bottom: var(--space-6);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-8);
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  position: relative;
+  overflow: hidden;
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 4px;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-accent-pink),
+      var(--color-vivid-pink),
+      var(--color-accent-pink),
+      transparent);
+  animation: shimmerSlide 3s ease-in-out infinite;
+}
+
+@keyframes shimmerSlide {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 .headerContent {
   flex: 1;
 }
 
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
 .title {
-  font-size: var(--font-size-2xl);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: var(--font-weight-bold);
-  color: var(--color-foreground);
-  margin: 0 0 var(--space-2) 0;
+  background: linear-gradient(135deg,
+      var(--color-foreground) 0%,
+      var(--color-accent-pink) 50%,
+      var(--color-vivid-pink) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
   line-height: var(--line-height-tight);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.titleIcon {
+  color: var(--color-accent-pink);
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--color-muted-foreground);
   margin: 0;
-  line-height: var(--line-height-normal);
-  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-relaxed);
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .headerActions {
   display: flex;
   gap: var(--space-3);
   margin-left: var(--space-4);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.refreshingBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+  color: var(--color-accent-pink);
+  border: 1px solid var(--color-accent-pink);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--color-shadow-pink);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 4px var(--color-shadow-pink);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==========================================================================
-   Metrics Section
+   Metrics Section - Premium KPI Cards
    ========================================================================== */
 
 .metricsSection {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
+  padding: var(--space-8);
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
-.quickInsightsSection {
-  margin-bottom: var(--space-8);
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metricsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.sectionTitle {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0;
+  position: relative;
+  padding-left: var(--space-4);
+}
+
+.sectionTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, var(--color-accent-pink), var(--color-vivid-pink));
+  border-radius: var(--radius-full);
+}
+
+.statsSummary {
+  display: flex;
+  gap: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  flex-wrap: wrap;
+}
+
+.statsItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-radial-pink-1);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.statsItem:hover {
+  background: var(--color-radial-pink-2);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+}
+
+.statsItem strong {
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+/* KPI Grid - Responsive 2-4 Columns */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+@media (min-width: 80rem) {
+  .kpiGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.kpiItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg,
+      var(--color-background),
+      var(--color-translucent-white-1));
+  border: 1px solid var(--color-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.kpiItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-radial-pink-1),
+      transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kpiItem:hover::before {
+  left: 100%;
+}
+
+.kpiItem:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 12px 24px var(--color-shadow-pink),
+    0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.kpiIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 16px var(--color-shadow-pink),
+    inset 0 1px 0 var(--color-translucent-white-2);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kpiItem:hover .kpiIconWrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.kpiIconWrapper svg {
+  color: var(--color-primary-white);
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.kpiLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.kpiValue {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  line-height: var(--line-height-tight);
+  background: linear-gradient(135deg, var(--color-foreground), var(--color-accent-pink));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.kpiChange {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
 }
 
 /* ==========================================================================
-   Content Grid Layout - 2 Column
+   Content Grid - Smart Single Column with Grouped Cards
    ========================================================================== */
 
 .contentGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-  margin-top: var(--space-6);
-  align-items: start;
-}
-
-.leftColumn,
-.rightColumn {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+@media (min-width: 48rem) {
+  .cardRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 80rem) {
+  .cardRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Card appears animation with stagger */
+.contentGrid>* {
+  animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.contentGrid>*:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.contentGrid>*:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.contentGrid>*:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.contentGrid>*:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+.contentGrid>*:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.contentGrid>*:nth-child(6) {
+  animation-delay: 0.55s;
+}
+
+.contentGrid>*:nth-child(7) {
+  animation-delay: 0.6s;
+}
+
+.contentGrid>*:nth-child(8) {
+  animation-delay: 0.65s;
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* ==========================================================================
-   Dashboard Cards - Fixed Height Issues
+   Dashboard Cards - Premium Glassmorphism
    ========================================================================== */
 
-.activityCard,
-.actionsCard,
-.jobsCard,
 .statusCard,
+.activityCard,
+.quickActionsCard,
+.savedJobsCard,
+.insightsCard,
 .skillsCard,
-.metricsCard,
-.quickActionsCard {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: fit-content;
-}
-
-.activityCard {
-  min-height: 280px;
-}
-
-.actionsCard {
-  min-height: 320px;
-}
-
-.statusCard {
-  min-height: 200px;
-}
-
-.skillsCard {
-  min-height: 240px;
-}
-
 .jobsCard {
-  min-height: 260px;
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.metricsCard {
-  height: 200px;
+.statusCard::after,
+.activityCard::after,
+.quickActionsCard::after,
+.savedJobsCard::after,
+.insightsCard::after,
+.skillsCard::after,
+.jobsCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-accent-pink) 30%,
+      var(--color-vivid-pink) 70%,
+      transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.quickActionsCard {
-  height: 180px;
+.statusCard:hover::after,
+.activityCard:hover::after,
+.quickActionsCard:hover::after,
+.savedJobsCard:hover::after,
+.insightsCard:hover::after,
+.skillsCard:hover::after,
+.jobsCard:hover::after {
+  opacity: 1;
 }
 
-.activityCard:hover,
-.actionsCard:hover,
-.jobsCard:hover,
 .statusCard:hover,
+.activityCard:hover,
+.quickActionsCard:hover,
+.savedJobsCard:hover,
+.insightsCard:hover,
 .skillsCard:hover,
-.metricsCard:hover,
-.quickActionsCard:hover {
-  border-color: var(--color-ring);
-  box-shadow: 0 4px 16px var(--color-translucent-white-3);
+.jobsCard:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow:
+    0 16px 48px var(--color-shadow-pink),
+    0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
 }
 
 /* ==========================================================================
-   Compact Job Posts
+   Profile Summary - Enhanced Premium Design
+   ========================================================================== */
+
+.profileSummary {
+  padding: var(--space-6);
+}
+
+.avatarSection {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-2xl);
+  object-fit: cover;
+  border: 3px solid var(--color-accent-pink);
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 24px var(--color-shadow-pink),
+    inset 0 1px 0 var(--color-translucent-white-2);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.avatar:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileInfo h4 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.profileInfo p {
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--font-size-sm);
+}
+
+.profileTitle {
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  margin-top: var(--space-2);
+}
+
+.verificationStatus {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Skills Card - Premium Progress Bars
+   ========================================================================== */
+
+.skillsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+@media (min-width: 48rem) {
+  .skillsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.skillItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg,
+      var(--color-background),
+      var(--color-translucent-white-1));
+  border: 1px solid var(--color-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skillItem:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 20px var(--color-shadow-pink);
+}
+
+.skillHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skillLabel {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skillPercentage {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.skillProgress {
+  height: 10px;
+  background: var(--color-background);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.skillFill {
+  height: 100%;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 0 12px var(--color-shadow-pink);
+}
+
+.skillFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-translucent-white-2),
+      transparent);
+  animation: shimmer 2s infinite;
+}
+
+.skillLevel {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.demandBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
+}
+
+.skillsRecommendations {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+}
+
+.skillsRecommendations h5 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.skillsRecommendations ul {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  line-height: var(--line-height-relaxed);
+}
+
+.skillsRecommendations li {
+  margin-bottom: var(--space-2);
+}
+
+.skillsFooter {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.skillAssessmentBtn {
+  background: transparent;
+  border: 2px solid var(--color-accent-pink);
+  color: var(--color-accent-pink);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skillAssessmentBtn:hover {
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Saved Jobs List - Premium Cards
+   ========================================================================== */
+
+.savedJobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.savedJobItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-background);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: var(--space-4);
+}
+
+.savedJobItem:hover {
+  border-color: var(--color-accent-pink);
+  background: var(--color-card);
+  transform: translateX(8px) scale(1.01);
+  box-shadow: 0 6px 16px var(--color-shadow-pink);
+}
+
+.savedJobInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.savedJobInfo h5 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.savedJobInfo p {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.savedJobMeta {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  flex-wrap: wrap;
+}
+
+.savedJobActions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Buttons - Premium Modern Design
+   ========================================================================== */
+
+.primaryButton,
+.secondaryButton,
+.refreshButton,
+.viewAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  white-space: nowrap;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+.primaryButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.secondaryButton,
+.refreshButton {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.secondaryButton:hover,
+.refreshButton:hover {
+  background: var(--color-card);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.viewAllBtn {
+  background: transparent;
+  color: var(--color-accent-pink);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+.viewAllBtn:hover {
+  background: var(--color-radial-pink-1);
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Loading State
+   ========================================================================== */
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--space-4);
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent-pink);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+.loadingContainer p {
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-base);
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile First
+   ========================================================================== */
+
+@media (max-width: 48rem) {
+  .jobseekerDashboard {
+    padding: var(--space-4);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+
+  .headerActions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .headerActions button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .metricsSection {
+    padding: var(--space-5);
+  }
+
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .avatarSection {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cardRow {
+    grid-template-columns: 1fr;
+  }
+
+  .skillsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+
+  .jobseekerDashboard::before,
+  .header::before,
+  .refreshingBadge,
+  .headerActions,
+  .viewAllBtn {
+    display: none;
+  }
+
+  .jobseekerDashboard {
+    background: white;
+  }
+
+  .statusCard,
+  .activityCard,
+  .quickActionsCard,
+  .savedJobsCard,
+  .insightsCard,
+  .skillsCard,
+  .jobsCard {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}
+
+.completionSection {
+  background: linear-gradient(135deg,
+      var(--color-radial-pink-1),
+      var(--color-radial-pink-2));
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-accent-pink);
+  box-shadow: inset 0 1px 0 var(--color-translucent-white-1);
+}
+
+.profileCompletion {
+  margin-bottom: var(--space-4);
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-semibold);
+}
+
+.progressPercentage {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+  font-size: var(--font-size-lg);
+}
+
+.progressBar {
+  height: 10px;
+  background-color: var(--color-background);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 0 12px var(--color-shadow-pink);
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-translucent-white-2),
+      transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.editProfileBtn {
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  border: none;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px var(--color-shadow-pink);
+  width: 100%;
+}
+
+.editProfileBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.editProfileBtn:active {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Quick Actions - Interactive Premium Cards
+   ========================================================================== */
+
+.quickActionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.quickActionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-background);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.quickActionItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-radial-pink-1),
+      transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quickActionItem:hover::before {
+  left: 100%;
+}
+
+.quickActionItem:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateX(12px) scale(1.02);
+  box-shadow: 0 8px 20px var(--color-shadow-pink);
+  background: var(--color-card);
+}
+
+.quickActionItem svg {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quickActionItem:hover svg {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.quickActionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.quickActionTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+}
+
+.quickActionDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Compact Job Cards - Premium Design
    ========================================================================== */
 
 .compactJobsList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  max-height: 400px;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  max-height: 600px;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .compactJobsList::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 
 .compactJobsList::-webkit-scrollbar-track {
   background: var(--color-muted);
+  border-radius: var(--radius-full);
 }
 
 .compactJobsList::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: linear-gradient(180deg, var(--color-accent-pink), var(--color-vivid-pink));
   border-radius: var(--radius-full);
 }
 
 .compactJobCard {
-  width: 99%;
-  padding: var(--space-3);
+  padding: var(--space-5);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-muted);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-xl);
+  background: var(--color-background);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.compactJobCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  transform: scaleY(0);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compactJobCard:hover::before {
+  transform: scaleY(1);
 }
 
 .compactJobCard:hover {
-  background-color: var(--color-sidebar);
+  background: var(--color-card);
   border-color: var(--color-accent-pink);
-  transform: translateX(5px);
+  transform: translateX(12px) scale(1.02);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
 }
 
 .jobCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2);
-  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  gap: var(--space-3);
 }
 
 .jobCardTitle {
@@ -217,13 +1316,13 @@
 }
 
 .jobCardTitle h4 {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--color-foreground);
   margin: 0;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .jobCardIcon {
@@ -234,457 +1333,37 @@
 .jobCardMeta {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   flex-wrap: wrap;
+  font-size: var(--font-size-sm);
 }
 
 .jobMetaItem {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-xs);
   color: var(--color-muted-foreground);
-  white-space: nowrap;
 }
 
 .jobMetaItem svg {
-  color: var(--color-muted-foreground);
   flex-shrink: 0;
 }
 
-/* ==========================================================================
-   KPI Grid
-   ========================================================================== */
-
-.kpiGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  height: 100%;
+.jobMetaIcon {
+  font-size: var(--font-size-base);
 }
 
-.kpiItem {
-  display: flex;
+.matchScoreBadge {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  background-color: var(--color-muted);
-  transition: all 0.2s ease;
-}
-
-.kpiItem:hover {
-  background-color: var(--color-sidebar);
-  transform: translateX(4px);
-}
-
-.kpiIconWrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(
-    135deg,
-    var(--color-radial-pink-1),
-    var(--color-radial-pink-2)
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.kpiIconWrapper svg {
-  color: var(--color-accent-pink);
-}
-
-.kpiContent {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-1);
-  flex: 1;
-}
-
-.kpiLabel {
-  font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.kpiValue {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-foreground);
-}
-
-/* ==========================================================================
-   Skills Development Card
-   ========================================================================== */
-
-.skillsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-}
-
-.skillItem {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  background-color: var(--color-muted);
-  transition: all 0.2s ease;
-}
-
-.skillItem:hover {
-  background-color: var(--color-sidebar);
-  transform: translateX(4px);
-}
-
-.skillHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.skillLabel {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-foreground);
-}
-
-.skillPercentage {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-pink);
-}
-
-.skillProgress {
-  height: 6px;
-  background-color: var(--color-muted);
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+  border: 1px solid var(--color-accent-pink);
   border-radius: var(--radius-full);
-  overflow: hidden;
-  position: relative;
-}
-
-.skillFill {
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
-  border-radius: var(--radius-full);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.skillFill::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-translucent-white-1),
-    transparent
-  );
-  animation: shimmer 2s infinite;
-}
-
-/* Skill Level Color Variations */
-.skillItem[data-skill-level="expert"] .skillFill {
-  background: linear-gradient(
-    90deg,
-    var(--color-chart-2),
-    var(--color-chart-3)
-  );
-}
-
-.skillItem[data-skill-level="advanced"] .skillFill {
-  background: linear-gradient(
-    90deg,
-    var(--color-chart-3),
-    var(--color-chart-4)
-  );
-}
-
-.skillItem[data-skill-level="intermediate"] .skillFill {
-  background: linear-gradient(
-    90deg,
-    var(--color-chart-4),
-    var(--color-accent-pink)
-  );
-}
-
-.skillItem[data-skill-level="beginner"] .skillFill {
-  background: linear-gradient(90deg, var(--color-chart-5), var(--color-muted));
-}
-
-.skillLevel {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--space-1);
-}
-
-/* ==========================================================================
-   Quick Actions Panel
-   ========================================================================== */
-
-.quickActionsList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
-  height: 100%;
-}
-
-.quickActionItem {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: transparent;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: left;
-  width: 100%;
-  flex: 1;
-}
-
-.quickActionItem:hover {
-  background-color: var(--color-muted);
-  border-color: var(--color-accent-pink);
-  transform: translateX(4px);
-}
-
-.quickActionItem svg {
-  color: var(--color-accent-pink);
-  flex-shrink: 0;
-}
-
-.quickActionContent {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  flex: 1;
-}
-
-.quickActionTitle {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-foreground);
-}
-
-.quickActionDesc {
   font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
-}
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-bold);
+  margin-top: var(--space-3);
 
-/* ==========================================================================
-   Responsive Design
-   ========================================================================== */
-
-@media (max-width: 1200px) {
-  .contentGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  .leftColumn,
-  .rightColumn {
-    gap: var(--space-4);
-  }
-
-  /* Reset heights on mobile */
-  .activityCard,
-  .actionsCard,
-  .statusCard,
-  .skillsCard,
-  .jobsCard,
-  .metricsCard,
-  .quickActionsCard {
-    height: auto !important;
-    min-height: auto !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .contentGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  .header {
-    flex-direction: column;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
-  }
-
-  .headerActions {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .kpiGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .jobseekerDashboard {
-    padding: var(--space-4);
-  }
-
-  .header {
-    padding-bottom: var(--space-4);
-    margin-bottom: var(--space-6);
-  }
-
-  .title {
-    font-size: var(--font-size-xl);
-  }
-
-  .subtitle {
-    font-size: var(--font-size-base);
-  }
-
-  .headerActions {
-    flex-direction: column;
-  }
-
-  .headerActions button {
-    width: 100%;
-  }
-
-  .compactJobsList {
-    max-height: none;
-  }
-
-  .skillHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-  }
-
-  .skillPercentage {
-    align-self: flex-end;
-  }
-}
-
-@media (max-width: 480px) {
-  .jobseekerDashboard {
-    padding: var(--space-3);
-  }
-
-  .title {
-    font-size: var(--font-size-lg);
-  }
-
-  .subtitle {
-    font-size: var(--font-size-sm);
-  }
-
-  .kpiValue {
-    font-size: var(--font-size-base);
-  }
-
-  .compactJobCard {
-    padding: var(--space-2);
-  }
-
-  .jobCardHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .jobCardMeta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-    width: 100%;
-  }
-}
-
-/* ==========================================================================
-   Accessibility & Motion Management
-   ========================================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  .jobseekerDashboard,
-  .activityCard,
-  .actionsCard,
-  .statusCard,
-  .skillsCard,
-  .jobsCard,
-  .metricsCard,
-  .quickActionsCard,
-  .kpiItem,
-  .quickActionItem,
-  .compactJobCard,
-  .skillItem,
-  .skillFill {
-    transition: none;
-    animation: none;
-  }
-
-  .activityCard:hover,
-  .actionsCard:hover,
-  .statusCard:hover,
-  .skillsCard:hover,
-  .jobsCard:hover,
-  .metricsCard:hover,
-  .quickActionsCard:hover {
-    transform: none;
-  }
-
-  .kpiItem:hover,
-  .quickActionItem:hover,
-  .compactJobCard:hover,
-  .skillItem:hover {
-    transform: none;
-  }
-
-  .skillFill::after {
-    animation: none;
-  }
-}
-
-@media (prefers-contrast: high) {
-  .header {
-    border-bottom: 2px solid var(--color-foreground);
-  }
-
-  .kpiItem,
-  .skillItem {
-    border: 1px solid var(--color-foreground);
-  }
-
-  .quickActionItem {
-    border: 2px solid var(--color-foreground);
-  }
-}
-
-/* ==========================================================================
-   Animations
-   ========================================================================== */
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }

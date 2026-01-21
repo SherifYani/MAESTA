@@ -3,11 +3,15 @@
  * @description Company profile component displaying company information, team, and job listings.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-date 2026-1-20
+ * 
+ * @update :-
+ * - removed navigation section 
+ * - edit the link to the edit profile page (because include {profile} and {edit profile} to dashboard)
  */
 
 import React from "react";
@@ -65,30 +69,6 @@ export default function CompanyProfile() {
 
   return (
     <div className="profile">
-      {/* Navigation Section */}
-      <nav className="profile__nav" aria-label="Profile navigation">
-        <Link to="/" className="profile__logo" aria-label="MAESTA homepage">
-          MAESTA
-        </Link>
-
-        <div className="profile__nav-links">
-          <Link to="/profile/client" aria-label="Client profile">
-            Client
-          </Link>
-          <Link to="/profile/freelancer" aria-label="Freelancer profile">
-            Freelancer
-          </Link>
-          <Link to="/profile/jobseeker" aria-label="Job seeker profile">
-            Job Seeker
-          </Link>
-          <Link
-            to="/profile/company"
-            aria-label="Company profile"
-            aria-current="page">
-            Company
-          </Link>
-        </div>
-      </nav>
 
       {/* Main Content Area */}
       <main className="profile__content">
@@ -136,7 +116,7 @@ export default function CompanyProfile() {
             </div>
 
             <Link
-              to="/edit/company"
+              to="edit"
               className="profile__edit-btn"
               aria-label="Edit company profile">
               Edit Profile

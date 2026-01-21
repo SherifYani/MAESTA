@@ -3,11 +3,15 @@
  * @description Client profile component displaying personal information, statistics, and projects.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-date 2026-1-20
+ * 
+ * @update :-
+ * - removed navigation section 
+ * - edit the link to the edit profile page (because include {profile} and {edit profile} to dashboard)
  */
 
 import { Link } from "react-router-dom";
@@ -55,28 +59,6 @@ export default function ClientProfile() {
 
   return (
     <div className="profile">
-      {/* Navigation Section */}
-      <nav className="profile__nav" aria-label="Profile navigation">
-        <Link to="/" className="profile__logo" aria-label="MAESTA homepage">
-          MAESTA
-        </Link>
-
-        <div className="profile__nav-links">
-          <Link to="/profile/client" aria-current="page">
-            Client
-          </Link>
-          <Link to="/profile/freelancer" aria-label="Freelancer profile">
-            Freelancer
-          </Link>
-          <Link to="/profile/jobseeker" aria-label="Job seeker profile">
-            Job Seeker
-          </Link>
-          <Link to="/profile/company" aria-label="Company profile">
-            Company
-          </Link>
-        </div>
-      </nav>
-
       {/* Main Content Area */}
       <main className="profile__content">
         {/* Profile Header Section */}
@@ -121,7 +103,7 @@ export default function ClientProfile() {
             </div>
 
             <Link
-              to="/edit/client"
+              to="edit"
               className="profile__edit-btn"
               aria-label="Edit client profile">
               Edit Profile

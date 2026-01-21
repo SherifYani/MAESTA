@@ -3,11 +3,15 @@
  * @description Edit client profile component with form fields for personal info and projects.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-date 2026-1-20
+ * 
+ * @update :-
+ * - removed navigation section 
+ * - edit the link to the edit profile page (because include {profile} and {edit profile} to dashboard)
  */
 
 import React, { useState } from "react";
@@ -187,7 +191,7 @@ export default function EditClientProfile() {
 
     // Update context and navigate back
     updateClientData(updatedClientData);
-    navigate("/profile/client");
+    navigate("/profile");
   };
 
   /**
@@ -199,36 +203,12 @@ export default function EditClientProfile() {
     );
 
     if (confirmCancel) {
-      navigate("/profile/client");
+      navigate("/dashboard/profile");
     }
   };
 
   return (
     <div className="profile">
-      {/* Navigation Section */}
-      <nav className="profile__nav" aria-label="Profile navigation">
-        <Link to="/" className="profile__logo" aria-label="MAESTA homepage">
-          MAESTA
-        </Link>
-
-        <div className="profile__nav-links">
-          <Link
-            to="/profile/client"
-            aria-label="Client profile"
-            aria-current="page">
-            Client
-          </Link>
-          <Link to="/profile/freelancer" aria-label="Freelancer profile">
-            Freelancer
-          </Link>
-          <Link to="/profile/jobseeker" aria-label="Job seeker profile">
-            Job Seeker
-          </Link>
-          <Link to="/profile/company" aria-label="Company profile">
-            Company
-          </Link>
-        </div>
-      </nav>
 
       {/* Main Content Area */}
       <main className="profile__content">

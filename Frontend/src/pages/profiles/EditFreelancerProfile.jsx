@@ -9,7 +9,15 @@ import "../../styles/edit-profile.css";
  * @returns {JSX.Element} The rendered edit company profile form.
  * @author Shadh Mohay
  * @date 2025-12-11
- **/
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-1-20
+ * 
+ * @update :-
+ * - removed navigation section 
+ * - edit the link to the profile page (because include {profile} and {edit profile} to dashboard)
+ */
+
 export default function EditCompanyProfile() {
   const navigate = useNavigate();
   const { companyData, updateCompanyData } = useProfile();
@@ -122,22 +130,11 @@ export default function EditCompanyProfile() {
       members,
       jobs,
     });
-    navigate("/profile/company");
+    navigate("/profile");
   };
 
   return (
     <div className="profile">
-      <nav className="profile__nav">
-        <Link to="/" className="profile__logo">
-          MAESTA
-        </Link>
-        <div className="profile__nav-links">
-          <Link to="/profile/client">Client</Link>
-          <Link to="/profile/freelancer">Freelancer</Link>
-          <Link to="/profile/jobseeker">Job Seeker</Link>
-          <Link to="/profile/company">Company</Link>
-        </div>
-      </nav>
 
       <main className="profile__content">
         <div className="edit__header">
@@ -401,7 +398,7 @@ export default function EditCompanyProfile() {
             <button
               type="button"
               className="edit__cancel-btn"
-              onClick={() => navigate("/profile/company")}>
+              onClick={() => navigate("/dashboard/profile")}>
               Cancel
             </button>
             <button type="submit" className="edit__save-btn">

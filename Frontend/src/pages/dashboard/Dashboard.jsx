@@ -2,19 +2,27 @@
  * @file Dashboard.jsx
  * @description Main dashboard component that renders role-specific content
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 2025-12-19
+ * @version 2.0.0
+ * @date 2026-1-20
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-1-20
+ * @changes:-
+ * - Updated to use proper test data integration for all roles
+ * - Simplified role-specific dashboard rendering
  */
 
 import { useContext } from "react";
 import { DashboardContext } from "./layout/DashboardLayout";
-import { getCompleteDashboardData } from "./config/dashboard.config"; // ADD THIS
+import { getCompleteDashboardData, getJobSeekerDashboardData } from "./config/dashboard.config";
 
+// Import all role-specific dashboards
 import ClientDashboard from "./tabs/client/ClientDashboard";
 import CompanyDashboard from "./tabs/company/CompanyDashboard";
 import FreelancerDashboard from "./tabs/freelancer/FreelancerDashboard";
 import JobseekerDashboard from "./tabs/jobseeker/JobseekerDashboard";
 import AdminDashboard from "./tabs/admin/AdminDashboard";
+
 import styles from "./dashboard.module.css";
 
 /**
@@ -24,8 +32,19 @@ import styles from "./dashboard.module.css";
 const Dashboard = () => {
   const { currentRole } = useContext(DashboardContext);
 
-  // Get data for current role
-  const dashboardData = getCompleteDashboardData(currentRole);
+  /**
+   * Get dashboard data based on current role
+   */
+  const getDashboardData = () => {
+    switch (currentRole) {
+      case "jobseeker":
+        return getJobSeekerDashboardData();
+      default:
+        return getCompleteDashboardData(currentRole);
+    }
+  };
+
+  const dashboardData = getDashboardData();
 
   /**
    * Render dashboard content based on current role
@@ -44,11 +63,14 @@ const Dashboard = () => {
       case "admin":
         return <AdminDashboard data={dashboardData} />;
       default:
-        return <ClientDashboard data={dashboardData} />;
+        return <div className={styles.roleNotFound}>Role not found</div>;
     }
   };
+
   return (
-    <div className={styles.dashboardContainer}>{renderDashboardContent()}</div>
+    <div className={styles.dashboardContainer}>
+      {renderDashboardContent()}
+    </div>
   );
 };
 

@@ -1,231 +1,471 @@
 /**
  * @file SavedJobs.jsx
- * @description Saved jobs component for job seekers showing favorited/bookmarked jobs
+ * @description Displays saved jobs with ability to apply, remove, and track application status
+ * Follows BEM methodology and uses global CSS variables
  * @author Sherif Talaat
  * @version 1.0.0
- * @date 2025-12-22
+ * @date 2026-1-20
  *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-1-20
  */
 
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import {
   Bookmark,
-  MapPin,
-  DollarSign,
-  Calendar,
-  Briefcase,
-  Eye,
   BookmarkCheck,
+  MapPin,
+  Calendar,
+  DollarSign,
+  Briefcase,
+  Trash2,
+  Eye,
+  Send,
+  Filter,
+  X,
+  ChevronDown,
+  ExternalLink
 } from "lucide-react";
-import Badge from "../../../../components/ui/Badge";
 import Button from "../../../../components/ui/Button";
-import Card from "../../../../components/ui/Card";
+import Badge from "../../../../components/ui/Badge";
 import styles from "./SavedJobs.module.css";
 
 /**
- * SavedJobs component for displaying bookmarked jobs
+ * SavedJobs Component
+ * @description Displays saved/favorite jobs with filtering and management options
  * @param {Object} props - Component props
  * @param {Array} props.jobs - Array of saved job objects
- * @param {Function} props.onRemoveJob - Function to remove job from saved list
- * @param {Function} props.onViewJob - Function to view job details
- * @returns {JSX.Element} Rendered saved jobs component
+ * @param {function} props.onRemoveJob - Callback when a job is removed
+ * @param {function} props.onViewJob - Callback when viewing job details
+ * @param {function} props.onApplyJob - Callback when applying to a job
+ * @returns {JSX.Element} The rendered saved jobs list
  */
-const SavedJobs = ({ jobs = [], onRemoveJob, onViewJob }) => {
-  // Fallback sample data if no jobs provided
-  const savedJobs =
-    jobs.length > 0
-      ? jobs
-      : [
-          {
-            id: 1,
-            title: "Senior Frontend Developer",
-            company: "TechCorp",
-            location: "Remote",
-            salary: "$120,000 - $150,000",
-            dateSaved: "2024-01-15",
-            jobType: "Full-time",
-            status: "active",
-            matchScore: 92,
-          },
-          {
-            id: 2,
-            title: "UI/UX Designer",
-            company: "CreativeStudio",
-            location: "New York, NY",
-            salary: "$90,000 - $110,000",
-            dateSaved: "2024-01-12",
-            jobType: "Full-time",
-            status: "active",
-            matchScore: 85,
-          },
-          {
-            id: 3,
-            title: "React Native Developer",
-            company: "MobileFirst",
-            location: "San Francisco, CA",
-            salary: "$110,000 - $130,000",
-            dateSaved: "2024-01-10",
-            jobType: "Contract",
-            status: "expired",
-            matchScore: 78,
-          },
-        ];
+const SavedJobs = ({
+  jobs = [],
+  onRemoveJob = () => { },
+  onViewJob = () => { },
+  onApplyJob = () => { }
+}) => {
+  const [filters, setFilters] = useState({
+    status: "all",
+    type: "all",
+    hasApplied: "all"
+  });
+  const [showFilters, setShowFilters] = useState(false);
+  const [expandedJobId, setExpandedJobId] = useState(null);
 
-  const handleRemoveJob = (jobId, e) => {
+  /**
+   * Apply filters to jobs list
+   * @param {Array} jobList - Array of job objects
+   * @returns {Array} Filtered jobs
+   */
+  const filteredJobs = jobs.filter(job => {
+    // Status filter
+    if (filters.status !== "all" && job.status !== filters.status) {
+      return false;
+    }
+
+    // Type filter
+    if (filters.type !== "all" && job.type !== filters.type) {
+      return false;
+    }
+
+    // Application status filter
+    if (filters.hasApplied !== "all") {
+      const hasApplied = job.hasApplied || false;
+      const wantsApplied = filters.hasApplied === "applied";
+      if (wantsApplied !== hasApplied) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  /**
+   * Get unique values for filter dropdowns
+   */
+  const uniqueTypes = [...new Set(jobs.map(job => job.type).filter(Boolean))];
+  const uniqueStatuses = [...new Set(jobs.map(job => job.status).filter(Boolean))];
+
+  /**
+   * Handle job removal
+   * @param {string} jobId - Job ID
+   * @param {Event} e - Click event
+   */
+  const handleRemove = (jobId, e) => {
     e.stopPropagation();
-    if (onRemoveJob) {
+    if (window.confirm("Are you sure you want to remove this job from saved?")) {
       onRemoveJob(jobId);
-    } else {
-      console.log(`Remove job ${jobId}`);
     }
   };
 
-  const handleViewJob = (jobId) => {
-    if (onViewJob) {
-      onViewJob(jobId);
-    } else {
-      console.log(`View job ${jobId}`);
-    }
+  /**
+   * Handle job application
+   * @param {Object} job - Job object
+   * @param {Event} e - Click event
+   */
+  const handleApply = (job, e) => {
+    e.stopPropagation();
+    onApplyJob(job.jobId || job.id);
   };
 
-  if (savedJobs.length === 0) {
+  /**
+   * Toggle job details expansion
+   * @param {string} jobId - Job ID
+   */
+  const toggleJobDetails = (jobId) => {
+    setExpandedJobId(expandedJobId === jobId ? null : jobId);
+  };
+
+  /**
+   * Clear all filters
+   */
+  const clearFilters = () => {
+    setFilters({
+      status: "all",
+      type: "all",
+      hasApplied: "all"
+    });
+  };
+
+  /**
+   * Render status badge with appropriate color
+   * @param {string} status - Job status
+   * @returns {JSX.Element} Badge component
+   */
+  const renderStatusBadge = (status) => {
+    const statusMap = {
+      "active": { variant: "success", label: "Active" },
+      "expired": { variant: "danger", label: "Expired" },
+      "closed": { variant: "secondary", label: "Closed" },
+      "draft": { variant: "warning", label: "Draft" }
+    };
+
+    const config = statusMap[status] || { variant: "default", label: status };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  /**
+   * Render application status badge
+   * @param {boolean} hasApplied - Whether job has been applied to
+   * @returns {JSX.Element} Badge component
+   */
+  const renderApplicationBadge = (hasApplied) => {
+    return hasApplied ? (
+      <Badge variant="success" className={styles.appliedBadge}>
+        <BookmarkCheck size={12} /> Applied
+      </Badge>
+    ) : (
+      <Badge variant="outline" className={styles.notAppliedBadge}>
+        Not Applied
+      </Badge>
+    );
+  };
+
+  /**
+   * Render match score indicator
+   * @param {number} score - Match score percentage
+   * @returns {JSX.Element} Match score display
+   */
+  const renderMatchScore = (score) => {
+    let colorClass = styles.matchLow;
+    if (score >= 80) colorClass = styles.matchHigh;
+    else if (score >= 60) colorClass = styles.matchMedium;
+
     return (
-      <Card className={styles.savedJobs} padding={true}>
-        <div className={styles.emptyState}>
-          <Bookmark size={48} className={styles.emptyIcon} />
-          <h3 className={styles.emptyTitle}>No Saved Jobs</h3>
-          <p className={styles.emptyDescription}>
-            Jobs you bookmark will appear here for easy access
-          </p>
-          <Button variant="primary" icon={Briefcase}>
-            Browse Jobs
-          </Button>
+      <div className={styles.matchScore}>
+        <div className={styles.matchLabel}>Match</div>
+        <div className={`${styles.matchValue} ${colorClass}`}>
+          {score}%
         </div>
-      </Card>
+      </div>
+    );
+  };
+
+  // If no saved jobs
+  if (jobs.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIcon}>
+          <Bookmark size={48} />
+        </div>
+        <h3>No Saved Jobs</h3>
+        <p>Save jobs you're interested in to track them here</p>
+        <Button variant="primary">
+          <Briefcase size={16} /> Browse Jobs
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card className={styles.savedJobs} padding={true}>
+    <div className={styles.container}>
+      {/* Header */}
       <div className={styles.header}>
-        <div className={styles.titleSection}>
-          <h3 className={styles.title}>Saved Jobs</h3>
-          <Badge variant="primary" rounded={true}>
-            {savedJobs.length} jobs
-          </Badge>
+        <div className={styles.headerInfo}>
+          <h2 className={styles.title}>Saved Jobs</h2>
+          <p className={styles.subtitle}>
+            {filteredJobs.length} of {jobs.length} saved jobs
+          </p>
         </div>
-        <Button variant="ghost" size="small">
-          View All
-        </Button>
+
+        <div className={styles.headerActions}>
+          <button
+            className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={16} />
+            Filter
+            {Object.values(filters).filter(f => f !== "all").length > 0 && (
+              <span className={styles.filterCount}>
+                {Object.values(filters).filter(f => f !== "all").length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className={styles.filtersPanel}>
+          <div className={styles.filterSection}>
+            <label className={styles.filterLabel}>Job Type</label>
+            <div className={styles.filterOptions}>
+              <button
+                className={`${styles.filterOption} ${filters.type === "all" ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, type: "all" }))}
+              >
+                All Types
+              </button>
+              {uniqueTypes.map(type => (
+                <button
+                  key={type}
+                  className={`${styles.filterOption} ${filters.type === type ? styles.active : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, type }))}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterSection}>
+            <label className={styles.filterLabel}>Status</label>
+            <div className={styles.filterOptions}>
+              <button
+                className={`${styles.filterOption} ${filters.status === "all" ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, status: "all" }))}
+              >
+                All Statuses
+              </button>
+              {uniqueStatuses.map(status => (
+                <button
+                  key={status}
+                  className={`${styles.filterOption} ${filters.status === status ? styles.active : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, status }))}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterSection}>
+            <label className={styles.filterLabel}>Application Status</label>
+            <div className={styles.filterOptions}>
+              <button
+                className={`${styles.filterOption} ${filters.hasApplied === "all" ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, hasApplied: "all" }))}
+              >
+                All Jobs
+              </button>
+              <button
+                className={`${styles.filterOption} ${filters.hasApplied === "applied" ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, hasApplied: "applied" }))}
+              >
+                Applied
+              </button>
+              <button
+                className={`${styles.filterOption} ${filters.hasApplied === "not-applied" ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, hasApplied: "not-applied" }))}
+              >
+                Not Applied
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.filterActions}>
+            <button className={styles.clearButton} onClick={clearFilters}>
+              <X size={14} />
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Jobs List */}
       <div className={styles.jobsList}>
-        {savedJobs.map((job) => (
-          <div
+        {filteredJobs.map(job => (
+          <article
             key={job.id}
-            className={`${styles.jobItem} ${
-              job.status === "expired" ? styles.expired : ""
-            }`}
-            onClick={() => handleViewJob(job.id)}>
+            className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ''}`}
+            onClick={() => toggleJobDetails(job.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleJobDetails(job.id);
+              }
+            }}
+          >
             <div className={styles.jobHeader}>
-              <div className={styles.jobInfo}>
-                <h4 className={styles.jobTitle}>{job.title}</h4>
-                <p className={styles.jobCompany}>{job.company}</p>
+              <div className={styles.jobMainInfo}>
+                <div className={styles.jobTitleRow}>
+                  <h3 className={styles.jobTitle}>{job.jobTitle || job.title}</h3>
+                  {job.isUrgent && (
+                    <Badge variant="danger" className={styles.urgentBadge}>
+                      Urgent
+                    </Badge>
+                  )}
+                </div>
+                <p className={styles.company}>{job.company}</p>
               </div>
 
               <div className={styles.jobActions}>
-                <button
-                  className={styles.bookmarkButton}
-                  onClick={(e) => handleRemoveJob(job.id, e)}
-                  aria-label="Remove from saved">
-                  {job.status === "expired" ? (
-                    <BookmarkCheck size={20} className={styles.bookmarkIcon} />
-                  ) : (
-                    <Bookmark size={20} className={styles.bookmarkIcon} />
-                  )}
-                </button>
+                {renderApplicationBadge(job.hasApplied)}
+                {renderStatusBadge(job.status)}
+                {job.matchScore && renderMatchScore(job.matchScore)}
               </div>
             </div>
 
             <div className={styles.jobDetails}>
-              <div className={styles.detailItem}>
-                <MapPin size={16} className={styles.detailIcon} />
-                <span className={styles.detailText}>{job.location}</span>
-              </div>
-              <div className={styles.detailItem}>
-                <DollarSign size={16} className={styles.detailIcon} />
-                <span className={styles.detailText}>{job.salary}</span>
-              </div>
-              <div className={styles.detailItem}>
-                <Calendar size={16} className={styles.detailIcon} />
-                <span className={styles.detailText}>
-                  Saved{" "}
-                  {new Date(job.dateSaved).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.jobFooter}>
-              <Badge
-                variant={job.jobType === "Full-time" ? "primary" : "secondary"}
-                className={styles.typeBadge}>
-                {job.jobType}
-              </Badge>
-
-              <div className={styles.matchScore}>
-                <span className={styles.matchLabel}>Match:</span>
-                <span className={styles.matchValue}>{job.matchScore}%</span>
-                <div className={styles.matchBar}>
-                  <div
-                    className={styles.matchFill}
-                    style={{ width: `${job.matchScore}%` }}
-                  />
+              <div className={styles.detailsRow}>
+                <div className={styles.detailItem}>
+                  <MapPin size={14} />
+                  <span>{job.location}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <DollarSign size={14} />
+                  <span>{job.salary || "Salary not specified"}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <Calendar size={14} />
+                  <span>Saved {job.savedDate}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <Briefcase size={14} />
+                  <span>{job.type || "Full-time"}</span>
                 </div>
               </div>
-
-              <Button
-                variant="outline"
-                size="small"
-                icon={Eye}
-                className={styles.viewButton}>
-                View Details
-              </Button>
             </div>
-          </div>
+
+            {/* Expandable Content */}
+            {expandedJobId === job.id && (
+              <div className={styles.expandedContent}>
+                <div className={styles.jobMeta}>
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Job ID:</span>
+                    <span className={styles.metaValue}>{job.jobId || job.id}</span>
+                  </div>
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Saved On:</span>
+                    <span className={styles.metaValue}>{job.savedDate}</span>
+                  </div>
+                  {job.hasApplied && (
+                    <div className={styles.metaItem}>
+                      <span className={styles.metaLabel}>Applied:</span>
+                      <span className={styles.metaValue}>Yes</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.expandedActions}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => onViewJob(job.id, e)}
+                  >
+                    <Eye size={16} /> View Details
+                  </Button>
+
+                  {!job.hasApplied && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => handleApply(job, e)}
+                    >
+                      <Send size={16} /> Apply Now
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={(e) => handleRemove(job.id, e)}
+                  >
+                    <Trash2 size={16} /> Remove
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Collapsed Actions */}
+            {expandedJobId !== job.id && (
+              <div className={styles.collapsedActions}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => onViewJob(job.id, e)}
+                >
+                  <Eye size={14} />
+                </Button>
+
+                {!job.hasApplied && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={(e) => handleApply(job, e)}
+                  >
+                    <Send size={14} />
+                  </Button>
+                )}
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => handleRemove(job.id, e)}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
+            )}
+          </article>
         ))}
       </div>
-    </Card>
-  );
-};
 
-SavedJobs.propTypes = {
-  /** Array of saved job objects */
-  jobs: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      company: PropTypes.string.isRequired,
-      location: PropTypes.string.isRequired,
-      salary: PropTypes.string.isRequired,
-      dateSaved: PropTypes.string.isRequired,
-      jobType: PropTypes.oneOf([
-        "Full-time",
-        "Part-time",
-        "Contract",
-        "Internship",
-      ]),
-      status: PropTypes.oneOf(["active", "expired", "filled"]),
-      matchScore: PropTypes.number,
-    })
-  ),
-  /** Function to remove job from saved list */
-  onRemoveJob: PropTypes.func,
-  /** Function to view job details */
-  onViewJob: PropTypes.func,
+      {/* Footer */}
+      {filteredJobs.length > 0 && (
+        <div className={styles.footer}>
+          <div className={styles.footerStats}>
+            <span className={styles.statItem}>
+              <Bookmark size={14} /> {jobs.length} total saved
+            </span>
+            <span className={styles.statItem}>
+              <BookmarkCheck size={14} /> {jobs.filter(j => j.hasApplied).length} applied
+            </span>
+            <span className={styles.statItem}>
+              <Briefcase size={14} /> {filteredJobs.length} showing
+            </span>
+          </div>
+          <button className={styles.viewAllButton}>
+            View All Saved Jobs <ExternalLink size={14} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SavedJobs;

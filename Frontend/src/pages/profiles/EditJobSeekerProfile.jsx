@@ -3,11 +3,15 @@
  * @description Edit job seeker profile component with forms for personal info, skills, experience, and education.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
+ * @last-modified-date 2026-1-20
+ * 
+ * @update :-
+ * - removed navigation section 
+ * - edit the link to the profile page (because include {profile} and {edit profile} to dashboard)
  */
 
 import React, { useState } from "react";
@@ -278,7 +282,7 @@ export default function EditJobSeekerProfile() {
 
     // Update context and navigate back
     updateJobSeekerData(updatedJobSeekerData);
-    navigate("/profile/jobseeker");
+    navigate("/profile");
   };
 
   /**
@@ -290,7 +294,7 @@ export default function EditJobSeekerProfile() {
     );
 
     if (confirmCancel) {
-      navigate("/profile/jobseeker");
+      navigate("/dashboard/profile");
     }
   };
 
@@ -314,30 +318,6 @@ export default function EditJobSeekerProfile() {
 
   return (
     <div className="profile">
-      {/* Navigation Section */}
-      <nav className="profile__nav" aria-label="Profile navigation">
-        <Link to="/" className="profile__logo" aria-label="MAESTA homepage">
-          MAESTA
-        </Link>
-
-        <div className="profile__nav-links">
-          <Link to="/profile/client" aria-label="Client profile">
-            Client
-          </Link>
-          <Link to="/profile/freelancer" aria-label="Freelancer profile">
-            Freelancer
-          </Link>
-          <Link
-            to="/profile/jobseeker"
-            aria-label="Job seeker profile"
-            aria-current="page">
-            Job Seeker
-          </Link>
-          <Link to="/profile/company" aria-label="Company profile">
-            Company
-          </Link>
-        </div>
-      </nav>
 
       {/* Main Content Area */}
       <main className="profile__content">

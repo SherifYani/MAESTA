@@ -1,24 +1,39 @@
 /**
  * @file DashboardSidebar.module.css
- * @description Sidebar styles for the dashboard
+ * @description Sidebar styles with responsive drawer behavior for mobile
  * @author Sherif Talaat
- * @version 1.1.0
+ * @version 2.0.0
  * @date 2025-12-19
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-01-19
  */
 
-/* Sidebar Base */
+/* ==========================================================================
+   Sidebar Base - Desktop Behavior with Modern Design
+   ========================================================================== */
+
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
   background: var(--color-card);
+  backdrop-filter: blur(20px);
   border-right: 1px solid var(--color-border);
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   z-index: 100;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhance glass effect in dark mode */
+:global(.dark) .sidebar {
+  background: rgba(24, 24, 27, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
 }
 
 .sidebar.open {
@@ -29,36 +44,52 @@
   width: 70px;
 }
 
-/* Sidebar Header */
+/* ==========================================================================
+   Sidebar Header
+   ========================================================================== */
+
 .sidebarHeader {
   padding: var(--space-4);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 72px;
+  flex-shrink: 0;
 }
 
 .brand {
   opacity: 1;
   transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .sidebar.closed .brand {
   opacity: 0;
   width: 0;
-  overflow: hidden;
 }
 
 .brandTitle {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-accent-pink);
   margin: 0;
+  line-height: var(--line-height-tight);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .brandSubtitle {
   font-size: var(--font-size-xs);
   color: var(--color-muted-foreground);
+  display: block;
+  margin-top: var(--space-1);
 }
 
 .toggleButton {
@@ -68,22 +99,34 @@
   cursor: pointer;
   padding: var(--space-2);
   border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
 .toggleButton:hover {
   background-color: var(--color-muted);
+  color: var(--color-accent-pink);
+  transform: scale(1.1);
 }
 
 .toggleIcon {
   transition: transform 0.3s ease;
 }
 
-/* Navigation */
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
 .navigation {
   flex: 1;
   padding: var(--space-4);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .navSection {
@@ -101,6 +144,8 @@
   letter-spacing: 0.05em;
   margin-bottom: var(--space-3);
   font-weight: var(--font-weight-medium);
+  transition: opacity 0.3s ease, height 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebar.closed .navSectionTitle {
@@ -131,18 +176,22 @@
   color: var(--color-foreground);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   gap: var(--space-3);
+  min-height: 44px;
 }
 
 .navLink:hover {
   background-color: var(--color-muted);
   color: var(--color-accent-pink);
+  transform: translateX(4px);
+  box-shadow: inset 3px 0 0 var(--color-accent-pink);
 }
 
 .navLink.active {
   background-color: var(--color-translucent-white-1);
   color: var(--color-accent-pink);
+  box-shadow: inset 3px 0 0 var(--color-accent-pink);
 }
 
 .navIcon {
@@ -155,30 +204,34 @@
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   transition: opacity 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar.closed .navLabel {
   opacity: 0;
   width: 0;
-  overflow: hidden;
 }
 
 .navBadge {
   background-color: var(--color-accent-pink);
-  color: white;
+  color: var(--color-primary-white);
   font-size: var(--font-size-xs);
   padding: 2px 6px;
   border-radius: var(--radius-full);
   min-width: 20px;
   text-align: center;
+  flex-shrink: 0;
 }
 
-/* Role Selector */
+/* ==========================================================================
+   Role Selector
+   ========================================================================== */
+
 .roleSelector {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  color: var(--color-translucent-white-4);
 }
 
 .roleButton {
@@ -188,23 +241,31 @@
   border: 1px solid var(--color-border);
   padding: var(--space-3);
   border-radius: var(--radius-sm);
-  color: var(--color-primary-white);
+  color: var(--color-foreground);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   gap: var(--space-3);
   text-align: left;
+  min-height: 44px;
 }
 
 .roleButton:hover {
   background-color: var(--color-muted);
   color: var(--color-accent-pink);
-  border-color: var(--color-primary);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-shadow-pink);
 }
 
 .roleButton.active {
-  background-color: var(--color-translucent-white-1);
+  background: linear-gradient(
+    135deg,
+    rgba(184, 148, 95, 0.15),
+    rgba(201, 161, 82, 0.1)
+  );
   color: var(--color-accent-pink);
-  border-color: var(--color-primary);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
 }
 
 .roleIcon {
@@ -217,18 +278,23 @@
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   transition: opacity 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar.closed .roleLabel {
   opacity: 0;
   width: 0;
-  overflow: hidden;
 }
 
-/* Sidebar Footer */
+/* ==========================================================================
+   Sidebar Footer
+   ========================================================================== */
+
 .sidebarFooter {
   padding: var(--space-4);
   border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .userProfile {
@@ -241,25 +307,34 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background-color: var(--color-translucent-white-1);
-  color: var(--color-accent-pink);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  color: var(--color-primary-white);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: var(--font-weight-bold);
   flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+.avatarText {
+  line-height: 1;
 }
 
 .userInfo {
   flex: 1;
   overflow: hidden;
   transition: opacity 0.3s ease;
+  min-width: 0;
 }
 
 .sidebar.closed .userInfo {
   opacity: 0;
   width: 0;
-  overflow: hidden;
 }
 
 .userName {
@@ -281,15 +356,107 @@
   text-overflow: ellipsis;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* ==========================================================================
+   Responsive Design - Tablet (60.5rem / 968px)
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
   .sidebar.open {
-    width: 100%;
-    max-width: 280px;
+    width: 260px;
+  }
+
+  .sidebarHeader {
+    padding: var(--space-3);
+  }
+
+  .navigation {
+    padding: var(--space-3);
+  }
+
+  .navSection {
+    margin-bottom: var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile (40rem / 640px)
+   Mobile: Sidebar becomes full-screen drawer overlay
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+  .sidebar {
+    width: 280px;
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
   }
 
   .sidebar.closed {
-    width: 0;
-    padding: 0;
+    width: 280px;
+    transform: translateX(-100%);
+  }
+
+  /* Always show brand on mobile */
+  .sidebar.mobile .brand {
+    opacity: 1;
+    width: auto;
+  }
+
+  /* Always show labels on mobile */
+  .sidebar.mobile .navLabel,
+  .sidebar.mobile .roleLabel,
+  .sidebar.mobile .userInfo {
+    opacity: 1;
+    width: auto;
+  }
+
+  /* Always show section titles on mobile */
+  .sidebar.mobile .navSectionTitle {
+    opacity: 1;
+    height: auto;
+    margin-bottom: var(--space-3);
+  }
+
+  .sidebarHeader {
+    padding: var(--space-4);
+    min-height: 64px;
+  }
+
+  .navigation {
+    padding: var(--space-4);
+  }
+
+  /* Increase touch target sizes for mobile */
+  .navLink {
+    padding: var(--space-4);
+    min-height: 48px;
+  }
+
+  .roleButton {
+    padding: var(--space-4);
+    min-height: 48px;
+  }
+
+  .sidebarFooter {
+    padding: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Very Small Screens (320px)
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .sidebar {
+    width: 100%;
+  }
+
+  .sidebar.closed {
+    width: 100%;
   }
 }

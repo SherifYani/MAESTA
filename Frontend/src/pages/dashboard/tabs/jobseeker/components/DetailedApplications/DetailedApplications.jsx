@@ -1,337 +1,622 @@
 /**
  * @file DetailedApplications.jsx
- * @description Detailed applications list component with status tracking and actions
+ * @description Displays job applications with detailed status tracking and filtering
+ * Follows BEM methodology and uses global CSS variables
  * @author Sherif Talaat
  * @version 1.0.0
- * @date 2025-12-23
+ * @date 2026-1-20
  *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-1-20
  */
 
-import PropTypes from "prop-types";
+import React, { useState, useMemo } from "react";
 import {
-  CheckCircle,
-  Clock,
-  MessageSquare,
-  XCircle,
-  Award,
-  Eye,
   FileText,
-  ChevronRight,
   Calendar,
-  Building,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  TrendingUp,
+  Eye,
+  Trash2,
+  Filter,
+  ChevronDown,
+  ExternalLink,
+  MapPin,
+  DollarSign,
+  Users,
+  BarChart
 } from "lucide-react";
-import Badge from "../../../../components/ui/Badge";
 import Button from "../../../../components/ui/Button";
-import Card from "../../../../components/ui/Card";
+import Badge from "../../../../components/ui/Badge";
 import styles from "./DetailedApplications.module.css";
 
 /**
- * DetailedApplications component for displaying full applications list with statuses
+ * DetailedApplications Component
+ * @description Displays job applications with status tracking and management
  * @param {Object} props - Component props
  * @param {Array} props.applications - Array of application objects
- * @param {Function} props.onViewApplication - Function to view application details
- * @param {Function} props.onWithdrawApplication - Function to withdraw application
  * @param {Object} props.stats - Application statistics
- * @returns {JSX.Element} Rendered detailed applications component
+ * @param {function} props.onViewApplication - Callback when viewing application
+ * @param {function} props.onWithdrawApplication - Callback when withdrawing application
+ * @param {function} props.onUpdateStatus - Callback when updating application status
+ * @returns {JSX.Element} The rendered applications list
  */
 const DetailedApplications = ({
   applications = [],
-  onViewApplication,
-  onWithdrawApplication,
-  stats,
+  stats = {},
+  onViewApplication = () => {},
+  onWithdrawApplication = () => {},
+  onUpdateStatus = () => {}
 }) => {
-  // Fallback sample data if no applications provided
-  const appData =
-    applications.length > 0
-      ? applications
-      : [
-          {
-            id: 1,
-            jobTitle: "Senior Frontend Developer",
-            company: "TechCorp Inc.",
-            dateApplied: "2024-01-15",
-            status: "under_review",
-            stage: "Under Review",
-            nextStep: "Technical Assessment",
-            timeline: "Expected: 3-5 business days",
-          },
-          {
-            id: 2,
-            jobTitle: "UI/UX Designer",
-            company: "Creative Studio",
-            dateApplied: "2024-01-12",
-            status: "interview",
-            stage: "Interview Scheduled",
-            nextStep: "Design Challenge Review",
-            timeline: "Interview: Jan 20, 2024",
-          },
-          {
-            id: 3,
-            jobTitle: "React Native Developer",
-            company: "MobileFirst",
-            dateApplied: "2024-01-10",
-            status: "offer",
-            stage: "Offer Received",
-            nextStep: "Offer Review",
-            timeline: "Deadline: Jan 25, 2024",
-          },
-          {
-            id: 4,
-            jobTitle: "Full Stack Developer",
-            company: "StartupXYZ",
-            dateApplied: "2024-01-05",
-            status: "rejected",
-            stage: "Not Selected",
-            nextStep: "Feedback Requested",
-            timeline: "Application closed",
-          },
-        ];
+  const [filters, setFilters] = useState({
+    status: "all",
+    dateRange: "all",
+    matchScore: "all"
+  });
+  const [showFilters, setShowFilters] = useState(false);
+  const [expandedAppId, setExpandedAppId] = useState(null);
+  const [sortBy, setSortBy] = useState("date");
 
-  // Calculate statistics
-  const applicationStats = stats || {
-    total: appData.length,
-    underReview: appData.filter((app) => app.status === "under_review").length,
-    interview: appData.filter((app) => app.status === "interview").length,
-    offers: appData.filter((app) => app.status === "offer").length,
-    rejected: appData.filter((app) => app.status === "rejected").length,
-  };
+  /**
+   * Apply filters and sorting to applications
+   */
+  const filteredApplications = useMemo(() => {
+    let filtered = [...applications];
 
-  // Status configuration
-  const statusConfig = {
-    under_review: {
-      label: "Under Review",
-      color: "warning",
-      icon: Clock,
-    },
-    interview: {
-      label: "Interview",
-      color: "info",
-      icon: MessageSquare,
-    },
-    offer: {
-      label: "Offer",
-      color: "success",
-      icon: Award,
-    },
-    rejected: {
-      label: "Rejected",
-      color: "error",
-      icon: XCircle,
-    },
-    accepted: {
-      label: "Accepted",
-      color: "success",
-      icon: CheckCircle,
-    },
-  };
+    // Apply filters
+    if (filters.status !== "all") {
+      filtered = filtered.filter(app => 
+        app.status?.toLowerCase() === filters.status.toLowerCase()
+      );
+    }
 
-  const handleViewApplication = (applicationId) => {
-    if (onViewApplication) {
-      onViewApplication(applicationId);
-    } else {
-      console.log(`View application ${applicationId}`);
+    if (filters.dateRange !== "all") {
+      const now = new Date();
+      const cutoff = new Date();
+      
+      switch (filters.dateRange) {
+        case "week":
+          cutoff.setDate(now.getDate() - 7);
+          break;
+        case "month":
+          cutoff.setMonth(now.getMonth() - 1);
+          break;
+        case "quarter":
+          cutoff.setMonth(now.getMonth() - 3);
+          break;
+      }
+      
+      filtered = filtered.filter(app => {
+        const appDate = new Date(app.appliedDate || app.date);
+        return appDate >= cutoff;
+      });
+    }
+
+    if (filters.matchScore !== "all") {
+      const minScore = parseInt(filters.matchScore);
+      filtered = filtered.filter(app => app.matchScore >= minScore);
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case "date":
+        filtered.sort((a, b) => 
+          new Date(b.appliedDate || b.date) - new Date(a.appliedDate || a.date)
+        );
+        break;
+      case "match":
+        filtered.sort((a, b) => b.matchScore - a.matchScore);
+        break;
+      case "company":
+        filtered.sort((a, b) => a.company.localeCompare(b.company));
+        break;
+      case "status":
+        const statusOrder = {
+          "offer": 1,
+          "interview": 2,
+          "review": 3,
+          "applied": 4,
+          "rejected": 5,
+          "withdrawn": 6
+        };
+        filtered.sort((a, b) => 
+          (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99)
+        );
+        break;
+    }
+
+    return filtered;
+  }, [applications, filters, sortBy]);
+
+  /**
+   * Get status icon and color
+   * @param {string} status - Application status
+   * @returns {Object} Icon component and color
+   */
+  const getStatusConfig = (status) => {
+    const statusLower = status?.toLowerCase() || "";
+    
+    switch (statusLower) {
+      case "offer":
+      case "accepted":
+        return {
+          icon: CheckCircle,
+          color: "var(--color-success)",
+          bgColor: "rgba(34, 197, 94, 0.1)",
+          label: "Offer"
+        };
+      case "interview":
+      case "scheduled":
+        return {
+          icon: Calendar,
+          color: "var(--color-accent)",
+          bgColor: "rgba(168, 85, 247, 0.1)",
+          label: "Interview"
+        };
+      case "review":
+      case "applied":
+      case "pending":
+        return {
+          icon: Clock,
+          color: "var(--color-warning)",
+          bgColor: "rgba(245, 158, 11, 0.1)",
+          label: "Under Review"
+        };
+      case "rejected":
+      case "not selected":
+        return {
+          icon: XCircle,
+          color: "var(--color-danger)",
+          bgColor: "rgba(239, 68, 68, 0.1)",
+          label: "Rejected"
+        };
+      case "withdrawn":
+        return {
+          icon: AlertCircle,
+          color: "var(--color-secondary)",
+          bgColor: "rgba(156, 163, 175, 0.1)",
+          label: "Withdrawn"
+        };
+      default:
+        return {
+          icon: FileText,
+          color: "var(--color-info)",
+          bgColor: "rgba(59, 130, 246, 0.1)",
+          label: status || "Applied"
+        };
     }
   };
 
-  const handleWithdrawApplication = (applicationId, e) => {
+  /**
+   * Render status badge
+   * @param {string} status - Application status
+   * @param {string} stage - Application stage
+   * @returns {JSX.Element} Status badge
+   */
+  const renderStatusBadge = (status, stage) => {
+    const config = getStatusConfig(status);
+    const Icon = config.icon;
+    
+    return (
+      <Badge 
+        variant="custom" 
+        style={{ 
+          background: config.bgColor,
+          color: config.color,
+          borderColor: config.color
+        }}
+        className={styles.statusBadge}
+      >
+        <Icon size={12} />
+        {stage || config.label}
+      </Badge>
+    );
+  };
+
+  /**
+   * Render timeline for application
+   * @param {Array} timeline - Timeline array
+   * @returns {JSX.Element} Timeline component
+   */
+  const renderTimeline = (timeline) => {
+    if (!timeline || !Array.isArray(timeline)) return null;
+    
+    return (
+      <div className={styles.timeline}>
+        {timeline.slice(0, 3).map((item, index) => (
+          <div key={index} className={styles.timelineItem}>
+            <div className={styles.timelineDot} />
+            <div className={styles.timelineContent}>
+              <span className={styles.timelineAction}>{item.action}</span>
+              <span className={styles.timelineDate}>{item.date}</span>
+            </div>
+            <Badge 
+              variant={item.status === "completed" ? "success" : 
+                      item.status === "scheduled" ? "warning" : "default"}
+              size="sm"
+            >
+              {item.status}
+            </Badge>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  /**
+   * Toggle application details
+   * @param {string} appId - Application ID
+   */
+  const toggleAppDetails = (appId) => {
+    setExpandedAppId(expandedAppId === appId ? null : appId);
+  };
+
+  /**
+   * Handle application withdrawal
+   * @param {string} appId - Application ID
+   * @param {Event} e - Click event
+   */
+  const handleWithdraw = (appId, e) => {
     e.stopPropagation();
-    if (onWithdrawApplication) {
-      onWithdrawApplication(applicationId);
-    } else {
-      console.log(`Withdraw application ${applicationId}`);
+    if (window.confirm("Are you sure you want to withdraw this application?")) {
+      onWithdrawApplication(appId);
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+  /**
+   * Clear all filters
+   */
+  const clearFilters = () => {
+    setFilters({
+      status: "all",
+      dateRange: "all",
+      matchScore: "all"
     });
   };
 
-  return (
-    <Card className={styles.detailedApplications} padding={true}>
-      {/* Header with Statistics */}
-      <div className={styles.header}>
-        <div className={styles.titleSection}>
-          <h3 className={styles.title}>Applications</h3>
-          <Badge variant="primary" rounded={true}>
-            {applicationStats.total} total
-          </Badge>
+  // If no applications
+  if (applications.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIcon}>
+          <FileText size={48} />
         </div>
+        <h3>No Applications Yet</h3>
+        <p>Start applying to jobs to track your progress here</p>
+        <Button variant="primary">
+          Browse Jobs
+        </Button>
+      </div>
+    );
+  }
 
-        <div className={styles.statsSummary}>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Active</span>
-            <span className={styles.statValue}>
-              {applicationStats.underReview +
-                applicationStats.interview +
-                applicationStats.offers}
-            </span>
+  // Application statistics
+  const applicationStats = {
+    total: stats.total || applications.length,
+    underReview: stats.underReview || applications.filter(app => 
+      ["applied", "review", "pending"].includes(app.status?.toLowerCase())
+    ).length,
+    interview: stats.interview || applications.filter(app => 
+      ["interview", "scheduled"].some(status => 
+        app.status?.toLowerCase().includes(status)
+      )
+    ).length,
+    offers: stats.offers || applications.filter(app => 
+      ["offer", "accepted"].some(status => 
+        app.status?.toLowerCase().includes(status)
+      )
+    ).length,
+    rejected: stats.rejected || applications.filter(app => 
+      ["rejected", "not selected"].includes(app.status?.toLowerCase())
+    ).length,
+  };
+
+  return (
+    <div className={styles.container}>
+      {/* Header with Stats */}
+      <div className={styles.header}>
+        <div className={styles.headerInfo}>
+          <h2 className={styles.title}>Job Applications</h2>
+          <p className={styles.subtitle}>
+            Track and manage all your job applications
+          </p>
+        </div>
+        
+        <div className={styles.headerStats}>
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{applicationStats.total}</div>
+            <div className={styles.statLabel}>Total</div>
           </div>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Interviews</span>
-            <span className={styles.statValue}>
-              {applicationStats.interview}
-            </span>
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{applicationStats.underReview}</div>
+            <div className={styles.statLabel}>Review</div>
           </div>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Offers</span>
-            <span className={styles.statValue}>{applicationStats.offers}</span>
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{applicationStats.interview}</div>
+            <div className={styles.statLabel}>Interview</div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{applicationStats.offers}</div>
+            <div className={styles.statLabel}>Offers</div>
           </div>
         </div>
       </div>
 
-      {/* Applications Table */}
-      <div className={styles.applicationsTable}>
-        <div className={styles.tableHeader}>
-          <div className={styles.tableCell}>Job / Company</div>
-          <div className={styles.tableCell}>Date Applied</div>
-          <div className={styles.tableCell}>Status</div>
-          <div className={styles.tableCell}>Next Step</div>
-          <div className={styles.tableCell}>Actions</div>
+      {/* Controls Bar */}
+      <div className={styles.controls}>
+        <div className={styles.filterControls}>
+          <button 
+            className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={16} />
+            Filter
+            {Object.values(filters).filter(f => f !== "all").length > 0 && (
+              <span className={styles.filterCount}>
+                {Object.values(filters).filter(f => f !== "all").length}
+              </span>
+            )}
+          </button>
+          
+          <div className={styles.sortDropdown}>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className={styles.sortSelect}
+            >
+              <option value="date">Sort by: Newest</option>
+              <option value="match">Sort by: Match Score</option>
+              <option value="company">Sort by: Company</option>
+              <option value="status">Sort by: Status</option>
+            </select>
+            <ChevronDown size={16} className={styles.sortIcon} />
+          </div>
         </div>
+        
+        <div className={styles.viewOptions}>
+          <Button variant="outline" size="sm">
+            <BarChart size={16} /> Analytics
+          </Button>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </div>
+      </div>
 
-        <div className={styles.tableBody}>
-          {appData.map((application) => {
-            const status =
-              statusConfig[application.status] || statusConfig.under_review;
-            const StatusIcon = status.icon;
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className={styles.filtersPanel}>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Status</label>
+            <div className={styles.filterOptions}>
+              {["all", "applied", "review", "interview", "offer", "rejected", "withdrawn"].map(status => (
+                <button
+                  key={status}
+                  className={`${styles.filterOption} ${filters.status === status ? styles.active : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, status }))}
+                >
+                  {status === "all" ? "All Statuses" : status}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            return (
-              <div
-                key={application.id}
-                className={styles.tableRow}
-                onClick={() => handleViewApplication(application.id)}>
-                <div className={styles.tableCell}>
-                  <div className={styles.jobInfo}>
-                    <h4 className={styles.jobTitle}>{application.jobTitle}</h4>
-                    <div className={styles.companyInfo}>
-                      <Building size={14} />
-                      <span className={styles.companyName}>
-                        {application.company}
-                      </span>
-                    </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Date Range</label>
+            <div className={styles.filterOptions}>
+              {["all", "week", "month", "quarter"].map(range => (
+                <button
+                  key={range}
+                  className={`${styles.filterOption} ${filters.dateRange === range ? styles.active : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, dateRange: range }))}
+                >
+                  {range === "all" ? "All Time" : `Last ${range}`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Match Score</label>
+            <div className={styles.filterOptions}>
+              {["all", "90", "80", "70", "60"].map(score => (
+                <button
+                  key={score}
+                  className={`${styles.filterOption} ${filters.matchScore === score ? styles.active : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, matchScore: score }))}
+                >
+                  {score === "all" ? "Any Score" : `≥ ${score}%`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterActions}>
+            <button className={styles.clearButton} onClick={clearFilters}>
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Applications List */}
+      <div className={styles.applicationsList}>
+        {filteredApplications.map(application => {
+          const statusConfig = getStatusConfig(application.status);
+          const StatusIcon = statusConfig.icon;
+          
+          return (
+            <article 
+              key={application.id} 
+              className={`${styles.applicationCard} ${expandedAppId === application.id ? styles.expanded : ''}`}
+              onClick={() => toggleAppDetails(application.id)}
+              role="button"
+              tabIndex={0}
+            >
+              <div className={styles.appHeader}>
+                <div className={styles.appMainInfo}>
+                  <div className={styles.appTitleRow}>
+                    <h3 className={styles.appTitle}>{application.jobTitle || application.title}</h3>
+                    {renderStatusBadge(application.status, application.stage)}
                   </div>
+                  <p className={styles.company}>{application.company}</p>
                 </div>
-
-                <div className={styles.tableCell}>
-                  <div className={styles.dateInfo}>
+                
+                <div className={styles.appMeta}>
+                  <div className={styles.matchScore}>
+                    <TrendingUp size={14} />
+                    <span>{application.matchScore || "N/A"}% Match</span>
+                  </div>
+                  <div className={styles.appliedDate}>
                     <Calendar size={14} />
-                    <span className={styles.dateText}>
-                      {formatDate(application.dateApplied)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.tableCell}>
-                  <Badge
-                    variant={status.color}
-                    icon={StatusIcon}
-                    className={styles.statusBadge}>
-                    {application.stage || status.label}
-                  </Badge>
-                  {application.timeline && (
-                    <span className={styles.timeline}>
-                      {application.timeline}
-                    </span>
-                  )}
-                </div>
-
-                <div className={styles.tableCell}>
-                  <div className={styles.nextStep}>
-                    <span className={styles.nextStepLabel}>Next:</span>
-                    <span className={styles.nextStepText}>
-                      {application.nextStep}
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.tableCell}>
-                  <div className={styles.actionButtons}>
-                    <Button
-                      variant="ghost"
-                      size="small"
-                      icon={Eye}
-                      onClick={() => handleViewApplication(application.id)}
-                      className={styles.actionButton}>
-                      View
-                    </Button>
-
-                    {application.status !== "rejected" &&
-                      application.status !== "accepted" && (
-                        <Button
-                          variant="ghost"
-                          size="small"
-                          icon={FileText}
-                          onClick={(e) =>
-                            handleWithdrawApplication(application.id, e)
-                          }
-                          className={styles.actionButton}>
-                          Withdraw
-                        </Button>
-                      )}
-
-                    <ChevronRight size={16} className={styles.chevronIcon} />
+                    <span>{application.appliedDate || application.date}</span>
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+
+              <div className={styles.appDetails}>
+                <div className={styles.detailsRow}>
+                  <div className={styles.detailItem}>
+                    <MapPin size={14} />
+                    <span>{application.location || "Location not specified"}</span>
+                  </div>
+                  {application.salary && (
+                    <div className={styles.detailItem}>
+                      <DollarSign size={14} />
+                      <span>{application.salary}</span>
+                    </div>
+                  )}
+                  {application.nextAction && (
+                    <div className={styles.detailItem}>
+                      <Clock size={14} />
+                      <span>Next: {application.nextAction}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {application.notes && (
+                  <div className={styles.notes}>
+                    <span className={styles.notesLabel}>Notes: </span>
+                    {application.notes}
+                  </div>
+                )}
+              </div>
+
+              {/* Expandable Content */}
+              {expandedAppId === application.id && (
+                <div className={styles.expandedContent}>
+                  {application.timeline && (
+                    <div className={styles.timelineSection}>
+                      <h4>Application Timeline</h4>
+                      {renderTimeline(application.timeline)}
+                    </div>
+                  )}
+                  
+                  {application.offerDetails && (
+                    <div className={styles.offerSection}>
+                      <h4>Offer Details</h4>
+                      <div className={styles.offerDetails}>
+                        {Object.entries(application.offerDetails).map(([key, value]) => (
+                          <div key={key} className={styles.offerItem}>
+                            <span className={styles.offerLabel}>{key}:</span>
+                            <span className={styles.offerValue}>{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {application.feedback && (
+                    <div className={styles.feedbackSection}>
+                      <h4>Feedback</h4>
+                      <p>{application.feedback}</p>
+                    </div>
+                  )}
+                  
+                  <div className={styles.expandedActions}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewApplication(application.id);
+                      }}
+                    >
+                      <Eye size={16} /> View Details
+                    </Button>
+                    
+                    {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={(e) => handleWithdraw(application.id, e)}
+                      >
+                        <Trash2 size={16} /> Withdraw
+                      </Button>
+                    )}
+                    
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Update Status
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Collapsed Actions */}
+              {expandedAppId !== application.id && (
+                <div className={styles.collapsedActions}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewApplication(application.id);
+                    }}
+                  >
+                    <Eye size={14} />
+                  </Button>
+                  
+                  {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleWithdraw(application.id, e)}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </article>
+          );
+        })}
       </div>
 
-      {/* Empty State */}
-      {appData.length === 0 && (
-        <div className={styles.emptyState}>
-          <FileText size={48} className={styles.emptyIcon} />
-          <h3 className={styles.emptyTitle}>No Applications Yet</h3>
-          <p className={styles.emptyDescription}>
-            Applications you submit will appear here with their current status
-          </p>
-          <Button variant="primary" icon={Eye}>
-            Browse Jobs
-          </Button>
+      {/* Footer */}
+      {filteredApplications.length > 0 && (
+        <div className={styles.footer}>
+          <div className={styles.footerInfo}>
+            Showing {filteredApplications.length} of {applications.length} applications
+          </div>
+          <div className={styles.footerActions}>
+            <Button variant="outline" size="sm">
+              Load More
+            </Button>
+            <Button variant="primary" size="sm">
+              <ExternalLink size={14} /> Application Analytics
+            </Button>
+          </div>
         </div>
       )}
-    </Card>
+    </div>
   );
-};
-
-DetailedApplications.propTypes = {
-  /** Array of application objects */
-  applications: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      jobTitle: PropTypes.string.isRequired,
-      company: PropTypes.string.isRequired,
-      dateApplied: PropTypes.string.isRequired,
-      status: PropTypes.oneOf([
-        "under_review",
-        "interview",
-        "offer",
-        "rejected",
-        "accepted",
-      ]),
-      stage: PropTypes.string,
-      nextStep: PropTypes.string,
-      timeline: PropTypes.string,
-    })
-  ),
-  /** Function to view application details */
-  onViewApplication: PropTypes.func,
-  /** Function to withdraw application */
-  onWithdrawApplication: PropTypes.func,
-  /** Application statistics */
-  stats: PropTypes.shape({
-    total: PropTypes.number,
-    underReview: PropTypes.number,
-    interview: PropTypes.number,
-    offers: PropTypes.number,
-    rejected: PropTypes.number,
-  }),
 };
 
 export default DetailedApplications;

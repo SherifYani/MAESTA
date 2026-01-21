@@ -1,24 +1,23 @@
 /**
  * @file JobseekerDashboard.jsx - Enhanced Version
- * @description Jobseeker-specific dashboard with metrics, activities, and job posts - Similar to ClientDashboard
+ * @description Jobseeker-specific dashboard with comprehensive SRS compliance
  * @author Sherif Talaat
- * @version 4.0.0
- * @date 2025-12-23
+ * @version 6.0.0
+ * @date 2026-01-23
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-23
- * @changes Added SRS-required components: ProfileSummary, SavedJobs, DetailedApplications
+ * @last-modified-date 2026-01-23
+ * @changes Integrated complete test data from dashboard.config.js
  */
 
-import StatsGrid from "../../components/StatsGrid";
-import RecentActivity from "../../components/RecentActivity";
-import PendingActions from "../../components/PendingActions";
-import ProfileSummary from "./components/ProfileSummary/ProfileSummary";
-import SavedJobs from "./components/SavedJobs/SavedJobs";
-import DetailedApplications from "./components/DetailedApplications/DetailedApplications";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import Badge from "../../components/ui/Badge";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Card from '../../components/ui/Card';
+import Button from '../../components/ui/Button';
+import Badge from '../../components/ui/Badge';
+import StatsGrid from '../../components/StatsGrid';
+import RecentActivity from '../../components/RecentActivity';
+import DetailedApplications from './components/DetailedApplications/DetailedApplications';
 import {
   Search,
   Target,
@@ -32,12 +31,92 @@ import {
   ArrowUpRight,
   MapPin,
   FileText,
-  Plus,
-} from "lucide-react";
-import styles from "./JobseekerDashboard.module.css";
+  Mail,
+  Calendar,
+  Check,
+  X,
+  Eye,
+  TrendingUp,
+  Star,
+  Download,
+  RefreshCw
+} from 'lucide-react';
+import styles from './JobseekerDashboard.module.css';
+
+// Import test data functions
+import {
+  getJobSeekerDashboardData,
+  getJobSeekerStatistics,
+  getApplicationStatusSummary,
+  getSavedJobsSummary
+} from '../../config/dashboard.config';
 
 /**
- * Compact Job Post Card Component
+ * Profile Completion Component - FR-105.15
+ * @param {Object} props
+ * @param {number} props.progress - Progress percentage (0-100)
+ * @returns {JSX.Element} Profile completion component
+ */
+const ProfileCompletion = ({ progress }) => (
+  <div className={styles.profileCompletion}>
+    <div className={styles.progressLabel}>
+      <span>Profile Completion</span>
+      <span className={styles.progressPercentage}>{progress}%</span>
+    </div>
+    <div className={styles.progressBar}>
+      <div
+        className={styles.progressFill}
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  </div>
+);
+
+/**
+ * Helper function to determine skill level - MOVED BEFORE COMPACT JOB CARD
+ */
+const getSkillLevel = (percentage) => {
+  if (percentage >= 85) return "expert";
+  if (percentage >= 70) return "advanced";
+  if (percentage >= 50) return "intermediate";
+  return "beginner";
+};
+
+/**
+ * Status Helper Functions - MOVED BEFORE COMPACT JOB CARD
+ */
+const getStatusVariant = (status) => {
+  const variants = {
+    'review': 'pending',
+    'interview': 'active',
+    'offer': 'success',
+    'rejected': 'destructive',
+    'withdrawn': 'outline',
+    'under-review': 'pending',
+    'accepted': 'success'
+  };
+  return variants[status] || 'outline';
+};
+
+const formatStatus = (status) => {
+  const statusMap = {
+    'review': 'Under Review',
+    'interview': 'Interview',
+    'offer': 'Offer Received',
+    'rejected': 'Rejected',
+    'withdrawn': 'Withdrawn',
+    'under-review': 'Under Review',
+    'accepted': 'Accepted'
+  };
+  return statusMap[status] || status;
+};
+
+/**
+ * Compact Job Card Component
+ * @param {Object} props
+ * @param {Object} props.job - Job data
+ * @param {Function} props.onClick - Click handler
+ * @returns {JSX.Element} Compact job card
  */
 const CompactJobCard = ({ job, onClick }) => (
   <div className={styles.compactJobCard} onClick={() => onClick?.(job.id)}>
@@ -47,246 +126,457 @@ const CompactJobCard = ({ job, onClick }) => (
         <h4>{job.title}</h4>
       </div>
       <Badge
-        variant={job.status?.toLowerCase() === "active" ? "active" : "pending"}>
-        {job.status}
+        variant={getStatusVariant(job.status)}
+        size="sm"
+      >
+        {formatStatus(job.status)}
       </Badge>
     </div>
-
     <div className={styles.jobCardMeta}>
-      <span className={styles.jobMetaItem}>{job.budget}</span>
+      <span className={styles.jobMetaItem}>
+        <span className={styles.jobMetaIcon}>🏢</span>
+        {job.company}
+      </span>
       <span className={styles.jobMetaItem}>
         <MapPin size={14} />
         {job.location}
       </span>
       <span className={styles.jobMetaItem}>
-        <Users size={14} />
-        {job.applicants} applicants
+        <span className={styles.jobMetaIcon}>💰</span>
+        {job.salary}
       </span>
     </div>
+    {job.matchScore && (
+      <div className={styles.matchScoreBadge}>
+        <TrendingUp size={12} />
+        <span>{job.matchScore}% Match</span>
+      </div>
+    )}
   </div>
 );
 
 /**
- * Enhanced JobseekerDashboard with SRS-required components
+ * Enhanced JobseekerDashboard with Complete Test Data Integration
+ * @param {Object} props
+ * @param {Object} props.data - Dashboard data from API (optional)
+ * @returns {JSX.Element} Jobseeker dashboard component
  */
 const JobseekerDashboard = ({ data }) => {
-  // Get all role-specific data from props
-  const activities = data?.activities || [];
-  const pendingActions = data?.pendingActions || [];
-  const recentJobPosts = data?.recentJobPosts || [];
-  const jobApplications = data?.jobApplications || [];
-  const skillAnalysis = data?.skillAnalysis || {};
-  const performanceMetrics = data?.performanceMetrics || {};
-  const metrics = data?.metrics || [];
+  const navigate = useNavigate();
 
-  // Create user data for ProfileSummary from available data
-  const userData = {
-    name: "John Doe", // Would come from user profile in real app
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    location: "New York, NY",
-    avatar: null,
-    completionPercentage: skillAnalysis?.matchPercentage || 78,
-    title: "Senior Frontend Developer",
+  // Initialize with test data if no API data provided
+  const [dashboardData, setDashboardData] = useState(() => {
+    return data || getJobSeekerDashboardData();
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Simulate API refresh
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setDashboardData(getJobSeekerDashboardData());
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  // Extract data from dashboardData
+  const profile = dashboardData.profile || {};
+  const applications = dashboardData.applications || [];
+  const savedJobs = dashboardData.savedJobs || [];
+  const skillsAnalysis = dashboardData.skillsAnalysis || {};
+  const recentActivity = dashboardData.recentActivity || [];
+  const performance = dashboardData.performance || {};
+  const recommendedJobs = dashboardData.recommendedJobs || [];
+  const activities = dashboardData.activities || [];
+  const pendingActions = dashboardData.pendingActions || [];
+
+  // Get calculated statistics
+  const jobSeekerStats = getJobSeekerStatistics();
+  const applicationSummary = getApplicationStatusSummary();
+  const savedJobsSummary = getSavedJobsSummary();
+
+  // Profile data for ProfileSummary component
+  const profileData = {
+    name: profile.name || "Sherif Talaat",
+    email: profile.email || "sherif.talaat@example.com",
+    phone: profile.phone || "+20 100 000 0000",
+    location: profile.location || "Cairo, Egypt",
+    avatar: profile.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=ST",
+    completionPercentage: profile.completionPercentage || 85,
+    title: profile.headline || "Senior Frontend Developer | React & TypeScript Expert",
     status: "active",
-    skills: skillAnalysis?.matchedSkills || [
-      "React",
-      "TypeScript",
-      "CSS",
-      "Git",
-    ],
-    verified: true,
+    skills: skillsAnalysis.matchedSkills?.map(skill => skill.name) || ["React", "TypeScript", "Next.js", "JavaScript"],
+    verified: profile.verification?.email || false,
+    summary: profile.summary || "Experienced Frontend Developer with 5+ years building scalable web applications."
   };
 
-  // Create saved jobs data (would come from backend in real app)
-  const savedJobsData = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp",
-      location: "Remote",
-      salary: "$120,000 - $150,000",
-      dateSaved: "2024-01-15",
-      jobType: "Full-time",
-      status: "active",
-      matchScore: skillAnalysis?.matchPercentage || 92,
-    },
-    {
-      id: 2,
-      title: "UI/UX Designer",
-      company: "CreativeStudio",
-      location: "New York, NY",
-      salary: "$90,000 - $110,000",
-      dateSaved: "2024-01-12",
-      jobType: "Full-time",
-      status: "active",
-      matchScore: 85,
-    },
-    {
-      id: 3,
-      title: "React Native Developer",
-      company: "MobileFirst",
-      location: "San Francisco, CA",
-      salary: "$110,000 - $130,000",
-      dateSaved: "2024-01-10",
-      jobType: "Contract",
-      status: "expired",
-      matchScore: 78,
-    },
-  ];
-
-  // Calculate application status counts for DetailedApplications
-  const calculateApplicationStats = () => {
-    if (jobApplications.length > 0) {
-      const stats = {
-        total: jobApplications.length,
-        underReview: jobApplications.filter((app) => app.status === "applied")
-          .length,
-        interview: jobApplications.filter((app) => app.status === "interview")
-          .length,
-        offers: jobApplications.filter((app) => app.status === "offer").length,
-        rejected: jobApplications.filter((app) => app.status === "rejected")
-          .length,
-      };
-      return stats;
-    }
-
-    // Fallback stats
-    return {
-      total: 4,
-      underReview: 1,
-      interview: 1,
-      offers: 1,
-      rejected: 1,
-    };
+  // Calculate application statistics
+  const applicationStats = {
+    total: applications.length,
+    underReview: applications.filter(app =>
+      app.status === 'review' || app.status === 'under-review'
+    ).length,
+    interview: applications.filter(app => app.status === 'interview').length,
+    offers: applications.filter(app =>
+      app.status === 'offer' || app.status === 'accepted'
+    ).length,
+    rejected: applications.filter(app => app.status === 'rejected').length
   };
-
-  const applicationStats = calculateApplicationStats();
 
   // Quick Insights Metrics for StatsGrid
-  const quickInsightsMetrics =
-    metrics.length > 0
-      ? metrics
-      : [
-          {
-            title: "Total Applications",
-            value: applicationStats.total,
-            change: "active applications",
-            icon: FileText,
-            trendType: "positive",
-            description: "Submitted job applications",
-          },
-          {
-            title: "Interview Rate",
-            value: `${
-              Math.round(
-                (applicationStats.interview / applicationStats.total) * 100
-              ) || 25
-            }%`,
-            change: "of applications",
-            icon: Target,
-            trendType: "positive",
-            description: "Applications to interview",
-          },
-          {
-            title: "Profile Match",
-            value: `${skillAnalysis?.matchPercentage || 87}%`,
-            change: "with job requirements",
-            icon: Award,
-            trendType: "positive",
-            description: "Job match score",
-          },
-          {
-            title: "Response Time",
-            value: `${performanceMetrics?.responseTime || "2.5"}d`,
-            change: "average response",
-            icon: Clock,
-            trendType: "positive",
-            description: "Average response time",
-          },
-        ];
+  const quickInsightsMetrics = [
+    {
+      title: "Total Applications",
+      value: applicationStats.total,
+      change: `${applicationStats.underReview} active`,
+      icon: FileText,
+      trendType: "positive",
+      description: "Submitted job applications",
+      color: "primary"
+    },
+    {
+      title: "Interview Rate",
+      value: `${applicationStats.total > 0 ?
+        Math.round((applicationStats.interview / applicationStats.total) * 100) : 0}%`,
+      change: `${applicationStats.interview} scheduled`,
+      icon: Target,
+      trendType: applicationStats.interview > 0 ? "positive" : "neutral",
+      description: "Applications to interview",
+      color: "success"
+    },
+    {
+      title: "Profile Match",
+      value: `${skillsAnalysis.overallMatch || 87}%`,
+      change: "with job requirements",
+      icon: Award,
+      trendType: "positive",
+      description: "Average job match score",
+      color: "warning"
+    },
+    {
+      title: "Response Rate",
+      value: performance.applicationMetrics?.avgResponseTime || "3.2d",
+      change: "average response time",
+      icon: Clock,
+      trendType: "positive",
+      description: "Average employer response time",
+      color: "info"
+    }
+  ];
 
-  // Skill data for Skill Development card
-  const skillData = skillAnalysis?.matchedSkills
-    ? skillAnalysis.matchedSkills.slice(0, 4).map((skill, index) => ({
-        label: skill,
-        percentage: 60 + index * 10, // Simulated progress
-        level:
-          index === 0 ? "expert" : index === 1 ? "advanced" : "intermediate",
-      }))
-    : [
-        { label: "React 19", percentage: 85, level: "expert" },
-        { label: "TypeScript", percentage: 70, level: "advanced" },
-        { label: "UI/UX Design", percentage: 60, level: "intermediate" },
-        { label: "Project Mgmt", percentage: 45, level: "beginner" },
-      ];
+  // Skill data for Skill Development card - NOW getSkillLevel IS DEFINED BEFORE THIS
+  const skillData = skillsAnalysis.matchedSkills?.slice(0, 4).map(skill => ({
+    label: skill.name,
+    percentage: skill.level || 70,
+    level: getSkillLevel(skill.level || 70),
+    category: skill.category || "Frontend",
+    demand: skill.demand || "High"
+  })) || [
+      {
+        label: "React 19",
+        percentage: 95,
+        level: "expert",
+        category: "Frontend",
+        demand: "Very High"
+      },
+      {
+        label: "TypeScript",
+        percentage: 90,
+        level: "expert",
+        category: "Frontend",
+        demand: "High"
+      },
+      {
+        label: "Next.js",
+        percentage: 85,
+        level: "advanced",
+        category: "Frontend",
+        demand: "High"
+      },
+      {
+        label: "UI/UX Design",
+        percentage: 60,
+        level: "intermediate",
+        category: "Design",
+        demand: "Medium"
+      }
+    ];
 
   // Event handlers
-  const handleActionToggle = (id, completed) => {
-    console.log(
-      `Action ${id} toggled to ${completed ? "completed" : "pending"}`
-    );
+  const handleJobSearch = () => {
+    navigate('/dashboard/recommended-jobs');
+  };
+
+  const handleViewProfile = () => {
+    navigate('/dashboard/profile');
+  };
+
+  const handleViewAllApplications = () => {
+    navigate('/dashboard/applications');
+  };
+
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'search-jobs':
+        navigate('/dashboard/recommended-jobs');
+        break;
+      case 'update-profile':
+        navigate('/dashboard/profile/edit');
+        break;
+      case 'track-applications':
+        navigate('/dashboard/applications');
+        break;
+      case 'set-alerts':
+        console.log('Set job alerts');
+        break;
+      case 'download-resume':
+        console.log('Download resume');
+        break;
+      default:
+        console.log(`Quick action: ${action}`);
+    }
   };
 
   const handleJobClick = (jobId) => {
     console.log(`Job ${jobId} clicked`);
+    // In real app: navigate to job details
+    // navigate(`/jobs/${jobId}`);
   };
 
-  const handleQuickAction = (action) => {
-    console.log(`Quick action: ${action}`);
-  };
-
-  const handleRemoveJob = (jobId) => {
+  const handleRemoveSavedJob = (jobId) => {
     console.log(`Remove saved job ${jobId}`);
+    // In real app: API call to remove from saved jobs
+    // Update local state
+    const updatedSavedJobs = savedJobs.filter(job => job.id !== jobId);
+    setDashboardData(prev => ({
+      ...prev,
+      savedJobs: updatedSavedJobs
+    }));
   };
 
   const handleViewJob = (jobId) => {
     console.log(`View job details ${jobId}`);
+    // In real app: navigate to job details
   };
 
   const handleViewApplication = (applicationId) => {
     console.log(`View application ${applicationId}`);
+    // In real app: navigate to application details
   };
 
   const handleWithdrawApplication = (applicationId) => {
     console.log(`Withdraw application ${applicationId}`);
+    // In real app: API call to withdraw application
+    // Update local state
+    const updatedApplications = applications.filter(app => app.id !== applicationId);
+    setDashboardData(prev => ({
+      ...prev,
+      applications: updatedApplications
+    }));
   };
+
+  const handleSaveJob = (jobId, saved) => {
+    console.log(`${saved ? 'Save' : 'Unsave'} job ${jobId}`);
+    // In real app: API call to save/unsave job
+    // Update local state for recommended jobs
+    if (recommendedJobs) {
+      const updatedRecommendedJobs = recommendedJobs.map(job =>
+        job.id === jobId ? { ...job, isSaved: saved } : job
+      );
+      setDashboardData(prev => ({
+        ...prev,
+        recommendedJobs: updatedRecommendedJobs
+      }));
+    }
+  };
+
+  const handleApplyJob = (jobId) => {
+    console.log(`Apply to job ${jobId}`);
+    // In real app: API call to apply to job
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Loading dashboard data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.jobseekerDashboard}>
       {/* Header Section */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>Job Seeker Dashboard</h1>
+          <h1 className={styles.title}>
+            Welcome back, {profileData.name.split(' ')[0]}!
+            {refreshing && <span className={styles.refreshingBadge}>Refreshing...</span>}
+          </h1>
           <p className={styles.subtitle}>
-            Track applications, interviews, and job recommendations
+            Track your applications, interviews, and job recommendations in one place
           </p>
         </div>
-
         <div className={styles.headerActions}>
+          <Button
+            variant="outline"
+            icon={RefreshCw}
+            onClick={handleRefresh}
+            loading={refreshing}
+            className={styles.refreshButton}
+          >
+            Refresh
+          </Button>
           <Button
             variant="primary"
             icon={Search}
-            onClick={() => handleQuickAction("search-jobs")}>
+            onClick={handleJobSearch}
+            className={styles.primaryButton}
+          >
             Search Jobs
           </Button>
           <Button
             variant="outline"
             icon={Bell}
-            onClick={() => handleQuickAction("set-alerts")}>
+            onClick={() => handleQuickAction('set-alerts')}
+            className={styles.secondaryButton}
+          >
             Set Alerts
           </Button>
         </div>
       </header>
 
-      {/* Main Content Grid - 2 Column Layout with SRS Components */}
-      <div className={styles.contentGrid}>
-        {/* Left Column - Profile, Activities, & Pending Actions */}
-        <div className={styles.leftColumn}>
-          {/* ProfileSummary Component (FR-701.2) */}
-          <ProfileSummary user={userData} />
+      {/* Application Stats Section - FR-701.4 */}
+      <section className={styles.metricsSection}>
+        <div className={styles.metricsHeader}>
+          <h2 className={styles.sectionTitle}>Application Overview</h2>
+          <div className={styles.statsSummary}>
+            <span className={styles.statsItem}>
+              <strong>{jobSeekerStats.totalApplications}</strong> Total Applications
+            </span>
+            <span className={styles.statsItem}>
+              <strong>{jobSeekerStats.interviewsScheduled}</strong> Interviews
+            </span>
+            <span className={styles.statsItem}>
+              <strong>{jobSeekerStats.offersReceived}</strong> Offers
+            </span>
+          </div>
+        </div>
+        <div className={styles.kpiGrid}>
+          <div className={styles.kpiItem}>
+            <div className={styles.kpiIconWrapper}>
+              <Mail size={20} />
+            </div>
+            <div className={styles.kpiContent}>
+              <span className={styles.kpiLabel}>Total Applications</span>
+              <span className={styles.kpiValue}>{applicationStats.total}</span>
+              <span className={styles.kpiChange}>
+                {applicationStats.underReview} under review
+              </span>
+            </div>
+          </div>
+          <div className={styles.kpiItem}>
+            <div className={styles.kpiIconWrapper}>
+              <Clock size={20} />
+            </div>
+            <div className={styles.kpiContent}>
+              <span className={styles.kpiLabel}>Under Review</span>
+              <span className={styles.kpiValue}>{applicationStats.underReview}</span>
+              <span className={styles.kpiChange}>
+                Awaiting response
+              </span>
+            </div>
+          </div>
+          <div className={styles.kpiItem}>
+            <div className={styles.kpiIconWrapper}>
+              <Calendar size={20} />
+            </div>
+            <div className={styles.kpiContent}>
+              <span className={styles.kpiLabel}>Interviews</span>
+              <span className={styles.kpiValue}>{applicationStats.interview}</span>
+              <span className={styles.kpiChange}>
+                Scheduled & upcoming
+              </span>
+            </div>
+          </div>
+          <div className={styles.kpiItem}>
+            <div className={styles.kpiIconWrapper}>
+              <Check size={20} />
+            </div>
+            <div className={styles.kpiContent}>
+              <span className={styles.kpiLabel}>Offers</span>
+              <span className={styles.kpiValue}>{applicationStats.offers}</span>
+              <span className={styles.kpiChange}>
+                Pending acceptance
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          {/* Recent Activity with Card Wrapper */}
+      {/* Main Content Grid - 2 Column Layout */}
+      <div className={styles.contentGrid}>
+        {/* Left Column */}
+        <div className={styles.leftColumn}>
+          {/* Profile Summary Card - FR-701.2 */}
+          <Card
+            title="Profile Summary"
+            subtitle="Complete your profile to get better matches"
+            className={styles.statusCard}
+            action={
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={handleViewProfile}
+                className={styles.viewAllBtn}
+              >
+                Edit Profile <ArrowUpRight size={14} />
+              </Button>
+            }
+          >
+            <div className={styles.profileSummary}>
+              <div className={styles.avatarSection}>
+                <img
+                  src={profileData.avatar}
+                  alt={profileData.name}
+                  className={styles.avatar}
+                />
+                <div className={styles.profileInfo}>
+                  <h4>{profileData.name}</h4>
+                  <p>{profileData.email}</p>
+                  <p className={styles.profileTitle}>{profileData.title}</p>
+                  <div className={styles.verificationStatus}>
+                    {profileData.verified && (
+                      <Badge variant="success" size="sm">
+                        <Check size={12} /> Verified
+                      </Badge>
+                    )}
+                    <Badge variant="outline" size="sm">
+                      Member since 2024
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profile Completion - FR-105.15 */}
+              <div className={styles.completionSection}>
+                <ProfileCompletion progress={profileData.completionPercentage} />
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/dashboard/profile/edit')}
+                  className={styles.editProfileBtn}
+                  fullWidth
+                >
+                  Complete Profile ({profileData.completionPercentage}%)
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          {/* Recent Activity */}
           <Card
             title="Recent Activity"
             subtitle="Application updates and notifications"
@@ -295,60 +585,173 @@ const JobseekerDashboard = ({ data }) => {
               <Button variant="ghost" size="small">
                 View All <ArrowUpRight size={14} />
               </Button>
-            }>
-            <RecentActivity activities={activities} limit={5} />
+            }
+          >
+            <RecentActivity
+              activities={recentActivity.slice(0, 5)}
+              limit={5}
+              showTimeline
+            />
           </Card>
 
-          {/* Pending Actions with Card Wrapper */}
+          {/* Quick Actions Panel */}
           <Card
-            title="Pending Actions"
-            subtitle={`${pendingActions.length} tasks to improve your job search`}
-            className={styles.actionsCard}
-            action={
-              <Badge variant="warning">{pendingActions.length} pending</Badge>
-            }>
-            <PendingActions
-              actions={pendingActions}
-              onActionComplete={handleActionToggle}
-            />
+            title="Quick Actions"
+            subtitle="Common job search tasks"
+            className={styles.quickActionsCard}
+          >
+            <div className={styles.quickActionsList}>
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction('search-jobs')}
+              >
+                <Search size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>Search Jobs</span>
+                  <span className={styles.quickActionDesc}>
+                    Find new opportunities
+                  </span>
+                </div>
+              </button>
+
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction('update-profile')}
+              >
+                <Briefcase size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>
+                    Update Resume
+                  </span>
+                  <span className={styles.quickActionDesc}>
+                    Enhance your CV
+                  </span>
+                </div>
+              </button>
+
+              <button
+                className={styles.quickActionItem}
+                onClick={() => handleQuickAction('download-resume')}
+              >
+                <Download size={20} />
+                <div className={styles.quickActionContent}>
+                  <span className={styles.quickActionTitle}>
+                    Download Resume
+                  </span>
+                  <span className={styles.quickActionDesc}>
+                    Latest version
+                  </span>
+                </div>
+              </button>
+            </div>
           </Card>
         </div>
 
-        {/* Right Column - Saved Jobs, Applications, & Insights */}
+        {/* Right Column */}
         <div className={styles.rightColumn}>
-          {/* SavedJobs Component (FR-701.5) */}
-          <SavedJobs
-            jobs={savedJobsData}
-            onRemoveJob={handleRemoveJob}
-            onViewJob={handleViewJob}
-          />
+          {/* Saved Jobs Component - FR-701.5 */}
+          <Card
+            title="Saved Jobs"
+            subtitle={`${savedJobsSummary.totalSaved} jobs saved, ${savedJobsSummary.appliedFromSaved} applied`}
+            className={styles.savedJobsCard}
+            action={
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate('/dashboard/saved-jobs')}
+                className={styles.viewAllBtn}
+              >
+                View All <ArrowUpRight size={14} />
+              </Button>
+            }
+          >
+            <div className={styles.savedJobsList}>
+              {savedJobs.slice(0, 3).map((job) => (
+                <div key={job.id} className={styles.savedJobItem}>
+                  <div className={styles.savedJobInfo}>
+                    <h5>{job.jobTitle}</h5>
+                    <p>{job.company}</p>
+                    <div className={styles.savedJobMeta}>
+                      <span>{job.location}</span>
+                      <span>{job.salary}</span>
+                    </div>
+                  </div>
+                  <div className={styles.savedJobActions}>
+                    {job.hasApplied ? (
+                      <Badge variant="success">Applied</Badge>
+                    ) : (
+                      <Button size="sm" variant="outline">Apply</Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleRemoveSavedJob(job.id)}
+                    >
+                      <X size={14} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
 
-          {/* DetailedApplications Component (FR-701.4) */}
+          {/* Detailed Applications Component - FR-701.4 */}
           <DetailedApplications
-            applications={jobApplications}
+            applications={applications.slice(0, 4)}
             stats={applicationStats}
             onViewApplication={handleViewApplication}
             onWithdrawApplication={handleWithdrawApplication}
           />
 
-          {/* Quick Stats Section using StatsGrid */}
-          <section className={styles.quickStatsSection}>
-            <StatsGrid metrics={quickInsightsMetrics} />
-          </section>
-
-          {/* Skill Development - Compact View */}
+          {/* Quick Stats Section */}
           <Card
-            title="Skill Development"
-            subtitle="Areas to improve for better matches"
-            className={styles.skillsCard}>
+            title="Performance Insights"
+            subtitle="Your job search performance"
+            className={styles.insightsCard}
+          >
+            <StatsGrid
+              metrics={quickInsightsMetrics}
+              columns={2}
+              compact
+            />
+          </Card>
+
+          {/* Skill Development Card - Skills at the end as requested */}
+          <Card
+            title="Skill Analysis"
+            subtitle={`Overall match: ${skillsAnalysis.overallMatch || 87}%`}
+            className={styles.skillsCard}
+            action={
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate('/dashboard/profile/edit#skills')}
+                className={styles.editBtn}
+              >
+                Edit Skills
+              </Button>
+            }
+          >
             <div className={styles.skillsGrid}>
               {skillData.map((skill, index) => (
                 <div
                   key={index}
                   className={styles.skillItem}
-                  data-skill-level={skill.level}>
+                  data-skill-level={skill.level}
+                >
                   <div className={styles.skillHeader}>
-                    <span className={styles.skillLabel}>{skill.label}</span>
+                    <span className={styles.skillLabel}>
+                      {skill.label}
+                      {skill.demand && (
+                        <Badge
+                          variant="outline"
+                          size="xs"
+                          className={styles.demandBadge}
+                        >
+                          {skill.demand}
+                        </Badge>
+                      )}
+                    </span>
                     <span className={styles.skillPercentage}>
                       {skill.percentage}%
                     </span>
@@ -365,51 +768,52 @@ const JobseekerDashboard = ({ data }) => {
                 </div>
               ))}
             </div>
+            {skillsAnalysis.recommendations && (
+              <div className={styles.skillsRecommendations}>
+                <h5>Recommendations:</h5>
+                <ul>
+                  {skillsAnalysis.recommendations.slice(0, 2).map((rec, idx) => (
+                    <li key={idx}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className={styles.skillsFooter}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => console.log('Take skill assessment')}
+                className={styles.skillAssessmentBtn}
+              >
+                Take Skill Assessment
+              </Button>
+            </div>
           </Card>
 
-          {/* Quick Actions Panel */}
+          {/* Recent Job Recommendations */}
           <Card
-            title="Quick Actions"
-            subtitle="Common job search tasks"
-            className={styles.quickActionsCard}>
-            <div className={styles.quickActionsList}>
-              <button
-                className={styles.quickActionItem}
-                onClick={() => handleQuickAction("search-jobs")}>
-                <Search size={20} />
-                <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>Search Jobs</span>
-                  <span className={styles.quickActionDesc}>
-                    Find new opportunities
-                  </span>
-                </div>
-              </button>
-
-              <button
-                className={styles.quickActionItem}
-                onClick={() => handleQuickAction("update-profile")}>
-                <Briefcase size={20} />
-                <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>
-                    Update Profile
-                  </span>
-                  <span className={styles.quickActionDesc}>
-                    Enhance your resume
-                  </span>
-                </div>
-              </button>
-
-              <button
-                className={styles.quickActionItem}
-                onClick={() => handleQuickAction("track-applications")}>
-                <BarChart3 size={20} />
-                <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>Track Apps</span>
-                  <span className={styles.quickActionDesc}>
-                    Monitor applications
-                  </span>
-                </div>
-              </button>
+            title="Recommended For You"
+            subtitle={`${recommendedJobs.length} jobs matching your profile`}
+            className={styles.jobsCard}
+            action={
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate('/dashboard/recommended-jobs')}
+                className={styles.viewAllBtn}
+              >
+                View All <ArrowUpRight size={14} />
+              </Button>
+            }
+          >
+            <div className={styles.compactJobsList}>
+              {recommendedJobs.slice(0, 3).map((job) => (
+                <CompactJobCard
+                  key={job.id}
+                  job={job}
+                  onClick={() => handleJobClick(job.id)}
+                />
+              ))}
             </div>
           </Card>
         </div>

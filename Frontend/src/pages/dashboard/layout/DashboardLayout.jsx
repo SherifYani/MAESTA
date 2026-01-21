@@ -1,25 +1,35 @@
 /**
  * @file DashboardLayout.jsx
- * @description Main layout component for the TalentPro dashboard
+ * @description Main layout component for the MAESTA dashboard with responsive behavior
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 3.0.0
  * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-01-19
  */
 
-import React, { useState, createContext, useEffect } from "react";
+import React, {
+  useState,
+  createContext,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
 import styles from "./DashboardLayout.module.css";
 import { Outlet } from "react-router-dom";
 
 /**
- * Dashboard context for managing theme and role state
+ * Dashboard context for managing role and sidebar state
  * @type {React.Context}
  */
 export const DashboardContext = createContext();
 
 /**
- * Main dashboard layout component
+ * Main dashboard layout component with responsive sidebar behavior
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components
  * @returns {JSX.Element} The rendered dashboard layout
@@ -27,122 +37,124 @@ export const DashboardContext = createContext();
 const DashboardLayout = ({ children }) => {
   const [currentRole, setCurrentRole] = useState("client");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [themeInitialized, setThemeInitialized] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const resizeTimeoutRef = useRef(null);
 
   /**
-   * Initialize theme from localStorage or system preference
+   * Handle responsive behavior based on screen size
    * @function
    */
-  const initializeTheme = () => {
-    // Check localStorage first
-    const savedTheme = localStorage.getItem("dashboard-theme");
-
-    if (savedTheme) {
-      // Use saved preference
-      const isDark = savedTheme === "dark";
-      setIsDarkTheme(isDark);
-      if (isDark) {
-        document.body.classList.add("dark");
-      } else {
-        document.body.classList.remove("dark");
-      }
-    } else {
-      // No saved preference, check system preference
-      const systemPrefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setIsDarkTheme(systemPrefersDark);
-      if (systemPrefersDark) {
-        document.body.classList.add("dark");
-      }
-      // Save system preference for consistency
-      localStorage.setItem(
-        "dashboard-theme",
-        systemPrefersDark ? "dark" : "light"
-      );
+  const handleResize = useCallback(() => {
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
     }
 
-    setThemeInitialized(true);
-  };
+    resizeTimeoutRef.current = setTimeout(() => {
+      const width = window.innerWidth;
+      const mobile = width < 640;
+
+      setIsMobile(mobile);
+
+      // Use functional update to avoid dependency on sidebarOpen
+      setSidebarOpen((prevOpen) => {
+        if (mobile && prevOpen) {
+          return false;
+        } else if (!mobile && width >= 968 && !prevOpen) {
+          return true;
+        }
+        return prevOpen;
+      });
+    }, 100);
+  }, []); // Empty dependency array - handleResize is now stable
 
   /**
-   * Toggle between light and dark themes
+   * Toggle sidebar with mobile-friendly behavior
    * @function
    */
-  const toggleTheme = () => {
-    const newTheme = !isDarkTheme;
-    setIsDarkTheme(newTheme);
-
-    if (newTheme) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-
-    // Save theme preference to localStorage
-    localStorage.setItem("dashboard-theme", newTheme ? "dark" : "light");
-  };
-
-  // Load theme on mount
-  useEffect(() => {
-    initializeTheme();
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
   }, []);
 
-  // Optional: Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  /**
+   * Close sidebar when clicking overlay on mobile
+   * @function
+   */
+  const closeSidebarOnMobile = useCallback(() => {
+    if (isMobile && sidebarOpen) {
+      setSidebarOpen(false);
+    }
+  }, [isMobile, sidebarOpen]);
 
-    const handleSystemThemeChange = (e) => {
-      // Only change if user hasn't set a preference
-      const savedTheme = localStorage.getItem("dashboard-theme");
-      if (!savedTheme) {
-        setIsDarkTheme(e.matches);
-        if (e.matches) {
-          document.body.classList.add("dark");
-        } else {
-          document.body.classList.remove("dark");
-        }
+  // Handle responsive behavior
+  useEffect(() => {
+    // Initial check
+    const initialCheck = () => {
+      const width = window.innerWidth;
+      const mobile = width < 640;
+      setIsMobile(mobile);
+
+      // On mobile, start with sidebar closed
+      if (mobile && sidebarOpen) {
+        setSidebarOpen(false);
       }
     };
 
-    mediaQuery.addEventListener("change", handleSystemThemeChange);
-    return () =>
-      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+    initialCheck();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
   }, []);
 
-  // Prevent flash of wrong theme by not rendering until theme is initialized
-  if (!themeInitialized) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}></div>
-        <p>Loading dashboard...</p>
-      </div>
-    );
-  }
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      currentRole,
+      setCurrentRole: (role) => {
+        // Validate role before setting
+        const validRoles = [
+          "client",
+          "company",
+          "freelancer",
+          "jobseeker",
+          "admin",
+        ];
+        if (validRoles.includes(role)) {
+          setCurrentRole(role);
+        }
+      },
+      sidebarOpen,
+      toggleSidebar,
+      isMobile,
+    }),
+    [currentRole, sidebarOpen, toggleSidebar, isMobile],
+  );
 
-  // In the return section of DashboardLayout.jsx:
   return (
-    <DashboardContext.Provider
-      value={{
-        currentRole,
-        setCurrentRole,
-        isDarkTheme,
-        toggleTheme,
-      }}>
+    <DashboardContext.Provider value={contextValue}>
       <div className={styles.dashboardLayout}>
+        {/* Mobile overlay - closes sidebar when clicked */}
+        {isMobile && sidebarOpen && (
+          <div
+            className={styles.overlay}
+            onClick={closeSidebarOnMobile}
+            aria-hidden="true"
+          />
+        )}
+
         <DashboardSidebar
           isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen(!sidebarOpen)}
+          onToggle={toggleSidebar}
+          isMobile={isMobile}
         />
+
         <div
-          className={`${styles.mainContent} ${
-            sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
-          }`}
-          style={{
-            marginLeft: sidebarOpen ? "270px" : "50px",
-            width: sidebarOpen ? "calc(100% - 270px)" : "100%",
-          }}>
+          className={`${styles.mainContent} ${sidebarOpen && !isMobile ? styles.sidebarOpen : styles.sidebarClosed
+            }`}>
           <DashboardHeader />
           <main className={styles.content}>
             <Outlet />

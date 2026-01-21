@@ -6,7 +6,10 @@
  * @date 2025-12-19
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-21
+ * @last-modified-date 2025-1-20
+ * 
+ * @changes:-
+ * - add profile page for jobseeker, company and client
  */
 
 import {
@@ -56,7 +59,7 @@ export const ROLES = {
 
 // ==================== EXISTING CONFIGURATIONS ====================
 
-// Role-specific metrics configuration 
+// Role-specific metrics configuration
 export const ROLE_METRICS = {
   [ROLES.CLIENT]: {
     title: "Client Dashboard",
@@ -1214,33 +1217,90 @@ export const METRIC_COLORS = {
 export const ROLE_NAVIGATION = {
   [ROLES.CLIENT]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    { id: "projects", label: "Projects", icon: Briefcase, path: "/projects" },
-    { id: "talent", label: "Talent Pool", icon: Users, path: "/talent" },
-    { id: "messages", label: "Messages", icon: Mail, path: "/messages" },
-    { id: "reports", label: "Reports", icon: BarChart, path: "/reports" },
+    { id: "profile", label: "Profile", icon: Users, path: "/dashboard/profile" },
+    {
+      id: "projects",
+      label: "Projects",
+      icon: Briefcase,
+      path: "/dashboard/projects",
+    },
+    {
+      id: "talent",
+      label: "Talent Pool",
+      icon: Users,
+      path: "/dashboard/talent",
+    },
+    {
+      id: "messages",
+      label: "Messages",
+      icon: Mail,
+      path: "/dashboard/messages",
+    },
+    {
+      id: "reports",
+      label: "Reports",
+      icon: BarChart,
+      path: "/dashboard/reports",
+    },
   ],
   [ROLES.FREELANCER]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    { id: "projects", label: "Projects", icon: Briefcase, path: "/projects" },
-    { id: "proposals", label: "Proposals", icon: Send, path: "/proposals" },
-    { id: "earnings", label: "Earnings", icon: DollarSign, path: "/earnings" },
-    { id: "profile", label: "Profile", icon: UserPlus, path: "/profile" },
+    {
+      id: "projects",
+      label: "Projects",
+      icon: Briefcase,
+      path: "/dashboard/projects",
+    },
+    {
+      id: "proposals",
+      label: "Proposals",
+      icon: Send,
+      path: "/dashboard/proposals",
+    },
+    {
+      id: "earnings",
+      label: "Earnings",
+      icon: DollarSign,
+      path: "/dashboard/earnings",
+    },
+    {
+      id: "profile",
+      label: "Profile",
+      icon: UserPlus,
+      path: "/dashboard/profile",
+    },
   ],
   [ROLES.COMPANY]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    { id: "team", label: "Team", icon: Users, path: "/team" },
-    { id: "hiring", label: "Hiring", icon: Briefcase, path: "/hiring" },
-    { id: "reports", label: "Reports", icon: BarChart, path: "/reports" },
-    { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
+    { id: "team", label: "Team", icon: Users, path: "/dashboard/team" },
+    { id: "profile", label: "Profile", icon: Users, path: "/dashboard/profile" },
+    {
+      id: "hiring",
+      label: "Hiring",
+      icon: Briefcase,
+      path: "/dashboard/hiring",
+    },
+    {
+      id: "reports",
+      label: "Reports",
+      icon: BarChart,
+      path: "/dashboard/reports",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
+    },
   ],
   [ROLES.JOBSEEKER]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    // {
-    //   id: "profile",
-    //   label: "Profile",
-    //   icon: UserPlus,
-    //   path: "/dashboard/profile",
-    // },
+    {
+      id: "profile",
+      label: "Profile",
+      icon: UserPlus,
+      path: "/dashboard/profile",
+    },
     {
       id: "saved-jobs",
       label: "Saved Jobs",
@@ -1259,7 +1319,6 @@ export const ROLE_NAVIGATION = {
       icon: Briefcase,
       path: "/dashboard/recommended-jobs",
     },
-    { id: "skills", label: "Skills", icon: Award, path: "/dashboard/skills" },
   ],
   [ROLES.ADMIN]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
@@ -1267,32 +1326,37 @@ export const ROLE_NAVIGATION = {
       id: "users",
       label: "User Management",
       icon: Users,
-      path: "/admin/users",
+      path: "/dashboard/users",
     },
     {
       id: "jobs",
       label: "Job Management",
       icon: Briefcase,
-      path: "/admin/jobs",
+      path: "/dashboard/jobs",
     },
     {
       id: "content",
       label: "Content Moderation",
       icon: FileText,
-      path: "/admin/content",
+      path: "/dashboard/content",
     },
     {
       id: "payments",
       label: "Payments",
       icon: DollarSign,
-      path: "/admin/payments",
+      path: "/dashboard/payments",
     },
-    { id: "reports", label: "Reports", icon: BarChart, path: "/admin/reports" },
+    {
+      id: "reports",
+      label: "Reports",
+      icon: BarChart,
+      path: "/dashboard/reports",
+    },
     {
       id: "staff",
       label: "Staff Management",
       icon: UserPlus,
-      path: "/admin/staff",
+      path: "/dashboard/staff",
     },
   ],
 };
@@ -1307,7 +1371,7 @@ export const HEADER_NAVIGATION = [
 
 // ==================== EXISTING THEME & VISIBILITY ====================
 
-// Theme settings 
+// Theme settings
 export const THEME_SETTINGS = {
   light: {
     primaryColor: "var(--color-primary)",
@@ -1380,7 +1444,7 @@ export const COMPONENT_VISIBILITY = {
  */
 export const getCompleteDashboardData = (role) => {
   return {
-    // Existing data 
+    // Existing data
     metrics: ROLE_METRICS[role]?.metrics || [],
     activities: SAMPLE_ACTIVITIES[role] || [],
     pendingActions: SAMPLE_PENDING_ACTIONS[role] || [],
@@ -1445,6 +1509,738 @@ export const ROLE_DISPLAY_NAMES = {
   [ROLES.ADMIN]: "Administrator",
 };
 
+/**
+ * COMPREHENSIVE JOB SEEKER TEST DATA
+ * Based on SRS Requirements FR-701.1 to FR-701.5
+ */
+
+// ==================== JOB SEEKER SPECIFIC DATA ====================
+
+/**
+ * Detailed job seeker profile data
+ */
+export const JOB_SEEKER_PROFILE = {
+  id: "js_001",
+  name: "Sherif Talaat",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ST",
+  headline: "Senior Frontend Developer | React & TypeScript Expert",
+  location: "Cairo, Egypt",
+  email: "sherif.talaat@example.com",
+  phone: "+20 100 000 0000",
+  summary: "Experienced Frontend Developer with 5+ years building scalable web applications. Specialized in React ecosystem, TypeScript, and modern JavaScript. Passionate about UI/UX, performance optimization, and clean code architecture.",
+  completionPercentage: 85,
+  verification: {
+    email: true,
+    phone: true,
+    identity: true,
+    resume: true
+  },
+  stats: {
+    applications: 24,
+    interviews: 8,
+    offers: 3,
+    profileViews: 156,
+    responseRate: "65%",
+    averageSalary: "$85,000"
+  }
+};
+
+/**
+ * Detailed recommended jobs for job seeker (FR-701.3)
+ */
+export const JOB_SEEKER_RECOMMENDED_JOBS = [
+  {
+    id: "job_001",
+    title: "Senior React Developer",
+    company: "TechCorp Egypt",
+    location: "Cairo, Egypt",
+    salary: "EGP 25,000 - 35,000",
+    type: "Full-time",
+    postedDate: "2025-01-18",
+    matchScore: 95,
+    isUrgent: true,
+    isRemote: true,
+    isSaved: true,
+    skills: ["React", "TypeScript", "Next.js", "Redux", "Tailwind CSS", "GraphQL"],
+    duration: "Full-time",
+    description: "We're looking for a Senior React Developer to join our product team. You'll be responsible for building and maintaining our customer-facing web applications, working closely with designers and backend engineers.",
+    requirements: [
+      "5+ years experience with React and TypeScript",
+      "Strong understanding of Next.js and SSR",
+      "Experience with state management (Redux, Zustand)",
+      "Knowledge of modern CSS (Tailwind, Styled Components)",
+      "Experience with GraphQL and REST APIs",
+      "Familiarity with testing frameworks (Jest, React Testing Library)"
+    ],
+    benefits: [
+      "Competitive salary with bonuses",
+      "Medical insurance",
+      "Flexible remote work policy",
+      "Learning & development budget",
+      "Annual company retreat"
+    ],
+    companyInfo: {
+      size: "201-500 employees",
+      industry: "Technology",
+      founded: 2015,
+      website: "https://techcorp-egypt.com"
+    }
+  },
+  {
+    id: "job_002",
+    title: "Frontend Team Lead",
+    company: "Innovate Solutions",
+    location: "Giza, Egypt",
+    salary: "EGP 30,000 - 40,000",
+    type: "Full-time",
+    postedDate: "2025-01-15",
+    matchScore: 88,
+    isUrgent: false,
+    isRemote: true,
+    isSaved: false,
+    skills: ["React", "TypeScript", "Leadership", "Architecture", "Team Management", "Agile"],
+    duration: "Full-time",
+    description: "Lead a team of 5-7 frontend developers, define technical architecture, and ensure best practices. Mentor junior developers and collaborate with product managers on roadmap planning.",
+    requirements: [
+      "7+ years in frontend development",
+      "2+ years in a leadership role",
+      "Expert in React and TypeScript",
+      "Experience with micro-frontend architecture",
+      "Strong communication and mentorship skills",
+      "Bachelor's in Computer Science or equivalent"
+    ],
+    companyInfo: {
+      size: "501-1000 employees",
+      industry: "FinTech",
+      founded: 2018,
+      website: "https://innovate-solutions.com"
+    }
+  },
+  {
+    id: "job_003",
+    title: "Full Stack Developer (React/Node)",
+    company: "StartupXYZ",
+    location: "Remote",
+    salary: "$4,000 - $6,000",
+    type: "Contract",
+    postedDate: "2025-01-20",
+    matchScore: 82,
+    isUrgent: true,
+    isRemote: true,
+    isSaved: true,
+    skills: ["React", "Node.js", "MongoDB", "AWS", "Docker", "TypeScript"],
+    duration: "6 months",
+    description: "Join our fast-growing startup as a Full Stack Developer. You'll work on both frontend and backend, building features from concept to deployment.",
+    requirements: [
+      "3+ years with React and Node.js",
+      "Experience with MongoDB or similar NoSQL databases",
+      "Knowledge of AWS services (Lambda, S3, EC2)",
+      "Understanding of Docker and containerization",
+      "Experience with CI/CD pipelines",
+      "Ability to work in a fast-paced startup environment"
+    ],
+    companyInfo: {
+      size: "11-50 employees",
+      industry: "SaaS",
+      founded: 2022,
+      website: "https://startupxyz.com"
+    }
+  },
+  {
+    id: "job_004",
+    title: "UI/UX Developer",
+    company: "DesignStudio Pro",
+    location: "Alexandria, Egypt",
+    salary: "EGP 18,000 - 25,000",
+    type: "Full-time",
+    postedDate: "2025-01-12",
+    matchScore: 75,
+    isUrgent: false,
+    isRemote: false,
+    isSaved: false,
+    skills: ["React", "Figma", "UI/UX", "CSS", "Animation", "Design Systems"],
+    duration: "Full-time",
+    description: "Bridge the gap between design and development. Implement pixel-perfect UIs from Figma designs and contribute to our design system.",
+    requirements: [
+      "Strong eye for design and attention to detail",
+      "3+ years with React",
+      "Experience with design tools (Figma, Sketch)",
+      "Expert in CSS and animation libraries",
+      "Portfolio of previous work",
+      "Understanding of accessibility standards"
+    ],
+    companyInfo: {
+      size: "51-200 employees",
+      industry: "Design & Development",
+      founded: 2019,
+      website: "https://designstudiopro.com"
+    }
+  },
+  {
+    id: "job_005",
+    title: "React Native Developer",
+    company: "MobileFirst",
+    location: "Remote",
+    salary: "$3,500 - $5,500",
+    type: "Contract",
+    postedDate: "2025-01-22",
+    matchScore: 70,
+    isUrgent: false,
+    isRemote: true,
+    isSaved: false,
+    skills: ["React Native", "iOS", "Android", "TypeScript", "Mobile Development", "Firebase"],
+    duration: "4 months",
+    description: "Build cross-platform mobile applications using React Native. Work on new features and optimize existing functionality for performance.",
+    requirements: [
+      "2+ years with React Native",
+      "Published apps on App Store/Google Play",
+      "Experience with native modules (iOS/Android)",
+      "Knowledge of mobile app architecture",
+      "Familiarity with Firebase services",
+      "Understanding of mobile UI/UX best practices"
+    ],
+    companyInfo: {
+      size: "11-50 employees",
+      industry: "Mobile Development",
+      founded: 2021,
+      website: "https://mobilefirst.com"
+    }
+  },
+  {
+    id: "job_006",
+    title: "Frontend Developer (Vue.js)",
+    company: "VueTech Solutions",
+    location: "New Cairo, Egypt",
+    salary: "EGP 22,000 - 30,000",
+    type: "Full-time",
+    postedDate: "2025-01-19",
+    matchScore: 65,
+    isUrgent: false,
+    isRemote: true,
+    isSaved: false,
+    skills: ["Vue.js", "JavaScript", "Vuex", "Vuetify", "REST APIs", "Testing"],
+    duration: "Full-time",
+    description: "Join our Vue.js team to build enterprise-level applications. While we focus on Vue, experience with React is a plus as we consider expanding our tech stack.",
+    requirements: [
+      "4+ years with Vue.js",
+      "Experience with Vue ecosystem (Vuex, Vue Router)",
+      "Knowledge of UI frameworks (Vuetify, Quasar)",
+      "Understanding of JavaScript ES6+",
+      "Experience with testing (Vitest, Jest)",
+      "Willingness to learn new technologies"
+    ],
+    companyInfo: {
+      size: "101-500 employees",
+      industry: "Enterprise Software",
+      founded: 2017,
+      website: "https://vuetech.com"
+    }
+  },
+  {
+    id: "job_007",
+    title: "Software Engineer II (Frontend)",
+    company: "GlobalTech Inc.",
+    location: "Remote (US Hours)",
+    salary: "$6,000 - $8,500",
+    type: "Full-time",
+    postedDate: "2025-01-16",
+    matchScore: 92,
+    isUrgent: true,
+    isRemote: true,
+    isSaved: true,
+    skills: ["React", "TypeScript", "Next.js", "GraphQL", "Micro-frontends", "Testing"],
+    duration: "Full-time",
+    description: "Work on our core platform used by millions of users. You'll be part of a distributed team building scalable frontend architecture.",
+    requirements: [
+      "5+ years professional experience",
+      "Expert in React and TypeScript",
+      "Experience with Next.js and SSR",
+      "Knowledge of GraphQL and Apollo",
+      "Understanding of micro-frontend architecture",
+      "Experience with large-scale applications"
+    ],
+    companyInfo: {
+      size: "5000+ employees",
+      industry: "Technology",
+      founded: 2010,
+      website: "https://globaltech.com"
+    }
+  },
+  {
+    id: "job_008",
+    title: "Frontend Developer (Entry Level)",
+    company: "TechTrainee Program",
+    location: "Cairo, Egypt",
+    salary: "EGP 10,000 - 15,000",
+    type: "Full-time",
+    postedDate: "2025-01-21",
+    matchScore: 60,
+    isUrgent: false,
+    isRemote: false,
+    isSaved: false,
+    skills: ["JavaScript", "HTML", "CSS", "React Basics", "Git", "Problem Solving"],
+    duration: "Full-time",
+    description: "Join our trainee program for fresh graduates. Get mentorship, training, and hands-on experience with real projects.",
+    requirements: [
+      "Bachelor's in Computer Science or related",
+      "Basic understanding of JavaScript",
+      "Knowledge of HTML/CSS",
+      "Familiarity with React (academic or personal projects)",
+      "Strong problem-solving skills",
+      "Willingness to learn and grow"
+    ],
+    companyInfo: {
+      size: "1001-5000 employees",
+      industry: "Education & Training",
+      founded: 2016,
+      website: "https://techtrainee.com"
+    }
+  }
+];
+
+/**
+ * Detailed job applications for job seeker (FR-701.4)
+ */
+export const JOB_SEEKER_APPLICATIONS = [
+  {
+    id: "app_001",
+    jobId: "job_001",
+    jobTitle: "Senior React Developer",
+    company: "TechCorp Egypt",
+    appliedDate: "2025-01-15",
+    status: "interview",
+    stage: "Technical Interview",
+    statusDate: "2025-01-20",
+    matchScore: 95,
+    salary: "EGP 25,000 - 35,000",
+    location: "Cairo, Egypt",
+    nextAction: "Complete coding challenge by Jan 25",
+    notes: "Positive feedback from HR screening. Technical interview scheduled with engineering manager.",
+    timeline: [
+      { date: "2025-01-15", action: "Application submitted", status: "completed" },
+      { date: "2025-01-16", action: "HR screening", status: "completed" },
+      { date: "2025-01-20", action: "Technical interview", status: "scheduled" },
+      { date: "2025-01-25", action: "Coding challenge", status: "pending" },
+      { date: "2025-01-30", action: "Final interview", status: "pending" }
+    ]
+  },
+  {
+    id: "app_002",
+    jobId: "job_007",
+    jobTitle: "Software Engineer II (Frontend)",
+    company: "GlobalTech Inc.",
+    appliedDate: "2025-01-10",
+    status: "offer",
+    stage: "Offer Received",
+    statusDate: "2025-01-18",
+    matchScore: 92,
+    salary: "$6,000 - $8,500",
+    location: "Remote (US Hours)",
+    nextAction: "Review offer details and respond by Jan 28",
+    notes: "Offer package received. Includes base salary, stock options, and benefits.",
+    offerDetails: {
+      baseSalary: "$7,500/month",
+      signingBonus: "$5,000",
+      stockOptions: "1000 RSUs",
+      benefits: "Health insurance, 401k matching, remote work stipend",
+      startDate: "2025-02-15"
+    }
+  },
+  {
+    id: "app_003",
+    jobId: "job_003",
+    jobTitle: "Full Stack Developer (React/Node)",
+    company: "StartupXYZ",
+    appliedDate: "2025-01-18",
+    status: "review",
+    stage: "Under Review",
+    statusDate: "2025-01-19",
+    matchScore: 82,
+    salary: "$4,000 - $6,000",
+    location: "Remote",
+    nextAction: "Await initial screening call",
+    notes: "Application submitted. Portfolio review in progress by hiring team."
+  },
+  {
+    id: "app_004",
+    jobId: "job_002",
+    jobTitle: "Frontend Team Lead",
+    company: "Innovate Solutions",
+    appliedDate: "2025-01-05",
+    status: "rejected",
+    stage: "Not Selected",
+    statusDate: "2025-01-12",
+    matchScore: 88,
+    salary: "EGP 30,000 - 40,000",
+    location: "Giza, Egypt",
+    nextAction: "None - position filled",
+    notes: "Position filled internally. Hiring manager suggested reapplying for future openings.",
+    feedback: "Strong technical skills but limited leadership experience in current role."
+  },
+  {
+    id: "app_005",
+    jobId: "job_005",
+    jobTitle: "React Native Developer",
+    company: "MobileFirst",
+    appliedDate: "2025-01-14",
+    status: "interview",
+    stage: "Second Interview",
+    statusDate: "2025-01-22",
+    matchScore: 70,
+    salary: "$3,500 - $5,500",
+    location: "Remote",
+    nextAction: "Prepare for technical presentation",
+    notes: "First interview went well. Second interview scheduled with CTO.",
+    timeline: [
+      { date: "2025-01-14", action: "Application submitted", status: "completed" },
+      { date: "2025-01-17", action: "Initial screening", status: "completed" },
+      { date: "2025-01-19", action: "First interview", status: "completed" },
+      { date: "2025-01-22", action: "Second interview", status: "scheduled" }
+    ]
+  },
+  {
+    id: "app_006",
+    jobId: "job_004",
+    jobTitle: "UI/UX Developer",
+    company: "DesignStudio Pro",
+    appliedDate: "2025-01-08",
+    status: "withdrawn",
+    stage: "Application Withdrawn",
+    statusDate: "2025-01-10",
+    matchScore: 75,
+    salary: "EGP 18,000 - 25,000",
+    location: "Alexandria, Egypt",
+    nextAction: "None",
+    notes: "Withdrawn application due to accepting another offer.",
+    reason: "Accepted offer from GlobalTech Inc."
+  }
+];
+
+/**
+ * Saved jobs for job seeker (FR-701.5)
+ */
+export const JOB_SEEKER_SAVED_JOBS = [
+  {
+    id: "save_001",
+    jobId: "job_001",
+    jobTitle: "Senior React Developer",
+    company: "TechCorp Egypt",
+    savedDate: "2025-01-16",
+    hasApplied: true,
+    matchScore: 95,
+    salary: "EGP 25,000 - 35,000",
+    location: "Cairo, Egypt",
+    type: "Full-time"
+  },
+  {
+    id: "save_002",
+    jobId: "job_003",
+    jobTitle: "Full Stack Developer (React/Node)",
+    company: "StartupXYZ",
+    savedDate: "2025-01-20",
+    hasApplied: true,
+    matchScore: 82,
+    salary: "$4,000 - $6,000",
+    location: "Remote",
+    type: "Contract"
+  },
+  {
+    id: "save_003",
+    jobId: "job_007",
+    jobTitle: "Software Engineer II (Frontend)",
+    company: "GlobalTech Inc.",
+    savedDate: "2025-01-10",
+    hasApplied: true,
+    matchScore: 92,
+    salary: "$6,000 - $8,500",
+    location: "Remote (US Hours)",
+    type: "Full-time"
+  },
+  {
+    id: "save_004",
+    jobId: "job_008",
+    jobTitle: "Frontend Developer (Entry Level)",
+    company: "TechTrainee Program",
+    savedDate: "2025-01-22",
+    hasApplied: false,
+    matchScore: 60,
+    salary: "EGP 10,000 - 15,000",
+    location: "Cairo, Egypt",
+    type: "Full-time"
+  }
+];
+
+/**
+ * Skills analysis for job seeker
+ */
+export const JOB_SEEKER_SKILLS_ANALYSIS = {
+  matchedSkills: [
+    { name: "React", level: 95, category: "Frontend", demand: "Very High" },
+    { name: "TypeScript", level: 90, category: "Frontend", demand: "High" },
+    { name: "Next.js", level: 85, category: "Frontend", demand: "High" },
+    { name: "JavaScript", level: 95, category: "Frontend", demand: "Very High" },
+    { name: "HTML/CSS", level: 90, category: "Frontend", demand: "High" },
+    { name: "Redux", level: 80, category: "State Management", demand: "Medium" },
+    { name: "Tailwind CSS", level: 85, category: "Styling", demand: "High" },
+    { name: "Git", level: 85, category: "Tools", demand: "Very High" }
+  ],
+  missingSkills: [
+    { name: "GraphQL", reason: "Required by 40% of high-paying jobs", priority: "High", learningTime: "2-3 months" },
+    { name: "AWS", reason: "Cloud knowledge for full-stack roles", priority: "Medium", learningTime: "3-4 months" },
+    { name: "Docker", reason: "DevOps skills for modern workflows", priority: "Medium", learningTime: "1-2 months" },
+    { name: "Testing (Jest/Cypress)", reason: "Quality assurance requirements", priority: "High", learningTime: "1-2 months" }
+  ],
+  overallMatch: 87,
+  inDemandSkills: ["TypeScript", "Next.js", "GraphQL", "AWS", "Testing"],
+  recommendations: [
+    "Complete GraphQL course to unlock 40% more job opportunities",
+    "Learn AWS basics for cloud deployment skills",
+    "Improve testing knowledge with Jest and React Testing Library",
+    "Consider learning Node.js for full-stack capabilities"
+  ],
+  skillGaps: [
+    { skill: "GraphQL", currentLevel: 30, targetLevel: 70, impact: "High" },
+    { skill: "AWS", currentLevel: 20, targetLevel: 60, impact: "Medium" },
+    { skill: "Testing", currentLevel: 50, targetLevel: 80, impact: "High" }
+  ]
+};
+
+/**
+ * Recent activity for job seeker
+ */
+export const JOB_SEEKER_RECENT_ACTIVITY = [
+  {
+    id: "act_001",
+    type: "application",
+    title: "Application submitted for Senior React Developer",
+    description: "Applied to TechCorp Egypt",
+    date: "2025-01-15",
+    time: "10:30 AM",
+    status: "success",
+    icon: "📄"
+  },
+  {
+    id: "act_002",
+    type: "interview",
+    title: "Interview scheduled with GlobalTech Inc.",
+    description: "Technical interview with engineering team",
+    date: "2025-01-18",
+    time: "2:00 PM",
+    status: "upcoming",
+    icon: "🎯"
+  },
+  {
+    id: "act_003",
+    type: "offer",
+    title: "Offer received from GlobalTech Inc.",
+    description: "Software Engineer II position",
+    date: "2025-01-19",
+    time: "4:45 PM",
+    status: "success",
+    icon: "💰"
+  },
+  {
+    id: "act_004",
+    type: "profile",
+    title: "Profile viewed by 5 companies",
+    description: "TechCorp, Innovate Solutions, StartupXYZ",
+    date: "2025-01-20",
+    time: "9:15 AM",
+    status: "info",
+    icon: "👁️"
+  },
+  {
+    id: "act_005",
+    type: "skill",
+    title: "Skill assessment completed",
+    description: "React proficiency: Advanced (95%)",
+    date: "2025-01-21",
+    time: "11:00 AM",
+    status: "info",
+    icon: "📊"
+  },
+  {
+    id: "act_006",
+    type: "job",
+    title: "New job recommendation",
+    description: "Frontend Team Lead at DesignStudio Pro",
+    date: "2025-01-22",
+    time: "3:30 PM",
+    status: "info",
+    icon: "🎯"
+  }
+];
+
+/**
+ * Performance metrics for job seeker
+ */
+export const JOB_SEEKER_PERFORMANCE = {
+  applicationMetrics: {
+    totalApplied: 24,
+    interviews: 8,
+    offers: 3,
+    rejectionRate: 25,
+    avgResponseTime: "3.2 days",
+    conversionRate: "12.5%"
+  },
+  profileMetrics: {
+    completeness: 85,
+    viewsThisMonth: 156,
+    avgViewTime: "2m 45s",
+    searchAppearances: 342
+  },
+  skillMetrics: {
+    avgMatchScore: 87,
+    inDemandSkills: 8,
+    skillGaps: 4,
+    learningProgress: 65
+  },
+  marketMetrics: {
+    avgSalaryRange: "$75k - $95k",
+    inDemandRoles: ["Senior React Dev", "Frontend Lead", "Full Stack"],
+    hiringTrend: "High",
+    competitionLevel: "Medium"
+  }
+};
+
+// ==================== UPDATE EXISTING CONFIGURATIONS ====================
+
+// Update the existing SAMPLE_JOB_POSTS for jobseeker role
+export const UPDATED_SAMPLE_JOB_POSTS = {
+  ...SAMPLE_JOB_POSTS,
+  [ROLES.JOBSEEKER]: JOB_SEEKER_RECOMMENDED_JOBS
+};
+
+// Update the existing JOB_APPLICATIONS for jobseeker role
+export const UPDATED_JOB_APPLICATIONS = {
+  ...JOB_APPLICATIONS,
+  [ROLES.JOBSEEKER]: JOB_SEEKER_APPLICATIONS
+};
+
+// Update the existing SKILL_ANALYSIS for jobseeker role
+export const UPDATED_SKILL_ANALYSIS = {
+  ...SKILL_ANALYSIS,
+  [ROLES.JOBSEEKER]: JOB_SEEKER_SKILLS_ANALYSIS
+};
+
+// Update the existing PERFORMANCE_METRICS for jobseeker role
+export const UPDATED_PERFORMANCE_METRICS = {
+  ...PERFORMANCE_METRICS,
+  [ROLES.JOBSEEKER]: JOB_SEEKER_PERFORMANCE
+};
+
+// ==================== ENHANCED HELPER FUNCTIONS ====================
+
+/**
+ * Get comprehensive job seeker dashboard data
+ * @param {string} role - The role identifier
+ * @returns {Object} Complete dashboard data for job seeker
+ */
+export const getJobSeekerDashboardData = (role = ROLES.JOBSEEKER) => {
+  if (role !== ROLES.JOBSEEKER) {
+    return getCompleteDashboardData(role);
+  }
+
+  return {
+    // Profile data
+    profile: JOB_SEEKER_PROFILE,
+    
+    // Recommended jobs (FR-701.3)
+    recommendedJobs: JOB_SEEKER_RECOMMENDED_JOBS,
+    
+    // Job applications (FR-701.4)
+    applications: JOB_SEEKER_APPLICATIONS,
+    
+    // Saved jobs (FR-701.5)
+    savedJobs: JOB_SEEKER_SAVED_JOBS,
+    
+    // Skills analysis
+    skillsAnalysis: JOB_SEEKER_SKILLS_ANALYSIS,
+    
+    // Recent activity
+    recentActivity: JOB_SEEKER_RECENT_ACTIVITY,
+    
+    // Performance metrics
+    performance: JOB_SEEKER_PERFORMANCE,
+    
+    // Existing dashboard data
+    metrics: ROLE_METRICS[ROLES.JOBSEEKER]?.metrics || [],
+    activities: SAMPLE_ACTIVITIES[ROLES.JOBSEEKER] || [],
+    pendingActions: SAMPLE_PENDING_ACTIONS[ROLES.JOBSEEKER] || [],
+    recentJobPosts: JOB_SEEKER_RECOMMENDED_JOBS,
+    jobApplications: JOB_SEEKER_APPLICATIONS,
+    
+    // Role info
+    title: ROLE_METRICS[ROLES.JOBSEEKER]?.title || "",
+    description: ROLE_METRICS[ROLES.JOBSEEKER]?.description || "",
+    
+    // Additional data
+    earningsData: null, // Job seeker doesn't have earnings
+    teamData: null, // Job seeker doesn't have team data
+    skillAnalysis: JOB_SEEKER_SKILLS_ANALYSIS
+  };
+};
+
+/**
+ * Calculate job seeker statistics
+ * @returns {Object} Various statistics for dashboard
+ */
+export const getJobSeekerStatistics = () => {
+  const applications = JOB_SEEKER_APPLICATIONS;
+  const stats = {
+    totalApplications: applications.length,
+    activeApplications: applications.filter(app => 
+      ["applied", "review", "interview"].includes(app.status)
+    ).length,
+    interviewsScheduled: applications.filter(app => 
+      app.status === "interview"
+    ).length,
+    offersReceived: applications.filter(app => 
+      app.status === "offer"
+    ).length,
+    averageMatchScore: Math.round(
+      applications.reduce((sum, app) => sum + app.matchScore, 0) / applications.length
+    ) || 0
+  };
+  
+  return stats;
+};
+
+/**
+ * Get job application status summary
+ * @returns {Object} Status counts for applications
+ */
+export const getApplicationStatusSummary = () => {
+  const statusCounts = JOB_SEEKER_APPLICATIONS.reduce((acc, app) => {
+    acc[app.status] = (acc[app.status] || 0) + 1;
+    return acc;
+  }, {});
+  
+  return {
+    total: JOB_SEEKER_APPLICATIONS.length,
+    byStatus: statusCounts,
+    recentApplications: JOB_SEEKER_APPLICATIONS
+      .sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate))
+      .slice(0, 5)
+  };
+};
+
+/**
+ * Get saved jobs summary
+ * @returns {Object} Saved jobs statistics
+ */
+export const getSavedJobsSummary = () => {
+  return {
+    totalSaved: JOB_SEEKER_SAVED_JOBS.length,
+    appliedFromSaved: JOB_SEEKER_SAVED_JOBS.filter(job => job.hasApplied).length,
+    pendingReview: JOB_SEEKER_SAVED_JOBS.filter(job => !job.hasApplied).length,
+    byType: JOB_SEEKER_SAVED_JOBS.reduce((acc, job) => {
+      acc[job.type] = (acc[job.type] || 0) + 1;
+      return acc;
+    }, {})
+  };
+};
+
 // ==================== EXPORT EVERYTHING ====================
 
 export default {
@@ -1459,8 +2255,6 @@ export default {
   ROLE_DISPLAY_NAMES,
   THEME_SETTINGS,
   COMPONENT_VISIBILITY,
-
-  // New exports
   EARNINGS_DATA,
   TEAM_DATA,
   JOB_APPLICATIONS,
@@ -1474,4 +2268,17 @@ export default {
   getRoleMetrics,
   getRoleActivities,
   getRolePendingActions,
+
+  // new exports (jobseeker data for testing)
+  JOB_SEEKER_PROFILE,
+  JOB_SEEKER_RECOMMENDED_JOBS,
+  JOB_SEEKER_APPLICATIONS,
+  JOB_SEEKER_SAVED_JOBS,
+  JOB_SEEKER_SKILLS_ANALYSIS,
+  JOB_SEEKER_RECENT_ACTIVITY,
+  JOB_SEEKER_PERFORMANCE,
+  getJobSeekerDashboardData,
+  getJobSeekerStatistics,
+  getApplicationStatusSummary,
+  getSavedJobsSummary
 };

@@ -5,7 +5,7 @@
  * @date 2025-10-01
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-19
+ * @last-modified-date 2025-1-20
  */
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -23,25 +23,58 @@ import OnboardingPage from "./pages/onboarding/OnboardingPage.jsx";
 
 // Landing Page
 import LandingPage from "./pages/landing-page.tsx";
-
-// Profile Pages
-import ClientProfile from "./pages/profiles/ClientProfile.jsx";
-import FreelancerProfile from "./pages/profiles/FreelancerProfile.jsx";
-import JobSeekerProfile from "./pages/profiles/JobSeekerProfile.jsx";
-import CompanyProfile from "./pages/profiles/CompanyProfile.jsx";
-import EditClientProfile from "./pages/profiles/EditClientProfile.jsx";
-import EditJobSeekerProfile from "./pages/profiles/EditJobSeekerProfile.jsx";
-import EditCompanyProfile from "./pages/profiles/EditCompanyProfile.jsx";
-import EditFreelancerProfile from "./pages/profiles/EditFreelancerProfile.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 
 // Dashboard Components
 import DashboardLayout from "./pages/dashboard/layout/DashboardLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 
-import ClientDashboard from "./pages/dashboard/tabs/client/ClientDashboard";
-import FreelancerDashboard from "./pages/dashboard/tabs/freelancer/FreelancerDashboard";
-import CompanyDashboard from "./pages/dashboard/tabs/company/CompanyDashboard";
-import JobseekerDashboard from "./pages/dashboard/tabs/jobseeker/JobseekerDashboard";
+import AdminDashboard from "./pages/dashboard/tabs/admin/AdminDashboard.jsx";
+import { RoleBasedProfile, RoleBasedEditProfile } from "./pages/dashboard/RoleBasedRoutes";
+
+// Jobseeker Dashboard Pages
+import RecommendedJobs from "./pages/dashboard/tabs/jobseeker/components/RecommendedJobs/RecommendedJobs.jsx";
+import SavedJobs from "./pages/dashboard/tabs/jobseeker/components/SavedJobs/SavedJobs.jsx";
+import DetailedApplications from "./pages/dashboard/tabs/jobseeker/components/DetailedApplications/DetailedApplications.jsx"
+// Import test data
+import {
+  JOB_SEEKER_RECOMMENDED_JOBS,
+  JOB_SEEKER_APPLICATIONS,
+  JOB_SEEKER_SAVED_JOBS
+} from './pages/dashboard/config/dashboard.config';
+
+const RecommendedJobsWithData = () => (
+  <RecommendedJobs
+    jobs={JOB_SEEKER_RECOMMENDED_JOBS}
+    onJobSave={(jobId, saved) => console.log(`Job ${jobId} ${saved ? 'saved' : 'unsaved'}`)}
+    onJobApply={(jobId) => console.log(`Applied to job ${jobId}`)}
+  />
+);
+
+const SavedJobsWithData = () => (
+  <SavedJobs
+    jobs={JOB_SEEKER_SAVED_JOBS}
+    onRemoveJob={(jobId) => console.log(`Remove job ${jobId}`)}
+    onViewJob={(jobId) => console.log(`View job ${jobId}`)}
+    onApplyJob={(jobId) => console.log(`Apply to job ${jobId}`)}
+  />
+);
+
+const DetailedApplicationsWithData = () => (
+  <DetailedApplications
+    applications={JOB_SEEKER_APPLICATIONS}
+    stats={{
+      total: JOB_SEEKER_APPLICATIONS.length,
+      underReview: JOB_SEEKER_APPLICATIONS.filter(app => app.status === 'review' || app.status === 'under-review').length,
+      interview: JOB_SEEKER_APPLICATIONS.filter(app => app.status === 'interview').length,
+      offers: JOB_SEEKER_APPLICATIONS.filter(app => app.status === 'offer' || app.status === 'accepted').length,
+      rejected: JOB_SEEKER_APPLICATIONS.filter(app => app.status === 'rejected').length
+    }}
+    onViewApplication={(appId) => console.log(`View application ${appId}`)}
+    onWithdrawApplication={(appId) => console.log(`Withdraw application ${appId}`)}
+  />
+);
+
 
 /**
  * Main App component with routing configuration
@@ -59,40 +92,23 @@ function App() {
       <Route path="/verify" element={<VerificationEmailPage />} />
       <Route path="/register/onboarding" element={<OnboardingPage />} />
 
-      {/* Profile Routes */}
-      <Route path="/profile/client" element={<ClientProfile />} />
-      <Route path="/profile/freelancer" element={<FreelancerProfile />} />
-      <Route path="/profile/jobseeker" element={<JobSeekerProfile />} />
-      <Route path="/profile/company" element={<CompanyProfile />} />
-      <Route path="/edit/client" element={<EditClientProfile />} />
-      <Route path="/edit/freelancer" element={<EditFreelancerProfile />} />
-      <Route path="/edit/jobseeker" element={<EditJobSeekerProfile />} />
-      <Route path="/edit/company" element={<EditCompanyProfile />} />
-
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* General Routes for all roles */}
         <Route index element={<Dashboard />} />
+        <Route path="profile" element={<RoleBasedProfile />} />
+        <Route path="profile/edit" element={<RoleBasedEditProfile />} />
 
-        <Route path="client" element={<ClientDashboard />} />
-        <Route path="freelancer" element={<FreelancerDashboard />} />
-        <Route path="company" element={<CompanyDashboard />} />
-        <Route path="jobseeker" element={<JobseekerDashboard />} />
+        {/* Jobseeker Specific Routes */}
+        <Route path="recommended-jobs" element={<RecommendedJobsWithData />} />
+        <Route path="saved-jobs" element={<SavedJobsWithData />} />
+        <Route path="applications" element={<DetailedApplicationsWithData />} />
+        {/* Admin Dashboard Routes */}
+        <Route element={<AdminDashboard />}></Route>
       </Route>
 
       {/* 404 Page */}
-      <Route
-        path="*"
-        element={
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>
-              <p className="text-lg text-gray-600">
-                The page you're looking for doesn't exist.
-              </p>
-            </div>
-          </div>
-        }
-      />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }

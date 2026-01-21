@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import LandingHeader from "../components/common/LandingHeader";
 import "../styles/landing-page.css";
 
 /**
@@ -85,8 +85,6 @@ Button.displayName = "Button";
  */
 export default function LandingPage(): React.ReactElement {
   const [scrollY, setScrollY] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     /**
@@ -205,7 +203,6 @@ export default function LandingPage(): React.ReactElement {
    * @param {string} id - The target element ID.
    */
   const scrollToId = (id: string) => {
-    setMenuOpen(false);
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
@@ -246,71 +243,8 @@ export default function LandingPage(): React.ReactElement {
         </div>
       </div>
 
-      <nav className="landing__nav" role="navigation" aria-label="Main">
-        <div className="landing__nav-container">
-          <div
-            className="landing__logo"
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/")}
-            onKeyDown={(e) => e.key === "Enter" && navigate("/")}
-            aria-label="Go to homepage">
-            <span className="landing__logo-text">MAESTA</span>
-          </div>
-
-          <button
-            className="landing__mobile-menu-btn"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            onClick={() => setMenuOpen((s) => !s)}
-            aria-label="Toggle menu">
-            <span />
-            <span />
-            <span />
-          </button>
-
-          <div
-            id="primary-navigation"
-            className={`landing__nav-links ${
-              menuOpen ? "landing__nav-links--open" : ""
-            }`}
-            role="menu">
-            <a role="menuitem" href="#jobs" onClick={() => scrollToId("jobs")}>
-              Jobs
-            </a>
-            <a
-              role="menuitem"
-              href="#features"
-              onClick={() => scrollToId("features")}>
-              Features
-            </a>
-            <a
-              role="menuitem"
-              href="#pricing"
-              onClick={() => scrollToId("pricing")}>
-              Pricing
-            </a>
-            <a
-              role="menuitem"
-              href="#testimonials"
-              onClick={() => scrollToId("testimonials")}>
-              Reviews
-            </a>
-          </div>
-
-          <div className="landing__nav-actions">
-            <Link
-              to="/login"
-              className="landing__nav-login"
-              aria-label="Login to your account">
-              Login
-            </Link>
-            <Button variant="primary" onClick={() => navigate("/register")}>
-              Register
-            </Button>
-          </div>
-        </div>
-      </nav>
+      {/* Replace the entire nav section with LandingHeader */}
+      <LandingHeader />
 
       <main id="main-content">
         <section className="landing__hero" aria-labelledby="hero-heading">
