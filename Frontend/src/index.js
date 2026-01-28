@@ -14,8 +14,8 @@ root.render(
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
-      }}>
-      {/* <ThemeToggle /> */}
+      }}
+      >
       <ProfileProvider>
         <App />
       </ProfileProvider>

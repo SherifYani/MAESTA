@@ -14,7 +14,7 @@
 
 import {
   Briefcase,
-  DollarSign,
+  DollarSign, Building,
   Users,
   Clock,
   Send,
@@ -1272,26 +1272,11 @@ export const ROLE_NAVIGATION = {
   ],
   [ROLES.COMPANY]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
-    { id: "team", label: "Team", icon: Users, path: "/dashboard/team" },
-    { id: "profile", label: "Profile", icon: Users, path: "/dashboard/profile" },
-    {
-      id: "hiring",
-      label: "Hiring",
-      icon: Briefcase,
-      path: "/dashboard/hiring",
-    },
-    {
-      id: "reports",
-      label: "Reports",
-      icon: BarChart,
-      path: "/dashboard/reports",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      path: "/dashboard/settings",
-    },
+    { id: "published-jobs", label: "Published Jobs", icon: Briefcase, path: "/dashboard/published-jobs" },
+    { id: "new-applications", label: "Applications", icon: Users, path: "/dashboard/new-applications" },
+    { id: "performance-analytics", label: "Analytics", icon: BarChart, path: "/dashboard/performance-analytics" },
+    { id: "profile", label: "Profile", icon: Building, path: "/dashboard/profile" },
+    // { id: "settings", label: "Settings", icon: Settings, path: "/dashboard/settings" }
   ],
   [ROLES.JOBSEEKER]: [
     { id: "overview", label: "Overview", icon: Home, path: "/dashboard" },
@@ -2144,36 +2129,36 @@ export const getJobSeekerDashboardData = (role = ROLES.JOBSEEKER) => {
   return {
     // Profile data
     profile: JOB_SEEKER_PROFILE,
-    
+
     // Recommended jobs (FR-701.3)
     recommendedJobs: JOB_SEEKER_RECOMMENDED_JOBS,
-    
+
     // Job applications (FR-701.4)
     applications: JOB_SEEKER_APPLICATIONS,
-    
+
     // Saved jobs (FR-701.5)
     savedJobs: JOB_SEEKER_SAVED_JOBS,
-    
+
     // Skills analysis
     skillsAnalysis: JOB_SEEKER_SKILLS_ANALYSIS,
-    
+
     // Recent activity
     recentActivity: JOB_SEEKER_RECENT_ACTIVITY,
-    
+
     // Performance metrics
     performance: JOB_SEEKER_PERFORMANCE,
-    
+
     // Existing dashboard data
     metrics: ROLE_METRICS[ROLES.JOBSEEKER]?.metrics || [],
     activities: SAMPLE_ACTIVITIES[ROLES.JOBSEEKER] || [],
     pendingActions: SAMPLE_PENDING_ACTIONS[ROLES.JOBSEEKER] || [],
     recentJobPosts: JOB_SEEKER_RECOMMENDED_JOBS,
     jobApplications: JOB_SEEKER_APPLICATIONS,
-    
+
     // Role info
     title: ROLE_METRICS[ROLES.JOBSEEKER]?.title || "",
     description: ROLE_METRICS[ROLES.JOBSEEKER]?.description || "",
-    
+
     // Additional data
     earningsData: null, // Job seeker doesn't have earnings
     teamData: null, // Job seeker doesn't have team data
@@ -2189,20 +2174,20 @@ export const getJobSeekerStatistics = () => {
   const applications = JOB_SEEKER_APPLICATIONS;
   const stats = {
     totalApplications: applications.length,
-    activeApplications: applications.filter(app => 
+    activeApplications: applications.filter(app =>
       ["applied", "review", "interview"].includes(app.status)
     ).length,
-    interviewsScheduled: applications.filter(app => 
+    interviewsScheduled: applications.filter(app =>
       app.status === "interview"
     ).length,
-    offersReceived: applications.filter(app => 
+    offersReceived: applications.filter(app =>
       app.status === "offer"
     ).length,
     averageMatchScore: Math.round(
       applications.reduce((sum, app) => sum + app.matchScore, 0) / applications.length
     ) || 0
   };
-  
+
   return stats;
 };
 
@@ -2215,7 +2200,7 @@ export const getApplicationStatusSummary = () => {
     acc[app.status] = (acc[app.status] || 0) + 1;
     return acc;
   }, {});
-  
+
   return {
     total: JOB_SEEKER_APPLICATIONS.length,
     byStatus: statusCounts,
@@ -2238,6 +2223,864 @@ export const getSavedJobsSummary = () => {
       acc[job.type] = (acc[job.type] || 0) + 1;
       return acc;
     }, {})
+  };
+};
+
+// ==================== COMPANY SPECIFIC DATA ====================
+
+/**
+ * Detailed company profile data - FR-702.2
+ */
+export const COMPANY_PROFILE = {
+  id: "comp_001",
+  name: "TechCorp Egypt",
+  logo: "https://api.dicebear.com/7.x/shapes/svg?seed=TechCorp",
+  coverImage: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&h=400&fit=crop",
+  industry: "Technology & Software",
+  tagline: "Building the Future of Digital Egypt",
+  description: "Leading technology company specializing in enterprise software solutions, digital transformation, and AI-driven applications for the Egyptian market.",
+  location: "Cairo, Egypt",
+  headquarters: "Smart Village, Giza",
+  size: "201-500 employees",
+  founded: 2015,
+  website: "https://techcorp-egypt.com",
+  contactEmail: "careers@techcorp-egypt.com",
+  contactPhone: "+20 2 3534 5678",
+
+  socialMedia: {
+    linkedin: "https://linkedin.com/company/techcorp-egypt",
+    twitter: "https://twitter.com/techcorpegypt",
+    facebook: "https://facebook.com/techcorpegypt"
+  },
+
+  stats: {
+    activeJobs: 8,
+    totalJobsPosted: 42,
+    totalApplications: 1560,
+    openPositions: 12,
+    interviewRate: 18,
+    hireRate: 4.5,
+    avgTimeToHire: "24 days"
+  },
+
+  verification: {
+    verified: true,
+    verifiedDate: "2024-06-15",
+    verificationBadge: "Gold Employer"
+  },
+
+  hiringTeam: [
+    { id: 1, name: "Ahmed Samir", role: "HR Manager", email: "ahmed.samir@techcorp-egypt.com" },
+    { id: 2, name: "Mona Adel", role: "Recruitment Specialist", email: "mona.adel@techcorp-egypt.com" },
+    { id: 3, name: "Omar Hassan", role: "Technical Lead", email: "omar.hassan@techcorp-egypt.com" }
+  ]
+};
+
+/**
+ * Published Jobs for Company - FR-702.3
+ */
+export const COMPANY_PUBLISHED_JOBS = [
+  {
+    id: "comp_job_001",
+    title: "Senior Frontend Developer",
+    department: "Engineering",
+    level: "Senior",
+    type: "Full-time",
+    location: "Cairo, Egypt",
+    salary: "EGP 25,000 - 35,000",
+    postedDate: "2025-01-15",
+    expiryDate: "2025-02-15",
+    status: "active",
+    isUrgent: true,
+    isRemote: true,
+
+    stats: {
+      applications: 245,
+      viewed: 1560,
+      shortlisted: 45,
+      interviewed: 12,
+      hired: 2,
+      completionRate: 68
+    },
+
+    requirements: [
+      "5+ years experience with React and TypeScript",
+      "Strong understanding of Next.js and SSR",
+      "Experience with state management (Redux, Zustand)",
+      "Knowledge of modern CSS (Tailwind, Styled Components)",
+      "Experience with GraphQL and REST APIs"
+    ],
+
+    description: "We're looking for a Senior Frontend Developer to join our product team. You'll be responsible for building and maintaining our customer-facing web applications.",
+
+    actions: {
+      canEdit: true,
+      canPause: true,
+      canDelete: false,
+      canViewApplicants: true
+    }
+  },
+  {
+    id: "comp_job_002",
+    title: "DevOps Engineer",
+    department: "Engineering",
+    level: "Mid-Level",
+    type: "Full-time",
+    location: "Alexandria, Egypt",
+    salary: "EGP 20,000 - 28,000",
+    postedDate: "2025-01-10",
+    expiryDate: "2025-02-10",
+    status: "active",
+    isUrgent: false,
+    isRemote: true,
+
+    stats: {
+      applications: 189,
+      viewed: 1240,
+      shortlisted: 32,
+      interviewed: 8,
+      hired: 1,
+      completionRate: 72
+    },
+
+    requirements: [
+      "3+ years experience with AWS/GCP",
+      "Experience with Docker and Kubernetes",
+      "Knowledge of CI/CD pipelines",
+      "Understanding of infrastructure as code",
+      "Experience with monitoring tools"
+    ],
+
+    description: "Join our DevOps team to build and maintain our cloud infrastructure and deployment pipelines.",
+
+    actions: {
+      canEdit: true,
+      canPause: true,
+      canDelete: false,
+      canViewApplicants: true
+    }
+  },
+  {
+    id: "comp_job_003",
+    title: "UI/UX Designer",
+    department: "Design",
+    level: "Mid-Level",
+    type: "Full-time",
+    location: "Cairo, Egypt",
+    salary: "EGP 18,000 - 25,000",
+    postedDate: "2025-01-05",
+    expiryDate: "2025-02-05",
+    status: "paused",
+    isUrgent: false,
+    isRemote: false,
+
+    stats: {
+      applications: 156,
+      viewed: 980,
+      shortlisted: 28,
+      interviewed: 6,
+      hired: 1,
+      completionRate: 65
+    },
+
+    requirements: [
+      "3+ years in UI/UX design",
+      "Proficient in Figma, Adobe Creative Suite",
+      "Experience with design systems",
+      "Portfolio showcasing previous work",
+      "Understanding of user research"
+    ],
+
+    description: "Design intuitive and beautiful user interfaces for our enterprise products.",
+
+    actions: {
+      canEdit: true,
+      canPause: true,
+      canDelete: false,
+      canViewApplicants: true
+    }
+  },
+  {
+    id: "comp_job_004",
+    title: "Data Scientist",
+    department: "Data Science",
+    level: "Senior",
+    type: "Full-time",
+    location: "Remote",
+    salary: "$4,000 - $6,000",
+    postedDate: "2025-01-20",
+    expiryDate: "2025-02-20",
+    status: "active",
+    isUrgent: true,
+    isRemote: true,
+
+    stats: {
+      applications: 312,
+      viewed: 2100,
+      shortlisted: 52,
+      interviewed: 15,
+      hired: 0,
+      completionRate: 75
+    },
+
+    requirements: [
+      "PhD/MS in Computer Science, Statistics, or related",
+      "5+ years experience in ML/AI",
+      "Proficient in Python, R, SQL",
+      "Experience with TensorFlow/PyTorch",
+      "Strong statistical background"
+    ],
+
+    description: "Work on cutting-edge AI solutions for our clients across various industries.",
+
+    actions: {
+      canEdit: true,
+      canPause: true,
+      canDelete: false,
+      canViewApplicants: true
+    }
+  },
+  {
+    id: "comp_job_005",
+    title: "Marketing Manager",
+    department: "Marketing",
+    level: "Manager",
+    type: "Full-time",
+    location: "Cairo, Egypt",
+    salary: "EGP 30,000 - 40,000",
+    postedDate: "2024-12-15",
+    expiryDate: "2025-01-15",
+    status: "closed",
+    isUrgent: false,
+    isRemote: false,
+
+    stats: {
+      applications: 198,
+      viewed: 1450,
+      shortlisted: 38,
+      interviewed: 10,
+      hired: 1,
+      completionRate: 70
+    },
+
+    requirements: [
+      "7+ years in digital marketing",
+      "Experience in B2B tech marketing",
+      "Strong analytical skills",
+      "Team management experience",
+      "Proven track record of campaign success"
+    ],
+
+    description: "Lead our marketing team to drive growth and brand awareness in the Egyptian market.",
+
+    actions: {
+      canEdit: false,
+      canPause: false,
+      canDelete: true,
+      canViewApplicants: true
+    }
+  },
+  {
+    id: "comp_job_006",
+    title: "Backend Developer (Node.js)",
+    department: "Engineering",
+    level: "Mid-Level",
+    type: "Contract",
+    location: "Remote",
+    salary: "$2,500 - $3,500",
+    postedDate: "2025-01-18",
+    expiryDate: "2025-04-18",
+    status: "active",
+    isUrgent: false,
+    isRemote: true,
+
+    stats: {
+      applications: 178,
+      viewed: 1120,
+      shortlisted: 31,
+      interviewed: 8,
+      hired: 0,
+      completionRate: 68
+    },
+
+    requirements: [
+      "3+ years with Node.js and Express",
+      "Experience with MongoDB/PostgreSQL",
+      "Knowledge of microservices architecture",
+      "Understanding of RESTful APIs",
+      "Familiarity with testing frameworks"
+    ],
+
+    description: "6-month contract position for backend development on our new microservices platform.",
+
+    actions: {
+      canEdit: true,
+      canPause: true,
+      canDelete: false,
+      canViewApplicants: true
+    }
+  }
+];
+
+/**
+ * New Applicants for Company - FR-702.4
+ */
+export const COMPANY_NEW_APPLICANTS = [
+  {
+    id: "comp_app_001",
+    jobId: "comp_job_001",
+    jobTitle: "Senior Frontend Developer",
+    applicantId: "appl_001",
+    applicantName: "Sherif Talaat",
+    applicantEmail: "sherif.talaat@example.com",
+    applicantPhone: "+20 100 000 0000",
+    appliedDate: "2025-01-22",
+    status: "new",
+    matchScore: 95,
+    source: "LinkedIn",
+    experience: "5 years",
+    education: "BSc Computer Science",
+    location: "Cairo, Egypt",
+
+    resume: {
+      url: "#",
+      fileName: "Sherif_Talaat_CV.pdf",
+      lastUpdated: "2025-01-20"
+    },
+
+    profile: {
+      url: "#",
+      completion: 85
+    },
+
+    screening: {
+      passed: true,
+      score: 92,
+      notes: "Strong React experience, excellent portfolio"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: true,
+      canReject: true,
+      canScheduleInterview: true
+    }
+  },
+  {
+    id: "comp_app_002",
+    jobId: "comp_job_001",
+    jobTitle: "Senior Frontend Developer",
+    applicantId: "appl_002",
+    applicantName: "Mariam Adel",
+    applicantEmail: "mariam.adel@example.com",
+    applicantPhone: "+20 111 111 1111",
+    appliedDate: "2025-01-21",
+    status: "new",
+    matchScore: 88,
+    source: "Company Website",
+    experience: "4 years",
+    education: "MSc Software Engineering",
+    location: "Alexandria, Egypt",
+
+    resume: {
+      url: "#",
+      fileName: "Mariam_Adel_CV.pdf",
+      lastUpdated: "2025-01-15"
+    },
+
+    profile: {
+      url: "#",
+      completion: 78
+    },
+
+    screening: {
+      passed: true,
+      score: 85,
+      notes: "Good TypeScript skills, needs more React experience"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: true,
+      canReject: true,
+      canScheduleInterview: true
+    }
+  },
+  {
+    id: "comp_app_003",
+    jobId: "comp_job_004",
+    jobTitle: "Data Scientist",
+    applicantId: "appl_003",
+    applicantName: "Omar Khaled",
+    applicantEmail: "omar.khaled@example.com",
+    applicantPhone: "+20 122 222 2222",
+    appliedDate: "2025-01-21",
+    status: "reviewed",
+    matchScore: 92,
+    source: "LinkedIn",
+    experience: "6 years",
+    education: "PhD Artificial Intelligence",
+    location: "Remote",
+
+    resume: {
+      url: "#",
+      fileName: "Omar_Khaled_CV.pdf",
+      lastUpdated: "2025-01-18"
+    },
+
+    profile: {
+      url: "#",
+      completion: 92
+    },
+
+    screening: {
+      passed: true,
+      score: 94,
+      notes: "Excellent academic background, strong ML portfolio"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: true,
+      canReject: true,
+      canScheduleInterview: true
+    }
+  },
+  {
+    id: "comp_app_004",
+    jobId: "comp_job_002",
+    jobTitle: "DevOps Engineer",
+    applicantId: "appl_004",
+    applicantName: "Hassan Mohamed",
+    applicantEmail: "hassan.mohamed@example.com",
+    applicantPhone: "+20 133 333 3333",
+    appliedDate: "2025-01-20",
+    status: "shortlisted",
+    matchScore: 85,
+    source: "Referral",
+    experience: "3 years",
+    education: "BSc Computer Engineering",
+    location: "Cairo, Egypt",
+
+    resume: {
+      url: "#",
+      fileName: "Hassan_Mohamed_CV.pdf",
+      lastUpdated: "2025-01-10"
+    },
+
+    profile: {
+      url: "#",
+      completion: 82
+    },
+
+    screening: {
+      passed: true,
+      score: 87,
+      notes: "Good AWS experience, interview scheduled"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: false,
+      canReject: true,
+      canScheduleInterview: false
+    }
+  },
+  {
+    id: "comp_app_005",
+    jobId: "comp_job_003",
+    jobTitle: "UI/UX Designer",
+    applicantId: "appl_005",
+    applicantName: "Lina Samir",
+    applicantEmail: "lina.samir@example.com",
+    applicantPhone: "+20 144 444 4444",
+    appliedDate: "2025-01-19",
+    status: "interviewed",
+    matchScore: 90,
+    source: "Company Website",
+    experience: "4 years",
+    education: "BSc Graphic Design",
+    location: "Cairo, Egypt",
+
+    resume: {
+      url: "#",
+      fileName: "Lina_Samir_CV.pdf",
+      lastUpdated: "2025-01-12"
+    },
+
+    profile: {
+      url: "#",
+      completion: 88
+    },
+
+    screening: {
+      passed: true,
+      score: 91,
+      notes: "Interview completed, pending decision"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: false,
+      canReject: true,
+      canScheduleInterview: false
+    }
+  },
+  {
+    id: "comp_app_006",
+    jobId: "comp_job_006",
+    jobTitle: "Backend Developer (Node.js)",
+    applicantId: "appl_006",
+    applicantName: "Karim Ali",
+    applicantEmail: "karim.ali@example.com",
+    applicantPhone: "+20 155 555 5555",
+    appliedDate: "2025-01-18",
+    status: "rejected",
+    matchScore: 72,
+    source: "LinkedIn",
+    experience: "2 years",
+    education: "BSc Computer Science",
+    location: "Alexandria, Egypt",
+
+    resume: {
+      url: "#",
+      fileName: "Karim_Ali_CV.pdf",
+      lastUpdated: "2025-01-05"
+    },
+
+    profile: {
+      url: "#",
+      completion: 65
+    },
+
+    screening: {
+      passed: false,
+      score: 68,
+      notes: "Lack of required Node.js experience"
+    },
+
+    actions: {
+      canViewResume: true,
+      canViewProfile: true,
+      canShortlist: false,
+      canReject: false,
+      canScheduleInterview: false
+    }
+  }
+];
+
+/**
+ * Performance Analytics for Company - FR-702.5
+ */
+export const COMPANY_PERFORMANCE_ANALYTICS = {
+  // Overview metrics
+  overview: {
+    totalJobsPosted: 42,
+    activeJobs: 8,
+    totalApplications: 1560,
+    avgApplicationsPerJob: 37,
+    totalHires: 28,
+    hireRate: 4.5,
+    avgTimeToHire: "24 days",
+    applicationCompletionRate: 72
+  },
+
+  // Monthly trends
+  monthlyTrends: {
+    applications: [
+      { month: "Sep 2024", count: 320 },
+      { month: "Oct 2024", count: 380 },
+      { month: "Nov 2024", count: 410 },
+      { month: "Dec 2024", count: 280 },
+      { month: "Jan 2025", count: 450 }
+    ],
+
+    hires: [
+      { month: "Sep 2024", count: 4 },
+      { month: "Oct 2024", count: 6 },
+      { month: "Nov 2024", count: 5 },
+      { month: "Dec 2024", count: 3 },
+      { month: "Jan 2025", count: 10 }
+    ],
+
+    timeToHire: [
+      { month: "Sep 2024", days: 28 },
+      { month: "Oct 2024", days: 26 },
+      { month: "Nov 2024", days: 25 },
+      { month: "Dec 2024", days: 30 },
+      { month: "Jan 2025", days: 22 }
+    ]
+  },
+
+  // Application sources
+  applicationSources: [
+    { source: "LinkedIn", percentage: 35, count: 546 },
+    { source: "Company Website", percentage: 28, count: 437 },
+    { source: "Job Boards", percentage: 20, count: 312 },
+    { source: "Referrals", percentage: 12, count: 187 },
+    { source: "Other", percentage: 5, count: 78 }
+  ],
+
+  // Job performance
+  jobPerformance: [
+    {
+      jobId: "comp_job_001",
+      title: "Senior Frontend Developer",
+      applications: 245,
+      shortlisted: 45,
+      interviewed: 12,
+      hired: 2,
+      completionRate: 68,
+      avgMatchScore: 82
+    },
+    {
+      jobId: "comp_job_002",
+      title: "DevOps Engineer",
+      applications: 189,
+      shortlisted: 32,
+      interviewed: 8,
+      hired: 1,
+      completionRate: 72,
+      avgMatchScore: 78
+    },
+    {
+      jobId: "comp_job_004",
+      title: "Data Scientist",
+      applications: 312,
+      shortlisted: 52,
+      interviewed: 15,
+      hired: 0,
+      completionRate: 75,
+      avgMatchScore: 85
+    },
+    {
+      jobId: "comp_job_006",
+      title: "Backend Developer",
+      applications: 178,
+      shortlisted: 31,
+      interviewed: 8,
+      hired: 0,
+      completionRate: 68,
+      avgMatchScore: 76
+    }
+  ],
+
+  // Department performance
+  departmentPerformance: [
+    { department: "Engineering", applications: 624, hires: 3, avgTimeToHire: "23 days" },
+    { department: "Design", applications: 156, hires: 1, avgTimeToHire: "28 days" },
+    { department: "Data Science", applications: 312, hires: 0, avgTimeToHire: "N/A" },
+    { department: "Marketing", applications: 198, hires: 1, avgTimeToHire: "26 days" },
+    { department: "Sales", applications: 270, hires: 2, avgTimeToHire: "24 days" }
+  ],
+
+  // Recruitment funnel
+  recruitmentFunnel: {
+    applications: 1560,
+    screened: 1248,
+    shortlisted: 208,
+    interviewed: 52,
+    offered: 10,
+    hired: 4
+  }
+};
+
+/**
+ * Recent Activity for Company
+ */
+export const COMPANY_RECENT_ACTIVITY = [
+  {
+    id: "comp_act_001",
+    type: "application",
+    title: "New application for Senior Frontend Developer",
+    description: "Sherif Talaat applied with 95% match score",
+    date: "2025-01-22",
+    time: "10:30 AM",
+    status: "success",
+    icon: "📄",
+    priority: "high"
+  },
+  {
+    id: "comp_act_002",
+    type: "job",
+    title: "New job published: Backend Developer",
+    description: "Job posted to LinkedIn and company website",
+    date: "2025-01-18",
+    time: "2:15 PM",
+    status: "info",
+    icon: "🚀",
+    priority: "medium"
+  },
+  {
+    id: "comp_act_003",
+    type: "interview",
+    title: "Interview scheduled for Data Scientist",
+    description: "Technical interview with Omar Khaled",
+    date: "2025-01-20",
+    time: "11:00 AM",
+    status: "upcoming",
+    icon: "🎯",
+    priority: "high"
+  },
+  {
+    id: "comp_act_004",
+    type: "hire",
+    title: "Offer accepted for Marketing Manager",
+    description: "Candidate accepted offer, starting Feb 1",
+    date: "2025-01-15",
+    time: "4:45 PM",
+    status: "success",
+    icon: "✅",
+    priority: "medium"
+  },
+  {
+    id: "comp_act_005",
+    type: "analytics",
+    title: "Monthly recruitment report generated",
+    description: "January report shows 450 applications",
+    date: "2025-01-21",
+    time: "9:00 AM",
+    status: "info",
+    icon: "📊",
+    priority: "low"
+  }
+];
+
+/**
+ * Pending Actions for Company
+ */
+export const COMPANY_PENDING_ACTIONS = [
+  {
+    id: "comp_pend_001",
+    title: "Review 5 new applications",
+    description: "Applications require screening",
+    priority: "high",
+    dueDate: "2025-01-23",
+    assignedTo: "Ahmed Samir",
+    completed: false
+  },
+  {
+    id: "comp_pend_002",
+    title: "Schedule interviews for shortlisted candidates",
+    description: "3 candidates waiting for interview scheduling",
+    priority: "medium",
+    dueDate: "2025-01-24",
+    assignedTo: "Mona Adel",
+    completed: false
+  },
+  {
+    id: "comp_pend_003",
+    title: "Update job description for DevOps Engineer",
+    description: "Add new requirements based on team feedback",
+    priority: "medium",
+    dueDate: "2025-01-25",
+    assignedTo: "Omar Hassan",
+    completed: false
+  },
+  {
+    id: "comp_pend_004",
+    title: "Post new job: Mobile Developer",
+    description: "Create and publish new job posting",
+    priority: "low",
+    dueDate: "2025-01-30",
+    assignedTo: "Ahmed Samir",
+    completed: false
+  }
+];
+
+// ==================== UPDATE EXISTING CONFIGURATIONS ====================
+
+/**
+ * Get comprehensive company dashboard data
+ * @param {string} role - The role identifier
+ * @returns {Object} Complete dashboard data for company
+ */
+export const getCompanyDashboardData = (role = ROLES.COMPANY) => {
+  if (role !== ROLES.COMPANY) {
+    return getCompleteDashboardData(role);
+  }
+
+  return {
+    // Profile data
+    profile: COMPANY_PROFILE,
+
+    // Published jobs (FR-702.3)
+    publishedJobs: COMPANY_PUBLISHED_JOBS,
+
+    // New applicants (FR-702.4)
+    newApplicants: COMPANY_NEW_APPLICANTS,
+
+    // Performance analytics (FR-702.5)
+    performanceAnalytics: COMPANY_PERFORMANCE_ANALYTICS,
+
+    // Recent activity
+    recentActivity: COMPANY_RECENT_ACTIVITY,
+
+    // Pending actions
+    pendingActions: COMPANY_PENDING_ACTIONS,
+
+    // Existing dashboard data
+    metrics: ROLE_METRICS[ROLES.COMPANY]?.metrics || [],
+    activities: SAMPLE_ACTIVITIES[ROLES.COMPANY] || [],
+    recentJobPosts: COMPANY_PUBLISHED_JOBS,
+
+    // Role info
+    title: ROLE_METRICS[ROLES.COMPANY]?.title || "",
+    description: ROLE_METRICS[ROLES.COMPANY]?.description || "",
+
+    // Additional data
+    earningsData: null,
+    teamData: COMPANY_PROFILE.hiringTeam || []
+  };
+};
+
+/**
+ * Calculate company statistics
+ * @returns {Object} Various statistics for dashboard
+ */
+export const getCompanyStatistics = () => {
+  const publishedJobs = COMPANY_PUBLISHED_JOBS;
+  const applicants = COMPANY_NEW_APPLICANTS;
+
+  const stats = {
+    totalJobs: publishedJobs.length,
+    activeJobs: publishedJobs.filter(job => job.status === 'active').length,
+    pausedJobs: publishedJobs.filter(job => job.status === 'paused').length,
+    closedJobs: publishedJobs.filter(job => job.status === 'closed').length,
+    totalApplications: applicants.length,
+    newApplications: applicants.filter(app => app.status === 'new').length,
+    interviewScheduled: applicants.filter(app => app.status === 'interviewed' || app.status === 'shortlisted').length,
+    avgApplicationScore: Math.round(
+      applicants.reduce((sum, app) => sum + app.matchScore, 0) / applicants.length
+    ) || 0
+  };
+
+  return stats;
+};
+
+/**
+ * Get job performance summary
+ * @returns {Object} Job performance statistics
+ */
+export const getJobPerformanceSummary = () => {
+  const performance = COMPANY_PERFORMANCE_ANALYTICS.jobPerformance;
+
+  return {
+    totalApplications: performance.reduce((sum, job) => sum + job.applications, 0),
+    totalShortlisted: performance.reduce((sum, job) => sum + job.shortlisted, 0),
+    totalInterviewed: performance.reduce((sum, job) => sum + job.interviewed, 0),
+    totalHired: performance.reduce((sum, job) => sum + job.hired, 0),
+    avgCompletionRate: Math.round(
+      performance.reduce((sum, job) => sum + job.completionRate, 0) / performance.length
+    ) || 0,
+    avgMatchScore: Math.round(
+      performance.reduce((sum, job) => sum + job.avgMatchScore, 0) / performance.length
+    ) || 0
   };
 };
 
@@ -2269,7 +3112,7 @@ export default {
   getRoleActivities,
   getRolePendingActions,
 
-  // new exports (jobseeker data for testing)
+  // exports jobseeker data
   JOB_SEEKER_PROFILE,
   JOB_SEEKER_RECOMMENDED_JOBS,
   JOB_SEEKER_APPLICATIONS,
@@ -2280,5 +3123,16 @@ export default {
   getJobSeekerDashboardData,
   getJobSeekerStatistics,
   getApplicationStatusSummary,
-  getSavedJobsSummary
+  getSavedJobsSummary,
+
+  // New Company exports
+  COMPANY_PROFILE,
+  COMPANY_PUBLISHED_JOBS,
+  COMPANY_NEW_APPLICANTS,
+  COMPANY_PERFORMANCE_ANALYTICS,
+  COMPANY_RECENT_ACTIVITY,
+  COMPANY_PENDING_ACTIONS,
+  getCompanyDashboardData,
+  getCompanyStatistics,
+  getJobPerformanceSummary,
 };

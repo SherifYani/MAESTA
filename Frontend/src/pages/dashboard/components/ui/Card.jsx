@@ -19,6 +19,7 @@ import styles from "./Card.module.css";
  * @param {React.ReactNode} props.header - Header content (optional)
  * @param {string} props.title - Card title (optional, alternative to header)
  * @param {string} props.subtitle - Card subtitle (optional)
+ * @param {React.ReactNode} props.action - Action content for header (optional)
  * @param {React.ReactNode} props.footer - Footer content (optional)
  * @param {boolean} props.padding - Whether to apply padding (default: true)
  * @param {Object} props.style - Inline styles (optional)
@@ -31,6 +32,7 @@ const Card = ({
   header,
   title,
   subtitle,
+  action,
   footer,
   padding = true,
   style,
@@ -60,8 +62,11 @@ const Card = ({
             header
           ) : (
             <>
-              {title && <h3 className={styles.title}>{title}</h3>}
-              {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+              <div className={styles.headerContent}>
+                {title && <h3 className={styles.title}>{title}</h3>}
+                {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+              </div>
+              {action && <div className={styles.headerAction}>{action}</div>}
             </>
           )}
         </div>
@@ -85,6 +90,8 @@ Card.propTypes = {
   title: PropTypes.string,
   /** Card subtitle */
   subtitle: PropTypes.string,
+  /** Action content for header (e.g., buttons) */
+  action: PropTypes.node,
   /** Footer content */
   footer: PropTypes.node,
   /** Whether to apply padding */

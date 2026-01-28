@@ -5,7 +5,7 @@
  * @version 4.0.0
  * @date 2026-01-18
  *
- * @last-modified-by [Your Name]
+ * @last-modified-by Sherif Talaat
  * @last-modified-date 2026-01-18
  */
 

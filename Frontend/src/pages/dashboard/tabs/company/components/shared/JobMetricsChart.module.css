@@ -1,0 +1,948 @@
+/**
+ * @file JobMetricsChart.module.css
+ * @description Modern, attractive styles for the JobMetricsChart component with glassmorphism and premium animations
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2025-01-22
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-01-22
+ */
+
+/* ==========================================================================
+   Main Container - Glassmorphism Design
+   ========================================================================== */
+
+.jobMetricsChart {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: linear-gradient(135deg,
+            var(--color-card) 0%,
+            var(--color-background) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--color-translucent-white-1);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 2px 8px var(--color-shadow-pink),
+        inset 0 1px 0 var(--color-translucent-white-3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ambient glow effect */
+.jobMetricsChart::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+            var(--color-radial-pink-1) 0%,
+            var(--color-radial-pink-2) 25%,
+            var(--color-radial-pink-3) 50%,
+            transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+    animation: ambientGlow 8s ease-in-out infinite;
+}
+
+@keyframes ambientGlow {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(10%, 10%) scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+.jobMetricsChart:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.15),
+        0 4px 16px var(--color-shadow-pink),
+        inset 0 1px 0 var(--color-translucent-white-3);
+    border-color: var(--color-accent-pink);
+}
+
+/* Chart type modifiers */
+.type-bar {
+    min-height: 450px;
+}
+
+.type-line {
+    min-height: 450px;
+}
+
+.type-pie {
+    min-height: 500px;
+}
+
+.type-radial {
+    min-height: 500px;
+}
+
+/* ==========================================================================
+   Chart Header - Premium Typography
+   ========================================================================== */
+
+.chartHeader {
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-5);
+    border-bottom: 2px solid transparent;
+    background: linear-gradient(90deg, var(--color-accent-pink), transparent) bottom / 100% 2px no-repeat;
+    position: relative;
+    z-index: 1;
+}
+
+.chartTitle {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg,
+            var(--color-foreground) 0%,
+            var(--color-accent-pink) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleShimmer 3s ease-in-out infinite;
+}
+
+@keyframes titleShimmer {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.chartSubtitle {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-normal);
+    opacity: 0.8;
+}
+
+/* ==========================================================================
+   Chart Body - Enhanced Spacing
+   ========================================================================== */
+
+.chartBody {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: var(--space-8);
+    margin-bottom: var(--space-8);
+    position: relative;
+    z-index: 1;
+}
+
+.chartVisualization {
+    width: 100%;
+    min-height: 350px;
+    position: relative;
+    background: var(--color-translucent-white-3);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    backdrop-filter: blur(10px);
+}
+
+/* ==========================================================================
+   Chart Elements - Modern Interactions
+   ========================================================================== */
+
+.bar {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.bar:hover {
+    opacity: 0.85;
+    filter:
+        drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) brightness(1.15) saturate(1.2);
+    transform: translateY(-2px);
+}
+
+.line {
+    cursor: pointer;
+    filter: drop-shadow(0 3px 6px var(--color-shadow-pink));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.line:hover {
+    filter: drop-shadow(0 5px 10px var(--color-shadow-pink));
+    stroke-width: 4;
+}
+
+.pie {
+    cursor: pointer;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.cell {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.cell:hover {
+    opacity: 0.9;
+    filter:
+        drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2)) brightness(1.1) saturate(1.3);
+    transform: scale(1.05);
+    transform-origin: center;
+}
+
+.radialBar {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.radialBar:hover {
+    opacity: 0.95;
+    filter:
+        drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) brightness(1.08) saturate(1.2);
+}
+
+/* ==========================================================================
+   Custom Tooltip - Glassmorphism
+   ========================================================================== */
+
+.customTooltip {
+    background: var(--color-popover);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--color-translucent-white-1);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4) var(--space-5);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 2px 8px var(--color-shadow-pink),
+        inset 0 1px 0 var(--color-translucent-white-3);
+    min-width: 180px;
+    animation: tooltipSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes tooltipSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tooltipLabel {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    border-bottom: 2px solid var(--color-accent-pink);
+    padding-bottom: var(--space-2);
+    letter-spacing: -0.01em;
+}
+
+.tooltipItem {
+    margin: var(--space-2) 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-relaxed);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.tooltipItem::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   Legend - Card Grid Layout
+   ========================================================================== */
+
+.legendContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: linear-gradient(135deg,
+            var(--color-muted) 0%,
+            var(--color-background) 100%);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-translucent-white-1);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-background);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-translucent-white-1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.legendItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+            var(--color-accent-pink) 0%,
+            var(--color-vivid-pink) 100%);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legendItem:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 8px 24px var(--color-shadow-pink),
+        inset 0 1px 0 var(--color-translucent-white-3);
+    border-color: var(--color-accent-pink);
+}
+
+.legendItem:hover::before {
+    opacity: 0.1;
+}
+
+.legendColor {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legendItem:hover .legendColor {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.legendLabel {
+    flex: 1;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.01em;
+}
+
+.legendValue {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-pink);
+    font-family: var(--font-mono);
+    position: relative;
+    z-index: 1;
+}
+
+/* Trend indicators */
+.trendUp {
+    color: var(--color-chart-2);
+    animation: trendBounce 1.5s ease-in-out infinite;
+}
+
+.trendDown {
+    color: var(--color-destructive-foreground);
+    animation: trendBounce 1.5s ease-in-out infinite;
+}
+
+.trendNeutral {
+    color: var(--color-muted-foreground);
+}
+
+@keyframes trendBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+/* ==========================================================================
+   Chart Footer - Stats Dashboard
+   ========================================================================== */
+
+.chartFooter {
+    padding-top: var(--space-6);
+    border-top: 2px solid transparent;
+    background: linear-gradient(90deg, var(--color-accent-pink), transparent) top / 100% 2px no-repeat;
+    position: relative;
+    z-index: 1;
+}
+
+.chartStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-4);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-muted) 0%,
+            var(--color-background) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-translucent-white-1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.statItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg,
+            var(--color-accent-pink) 0%,
+            var(--color-vivid-pink) 100%);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.statItem:hover {
+    background: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+.statItem:hover::before {
+    transform: scaleY(1);
+    transform-origin: top;
+}
+
+.statLabel {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.statValue {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   Loading State - Elegant Animation
+   ========================================================================== */
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 450px;
+    padding: var(--space-12);
+    background: linear-gradient(135deg,
+            var(--color-card) 0%,
+            var(--color-background) 100%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.loadingContainer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+            var(--color-radial-pink-1) 0%,
+            transparent 70%);
+    animation: loadingPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+.loadingSpinner {
+    width: 56px;
+    height: 56px;
+    border: 4px solid var(--color-muted);
+    border-top-color: var(--color-accent-pink);
+    border-right-color: var(--color-vivid-pink);
+    border-radius: var(--radius-full);
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    margin-bottom: var(--space-5);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingContainer p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-muted-foreground);
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Empty State - Friendly Design
+   ========================================================================== */
+
+.emptyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 450px;
+    padding: var(--space-12);
+    background: linear-gradient(135deg,
+            var(--color-card) 0%,
+            var(--color-background) 100%);
+    border: 2px dashed var(--color-accent-pink);
+    border-radius: var(--radius-2xl);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.emptyContainer::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle,
+            var(--color-radial-pink-1) 0%,
+            transparent 70%);
+    opacity: 0.4;
+    animation: emptyPulse 3s ease-in-out infinite;
+}
+
+@keyframes emptyPulse {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+.emptyIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg,
+            var(--color-muted) 0%,
+            var(--color-accent) 100%);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-5);
+    color: var(--color-accent-pink);
+    position: relative;
+    z-index: 1;
+    box-shadow:
+        0 8px 24px var(--color-shadow-pink),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.emptyContainer h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.02em;
+}
+
+.emptyContainer p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    max-width: 320px;
+    position: relative;
+    z-index: 1;
+    line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   Responsive Design - Breakpoints: 75rem, 60.5rem, 40rem
+   ========================================================================== */
+
+/* Large screens (75rem = 1200px) */
+@media (max-width: 75rem) {
+    .jobMetricsChart {
+        padding: var(--space-6);
+    }
+
+    .chartTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .chartStats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .legendContainer {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+/* Medium screens (60.5rem = 968px) */
+@media (max-width: 60.5rem) {
+    .jobMetricsChart {
+        padding: var(--space-5);
+        border-radius: var(--radius-xl);
+    }
+
+    .chartHeader {
+        margin-bottom: var(--space-6);
+    }
+
+    .chartTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .chartSubtitle {
+        font-size: var(--font-size-xs);
+    }
+
+    .chartBody {
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
+    }
+
+    .chartVisualization {
+        min-height: 300px;
+    }
+
+    .type-bar,
+    .type-line {
+        min-height: 400px;
+    }
+
+    .type-pie,
+    .type-radial {
+        min-height: 450px;
+    }
+
+    .legendContainer {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+        padding: var(--space-4);
+    }
+
+    .chartStats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+
+    .statValue {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* Small screens (40rem = 640px) */
+@media (max-width: 40rem) {
+    .jobMetricsChart {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+    }
+
+    .jobMetricsChart::before {
+        opacity: 0.3;
+    }
+
+    .chartHeader {
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+    }
+
+    .chartTitle {
+        font-size: var(--font-size-base);
+    }
+
+    .chartSubtitle {
+        display: none;
+    }
+
+    .chartBody {
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+    }
+
+    .chartVisualization {
+        min-height: 250px;
+        padding: var(--space-3);
+    }
+
+    .type-bar,
+    .type-line {
+        min-height: 350px;
+    }
+
+    .type-pie,
+    .type-radial {
+        min-height: 400px;
+    }
+
+    .legendContainer {
+        padding: var(--space-3);
+    }
+
+    .legendItem {
+        padding: var(--space-2) var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .legendColor {
+        width: 14px;
+        height: 14px;
+    }
+
+    .legendLabel,
+    .legendValue {
+        font-size: var(--font-size-xs);
+    }
+
+    .chartFooter {
+        padding-top: var(--space-4);
+    }
+
+    .chartStats {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+
+    .statItem {
+        padding: var(--space-3);
+    }
+
+    .statLabel {
+        font-size: 0.625rem;
+    }
+
+    .statValue {
+        font-size: var(--font-size-base);
+    }
+
+    .loadingContainer,
+    .emptyContainer {
+        min-height: 350px;
+        padding: var(--space-8);
+    }
+
+    .loadingSpinner {
+        width: 44px;
+        height: 44px;
+        border-width: 3px;
+    }
+
+    .emptyIcon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .emptyContainer h4 {
+        font-size: var(--font-size-lg);
+    }
+
+    .emptyContainer p {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Enhancements
+   ========================================================================== */
+
+/* Focus visible styles for keyboard navigation */
+.legendItem:focus-visible,
+.bar:focus-visible,
+.line:focus-visible,
+.pie:focus-visible,
+.cell:focus-visible,
+.radialBar:focus-visible {
+    outline: 3px solid var(--color-accent-pink);
+    outline-offset: 3px;
+    border-radius: var(--radius-md);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    .jobMetricsChart,
+    .jobMetricsChart::before,
+    .legendItem,
+    .legendItem::before,
+    .bar,
+    .line,
+    .cell,
+    .radialBar,
+    .statItem,
+    .statItem::before,
+    .loadingContainer::before,
+    .emptyContainer::before,
+    .emptyIcon {
+        animation: none;
+        transition: none;
+    }
+
+    .loadingSpinner {
+        animation: spin 2s linear infinite;
+    }
+
+    .legendItem:hover,
+    .bar:hover,
+    .cell:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+    .jobMetricsChart {
+        border-width: 2px;
+        border-color: var(--color-foreground);
+    }
+
+    .customTooltip {
+        border-width: 2px;
+    }
+
+    .legendColor {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .emptyContainer {
+        border-width: 3px;
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+
+    .jobMetricsChart,
+    .jobMetricsChart::before,
+    .loadingContainer::before,
+    .emptyContainer::before {
+        background: white;
+        box-shadow: none;
+    }
+
+    .legendItem {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    .legendItem:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Disable all animations in print */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

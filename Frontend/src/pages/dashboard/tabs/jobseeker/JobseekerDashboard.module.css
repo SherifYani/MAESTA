@@ -535,7 +535,8 @@
 .savedJobsCard,
 .insightsCard,
 .skillsCard,
-.jobsCard {
+.jobsCard,
+.applicationsCard {
   background: var(--color-card);
   backdrop-filter: blur(40px) saturate(180%);
   border-radius: var(--radius-2xl);
@@ -554,7 +555,8 @@
 .savedJobsCard::after,
 .insightsCard::after,
 .skillsCard::after,
-.jobsCard::after {
+.jobsCard::after,
+.applicationsCard::after {
   content: '';
   position: absolute;
   top: 0;
@@ -576,7 +578,8 @@
 .savedJobsCard:hover::after,
 .insightsCard:hover::after,
 .skillsCard:hover::after,
-.jobsCard:hover::after {
+.jobsCard:hover::after,
+.applicationsCard:hover::after {
   opacity: 1;
 }
 
@@ -586,7 +589,8 @@
 .savedJobsCard:hover,
 .insightsCard:hover,
 .skillsCard:hover,
-.jobsCard:hover {
+.jobsCard:hover,
+.applicationsCard:hover {
   border-color: var(--color-accent-pink);
   box-shadow:
     0 16px 48px var(--color-shadow-pink),

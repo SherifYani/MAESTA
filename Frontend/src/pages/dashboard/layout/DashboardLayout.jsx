@@ -35,7 +35,7 @@ export const DashboardContext = createContext();
  * @returns {JSX.Element} The rendered dashboard layout
  */
 const DashboardLayout = ({ children }) => {
-  const [currentRole, setCurrentRole] = useState("client");
+  const [currentRole, setCurrentRole] = useState("company");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const resizeTimeoutRef = useRef(null);
@@ -65,7 +65,7 @@ const DashboardLayout = ({ children }) => {
         return prevOpen;
       });
     }, 100);
-  }, []); // Empty dependency array - handleResize is now stable
+  }, []);
 
   /**
    * Toggle sidebar with mobile-friendly behavior

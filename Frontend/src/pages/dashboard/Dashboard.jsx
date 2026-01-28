@@ -14,7 +14,7 @@
 
 import { useContext } from "react";
 import { DashboardContext } from "./layout/DashboardLayout";
-import { getCompleteDashboardData, getJobSeekerDashboardData } from "./config/dashboard.config";
+import { getCompleteDashboardData, getJobSeekerDashboardData, getCompanyDashboardData } from "./config/dashboard.config";
 
 // Import all role-specific dashboards
 import ClientDashboard from "./tabs/client/ClientDashboard";
@@ -39,6 +39,8 @@ const Dashboard = () => {
     switch (currentRole) {
       case "jobseeker":
         return getJobSeekerDashboardData();
+      case "company":
+        return getCompanyDashboardData();
       default:
         return getCompleteDashboardData(currentRole);
     }

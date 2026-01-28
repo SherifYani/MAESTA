@@ -31,11 +31,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
  * Role switcher configuration - maps roles to icons
  */
 const ROLE_SWITCHER_CONFIG = [
-  { id: "client", label: "Client", icon: Briefcase },
-  { id: "freelancer", label: "Freelancer", icon: UserPlus },
+  // { id: "client", label: "Client", icon: Briefcase },
+  // { id: "freelancer", label: "Freelancer", icon: UserPlus },
   { id: "company", label: "Employer", icon: Users },
   { id: "jobseeker", label: "Job Seeker", icon: Briefcase },
-  { id: "admin", label: "Admin", icon: Shield },
+  // { id: "admin", label: "Admin", icon: Shield },
 ];
 
 /**

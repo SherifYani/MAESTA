@@ -17,7 +17,9 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import StatsGrid from '../../components/StatsGrid';
 import RecentActivity from '../../components/RecentActivity';
-import DetailedApplications from './components/DetailedApplications/DetailedApplications';
+import ApplicationsWidget from './components/DetailedApplications/ApplicationsWidget';
+import SavedJobsWidget from './components/SavedJobs/SavedJobsWidget';
+import RecommendedJobsWidget from './components/RecommendedJobs/RecommendedJobsWidget';
 import {
   Search,
   Target,
@@ -111,49 +113,7 @@ const formatStatus = (status) => {
   return statusMap[status] || status;
 };
 
-/**
- * Compact Job Card Component
- * @param {Object} props
- * @param {Object} props.job - Job data
- * @param {Function} props.onClick - Click handler
- * @returns {JSX.Element} Compact job card
- */
-const CompactJobCard = ({ job, onClick }) => (
-  <div className={styles.compactJobCard} onClick={() => onClick?.(job.id)}>
-    <div className={styles.jobCardHeader}>
-      <div className={styles.jobCardTitle}>
-        <Briefcase size={16} className={styles.jobCardIcon} />
-        <h4>{job.title}</h4>
-      </div>
-      <Badge
-        variant={getStatusVariant(job.status)}
-        size="sm"
-      >
-        {formatStatus(job.status)}
-      </Badge>
-    </div>
-    <div className={styles.jobCardMeta}>
-      <span className={styles.jobMetaItem}>
-        <span className={styles.jobMetaIcon}>🏢</span>
-        {job.company}
-      </span>
-      <span className={styles.jobMetaItem}>
-        <MapPin size={14} />
-        {job.location}
-      </span>
-      <span className={styles.jobMetaItem}>
-        <span className={styles.jobMetaIcon}>💰</span>
-        {job.salary}
-      </span>
-    </div>
-    {job.matchScore && (
-      <div className={styles.matchScoreBadge}>
-        <TrendingUp size={12} />
-        <span>{job.matchScore}% Match</span>
-      </div>
-    )}
-  </div>
-);
+
 
 /**
  * Enhanced JobseekerDashboard with Complete Test Data Integration
@@ -666,42 +626,37 @@ const JobseekerDashboard = ({ data }) => {
             }
           >
             <div className={styles.savedJobsList}>
-              {savedJobs.slice(0, 3).map((job) => (
-                <div key={job.id} className={styles.savedJobItem}>
-                  <div className={styles.savedJobInfo}>
-                    <h5>{job.jobTitle}</h5>
-                    <p>{job.company}</p>
-                    <div className={styles.savedJobMeta}>
-                      <span>{job.location}</span>
-                      <span>{job.salary}</span>
-                    </div>
-                  </div>
-                  <div className={styles.savedJobActions}>
-                    {job.hasApplied ? (
-                      <Badge variant="success">Applied</Badge>
-                    ) : (
-                      <Button size="sm" variant="outline">Apply</Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveSavedJob(job.id)}
-                    >
-                      <X size={14} />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              <SavedJobsWidget
+                jobs={savedJobs}
+                onRemove={handleRemoveSavedJob}
+                onApply={handleApplyJob}
+                onView={handleViewJob}
+              />
             </div>
           </Card>
 
           {/* Detailed Applications Component - FR-701.4 */}
-          <DetailedApplications
-            applications={applications.slice(0, 4)}
-            stats={applicationStats}
-            onViewApplication={handleViewApplication}
-            onWithdrawApplication={handleWithdrawApplication}
-          />
+          {/* Applications Widget */}
+          <Card
+            title="Recent Applications"
+            subtitle={`${applicationStats.total} total applications`}
+            className={styles.applicationsCard}
+            action={
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={handleViewAllApplications}
+                className={styles.viewAllBtn}
+              >
+                View All <ArrowUpRight size={14} />
+              </Button>
+            }
+          >
+            <ApplicationsWidget
+              applications={applications}
+              onViewApplication={handleViewApplication}
+            />
+          </Card>
 
           {/* Quick Stats Section */}
           <Card
@@ -807,13 +762,10 @@ const JobseekerDashboard = ({ data }) => {
             }
           >
             <div className={styles.compactJobsList}>
-              {recommendedJobs.slice(0, 3).map((job) => (
-                <CompactJobCard
-                  key={job.id}
-                  job={job}
-                  onClick={() => handleJobClick(job.id)}
-                />
-              ))}
+              <RecommendedJobsWidget
+                jobs={recommendedJobs}
+                onJobClick={handleJobClick}
+              />
             </div>
           </Card>
         </div>

@@ -1,0 +1,835 @@
+/**
+ * @file PerformanceAnalytics.module.css
+ * @description CSS Module for PerformanceAnalytics component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-01-22
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-01-22
+ */
+
+/* ==========================================================================
+   Main Container
+   ========================================================================== */
+
+.performanceAnalytics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 60.5rem) {
+    .header {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+    line-height: var(--line-height-tight);
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+@media (max-width: 40rem) {
+    .headerActions {
+        width: 100%;
+    }
+
+    .headerActions button {
+        flex: 1;
+    }
+}
+
+/* ==========================================================================
+   Period Selector
+   ========================================================================== */
+
+.periodSelector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+@media (max-width: 60.5rem) {
+    .periodSelector {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+}
+
+.periodLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    white-space: nowrap;
+}
+
+.periodLabel svg {
+    color: var(--color-accent-pink);
+}
+
+.periodButtons {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.periodButton {
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.periodButton:hover {
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+}
+
+.periodButton.active {
+    background: var(--color-accent-pink);
+    border-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+}
+
+/* ==========================================================================
+   Overview Metrics
+   ========================================================================== */
+
+.overviewMetrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+@media (max-width: 75rem) {
+    .overviewMetrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 40rem) {
+    .overviewMetrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+.metricCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metricCard:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.metricHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.metricIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metricIcon svg {
+    color: var(--color-accent-pink);
+}
+
+.metricTitle {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.metricName {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metricValue {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.metricChange {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-xs);
+}
+
+.changeLabel {
+    color: var(--color-muted-foreground);
+}
+
+.changeValue {
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.trendUp {
+    color: var(--color-chart-2);
+}
+
+.trendDown {
+    color: var(--color-destructive);
+}
+
+/* ==========================================================================
+   Metrics Navigation
+   ========================================================================== */
+
+.metricsNav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+@media (max-width: 75rem) {
+    .metricsNav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+}
+
+.navHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    white-space: nowrap;
+}
+
+.navHeader svg {
+    color: var(--color-accent-pink);
+}
+
+.navButtons {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+@media (max-width: 40rem) {
+    .navButtons {
+        flex-direction: column;
+    }
+}
+
+.navButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+}
+
+@media (max-width: 40rem) {
+    .navButton {
+        width: 100%;
+        min-width: auto;
+        justify-content: flex-start;
+    }
+}
+
+.navButton:hover {
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+}
+
+.navButton.active {
+    background: var(--color-background);
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+}
+
+.activeIndicator {
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+}
+
+/* ==========================================================================
+   Main Chart Area
+   ========================================================================== */
+
+.mainChartArea {
+    min-height: 400px;
+    padding: var(--space-4);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chartLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-8);
+}
+
+.loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+    animation: spin 1s linear infinite;
+}
+
+.chartLoading p {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+.chartEmpty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    text-align: center;
+}
+
+.emptyIcon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    background: var(--color-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted-foreground);
+}
+
+.chartEmpty h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.chartEmpty p {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    max-width: 300px;
+}
+
+/* ==========================================================================
+   Insights Grid
+   ========================================================================== */
+
+.insightsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+@media (max-width: 75rem) {
+    .insightsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.insightCard {
+    height: 100%;
+}
+
+.insightList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+}
+
+.insightItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-muted);
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.insightItem:hover {
+    background: var(--color-sidebar);
+    border-color: var(--color-accent-pink);
+    transform: translateX(4px);
+}
+
+.insightRank {
+    flex-shrink: 0;
+}
+
+.insightIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.insightIcon svg {
+    color: var(--color-accent-pink);
+}
+
+.insightContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.insightTitle {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.insightDesc {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.insightStats {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+}
+
+.insightStat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.insightStat svg {
+    color: var(--color-accent-pink);
+}
+
+.insightAction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.insightAction:hover {
+    background: var(--color-sidebar);
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+}
+
+/* Funnel Visualization */
+.funnelVisual {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+}
+
+.funnelStage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.funnelHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.funnelLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+.funnelValue {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-pink);
+}
+
+.funnelBar {
+    height: 8px;
+    background: var(--color-muted);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.funnelFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent-pink), var(--color-vivid-pink));
+    border-radius: var(--radius-full);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.funnelPercentage {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: right;
+}
+
+/* Recommendations */
+.recommendationList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+}
+
+.recommendationItem {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-muted);
+    transition: all 0.2s ease;
+}
+
+.recommendationItem:hover {
+    background: var(--color-sidebar);
+    transform: translateX(4px);
+}
+
+.recommendationBadge {
+    flex-shrink: 0;
+}
+
+.recommendationText {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+    flex: 1;
+}
+
+/* ==========================================================================
+   Summary Footer
+   ========================================================================== */
+
+.summaryFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+@media (max-width: 60.5rem) {
+    .summaryFooter {
+        flex-direction: column;
+        gap: var(--space-3);
+        text-align: center;
+    }
+}
+
+.summaryLeft {
+    display: flex;
+    gap: var(--space-6);
+}
+
+@media (max-width: 40rem) {
+    .summaryLeft {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+}
+
+.summaryStat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.statLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statValue {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.summaryRight {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+    .performanceAnalytics {
+        padding: var(--space-4);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .overviewMetrics {
+        gap: var(--space-3);
+    }
+
+    .metricCard {
+        padding: var(--space-3);
+    }
+
+    .metricValue {
+        font-size: var(--font-size-xl);
+    }
+
+    .mainChartArea {
+        min-height: 300px;
+        padding: var(--space-3);
+    }
+}
+
+@media (max-width: 40rem) {
+    .performanceAnalytics {
+        padding: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .metricIcon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .navButton {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .insightItem {
+        padding: var(--space-2);
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .insightAction {
+        align-self: flex-end;
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .performanceAnalytics,
+    .metricCard,
+    .insightItem,
+    .recommendationItem,
+    .periodButton,
+    .navButton {
+        transition: none;
+        animation: none;
+    }
+
+    .metricCard:hover,
+    .insightItem:hover,
+    .recommendationItem:hover {
+        transform: none;
+    }
+
+    .loadingSpinner {
+        animation: none;
+        border-top-color: var(--color-border);
+    }
+
+    .funnelFill {
+        transition: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .performanceAnalytics {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .periodSelector,
+    .metricsNav,
+    .mainChartArea,
+    .summaryFooter {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .metricCard {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .insightItem,
+    .recommendationItem {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .periodButton,
+    .navButton {
+        border: 2px solid var(--color-foreground);
+    }
+}

@@ -14,9 +14,6 @@ import EditFreelancerProfile from '../profiles/EditFreelancerProfile';
 import EditJobSeekerProfile from '../profiles/EditJobSeekerProfile';
 import EditCompanyProfile from '../profiles/EditCompanyProfile';
 
-import RecommendedJobs from './tabs/jobseeker/components/RecommendedJobs/RecommendedJobs';
-import SavedJobs from './tabs/jobseeker/components/SavedJobs/SavedJobs';
-
 export const RoleBasedProfile = () => {
   const { currentRole } = useContext(DashboardContext);
 
