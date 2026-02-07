@@ -8,7 +8,7 @@
  *
  * @last-modified-by Sherif Talaat
  * @last-modified-date 2026-1-20
- * 
+ *
  * @changes:-
  * - add icon to empty state instead of text
  */
@@ -25,7 +25,7 @@ import {
   Filter,
   X,
   ChevronDown,
-  NotepadText
+  NotepadText,
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
@@ -42,8 +42,8 @@ import styles from "./RecommendedJobs.module.css";
  */
 const RecommendedJobs = ({
   jobs = [],
-  onJobSave = () => { },
-  onJobApply = () => { },
+  onJobSave = () => {},
+  onJobApply = () => {},
 }) => {
   const [filters, setFilters] = useState({
     jobType: "all",
@@ -218,7 +218,9 @@ const RecommendedJobs = ({
   if (jobs.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <div className={styles.emptyIcon}><NotepadText size={60} /></div>
+        <div className={styles.emptyIcon}>
+          <NotepadText size={60} />
+        </div>
         <h3>No Job Recommendations</h3>
         <p>Complete your profile to get personalized job recommendations</p>
         <Button variant="primary">Complete Profile</Button>
@@ -239,21 +241,22 @@ const RecommendedJobs = ({
 
         <div className={styles.headerActions}>
           <button
-            className={`${styles.filterToggle} ${showFilters ? styles.active : ""
-              }`}
+            className={`${styles.filterToggle} ${
+              showFilters ? styles.active : ""
+            }`}
             onClick={() => setShowFilters(!showFilters)}>
             <Filter size={16} />
             Filter{" "}
             {Object.values(filters).filter((f) => f !== "all" && f !== false)
               .length > 0 && (
-                <span className={styles.filterCount}>
-                  {
-                    Object.values(filters).filter(
-                      (f) => f !== "all" && f !== false
-                    ).length
-                  }
-                </span>
-              )}
+              <span className={styles.filterCount}>
+                {
+                  Object.values(filters).filter(
+                    (f) => f !== "all" && f !== false,
+                  ).length
+                }
+              </span>
+            )}
           </button>
 
           <div className={styles.sortDropdown}>
@@ -279,8 +282,9 @@ const RecommendedJobs = ({
               {uniqueJobTypes.map((type) => (
                 <button
                   key={type}
-                  className={`${styles.filterOption} ${filters.jobType === type ? styles.active : ""
-                    }`}
+                  className={`${styles.filterOption} ${
+                    filters.jobType === type ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setFilters((prev) => ({ ...prev, jobType: type }))
                   }>
@@ -296,8 +300,9 @@ const RecommendedJobs = ({
               {uniqueLocations.map((location) => (
                 <button
                   key={location}
-                  className={`${styles.filterOption} ${filters.location === location ? styles.active : ""
-                    }`}
+                  className={`${styles.filterOption} ${
+                    filters.location === location ? styles.active : ""
+                  }`}
                   onClick={() => setFilters((prev) => ({ ...prev, location }))}>
                   {location === "all" ? "All Locations" : location}
                 </button>
@@ -311,8 +316,9 @@ const RecommendedJobs = ({
               {["all", "90", "70", "50"].map((score) => (
                 <button
                   key={score}
-                  className={`${styles.filterOption} ${filters.matchScore === score ? styles.active : ""
-                    }`}
+                  className={`${styles.filterOption} ${
+                    filters.matchScore === score ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setFilters((prev) => ({ ...prev, matchScore: score }))
                   }>
@@ -352,8 +358,9 @@ const RecommendedJobs = ({
         {filteredJobs.map((job) => (
           <article
             key={job.id}
-            className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ""
-              }`}
+            className={`${styles.jobCard} ${
+              expandedJobId === job.id ? styles.expanded : ""
+            }`}
             onClick={() => toggleJobDetails(job.id)}
             role="button"
             tabIndex={0}
@@ -383,11 +390,9 @@ const RecommendedJobs = ({
                   aria-label={
                     job.isSaved ? "Remove from saved jobs" : "Save job"
                   }>
-                  {job.isSaved ? (
+                  {job.isSaved ?
                     <BookmarkCheck size={20} />
-                  ) : (
-                    <Bookmark size={20} />
-                  )}
+                  : <Bookmark size={20} />}
                 </button>
                 {renderMatchBadge(job.matchScore)}
               </div>
@@ -473,13 +478,13 @@ const RecommendedJobs = ({
               <div className={styles.collapsedActions}>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="medium"
                   onClick={(e) => handleSaveJob(job, e)}>
                   {job.isSaved ? "Saved" : "Save"}
                 </Button>
                 <Button
                   variant="primary"
-                  size="sm"
+                  size="medium"
                   onClick={(e) => handleApplyJob(job, e)}>
                   Apply
                 </Button>

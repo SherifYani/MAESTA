@@ -1,0 +1,71 @@
+/**
+ * @file GigPostingPage.jsx
+ * @description Page for clients to post new gigs
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useGig } from '../../context/GigContext';
+import GigPostForm from '../../components/gigs/GigPostForm';
+import { Button, Alert } from '../../components/common';
+import styles from './GigPostingPage.module.css';
+
+const GigPostingPage = () => {
+    const navigate = useNavigate();
+    const { createGig, error } = useGig();
+
+    const handleSubmit = async (gigData) => {
+        try {
+            await createGig(gigData);
+            navigate('/gigs'); // Redirect to listing or dashboard
+        } catch (err) {
+            console.error('Failed to post gig:', err);
+        }
+    };
+
+    const handleSaveDraft = async (gigData) => {
+        try {
+            // Add draft logic here if supported by backend, or just local storage
+            console.log('Draft saved:', gigData);
+            alert('Draft saved successfully!');
+        } catch (err) {
+            console.error('Failed to save draft:', err);
+        }
+    };
+
+    return (
+        <div className={styles.container}>
+            <header className={styles.header}>
+                <div className={styles.headerContent}>
+                    <Button variant="ghost" onClick={() => navigate('/gigs')} className={styles.backButton}>
+                        ← Back to Gigs
+                    </Button>
+                    <h1 className={styles.title}>Post a New Gig</h1>
+                    <p className={styles.subtitle}>
+                        Find the perfect talent for your next project.
+                        Provide as much detail as possible to attract the best freelancers.
+                    </p>
+                </div>
+            </header>
+
+            <main className={styles.main}>
+                {error && (
+                    <div className={styles.alertWrapper}>
+                        <Alert type="error" message={error} />
+                    </div>
+                )}
+
+                <div className={styles.formWrapper}>
+                    <GigPostForm
+                        onSubmit={handleSubmit}
+                        onSaveDraft={handleSaveDraft}
+                    />
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default GigPostingPage;

@@ -1,20 +1,21 @@
 /**
  * @file FreelancerDashboard.jsx - Enhanced Version
- * @description Freelancer-specific dashboard with metrics, activities, and job posts - Similar to ClientDashboard
+ * @description Freelancer-specific dashboard with metrics, activities, and job posts
  * @author Sherif Talaat
- * @version 3.0.0
- * @date 2025-12-19
- *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-21
+ * @version 4.0.0
+ * @date 2026-01-29
  */
 
+import React from 'react';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
+import CompactJobCard from "../../components/shared/CompactJobCard";
+import EarningsOverviewWidget from "./components/EarningsOverviewWidget";
+
 import {
   Plus,
   TrendingUp,
@@ -33,43 +34,10 @@ import {
 import styles from "./FreelancerDashboard.module.css";
 
 /**
- * Compact Job Post Card Component
- */
-const CompactJobCard = ({ job, onClick }) => (
-  <div className={styles.compactJobCard} onClick={() => onClick?.(job.id)}>
-    <div className={styles.jobCardHeader}>
-      <div className={styles.jobCardTitle}>
-        <Briefcase size={16} className={styles.jobCardIcon} />
-        <h4>{job.title}</h4>
-      </div>
-      <Badge
-        variant={job.status?.toLowerCase() === "active" ? "active" : "pending"}>
-        {job.status}
-      </Badge>
-    </div>
-
-    <div className={styles.jobCardMeta}>
-      <span className={styles.jobMetaItem}>
-        {job.budget}
-      </span>
-      <span className={styles.jobMetaItem}>
-        <MapPin size={14} />
-        {job.location}
-      </span>
-      <span className={styles.jobMetaItem}>
-        <Users size={14} />
-        {job.applicants} applicants
-      </span>
-    </div>
-  </div>
-);
-
-/**
- * Enhanced FreelancerDashboard - Similar to ClientDashboard
+ * Enhanced FreelancerDashboard
  */
 const FreelancerDashboard = ({ data }) => {
   // Get all role-specific data from dashboard.config.js
-
   const activities = data.activities;
   const pendingActions = data.pendingActions;
   const jobPosts = data.recentJobPosts;
@@ -185,6 +153,7 @@ const FreelancerDashboard = ({ data }) => {
             title="Recent Activity"
             subtitle="Your latest updates and notifications"
             className={styles.activityCard}
+            variant="glass"
             action={
               <Button variant="ghost" size="small">
                 View All <ArrowUpRight size={14} />
@@ -198,6 +167,7 @@ const FreelancerDashboard = ({ data }) => {
             title="Pending Actions"
             subtitle={`${pendingActions.length} tasks requiring your attention`}
             className={styles.actionsCard}
+            variant="glass"
             action={
               <Badge variant="warning">{pendingActions.length} pending</Badge>
             }>
@@ -211,15 +181,15 @@ const FreelancerDashboard = ({ data }) => {
           <Card
             title="Profile Completeness"
             subtitle="Improve your profile visibility"
-            className={styles.profileCard}>
+            className={styles.profileCard}
+            variant="glass">
             <div className={styles.profileContent}>
               <div className={styles.profileProgress}>
                 <div
                   className={styles.progressCircle}
                   style={{
-                    "--progress-percentage": `${
-                      skillAnalysis?.matchPercentage || 85
-                    }%`,
+                    "--progress-percentage": `${skillAnalysis?.matchPercentage || 85
+                      }%`,
                   }}>
                   <span className={styles.progressText}>
                     {skillAnalysis?.matchPercentage || 85}%
@@ -294,6 +264,7 @@ const FreelancerDashboard = ({ data }) => {
             title="Recommended Jobs"
             subtitle={`${jobPosts.length} matches based on your profile`}
             className={styles.jobsCard}
+            variant="glass"
             action={
               <Button variant="ghost" size="small">
                 View All <ArrowUpRight size={14} />
@@ -314,65 +285,23 @@ const FreelancerDashboard = ({ data }) => {
           <Card
             title="Earnings Overview"
             subtitle={`Monthly target: $${monthlyTarget.toLocaleString()}`}
-            className={styles.earningsCard}>
-            <div className={styles.earningsContent}>
-              <div className={styles.earningsStats}>
-                <div className={styles.earningsStat}>
-                  <span className={styles.earningsStatLabel}>This Month</span>
-                  <span className={styles.earningsStatValue}>
-                    ${currentMonthEarnings.toLocaleString()}
-                  </span>
-                </div>
-                <div className={styles.earningsStat}>
-                  <span className={styles.earningsStatLabel}>Projected</span>
-                  <span className={styles.earningsStatValue}>
-                    {typeof projectedTotal === "string"
-                      ? projectedTotal
-                      : `$${projectedTotal.toLocaleString()}`}
-                  </span>
-                </div>
-              </div>
-
-              <div className={styles.earningsProgress}>
-                <div className={styles.earningsProgressHeader}>
-                  <span className={styles.earningsProgressLabel}>
-                    Target Progress
-                  </span>
-                  <span className={styles.earningsProgressValue}>
-                    {earningsProgress}%
-                  </span>
-                </div>
-                <div className={styles.earningsProgressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${earningsProgress}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.earningsInsights}>
-                <div className={styles.earningsInsight}>
-                  <DollarSign size={16} />
-                  <span>
-                    Remaining: $
-                    {(monthlyTarget - currentMonthEarnings).toLocaleString()}
-                  </span>
-                </div>
-                <div className={styles.earningsInsight}>
-                  <TrendingUp size={16} />
-                  <span>
-                    {earningsData?.changePercentage || "+12.5%"} vs last month
-                  </span>
-                </div>
-              </div>
-            </div>
+            className={styles.earningsCard}
+            variant="glass">
+            <EarningsOverviewWidget
+              monthlyTarget={monthlyTarget}
+              currentMonthEarnings={currentMonthEarnings}
+              projectedTotal={projectedTotal}
+              earningsProgress={earningsProgress}
+              earningsData={earningsData}
+            />
           </Card>
 
           {/* Performance Metrics - Compact View */}
           <Card
             title="Performance Metrics"
             subtitle="Your freelancer success indicators"
-            className={styles.metricsCard}>
+            className={styles.metricsCard}
+            variant="glass">
             <div className={styles.kpiGrid}>
               {performanceMetrics &&
                 Object.entries(performanceMetrics).map(([key, value]) => {
@@ -433,7 +362,8 @@ const FreelancerDashboard = ({ data }) => {
           <Card
             title="Quick Actions"
             subtitle="Common freelancer tasks"
-            className={styles.quickActionsCard}>
+            className={styles.quickActionsCard}
+            variant="glass">
             <div className={styles.quickActionsList}>
               <button
                 className={styles.quickActionItem}

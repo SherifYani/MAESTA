@@ -1,0 +1,587 @@
+/**
+ * @file FileUpload.module.css
+ * @description Styles for the FileUpload component.
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+/* ==========================================================================
+   Main Container
+   ========================================================================== */
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Drop Zone
+   ========================================================================== */
+
+.dropzone {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    text-align: center;
+    background-color: var(--color-background);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.dropzone:hover:not(.disabled),
+.dropzone.active:not(.disabled) {
+    border-color: var(--color-accent-pink);
+    background-color: var(--color-radial-pink-3);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.dropzone.active:not(.disabled) {
+    border-color: var(--color-vivid-pink);
+    background-color: var(--color-radial-pink-2);
+}
+
+.dropzone.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: var(--color-muted);
+    background-color: var(--color-muted);
+}
+
+.dropzone:focus:not(.disabled) {
+    outline-color: var(--color-ring);
+}
+
+.input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.dropContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    pointer-events: none;
+}
+
+.icon {
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-2);
+    transition: color 0.3s ease;
+}
+
+.dropzone:hover:not(.disabled) .icon,
+.dropzone.active:not(.disabled) .icon {
+    color: var(--color-accent-pink);
+}
+
+.text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.browse {
+    color: var(--color-accent-pink);
+    text-decoration: underline;
+    font-weight: var(--font-weight-semibold);
+}
+
+.subtext {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Error Container
+   ========================================================================== */
+
+.errorContainer {
+    background-color: var(--color-destructive-foreground);
+    color: var(--color-destructive);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-destructive);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    animation: slideIn 0.3s ease;
+}
+
+.errorIcon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.errorList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.errorItem {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   File Section
+   ========================================================================== */
+
+.fileSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.fileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fileTitle {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.removeAllButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-destructive);
+    cursor: pointer;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    transition: all 0.2s ease;
+}
+
+.removeAllButton:hover:not(:disabled) {
+    background-color: var(--color-destructive-foreground);
+    border-color: var(--color-destructive);
+}
+
+.removeAllButton:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.totalSize {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: right;
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   File List
+   ========================================================================== */
+
+.fileList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.fileItem {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.fileItem.complete {
+    border-color: var(--color-chart-2);
+    background-color: var(--color-chart-2);
+    opacity: 0.9;
+}
+
+.fileItem:hover {
+    border-color: var(--color-accent-pink);
+}
+
+.fileInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.fileIcon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.fileDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+}
+
+.fileName {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: var(--line-height-tight);
+}
+
+.fileMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-xs);
+}
+
+.fileSize {
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.fileType {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    line-height: var(--line-height-tight);
+}
+
+.removeButton {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.removeButton:hover:not(:disabled) {
+    color: var(--color-destructive);
+    background-color: var(--color-translucent-white-1);
+    border-color: var(--color-border);
+}
+
+.removeButton:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Progress Bar
+   ========================================================================== */
+
+.progressContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.progressBar {
+    flex: 1;
+    height: 6px;
+    background-color: var(--color-input);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progressLow {
+    background-color: var(--color-chart-1);
+}
+
+.progressMedium {
+    background-color: var(--color-chart-3);
+}
+
+.progressComplete {
+    background-color: var(--color-chart-2);
+}
+
+.progressText {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+    min-width: 2.5rem;
+    text-align: right;
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Status
+   ========================================================================== */
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-chart-2);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-tight);
+}
+
+.successIcon {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Help Text
+   ========================================================================== */
+
+.helpText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: center;
+    line-height: var(--line-height-tight);
+    padding: var(--space-2) 0;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Desktop large: 75rem (1200px) */
+@media (min-width: 75rem) {
+    .dropzone {
+        padding: var(--space-10) var(--space-8);
+    }
+
+    .text {
+        font-size: var(--font-size-lg);
+    }
+
+    .subtext {
+        font-size: var(--font-size-base);
+    }
+
+    .fileTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .fileName {
+        font-size: var(--font-size-base);
+    }
+
+    .progressBar {
+        height: 8px;
+    }
+}
+
+/* Tablet landscape: 60.5rem (968px) */
+@media (max-width: 60.5rem) {
+    .dropzone {
+        padding: var(--space-6);
+    }
+
+    .icon {
+        size: 32;
+    }
+
+    .text {
+        font-size: var(--font-size-sm);
+    }
+
+    .subtext {
+        font-size: var(--font-size-xs);
+    }
+
+    .fileInfo {
+        gap: var(--space-2);
+    }
+
+    .fileMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+}
+
+/* Tablet portrait: 40rem (640px) */
+@media (max-width: 40rem) {
+    .dropzone {
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+    }
+
+    .icon {
+        size: 24;
+    }
+
+    .text {
+        font-size: var(--font-size-sm);
+    }
+
+    .subtext {
+        font-size: var(--font-size-xs);
+    }
+
+    .fileHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .removeAllButton {
+        align-self: stretch;
+        justify-content: center;
+    }
+
+    .fileInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .fileDetails {
+        width: 100%;
+    }
+
+    .fileMeta {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .progressContainer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-1);
+    }
+
+    .progressText {
+        text-align: left;
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dropzone,
+    .fileItem,
+    .removeButton,
+    .removeAllButton,
+    .progressFill {
+        transition: none;
+    }
+
+    .errorContainer {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .dropzone {
+        border: 2px solid var(--color-primary);
+    }
+
+    .dropzone.active:not(.disabled) {
+        border: 3px solid var(--color-select-pink);
+    }
+
+    .progressFill {
+        border: 1px solid var(--color-primary);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+.dark .dropzone {
+    background-color: var(--color-card);
+}
+
+.dark .dropzone:hover:not(.disabled),
+.dark .dropzone.active:not(.disabled) {
+    background-color: var(--color-accent);
+}
+
+.dark .fileItem {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+}
+
+.dark .fileItem.complete {
+    background-color: var(--color-chart-2);
+    border-color: var(--color-chart-2);
+}
+
+.dark .fileType {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.dark .removeButton:hover:not(:disabled) {
+    background-color: var(--color-translucent-white-2);
+}
+
+.dark .removeAllButton {
+    border-color: var(--color-border);
+}
+
+.dark .removeAllButton:hover:not(:disabled) {
+    background-color: var(--color-destructive-foreground);
+    border-color: var(--color-destructive);
+}

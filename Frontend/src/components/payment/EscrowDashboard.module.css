@@ -1,0 +1,594 @@
+/**
+ * @file EscrowDashboard.module.css
+ * @description Styles for EscrowDashboard component using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.container {
+    padding: var(--space-6);
+    max-width: 120rem;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+    line-height: var(--line-height-tight);
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+.trendIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+}
+
+.trendIcon {
+    color: var(--color-chart-2);
+}
+
+.trendText {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Balance Cards Grid
+   ========================================================================== */
+
+.balanceGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.balanceCard {
+    background-color: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.balanceCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px var(--color-shadow-pink);
+    border-color: var(--color-ring);
+}
+
+.balanceCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* Color variants for balance cards */
+.balanceCard--green::before {
+    background: linear-gradient(90deg, var(--color-chart-2), color-mix(in oklch, var(--color-chart-2), white 30%));
+}
+
+.balanceCard--yellow::before {
+    background: linear-gradient(90deg, var(--color-chart-3), color-mix(in oklch, var(--color-chart-3), white 30%));
+}
+
+.balanceCard--blue::before {
+    background: linear-gradient(90deg, var(--color-chart-1), color-mix(in oklch, var(--color-chart-1), white 30%));
+}
+
+.balanceCard--purple::before {
+    background: linear-gradient(90deg, var(--color-chart-4), color-mix(in oklch, var(--color-chart-4), white 30%));
+}
+
+.cardHeader {
+    padding: var(--space-4);
+    padding-bottom: 0;
+}
+
+.cardHeaderInner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.iconContainer {
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    transition: background-color 0.2s ease;
+}
+
+/* Color variants for icon containers */
+.iconContainer--green {
+    color: var(--color-chart-2);
+}
+
+.iconContainer--yellow {
+    color: var(--color-chart-3);
+}
+
+.iconContainer--blue {
+    color: var(--color-chart-1);
+}
+
+.iconContainer--purple {
+    color: var(--color-chart-4);
+}
+
+.cardIcon {
+    transition: transform 0.2s ease;
+}
+
+.balanceCard:hover .cardIcon {
+    transform: scale(1.1);
+}
+
+.cardBody {
+    padding: var(--space-4);
+    padding-top: var(--space-3);
+}
+
+.cardTitle {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-2) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.amount {
+    font-size: 1.875rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+    line-height: var(--line-height-tight);
+}
+
+.description {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* Color variants for descriptions */
+.balanceCard--green .description {
+    color: var(--color-chart-2);
+}
+
+.balanceCard--yellow .description {
+    color: var(--color-chart-3);
+}
+
+.balanceCard--blue .description {
+    color: var(--color-chart-1);
+}
+
+.balanceCard--purple .description {
+    color: var(--color-chart-4);
+}
+
+/* ==========================================================================
+   Actions Card
+   ========================================================================== */
+
+.actionsCard {
+    background-color: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.actionsTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-4) 0;
+}
+
+.actionsContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.actionsButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+}
+
+.withdrawButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.withdrawButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.withdrawButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.withdrawButton:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.withdrawButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.withdrawButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.buttonIcon {
+    flex-shrink: 0;
+}
+
+.withdrawAlert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-destructive);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-destructive);
+}
+
+.alertIcon {
+    color: var(--color-destructive-foreground);
+    flex-shrink: 0;
+}
+
+.alertText {
+    font-size: var(--font-size-sm);
+    color: var(--color-destructive-foreground);
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+}
+
+/* ==========================================================================
+   Info Cards Grid
+   ========================================================================== */
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.infoCard {
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    border: 1px solid transparent;
+}
+
+/* Color variants for info cards */
+.infoCard--blue {
+    background-color: color-mix(in oklch, var(--color-chart-1), var(--color-card) 90%);
+    border-color: color-mix(in oklch, var(--color-chart-1), transparent 80%);
+}
+
+.infoCard--purple {
+    background-color: color-mix(in oklch, var(--color-chart-4), var(--color-card) 90%);
+    border-color: color-mix(in oklch, var(--color-chart-4), transparent 80%);
+}
+
+.infoTitle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-lg);
+}
+
+.infoTitle--blue {
+    color: var(--color-chart-1);
+}
+
+.infoTitle--purple {
+    color: var(--color-chart-4);
+}
+
+.infoIcon {
+    flex-shrink: 0;
+}
+
+.infoList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.infoList li {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    position: relative;
+    padding-left: var(--space-4);
+}
+
+.infoList li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    font-weight: var(--font-weight-bold);
+}
+
+.infoList--blue li {
+    color: color-mix(in oklch, var(--color-chart-1), var(--color-foreground) 30%);
+}
+
+.infoList--purple li {
+    color: color-mix(in oklch, var(--color-chart-4), var(--color-foreground) 30%);
+}
+
+/* ==========================================================================
+   Stats Summary
+   ========================================================================== */
+
+.statsSummary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.statItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.statItem:last-child {
+    border-bottom: none;
+}
+
+.statLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.statValue {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .balanceGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .amount {
+        font-size: 1.5rem;
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .actionsCard {
+        padding: var(--space-4);
+    }
+
+    .withdrawButton {
+        padding: var(--space-2) var(--space-4);
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .balanceGrid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .balanceCard {
+        border-radius: var(--radius-lg);
+    }
+
+    .actionsCard {
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+    }
+
+    .actionsButtons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .withdrawButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .infoCard {
+        padding: var(--space-4);
+    }
+
+    .statsSummary {
+        grid-template-columns: 1fr;
+    }
+
+    .statItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .balanceCard {
+        background-color: var(--color-card);
+    }
+
+    .iconContainer {
+        background-color: var(--color-muted);
+        border-color: var(--color-border);
+    }
+
+    .infoCard--blue {
+        background-color: color-mix(in oklch, var(--color-chart-1), var(--color-card) 20%);
+    }
+
+    .infoCard--purple {
+        background-color: color-mix(in oklch, var(--color-chart-4), var(--color-card) 20%);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .balanceCard,
+    .withdrawButton,
+    .cardIcon {
+        transition: none;
+    }
+
+    .withdrawButton::before {
+        display: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .balanceCard {
+        border-width: 2px;
+    }
+
+    .withdrawButton {
+        border: 2px solid var(--color-accent-pink);
+    }
+}
+
+/* ==========================================================================
+   Focus States
+   ========================================================================== */
+
+.balanceCard:focus-within {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.withdrawButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}

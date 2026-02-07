@@ -5,10 +5,12 @@
  * @date 2025-10-01
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-1-22
+ * @last-modified-date 2025-2-6
  */
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import { FloatingAssistantIcon, ChatWindow } from "./components/ai-assistant";
 import "./styles/globals.css";
 import "./styles/App.css";
 
@@ -26,11 +28,47 @@ import OnboardingPage from "./pages/onboarding/OnboardingPage.jsx";
 import LandingPage from "./pages/landing-page.tsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 
+// Job Pages
+import JobSearchPage from "./pages/jobs/JobSearchPage.jsx";
+import JobDetailsPage from "./pages/jobs/JobDetailsPage.jsx";
+import JobApplicationPage from "./pages/jobs/JobApplicationPage.jsx";
+import JobPostingPage from "./pages/jobs/JobPostingPage.jsx";
+import SavedJobsPage from "./pages/jobs/SavedJobsPage.jsx";
+
+// AI Assistant Pages
+import CVBuilderPage from "./pages/ai-assistant/CVBuilderPage.jsx";
+import CandidateAnalysisPage from "./pages/ai-assistant/CandidateAnalysisPage.jsx";
+import SmartSearchPage from "./pages/ai-assistant/SmartSearchPage.jsx";
+import AIPostingPage from "./pages/ai-assistant/AIPostingPage.jsx";
+
+// Add these imports for gig pages
+import GigListingPage from './pages/gigs/GigListingPage';
+import GigDetailsPage from './pages/gigs/GigDetailsPage';
+import GigPostingPage from './pages/gigs/GigPostingPage';
+import GigBiddingPage from './pages/gigs/GigBiddingPage';
+import GigManagementPage from './pages/gigs/GigManagementPage';
+import WorkspacePage from './pages/gigs/WorkspacePage';
+
+// Subscription and Payment Pages
+import SubscriptionPlansPage from './pages/SubscriptionPlansPage';
+import PaymentPage from './pages/PaymentPage';
+import { EscrowDashboard, TransactionList } from './components/payment';
+
+// Context
+import { GigProvider } from './context/GigContext';
+
 // Dashboard Components
+import MainLayout from "./components/layout/MainLayout";
 import DashboardLayout from "./pages/dashboard/layout/DashboardLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 
 import AdminDashboard from "./pages/dashboard/tabs/admin/AdminDashboard.jsx";
+import UserManagement from "./pages/dashboard/tabs/admin/components/UserManagement/UserManagement";
+import JobManagement from "./pages/dashboard/tabs/admin/components/JobManagement/JobManagement";
+import ContentModeration from "./pages/dashboard/tabs/admin/components/ContentModeration/ContentModeration";
+import StatisticsDashboard from "./pages/dashboard/tabs/admin/components/Statistics/StatisticsDashboard";
+import StaffManagement from "./pages/dashboard/tabs/admin/components/StaffManagement/StaffManagement";
+import SubscriptionManagement from "./pages/dashboard/tabs/admin/components/SubscriptionManagement/SubscriptionManagement";
 import { RoleBasedProfile, RoleBasedEditProfile } from "./pages/dashboard/RoleBasedRoutes";
 
 // Company Dashboard Pages
@@ -204,7 +242,10 @@ const DetailedApplicationsWithData = () => (
  * @returns {JSX.Element} The main application router
  */
 function App() {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
+    <>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -214,6 +255,40 @@ function App() {
         <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<OnboardingPage />} />
+
+        {/* Main Layout Routes */}
+        <Route element={<MainLayout />}>
+          {/* Job Pages - Public Routes */}
+          <Route path="/jobs" element={<JobSearchPage />} />
+          <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
+          <Route path="/jobs/:jobId/apply" element={<JobApplicationPage />} />
+          <Route path="/jobs/post" element={<JobPostingPage />} />
+          <Route path="/jobs/saved" element={<SavedJobsPage />} />
+
+          {/* AI Assistant Pages */}
+          <Route path="/ai/cv-builder" element={<CVBuilderPage />} />
+          <Route path="/ai/candidate-analysis" element={<CandidateAnalysisPage />} />
+          <Route path="/ai/smart-search" element={<SmartSearchPage />} />
+          <Route path="/ai/post-job" element={<AIPostingPage />} />
+
+          {/* Gig Routes - Wrapped in GigProvider */}
+          <Route element={
+            <GigProvider>
+              <Outlet />
+            </GigProvider>
+          }>
+            <Route path="/gigs" element={<GigListingPage />} />
+            <Route path="/gigs/:id" element={<GigDetailsPage />} />
+            <Route path="/gigs/new" element={<GigPostingPage />} />
+            <Route path="/gigs/:id/bid" element={<GigBiddingPage />} />
+            <Route path="/gigs/manage" element={<GigManagementPage />} />
+            <Route path="/gigs/:id/workspace" element={<WorkspacePage />} />
+          </Route>
+
+          {/* Subscription and Payment Routes */}
+          <Route path="/subscription/plans" element={<SubscriptionPlansPage />} />
+          <Route path="/subscription/payment/:planId" element={<PaymentPage />} />
+        </Route>
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
@@ -233,12 +308,32 @@ function App() {
           <Route path="applications" element={<DetailedApplicationsWithData />} />
 
           {/* Admin Dashboard Routes */}
-          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="jobs" element={<JobManagement />} />
+          <Route path="moderation" element={<ContentModeration />} />
+          <Route path="statistics" element={<StatisticsDashboard />} />
+          <Route path="staff" element={<StaffManagement />} />
+          <Route path="subscriptions" element={<SubscriptionManagement />} />
+
+          {/* Subscription & Payment Dashboard Routes */}
+          <Route path="subscription" element={<SubscriptionManagement />} />
+          <Route path="escrow" element={<EscrowDashboard />} />
         </Route>
 
         {/* 404 Page */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
+
+      {/* Global AI Assistant */}
+      <FloatingAssistantIcon
+        onClick={() => setIsChatOpen(!isChatOpen)}
+        isOpen={isChatOpen}
+      />
+      <ChatWindow
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+      />
+    </>
   );
 }
 

@@ -1,0 +1,581 @@
+/**
+ * @file Footer.module.css
+ * @description Styles for Footer component using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+/* ==========================================================================
+   Footer Container
+   ========================================================================== */
+
+.footer {
+    position: relative;
+    background: linear-gradient(180deg,
+            var(--color-card) 0%,
+            var(--color-primary-black) 100%);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-primary-white);
+    margin-top: auto;
+}
+
+/* ==========================================================================
+   Footer Top Section
+   ========================================================================== */
+
+.footerTop {
+    padding: var(--space-12) var(--space-4) var(--space-8);
+    background-color: color-mix(in oklch,
+            var(--color-primary-black),
+            transparent 10%);
+}
+
+.footerWrapper {
+    max-width: 75rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+}
+
+/* ==========================================================================
+   Brand Section
+   ========================================================================== */
+
+.brandSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.brandLogo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.logoText {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    background: linear-gradient(135deg,
+            var(--color-primary-white),
+            var(--color-accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logoDot {
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+}
+
+.brandDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-normal);
+    max-width: 28rem;
+    margin: 0;
+}
+
+/* Contact Information */
+.contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-style: normal;
+    margin-top: var(--space-2);
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-muted-foreground);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color 0.2s ease;
+}
+
+.contactItem:hover {
+    color: var(--color-accent-pink);
+}
+
+.contactIcon {
+    flex-shrink: 0;
+    color: var(--color-accent-pink);
+}
+
+.contactValue {
+    line-height: var(--line-height-none);
+}
+
+/* Social Media */
+.socialSection {
+    margin-top: var(--space-4);
+}
+
+.socialTitle {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-2) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.socialLinks {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--color-muted);
+    color: var(--color-primary-white);
+    border-radius: var(--radius-full);
+    transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+    background-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+}
+
+.socialIcon {
+    transition: transform 0.2s ease;
+}
+
+.socialLink:hover .socialIcon {
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Navigation Sections
+   ========================================================================== */
+
+.navigationSections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
+    gap: var(--space-6);
+}
+
+.footerSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.sectionTitle {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary-white);
+    margin: 0;
+    position: relative;
+    padding-bottom: var(--space-2);
+}
+
+.sectionTitle::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2rem;
+    height: 2px;
+    background: linear-gradient(90deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink));
+    border-radius: var(--radius-full);
+}
+
+.sectionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.sectionItem {
+    margin: 0;
+}
+
+.sectionLink {
+    color: var(--color-muted-foreground);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+    display: inline-block;
+    position: relative;
+    padding: var(--space-1) 0;
+}
+
+.sectionLink:hover {
+    color: var(--color-accent-pink);
+    transform: translateX(4px);
+}
+
+.sectionLink::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sectionLink:hover::before {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Footer Bottom Section
+   ========================================================================== */
+
+.footerBottom {
+    padding: var(--space-6) var(--space-4);
+    background-color: var(--color-primary-black);
+    border-top: 1px solid var(--color-border);
+}
+
+.footerBottom .footerWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+}
+
+/* Copyright Section */
+.copyrightSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.copyrightText {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+.copyrightSubtext {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+}
+
+.heartIcon {
+    color: var(--color-accent-pink);
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Legal Section */
+.legalSection {
+    margin: var(--space-2) 0;
+}
+
+.legalLinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.legalLink {
+    color: var(--color-muted-foreground);
+    text-decoration: none;
+    font-size: var(--font-size-xs);
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.legalLink:hover {
+    color: var(--color-accent-pink);
+    text-decoration: underline;
+}
+
+.legalSeparator {
+    color: var(--color-muted-foreground);
+    opacity: 0.5;
+}
+
+/* Back to Top Button */
+.backToTopSection {
+    margin-top: var(--space-2);
+}
+
+.backToTopButton {
+    padding: var(--space-2) var(--space-4);
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.backToTopButton:hover {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Development Notice
+   ========================================================================== */
+
+.devNotice {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-destructive);
+    color: var(--color-primary-white);
+    padding: var(--space-1);
+    text-align: center;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    z-index: 1000;
+}
+
+.devNoticeText {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .footerTop {
+        padding: var(--space-8) var(--space-4) var(--space-6);
+    }
+
+    .navigationSections {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .footerWrapper {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+
+    .brandSection {
+        text-align: center;
+        align-items: center;
+    }
+
+    .brandDescription {
+        max-width: 100%;
+    }
+
+    .contactInfo {
+        align-items: center;
+    }
+
+    .navigationSections {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+    }
+
+    .footerBottom .footerWrapper {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .footerTop {
+        padding: var(--space-6) var(--space-3) var(--space-4);
+    }
+
+    .footerBottom {
+        padding: var(--space-4) var(--space-3);
+    }
+
+    .navigationSections {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .footerSection {
+        text-align: center;
+    }
+
+    .sectionTitle::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .sectionLink:hover {
+        transform: translateX(0);
+        transform: translateY(-2px);
+    }
+
+    .sectionLink::before {
+        display: none;
+    }
+
+    .socialLinks {
+        justify-content: center;
+    }
+
+    .legalLinks {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .legalSeparator {
+        display: none;
+    }
+
+    .backToTopButton {
+        width: 100%;
+    }
+
+    .heartIcon {
+        animation: none;
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .footer {
+        background: linear-gradient(180deg,
+                var(--color-card) 0%,
+                var(--color-primary-black) 100%);
+    }
+
+    .socialLink {
+        background-color: color-mix(in oklch, var(--color-muted), black 50%);
+    }
+
+    .backToTopButton {
+        border-color: var(--color-border);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .socialLink,
+    .sectionLink,
+    .contactItem,
+    .legalLink,
+    .backToTopButton {
+        transition: none;
+    }
+
+    .socialLink:hover,
+    .backToTopButton:hover {
+        transform: none;
+    }
+
+    .sectionLink:hover {
+        transform: none;
+    }
+
+    .socialLink:hover .socialIcon {
+        transform: none;
+    }
+
+    .heartIcon {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .footer {
+        border-top: 2px solid var(--color-border);
+    }
+
+    .footerBottom {
+        border-top: 2px solid var(--color-border);
+    }
+
+    .legalLink {
+        text-decoration: underline;
+    }
+
+    .backToTopButton {
+        border-width: 2px;
+    }
+}
+
+/* ==========================================================================
+   Focus States
+   ========================================================================== */
+
+.sectionLink:focus-visible,
+.contactItem:focus-visible,
+.socialLink:focus-visible,
+.legalLink:focus-visible,
+.backToTopButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Screen Reader Only Text
+   ========================================================================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

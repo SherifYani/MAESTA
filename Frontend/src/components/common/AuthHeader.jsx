@@ -40,6 +40,13 @@ const AuthHeader = () => {
           </Link>
         </div>
 
+        {/* Navigation Links */}
+        <nav className={styles.navSection}>
+          <Link to="/jobs" className={styles.navLink}>Jobs</Link>
+          <Link to="/gigs" className={styles.navLink}>Gigs</Link>
+          <Link to="/ai/smart-search" className={styles.navLink}>AI Assistant</Link>
+        </nav>
+
         {/* Actions Section */}
         <div className={styles.actions}>
           <div className={styles.authButtons}>

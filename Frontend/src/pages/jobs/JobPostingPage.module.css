@@ -1,0 +1,490 @@
+/**
+ * @file JobPostingPage.module.css
+ * @description Contains all styles for the JobPostingPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Container */
+.container {
+  width: 50%;
+  max-width: 87.5rem;
+  /* 1400px */
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-bold);
+}
+
+.subtitle {
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+}
+
+/* Progress Bar */
+.progressBar {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.progressStepActive {
+  opacity: 1;
+}
+
+.stepNumber {
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-full);
+  background: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s ease;
+  color: var(--color-muted-foreground);
+}
+
+.progressStepActive .stepNumber {
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+}
+
+.stepLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+/* Error Alert */
+.errorAlert {
+  background: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--color-destructive);
+  font-size: var(--font-size-sm);
+}
+
+/* Form */
+.form {
+  background: var(--color-card);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-translucent-white-1);
+  border: 1px solid var(--color-border);
+  width: 100%;
+  max-width: 100%;
+}
+
+.stepTitle {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-6);
+  color: var(--color-foreground);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-border);
+  font-weight: var(--font-weight-semibold);
+}
+
+.formGroup {
+  margin-bottom: var(--space-6);
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  font-family: var(--font-sans);
+  background: var(--color-input);
+  color: var(--color-foreground);
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+  background: var(--color-input-hover);
+}
+
+.formGroup input:hover,
+.formGroup textarea:hover,
+.formGroup select:hover {
+  border-color: var(--color-accent-hover);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: var(--space-25);
+  line-height: var(--line-height-normal);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+/* Checkbox */
+.checkboxLabel {
+  display: flex !important;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-weight: var(--font-weight-normal) !important;
+}
+
+.checkboxLabel input {
+  width: auto !important;
+  cursor: pointer;
+}
+
+/* Salary Section */
+.salarySection {
+  margin-bottom: var(--space-6);
+}
+
+.salaryInputs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.salarySection select {
+  width: 100px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease;
+}
+
+.salarySection select:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+}
+
+.salarySection input {
+  flex: 1;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  transition: border-color 0.2s ease;
+}
+
+.salarySection input:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+}
+
+.salarySeparator {
+  color: var(--color-muted-foreground);
+}
+
+/* Tag Input */
+.tagInput {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tagInput input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  transition: border-color 0.2s ease;
+}
+
+.tagInput input:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+}
+
+.tagInput button {
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tagInput button:hover,
+.tagInput button:focus {
+  background: var(--color-vivid-pink);
+  outline: none;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-secondary);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  line-height: 1;
+  transition: color 0.2s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.tag button:hover,
+.tag button:focus {
+  color: var(--color-destructive);
+  outline: none;
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.backButton {
+  padding: var(--space-3) var(--space-6);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  color: var(--color-foreground);
+  transition: all 0.2s ease;
+}
+
+.backButton:hover,
+.backButton:focus {
+  background: var(--color-accent);
+  border-color: var(--color-accent-hover);
+  outline: none;
+}
+
+.nextButton,
+.submitButton {
+  padding: var(--space-3) var(--space-8);
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nextButton:hover:not(:disabled),
+.submitButton:hover:not(:disabled),
+.nextButton:focus:not(:disabled),
+.submitButton:focus:not(:disabled) {
+  background: var(--color-vivid-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+  outline: none;
+}
+
+.nextButton:disabled,
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+  .container {
+    padding: var(--space-6);
+  }
+
+  .form {
+    padding: var(--space-6);
+  }
+}
+
+@media (max-width: 60.5rem) {
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .progressBar {
+    gap: var(--space-4);
+  }
+
+  .salaryInputs {
+    flex-wrap: wrap;
+  }
+
+  .salarySection select {
+    width: 100%;
+  }
+
+  .salarySection input {
+    width: calc(50% - var(--space-1));
+  }
+
+  .salarySeparator {
+    display: none;
+  }
+
+  .stepLabel {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 40rem) {
+  .container {
+    padding: var(--space-4);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .progressBar {
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    justify-content: flex-start;
+  }
+
+  .stepLabel {
+    display: none;
+  }
+
+  .form {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .stepTitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .backButton,
+  .nextButton,
+  .submitButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tagInput {
+    flex-direction: column;
+  }
+
+  .tagInput button {
+    width: 100%;
+  }
+
+  .salarySection input {
+    width: 100%;
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+
+  .nextButton,
+  .submitButton,
+  .backButton,
+  .tagInput button,
+  .tag button {
+    transition: none;
+  }
+
+  .nextButton:hover:not(:disabled),
+  .submitButton:hover:not(:disabled),
+  .nextButton:focus:not(:disabled),
+  .submitButton:focus:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Focus visible styles for keyboard navigation */
+.progressStep:focus-visible,
+.formGroup input:focus-visible,
+.formGroup textarea:focus-visible,
+.formGroup select:focus-visible,
+.tagInput input:focus-visible,
+.tagInput button:focus-visible,
+.tag button:focus-visible,
+.backButton:focus-visible,
+.nextButton:focus-visible,
+.submitButton:focus-visible {
+  outline: 2px solid var(--color-accent-pink);
+  outline-offset: 2px;
+}

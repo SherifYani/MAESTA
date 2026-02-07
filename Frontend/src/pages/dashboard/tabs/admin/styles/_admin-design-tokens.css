@@ -1,0 +1,121 @@
+/**
+ * @file _admin-design-tokens.css
+ * @description Design tokens specifically for Admin Dashboard
+ * Extends globals.css with admin-specific values
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+:root {
+    /* ==================== Admin Spacing (8px base unit) ==================== */
+    --admin-space-xs: 0.5rem;
+    /* 8px */
+    --admin-space-sm: 0.75rem;
+    /* 12px */
+    --admin-space-md: 1rem;
+    /* 16px */
+    --admin-space-lg: 1.5rem;
+    /* 24px */
+    --admin-space-xl: 2rem;
+    /* 32px */
+    --admin-space-2xl: 3rem;
+    /* 48px */
+
+    /* ==================== Admin Shadows ==================== */
+    --admin-shadow-card: 0 4px 20px rgba(255, 102, 196, 0.08);
+    --admin-shadow-hover: 0 8px 32px rgba(255, 102, 196, 0.12);
+    --admin-shadow-toolbar: 0 2px 12px rgba(255, 102, 196, 0.06);
+    --admin-shadow-dropdown: 0 10px 40px rgba(0, 0, 0, 0.15);
+
+    /* ==================== Admin Glassmorphism ==================== */
+    --admin-glass-background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.04));
+    --admin-glass-background-hover: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.06));
+    --admin-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --admin-glass-backdrop: blur(10px);
+    --admin-glass-backdrop-strong: blur(16px);
+
+    /* ==================== Admin Z-Index Layers ==================== */
+    --admin-z-base: 1;
+    --admin-z-header: 100;
+    --admin-z-toolbar: 90;
+    --admin-z-dropdown: 300;
+    --admin-z-modal: 400;
+    --admin-z-tooltip: 500;
+
+    /* ==================== Admin Typography Scale ==================== */
+    --admin-font-size-page-title: 2rem;
+    /* 32px */
+    --admin-font-size-section-title: 1.5rem;
+    /* 24px */
+    --admin-font-size-card-title: 1.25rem;
+    /* 20px */
+    --admin-font-size-body: 1rem;
+    /* 16px */
+    --admin-font-size-small: 0.875rem;
+    /* 14px */
+    --admin-font-size-xs: 0.75rem;
+    /* 12px */
+
+    /* ==================== Admin Animation Speeds ==================== */
+    --admin-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --admin-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --admin-transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ==================== Admin Container Widths ==================== */
+    --admin-container-max-width: 1440px;
+    --admin-sidebar-width: 280px;
+    --admin-toolbar-height: 64px;
+
+    /* ==================== Admin Border Radius ==================== */
+    --admin-radius-sm: 0.375rem;
+    /* 6px */
+    --admin-radius-md: 0.5rem;
+    /* 8px */
+    --admin-radius-lg: 0.75rem;
+    /* 12px */
+    --admin-radius-xl: 1rem;
+    /* 16px */
+    --admin-radius-2xl: 1.5rem;
+    /* 24px */
+
+    /* ==================== Admin Color Palette Extensions ==================== */
+    --admin-color-success-subtle: rgba(34, 197, 94, 0.1);
+    --admin-color-warning-subtle: rgba(251, 191, 36, 0.1);
+    --admin-color-danger-subtle: rgba(239, 68, 68, 0.1);
+    --admin-color-info-subtle: rgba(59, 130, 246, 0.1);
+
+    /* ==================== Admin Interactive States ==================== */
+    --admin-hover-opacity: 0.8;
+    --admin-active-scale: 0.98;
+    --admin-disabled-opacity: 0.5;
+}
+
+/* ==================== Dark Mode Overrides ==================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --admin-glass-background: linear-gradient(135deg,
+                rgba(0, 0, 0, 0.3),
+                rgba(0, 0, 0, 0.2));
+        --admin-glass-background-hover: linear-gradient(135deg,
+                rgba(0, 0, 0, 0.4),
+                rgba(0, 0, 0, 0.3));
+        --admin-glass-border: 1px solid rgba(255, 255, 255, 0.1);
+
+        --admin-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+        --admin-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.4);
+        --admin-shadow-toolbar: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* ==================== Reduced Motion Support ==================== */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --admin-transition-fast: 0ms;
+        --admin-transition-normal: 0ms;
+        --admin-transition-slow: 0ms;
+    }
+}

@@ -1,0 +1,127 @@
+/**
+ * @file GigManagementPage.module.css
+ * @description Styles for GigManagementPage component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.container {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.header {
+    background-color: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-8) 0;
+    margin-bottom: var(--space-8);
+}
+
+.headerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.createButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-6) var(--space-12);
+}
+
+.tabs {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+    padding: var(--space-3) var(--space-4);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.active {
+    color: var(--color-accent-pink);
+    border-bottom-color: var(--color-accent-pink);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--space-6);
+}
+
+.cardWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+
+.emptyState {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-16);
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--color-border);
+    color: var(--color-muted-foreground);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+/* Responsive */
+@media (max-width: 60.5rem) {
+    .headerContent {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .createButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .headerContent,
+    .main {
+        padding: 0 var(--space-4);
+    }
+}

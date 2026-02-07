@@ -23,6 +23,46 @@
   width: 100%;
 }
 
+/* Variants */
+.glass {
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  position: relative;
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-accent-pink) 30%,
+      var(--color-vivid-pink) 70%,
+      transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.glass:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow:
+    0 16px 48px var(--color-shadow-pink),
+    0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.glass:hover::after {
+  opacity: 1;
+}
+
 .card.withPadding {
   padding: var(--space-6);
 }

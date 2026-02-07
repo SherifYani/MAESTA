@@ -152,8 +152,8 @@ const initialFreelancerData = {
 const initialJobSeekerData = {
   id: 3,
   uuid: "j1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6",
-  fullName: "David Chen",
-  email: "david.chen@email.com",
+  fullName: "Sherif Talaat",
+  email: "sheriftalaat@email.com",
   profilePictureUrl: "/professional-asian-man.png",
   phoneNumber: "+1 (555) 456-7890",
   isEmailVerified: true,

@@ -1,0 +1,174 @@
+/**
+ * @file StaffManagement.module.css
+ * @description Styles for StaffManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+.container {
+    composes: admin-page-container from global;
+}
+
+.addButton {
+    composes: admin-btn admin-btn--primary from global;
+}
+
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+}
+
+.filterSelect:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+.content {
+    composes: admin-content from global;
+}
+
+.roleBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+}
+
+.roleBadge__icon {
+    flex-shrink: 0;
+}
+
+.roleBadge--admin {
+    background: rgba(239, 68, 68, 0.1);
+    color: rgb(239, 68, 68);
+    border: 1px solid rgb(239, 68, 68);
+}
+
+.roleBadge--moderator {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgb(59, 130, 246);
+    border: 1px solid rgb(59, 130, 246);
+}
+
+.roleBadge--support {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.statusIndicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+    text-transform: capitalize;
+}
+
+.statusIndicator__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statusIndicator--active {
+    color: var(--color-success);
+}
+
+.statusIndicator--inactive {
+    color: var(--color-muted-foreground);
+}
+
+.actions__dropdown {
+    position: relative;
+}
+
+.actions__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actions__toggle:hover {
+    background: var(--admin-glass-background-hover);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actions__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 160px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    box-shadow: var(--admin-shadow-dropdown);
+    padding: var(--admin-space-xs);
+    z-index: var(--admin-z-dropdown);
+    animation: menuAppear 150ms ease-out;
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.actions__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    width: 100%;
+    padding: var(--admin-space-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: var(--admin-font-size-small);
+    cursor: pointer;
+    border-radius: var(--admin-radius-md);
+    transition: background var(--admin-transition-fast);
+    text-align: left;
+}
+
+.actions__item:hover {
+    background: var(--admin-glass-background-hover);
+}
+
+@media (max-width: 640px) {
+    .actions__menu {
+        right: auto;
+        left: 0;
+    }
+}

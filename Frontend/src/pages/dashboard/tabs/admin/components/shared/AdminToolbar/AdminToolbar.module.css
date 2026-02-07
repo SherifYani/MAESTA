@@ -1,0 +1,120 @@
+/**
+ * @file AdminToolbar.module.css
+ * @description Styles for AdminToolbar component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../../styles/_admin-design-tokens.css';
+
+/* ==================== Toolbar Container ==================== */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--admin-space-md);
+    padding: var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-xl);
+    backdrop-filter: var(--admin-glass-backdrop);
+    box-shadow: var(--admin-shadow-toolbar);
+    margin-bottom: var(--admin-space-lg);
+}
+
+.toolbar__left {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.toolbar__right {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* ==================== Search Input ==================== */
+.search {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.search__icon {
+    position: absolute;
+    left: var(--admin-space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+}
+
+.search__input {
+    width: 100%;
+    padding: var(--admin-space-sm) var(--admin-space-md) var(--admin-space-sm) 44px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    transition: all var(--admin-transition-fast);
+    outline: none;
+}
+
+.search__input::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+.search__input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+/* ==================== Filters Section ==================== */
+.filters {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar__left,
+    .toolbar__right {
+        width: 100%;
+    }
+
+    .search {
+        max-width: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .toolbar {
+        padding: var(--admin-space-sm);
+    }
+
+    .toolbar__left {
+        flex-direction: column;
+        gap: var(--admin-space-sm);
+    }
+
+    .search {
+        min-width: 0;
+    }
+
+    .filters {
+        width: 100%;
+    }
+}

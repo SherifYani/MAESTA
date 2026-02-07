@@ -1,17 +1,21 @@
 /**
- * @file ClientDashboard.jsx - Enhanced Version (No Nested Cards)
+ * @file ClientDashboard.jsx - Enhanced Version
  * @description Improved client dashboard with clean layout and compact data
  * @author Sherif Talaat
- * @version 4.1.0
- * @date 2025-12-21
+ * @version 5.0.0
+ * @date 2026-01-29
  */
 
+import React from 'react';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
+import CompactJobCard from "../../components/shared/CompactJobCard";
+import BudgetOverviewWidget from "./components/BudgetOverviewWidget";
+
 import {
   ROLES,
   ROLE_METRICS,
@@ -21,47 +25,15 @@ import {
   Users,
   DollarSign,
   Calendar,
-  TrendingUp,
-  Briefcase,
-  Clock,
   Target,
   Award,
   BarChart3,
   CheckCircle,
   ArrowUpRight,
-  MapPin,
+  Briefcase,
+  Clock,
 } from "lucide-react";
 import styles from "./ClientDashboard.module.css";
-
-/**
- * Compact Job Post Card Component
- */
-const CompactJobCard = ({ job, onClick }) => (
-  <div className={styles.compactJobCard} onClick={() => onClick?.(job.id)}>
-    <div className={styles.jobCardHeader}>
-      <div className={styles.jobCardTitle}>
-        <Briefcase size={16} className={styles.jobCardIcon} />
-        <h4>{job.title}</h4>
-      </div>
-      <Badge
-        variant={job.status?.toLowerCase() === "active" ? "active" : "pending"}>
-        {job.status}
-      </Badge>
-    </div>
-
-    <div className={styles.jobCardMeta}>
-      <span className={styles.jobMetaItem}>{job.budget}</span>
-      <span className={styles.jobMetaItem}>
-        <MapPin size={14} />
-        {job.location}
-      </span>
-      <span className={styles.jobMetaItem}>
-        <Users size={14} />
-        {job.applicants} applicants
-      </span>
-    </div>
-  </div>
-);
 
 /**
  * Enhanced ClientDashboard - Clean, No Nested Cards
@@ -88,8 +60,8 @@ const ClientDashboard = ({ data }) => {
 
   const totalSavedValue = performanceMetrics?.budgetAdherence
     ? `${Math.round(
-        (performanceMetrics.budgetAdherence / 100) * monthlyValue
-      ).toLocaleString()}`
+      (performanceMetrics.budgetAdherence / 100) * monthlyValue
+    ).toLocaleString()}`
     : "$47,000";
 
   const onTimeDeliveryValue = performanceMetrics?.onTimeDelivery || "88";
@@ -186,6 +158,7 @@ const ClientDashboard = ({ data }) => {
             title="Recent Activity"
             subtitle="Latest project updates and notifications"
             className={styles.activityCard}
+            variant="glass"
             action={
               <Button variant="ghost" size="small">
                 View All <ArrowUpRight size={14} />
@@ -198,55 +171,16 @@ const ClientDashboard = ({ data }) => {
           <Card
             title="Budget Overview"
             subtitle={`Monthly spending • ${progressPercentage}% used`}
-            className={styles.budgetCard}>
-            <div className={styles.budgetContent}>
-              <div className={styles.budgetStats}>
-                <div className={styles.budgetStat}>
-                  <span className={styles.budgetStatLabel}>
-                    Spent This Month
-                  </span>
-                  <span className={styles.budgetStatValue}>{budgetSpent}</span>
-                </div>
-                <div className={styles.budgetStat}>
-                  <span className={styles.budgetStatLabel}>Monthly Budget</span>
-                  <span className={styles.budgetStatValue}>
-                    {monthlyBudget}
-                  </span>
-                </div>
-              </div>
-
-              <div className={styles.budgetProgress}>
-                <div className={styles.budgetProgressHeader}>
-                  <span className={styles.budgetProgressLabel}>
-                    Budget Usage
-                  </span>
-                  <span className={styles.budgetProgressValue}>
-                    {progressPercentage}%
-                  </span>
-                </div>
-                <div className={styles.budgetProgressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.budgetInsights}>
-                <div className={styles.budgetInsight}>
-                  <DollarSign size={16} />
-                  <span>
-                    Remaining: ${(monthlyValue - spentValue).toLocaleString()}
-                  </span>
-                </div>
-                <div className={styles.budgetInsight}>
-                  <TrendingUp size={16} />
-                  <span>
-                    {earningsData?.changePercentage || "+8.2%"} vs last month
-                  </span>
-                </div>
-              </div>
-            </div>
+            className={styles.budgetCard}
+            variant="glass">
+            <BudgetOverviewWidget
+              budgetSpent={budgetSpent}
+              monthlyBudget={monthlyBudget}
+              monthlyValue={monthlyValue}
+              spentValue={spentValue}
+              progressPercentage={progressPercentage}
+              earningsData={earningsData}
+            />
           </Card>
 
           {/* Compact Job Posts */}
@@ -254,6 +188,7 @@ const ClientDashboard = ({ data }) => {
             title="Active Job Posts"
             subtitle={`${jobPosts.length} open positions`}
             className={styles.jobsCard}
+            variant="glass"
             action={
               <Button variant="ghost" size="small">
                 View All <ArrowUpRight size={14} />
@@ -278,6 +213,7 @@ const ClientDashboard = ({ data }) => {
             title="Pending Actions"
             subtitle={`${pendingActions.length} tasks need your attention`}
             className={styles.actionsCard}
+            variant="glass"
             action={
               <Badge variant="warning">{pendingActions.length} pending</Badge>
             }>
@@ -291,7 +227,8 @@ const ClientDashboard = ({ data }) => {
           <Card
             title="Key Performance Indicators"
             subtitle="Your project success metrics"
-            className={styles.metricsCard}>
+            className={styles.metricsCard}
+            variant="glass">
             <div className={styles.kpiGrid}>
               {performanceMetrics &&
                 Object.entries(performanceMetrics).map(([key, value]) => {
@@ -347,7 +284,8 @@ const ClientDashboard = ({ data }) => {
           <Card
             title="Quick Actions"
             subtitle="Common tasks & shortcuts"
-            className={styles.quickActionsCard}>
+            className={styles.quickActionsCard}
+            variant="glass">
             <div className={styles.quickActionsList}>
               <button
                 className={styles.quickActionItem}

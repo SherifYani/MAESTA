@@ -1,0 +1,333 @@
+/**
+ * @file GigDetailsPage.module.css
+ * @description Styles for GigDetailsPage component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.container {
+    min-height: 100vh;
+    background-color: var(--color-background);
+    padding: var(--space-6);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.mainContent {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.gigOverview {
+    margin-bottom: var(--space-8);
+}
+
+.detailCard {
+    cursor: default !important;
+    /* Override pointer cursor from GigCard */
+}
+
+.detailCard:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: var(--color-border) !important;
+}
+
+.tabs {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-2);
+}
+
+.tab {
+    padding: var(--space-3) var(--space-6);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: var(--font-size-base);
+}
+
+.tab:hover {
+    color: var(--color-foreground);
+    transform: translateY(-1px);
+}
+
+.tab.active {
+    color: var(--color-accent-pink);
+    border-bottom-color: var(--color-accent-pink);
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.tabContent {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    margin-bottom: var(--space-8);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+}
+
+.detailsContent h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-6);
+    color: var(--color-foreground);
+}
+
+.description {
+    line-height: var(--line-height-relaxed);
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-8);
+    white-space: pre-wrap;
+}
+
+.metadataGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-lg);
+}
+
+.metadataItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.metadataItem strong {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.metadataItem span {
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.skillsContent h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-6);
+    color: var(--color-foreground);
+}
+
+.skillsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.skillTag {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.bidFormSection {
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+}
+
+.loadingContainer,
+.errorContainer,
+.notFound {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    gap: var(--space-6);
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .tabContent {
+        padding: var(--space-6);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .header {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .headerActions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        padding-bottom: var(--space-2);
+    }
+
+    .tab {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .metadataGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabContent {
+        padding: var(--space-4);
+    }
+
+    .headerActions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Dark Theme Support */
+.dark .tabContent {
+    background-color: var(--color-card);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Milestones Styles */
+.milestonesList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.milestoneItem {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    transition: all 0.2s ease;
+}
+
+.milestoneItem:hover {
+    border-color: var(--color-accent-pink);
+}
+
+.milestoneHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.milestoneDescription {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    font-size: var(--font-size-lg);
+}
+
+.milestoneAmount {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-lg);
+}
+
+.milestoneMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.statusTag {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    text-transform: capitalize;
+    font-weight: var(--font-weight-medium);
+}
+
+.statusTag.pending {
+    background-color: var(--color-accent-yellow-transparent);
+    color: var(--color-accent-yellow);
+}
+
+.statusTag.completed {
+    background-color: var(--color-accent-green-transparent);
+    color: var(--color-accent-green);
+}
+
+/* Q&A Styles */
+.qnaList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.qnaItem {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.question {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+}
+
+.question strong {
+    color: var(--color-foreground);
+    font-size: var(--font-size-lg);
+}
+
+.qnaMeta {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.answer {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--color-accent-pink);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-relaxed);
+}
+
+.answer strong {
+    color: var(--color-foreground);
+    margin-right: var(--space-2);
+}

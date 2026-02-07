@@ -1,0 +1,191 @@
+/**
+ * @file ContentModeration.module.css
+ * @description Styles for ContentModeration component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+/* Inherit base layout from admin-layout-base.css */
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Header Badge ==================== */
+.headerBadge {
+    composes: admin-badge admin-badge--warning from global;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+}
+
+/* ==================== Toolbar Stats ==================== */
+.toolbarStats {
+    display: flex;
+    gap: var(--admin-space-md);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+}
+
+.toolbarStat strong {
+    color: var(--color-foreground);
+    font-weight: 600;
+}
+
+/* ==================== Filter Select ==================== */
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+}
+
+.filterSelect:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+/* ==================== Content Section ==================== */
+.content {
+    composes: admin-content from global;
+}
+
+.dataTable {
+    /* Additional table-specific styles if needed */
+}
+
+/* ==================== Status Badges ==================== */
+.statusBadge {
+    display: inline-block;
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+    transition: all var(--admin-transition-fast);
+}
+
+.statusBadge--pending {
+    background: var(--admin-color-warning-subtle);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning);
+}
+
+.statusBadge--resolved {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.statusBadge--removed {
+    background: var(--admin-color-danger-subtle);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+/* ==================== Cell Styling ==================== */
+.idCell {
+    font-family: var(--font-mono, 'Courier New', monospace);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    font-weight: 600;
+}
+
+.reason {
+    composes: admin-line-clamp-2 from global;
+    color: var(--color-foreground);
+}
+
+/* ==================== Action Buttons ==================== */
+.actions {
+    display: flex;
+    gap: var(--admin-space-xs);
+    align-items: center;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actionButton:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actionButton:active {
+    transform: scale(0.95);
+}
+
+.actionButton__success {
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
+.actionButton__success:hover {
+    background: var(--admin-color-success-subtle);
+}
+
+.actionButton__warn {
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+.actionButton__warn:hover {
+    background: var(--admin-color-warning-subtle);
+}
+
+.actionButton__danger {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+.actionButton__danger:hover {
+    background: var(--admin-color-danger-subtle);
+}
+
+.resolvedText {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    font-style: italic;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .toolbarStats {
+        flex-direction: column;
+        gap: var(--admin-space-xs);
+    }
+}
+
+@media (max-width: 640px) {
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actionButton {
+        width: 28px;
+        height: 28px;
+    }
+}

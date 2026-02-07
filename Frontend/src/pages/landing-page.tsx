@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import LandingHeader from "../components/common/LandingHeader";
+import Footer from "../components/common/Footer";
 import "../styles/landing-page.css";
 
 /**
@@ -74,7 +75,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className={`landing__cta-btn landing__cta-btn--${variant} ${className}`.trim()}>
       {children}
     </button>
-  )
+  ),
 );
 
 Button.displayName = "Button";
@@ -440,81 +441,7 @@ export default function LandingPage(): React.ReactElement {
           </Button>
         </section>
 
-        <footer className="landing__footer">
-          <div className="landing__footer-content">
-            <div className="landing__footer-section">
-              <h4>For Job Seekers</h4>
-              <ul>
-                <li>
-                  <a href="#jobs">Browse Jobs</a>
-                </li>
-                <li>
-                  <a href="#pricing">Pricing</a>
-                </li>
-                <li>
-                  <a href="#guide">Career Guide</a>
-                </li>
-                <li>
-                  <a href="#resources">Resources</a>
-                </li>
-              </ul>
-            </div>
-            <div className="landing__footer-section">
-              <h4>For Companies</h4>
-              <ul>
-                <li>
-                  <a href="#hiring">Start Hiring</a>
-                </li>
-                <li>
-                  <a href="#pricing">Pricing</a>
-                </li>
-                <li>
-                  <a href="#features">Features</a>
-                </li>
-                <li>
-                  <a href="#contact">Contact Sales</a>
-                </li>
-              </ul>
-            </div>
-            <div className="landing__footer-section">
-              <h4>Company</h4>
-              <ul>
-                <li>
-                  <a href="#about">About Us</a>
-                </li>
-                <li>
-                  <a href="#blog">Blog</a>
-                </li>
-                <li>
-                  <a href="#careers">Careers</a>
-                </li>
-                <li>
-                  <a href="#press">Press Kit</a>
-                </li>
-              </ul>
-            </div>
-            <div className="landing__footer-section">
-              <h4>Legal & Support</h4>
-              <ul>
-                <li>
-                  <a href="#privacy">Privacy</a>
-                </li>
-                <li>
-                  <a href="#terms">Terms</a>
-                </li>
-                <li>
-                  <a href="#security">Security</a>
-                </li>
-                <li>
-                  <a href="#contact">Contact</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="landing__footer-bottom">
-            <p>&copy; 2025 maesta. Find your dream job today.</p>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

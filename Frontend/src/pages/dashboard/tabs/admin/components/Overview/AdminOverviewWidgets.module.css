@@ -1,0 +1,528 @@
+/**
+ * @file AdminOverviewWidgets.module.css
+ * @description Shared styles for Admin Dashboard Overview widgets
+ * Follows BEM methodology and uses variables from globals.css
+ */
+
+/* ==========================================================================
+   Widget Base Styles (BEM: widget)
+   ========================================================================== */
+
+.widget {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.widget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Widget Header (BEM: widget__header)
+   ========================================================================== */
+
+.widget__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.widget__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.widget__badge {
+    background: var(--color-accent-pink);
+    color: var(--color-primary-black);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    min-width: 24px;
+    text-align: center;
+}
+
+.widget__viewAll {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-foreground);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-1);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.widget__viewAll:hover,
+.widget__viewAll:focus-visible {
+    color: var(--color-accent-pink);
+    text-decoration-color: currentColor;
+}
+
+.widget__viewAll:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: var(--space-1);
+    border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Recent Activity Widget (BEM: activity)
+   ========================================================================== */
+
+.activity__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: var(--space-2);
+}
+
+.activity__item {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+}
+
+.activity__iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.activity__item:hover .activity__iconWrapper {
+    transform: scale(1.1);
+}
+
+.activity__content {
+    flex: 1;
+    min-width: 0;
+    /* Allows text truncation */
+}
+
+.activity__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-1) 0;
+    line-height: var(--line-height-normal);
+}
+
+.activity__user {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+.activity__time {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* Activity Type Colors */
+.activity__icon--user {
+    color: var(--color-chart-1);
+}
+
+.activity__icon--job {
+    color: var(--color-chart-2);
+}
+
+.activity__icon--report {
+    color: var(--color-chart-3);
+}
+
+.activity__icon--payment {
+    color: var(--color-chart-4);
+}
+
+.activity__icon--application {
+    color: var(--color-chart-5);
+}
+
+/* ==========================================================================
+   Pending Actions Widget (BEM: action)
+   ========================================================================== */
+
+.action__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.action__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action__item:hover {
+    background: var(--color-accent);
+    border-color: var(--color-ring);
+    transform: translateX(2px);
+}
+
+.action__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.action__title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.action__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.action__count {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.action__button {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    padding: var(--space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action__button:hover,
+.action__button:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-color: var(--color-ring);
+    transform: scale(1.1);
+}
+
+.action__button:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 1px;
+}
+
+/* ==========================================================================
+   System Health Widget (BEM: health)
+   ========================================================================== */
+
+.health__grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.health__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px dashed var(--color-border);
+}
+
+.health__item:last-child {
+    border-bottom: none;
+}
+
+.health__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.health__value {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+.health__statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 2px var(--color-card);
+}
+
+.health__statusDot--operational {
+    background: var(--color-chart-2);
+    box-shadow: 0 0 8px var(--color-chart-2);
+}
+
+.health__statusDot--issues {
+    background: var(--color-chart-3);
+    box-shadow: 0 0 8px var(--color-chart-3);
+}
+
+.health__graph {
+    height: 4px;
+    background: var(--color-muted);
+    border-radius: 2px;
+    margin-top: var(--space-6);
+    overflow: hidden;
+}
+
+.health__graphBar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* ==========================================================================
+   Priority Badge (BEM: priorityBadge)
+   ========================================================================== */
+
+.priorityBadge {
+    display: inline-block;
+    padding: var(--space-0-5) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.priorityBadge--high {
+    color: var(--color-destructive-foreground);
+    background-color: var(--color-destructive);
+    border: 1px solid var(--color-destructive-foreground);
+}
+
+.priorityBadge--medium {
+    color: var(--color-chart-3);
+    background-color: color-mix(in oklch, var(--color-chart-3) 15%, transparent);
+    border: 1px solid color-mix(in oklch, var(--color-chart-3) 30%, transparent);
+}
+
+.priorityBadge--low {
+    color: var(--color-chart-1);
+    background-color: color-mix(in oklch, var(--color-chart-1) 15%, transparent);
+    border: 1px solid color-mix(in oklch, var(--color-chart-1) 30%, transparent);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Breakpoint: 75rem (1200px) */
+@media (max-width: 75rem) {
+    .widget {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+    }
+
+    .widget__header {
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+    }
+
+    .widget__title {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* Breakpoint: 60.5rem (968px) */
+@media (max-width: 60.5rem) {
+    .widget {
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+    }
+
+    .activity__list {
+        max-height: 280px;
+    }
+
+    .activity__iconWrapper {
+        width: 32px;
+        height: 32px;
+    }
+
+    .action__item {
+        padding: var(--space-3);
+    }
+
+    .action__meta {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .priorityBadge {
+        font-size: 0.625rem;
+        padding: var(--space-0-5) var(--space-1-5);
+    }
+}
+
+/* Breakpoint: 40rem (640px) */
+@media (max-width: 40rem) {
+    .widget {
+        border-radius: var(--radius-md);
+    }
+
+    .widget__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .widget__badge {
+        align-self: flex-start;
+    }
+
+    .activity__item {
+        gap: var(--space-2);
+    }
+
+    .activity__iconWrapper {
+        width: 28px;
+        height: 28px;
+    }
+
+    .activity__iconWrapper svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .activity__text {
+        font-size: var(--font-size-xs);
+    }
+
+    .action__item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .action__button {
+        align-self: flex-end;
+    }
+
+    .health__item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+
+    .health__value {
+        margin-left: calc(var(--space-3) + 16px + var(--space-2));
+        /* Icon width + gap */
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .action__item:hover {
+        background: var(--color-secondary);
+    }
+
+    .action__button:hover,
+    .action__button:focus-visible {
+        background: var(--color-secondary);
+        color: var(--color-secondary-foreground);
+    }
+
+    .health__graph {
+        background: var(--color-border);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .widget,
+    .action__item,
+    .action__button,
+    .activity__iconWrapper {
+        transition: none;
+    }
+
+    .widget:hover,
+    .action__item:hover,
+    .action__button:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .widget {
+        border-width: 2px;
+    }
+
+    .health__statusDot {
+        box-shadow: 0 0 0 3px var(--color-card);
+    }
+
+    .action__button {
+        border-width: 2px;
+    }
+}
+
+/* Custom scrollbar for activity list */
+.activity__list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activity__list::-webkit-scrollbar-track {
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
+}
+
+.activity__list::-webkit-scrollbar-thumb {
+    background: var(--color-accent-pink);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--color-muted);
+}
+
+.activity__list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-vivid-pink);
+}

@@ -537,65 +537,10 @@
 .skillsCard,
 .jobsCard,
 .applicationsCard {
-  background: var(--color-card);
-  backdrop-filter: blur(40px) saturate(180%);
-  border-radius: var(--radius-2xl);
-  border: 1px solid var(--color-border);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 var(--color-translucent-white-1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Layout specific overrides can stay here */
+  /* Glass styles are now handled by variant="glass" */
   position: relative;
   overflow: hidden;
-}
-
-.statusCard::after,
-.activityCard::after,
-.quickActionsCard::after,
-.savedJobsCard::after,
-.insightsCard::after,
-.skillsCard::after,
-.jobsCard::after,
-.applicationsCard::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg,
-      transparent,
-      var(--color-accent-pink) 30%,
-      var(--color-vivid-pink) 70%,
-      transparent);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.statusCard:hover::after,
-.activityCard:hover::after,
-.quickActionsCard:hover::after,
-.savedJobsCard:hover::after,
-.insightsCard:hover::after,
-.skillsCard:hover::after,
-.jobsCard:hover::after,
-.applicationsCard:hover::after {
-  opacity: 1;
-}
-
-.statusCard:hover,
-.activityCard:hover,
-.quickActionsCard:hover,
-.savedJobsCard:hover,
-.insightsCard:hover,
-.skillsCard:hover,
-.jobsCard:hover,
-.applicationsCard:hover {
-  border-color: var(--color-accent-pink);
-  box-shadow:
-    0 16px 48px var(--color-shadow-pink),
-    0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-4px);
 }
 
 /* ==========================================================================

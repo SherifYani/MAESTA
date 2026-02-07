@@ -1,0 +1,656 @@
+/**
+ * @file CVBuilderPage.module.css
+ * @description Contains all styles for the CVBuilderPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Container */
+.container {
+  max-width: 56.25rem;
+  /* 900px */
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+/* Header */
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: var(--color-accent-pink);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  margin-bottom: var(--space-4);
+  padding: 0;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.backButton:hover,
+.backButton:focus {
+  color: var(--color-vivid-pink);
+  outline: none;
+  text-decoration: underline;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Progress Bar */
+.progressBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+  position: relative;
+  gap: var(--space-4);
+}
+
+.progressBar::before {
+  content: '';
+  position: absolute;
+  top: var(--space-5);
+  left: 10%;
+  right: 10%;
+  height: var(--space-half);
+  background: var(--color-muted);
+  z-index: 0;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  z-index: 1;
+  transition: all 0.2s ease;
+  position: relative;
+  background: none;
+  border: none;
+  text-align: center;
+}
+
+.progressStep:hover .stepIcon {
+  transform: scale(1.05);
+}
+
+.progressStep.active .stepIcon {
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  box-shadow: 0 var(--space-1) var(--space-3) var(--color-shadow-pink);
+}
+
+.progressStep.active .stepLabel {
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-medium);
+}
+
+.stepIcon {
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-full);
+  background: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  transition: all 0.3s ease;
+  color: var(--color-muted-foreground);
+}
+
+.stepLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Content */
+.content {
+  background: var(--color-card);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-translucent-white-1);
+  border: 1px solid var(--color-border);
+  min-height: var(--space-100);
+}
+
+.stepTitle {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-6);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+/* Form */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.formGroup.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.formGroup label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  background: var(--color-input);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  background: var(--color-input-hover);
+  box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.formGroup input:hover,
+.formGroup textarea:hover,
+.formGroup select:hover {
+  border-color: var(--color-accent-hover);
+}
+
+.formGroup textarea {
+  min-height: var(--space-30);
+  resize: vertical;
+  line-height: var(--line-height-normal);
+}
+
+.aiButton {
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-white);
+  border: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.aiButton:hover,
+.aiButton:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 var(--space-1) var(--space-3) var(--color-shadow-pink);
+  outline: none;
+}
+
+/* Entry Card */
+.entryCard {
+  background: var(--color-secondary);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--color-border);
+}
+
+.entryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.entryHeader span {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  font-size: var(--font-size-base);
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  color: var(--color-muted-foreground);
+  transition: color 0.2s ease;
+  padding: var(--space-1);
+}
+
+.removeButton:hover,
+.removeButton:focus {
+  color: var(--color-destructive);
+  outline: none;
+}
+
+/* Buttons */
+.addButton {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: 1px dashed var(--color-accent-pink);
+  color: var(--color-accent-pink);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.addButton:hover,
+.addButton:focus {
+  background: var(--color-radial-pink-1);
+  border-style: solid;
+  outline: none;
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-12) var(--space-8);
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-base);
+}
+
+/* Skills */
+.skillInput input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  transition: border-color 0.2s ease;
+}
+
+.skillInput input:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+}
+
+.skillsTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.skillTag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-secondary);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.skillTag button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  transition: color 0.2s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.skillTag button:hover,
+.skillTag button:focus {
+  color: var(--color-destructive);
+  outline: none;
+}
+
+/* Review Section */
+.reviewSection {
+  margin-bottom: var(--space-8);
+}
+
+.analyzeButton {
+  width: 100%;
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  margin-bottom: var(--space-6);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.analyzeButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.analyzeButton:not(:disabled):hover,
+.analyzeButton:not(:disabled):focus {
+  transform: translateY(-2px);
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+  outline: none;
+}
+
+.suggestionsPanel {
+  background: var(--color-secondary);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.suggestionsPanel h3 {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-4);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-semibold);
+}
+
+.scoreCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+}
+
+.score {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+}
+
+.suggestionsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.suggestionItem {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
+}
+
+/* Preview */
+.previewSection {
+  margin-top: var(--space-6);
+}
+
+.previewTitle {
+  margin-bottom: var(--space-4);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+}
+
+.cvPreview {
+  background: var(--color-secondary);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.cvPreview h4 {
+  font-size: var(--font-size-xl);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-2);
+}
+
+.previewJobTitle {
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-3);
+}
+
+.cvPreview p {
+  color: var(--color-foreground);
+  line-height: var(--line-height-normal);
+  margin-bottom: var(--space-2);
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-8);
+}
+
+.prevButton {
+  padding: var(--space-3) var(--space-6);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
+  font-size: var(--font-size-base);
+}
+
+.prevButton:hover,
+.prevButton:focus {
+  background: var(--color-accent);
+  border-color: var(--color-accent-hover);
+  outline: none;
+}
+
+.nextButton,
+.downloadButton {
+  padding: var(--space-3) var(--space-8);
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nextButton:hover,
+.downloadButton:hover,
+.nextButton:focus,
+.downloadButton:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+  outline: none;
+}
+
+/* Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+  .container {
+    padding: var(--space-6);
+  }
+
+  .content {
+    padding: var(--space-6);
+  }
+}
+
+@media (max-width: 60.5rem) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .progressBar {
+    gap: var(--space-2);
+    justify-content: center;
+  }
+
+  .progressBar::before {
+    left: 20%;
+    right: 20%;
+  }
+
+  .stepLabel {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 40rem) {
+  .container {
+    padding: var(--space-4);
+  }
+
+  .content {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .stepTitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .progressBar {
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+  }
+
+  .stepLabel {
+    display: none;
+  }
+
+  .progressBar::before {
+    display: none;
+  }
+
+  .navigation {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .prevButton,
+  .nextButton,
+  .downloadButton {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .emptyState {
+    padding: var(--space-8) var(--space-4);
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+
+  .analyzeButton,
+  .prevButton,
+  .nextButton,
+  .downloadButton,
+  .addButton,
+  .aiButton {
+    transition: none;
+  }
+
+  .analyzeButton:not(:disabled):hover,
+  .analyzeButton:not(:disabled):focus,
+  .nextButton:hover,
+  .nextButton:focus,
+  .downloadButton:hover,
+  .downloadButton:focus,
+  .aiButton:hover,
+  .aiButton:focus {
+    transform: none;
+  }
+}
+
+/* Focus visible styles for keyboard navigation */
+.progressStep:focus-visible,
+.formGroup input:focus-visible,
+.formGroup textarea:focus-visible,
+.formGroup select:focus-visible,
+.addButton:focus-visible,
+.removeButton:focus-visible,
+.skillTag button:focus-visible,
+.analyzeButton:focus-visible,
+.prevButton:focus-visible,
+.nextButton:focus-visible,
+.downloadButton:focus-visible,
+.aiButton:focus-visible,
+.backButton:focus-visible {
+  outline: 2px solid var(--color-accent-pink);
+  outline-offset: 2px;
+}

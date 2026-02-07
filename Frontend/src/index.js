@@ -5,6 +5,7 @@ import "./styles/index.css";
 import App from "./App";
 import ThemeToggle from "./components/common/ThemeToggle";
 import { ProfileProvider } from "./context/ProfileContext";
+import { SubscriptionProvider } from "./context/SubscriptionContext";
 import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -15,9 +16,11 @@ root.render(
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}
-      >
+    >
       <ProfileProvider>
-        <App />
+        <SubscriptionProvider>
+          <App />
+        </SubscriptionProvider>
       </ProfileProvider>
     </BrowserRouter>
   </React.StrictMode>

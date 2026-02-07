@@ -35,7 +35,7 @@ const ROLE_SWITCHER_CONFIG = [
   // { id: "freelancer", label: "Freelancer", icon: UserPlus },
   { id: "company", label: "Employer", icon: Users },
   { id: "jobseeker", label: "Job Seeker", icon: Briefcase },
-  // { id: "admin", label: "Admin", icon: Shield },
+  { id: "admin", label: "Admin", icon: Shield },
 ];
 
 /**

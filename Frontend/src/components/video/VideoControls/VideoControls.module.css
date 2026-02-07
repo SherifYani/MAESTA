@@ -1,0 +1,87 @@
+/**
+ * @file VideoControls.module.css
+ * @description Styles for the floating video control bar with glassmorphism effect.
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-translucent-white-4);
+    /* Glass effect var? defaulting to translucent white */
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-translucent-white-2);
+    transition: all 0.3s ease;
+}
+
+/* Dark mode override if needed, or rely on globals vars switching */
+:global(.dark) .container {
+    background: var(--color-translucent-black-1);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.button {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    border: none;
+    background-color: var(--color-secondary);
+    color: var(--color-foreground);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover {
+    background-color: var(--color-muted);
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.danger {
+    background-color: var(--color-destructive);
+    color: white;
+    /* Always white on red */
+}
+
+.danger:hover {
+    background-color: oklch(0.5 0.15 25);
+    /* Darker red mock */
+    opacity: 0.9;
+}
+
+.active {
+    background-color: var(--color-accent-pink);
+    color: white;
+}
+
+.active:hover {
+    background-color: var(--color-vivid-pink);
+}
+
+.endCall {
+    background-color: var(--color-destructive);
+    color: white;
+    width: 64px;
+    /* Larger button */
+    padding: 0 var(--space-4);
+    /* Pill shape if text, but icon only here */
+}
+
+.endCall:hover {
+    background-color: #ff4d4f;
+    /* Explicit red hover */
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}

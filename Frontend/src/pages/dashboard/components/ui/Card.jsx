@@ -24,6 +24,7 @@ import styles from "./Card.module.css";
  * @param {boolean} props.padding - Whether to apply padding (default: true)
  * @param {Object} props.style - Inline styles (optional)
  * @param {Function} props.onClick - Click handler (optional)
+ * @param {string} props.variant - Card variant ('default' | 'glass' | 'outline')
  * @returns {JSX.Element} Rendered card component
  */
 const Card = ({
@@ -37,9 +38,11 @@ const Card = ({
   padding = true,
   style,
   onClick,
+  variant = "default",
 }) => {
   const cardClasses = [
     styles.card,
+    styles[variant],
     padding ? styles.withPadding : "",
     onClick ? styles.clickable : "",
     className,

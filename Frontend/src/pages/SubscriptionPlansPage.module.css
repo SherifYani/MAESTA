@@ -1,0 +1,12 @@
+/**
+ * @file SubscriptionPlansPage.module.css
+ * @description Styles for Subscription Plans Page
+ */
+
+.page {
+    min-height: 100vh;
+    background: linear-gradient(135deg,
+            var(--color-background) 0%,
+            var(--color-accent) 50%,
+            var(--color-chart-4) 100%);
+}

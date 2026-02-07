@@ -1,0 +1,292 @@
+/**
+ * @file UserManagement.module.css
+ * @description Styles for UserManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+/* Inherit base layout */
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Add Button ==================== */
+.addButton {
+    composes: admin-btn admin-btn--primary from global;
+    font-size: var(--admin-font-size-body);
+}
+
+/* ==================== Filter Select ==================== */
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+}
+
+.filterSelect:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+/* ==================== Content ==================== */
+.content {
+    composes: admin-content from global;
+}
+
+/* ==================== User Info Cell ==================== */
+.userInfo {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+}
+
+.userInfo__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: var(--admin-font-size-body);
+    flex-shrink: 0;
+}
+
+.userInfo__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-xs);
+    min-width: 0;
+}
+
+.userInfo__name {
+    font-weight: 600;
+    color: var(--color-foreground);
+    composes: admin-truncate from global;
+}
+
+.userInfo__email {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    composes: admin-truncate from global;
+}
+
+/* ==================== Role Badges ==================== */
+.roleBadge {
+    display: inline-block;
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.roleBadge--jobseeker {
+    background: var(--admin-color-info-subtle);
+    color: var(--color-info);
+    border: 1px solid var(--color-info);
+}
+
+.roleBadge--employer {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.roleBadge--freelancer {
+    background: rgba(168, 85, 247, 0.1);
+    color: rgb(168, 85, 247);
+    border: 1px solid rgb(168, 85, 247);
+}
+
+/* ==================== Status Badges ==================== */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.statusBadge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statusBadge--active {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.statusBadge--inactive {
+    background: rgba(100, 100, 100, 0.1);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.statusBadge--banned {
+    background: var(--admin-color-danger-subtle);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+/* ==================== Last Active ==================== */
+.lastActive {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+}
+
+.lastActive__indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ==================== Actions Dropdown ==================== */
+.actions {
+    position: relative;
+}
+
+.actions__dropdown {
+    position: relative;
+}
+
+.actions__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actions__toggle:hover {
+    background: var(--admin-glass-background-hover);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actions__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 160px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    box-shadow: var(--admin-shadow-dropdown);
+    padding: var(--admin-space-xs);
+    z-index: var(--admin-z-dropdown);
+    animation: menuAppear 150ms ease-out;
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.actions__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    width: 100%;
+    padding: var(--admin-space-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: var(--admin-font-size-small);
+    cursor: pointer;
+    border-radius: var(--admin-radius-md);
+    transition: background var(--admin-transition-fast);
+    text-align: left;
+}
+
+.actions__item:hover {
+    background: var(--admin-glass-background-hover);
+}
+
+.actions__item--danger {
+    color: var(--color-danger);
+}
+
+.actions__item--danger:hover {
+    background: var(--admin-color-danger-subtle);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .userInfo__avatar {
+        width: 36px;
+        height: 36px;
+        font-size: var(--admin-font-size-small);
+    }
+
+    .actions__menu {
+        right: auto;
+        left: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .userInfo {
+        gap: var(--admin-space-xs);
+    }
+
+    .userInfo__avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .actions__menu {
+        min-width: 140px;
+    }
+}

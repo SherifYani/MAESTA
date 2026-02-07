@@ -1,0 +1,209 @@
+/**
+ * @file SavedJobsPage.jsx
+ * @description Saved jobs page displaying all bookmarked jobs for the user
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+
+
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import jobService from "../../services/jobService";
+import styles from "./SavedJobsPage.module.css";
+
+/**
+ * Component for displaying saved/bookmarked jobs
+ * @returns {JSX.Element} Rendered saved jobs page
+ */
+const SavedJobsPage = () => {
+    const navigate = useNavigate();
+    const [savedJobs, setSavedJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    /**
+     * Fetches saved jobs from the API
+     * @async
+     * @returns {Promise<void>}
+     */
+    const fetchSavedJobs = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await jobService.getSavedJobs();
+            setSavedJobs(data);
+        } catch (err) {
+            setError(err.message || "Failed to load saved jobs");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /**
+     * Removes a job from saved jobs
+     * @async
+     * @param {string} jobId - ID of the job to unsave
+     * @returns {Promise<void>}
+     */
+    const handleUnsaveJob = async (jobId) => {
+        try {
+            await jobService.unsaveJob(jobId);
+            setSavedJobs((prev) => prev.filter((job) => (job._id || job.id) !== jobId));
+        } catch (err) {
+            console.error("Error removing job:", err);
+        }
+    };
+
+    /**
+     * Navigates to job details page
+     * @param {string} jobId - ID of the job to view
+     */
+    const handleJobClick = (jobId) => {
+        navigate(`/jobs/${jobId}`);
+    };
+
+    /**
+     * Navigates to job application page
+     * @param {string} jobId - ID of the job to apply for
+     * @param {Event} e - Click event
+     */
+    const handleApply = (jobId, e) => {
+        e.stopPropagation();
+        navigate(`/jobs/${jobId}/apply`);
+    };
+
+    /**
+     * Formats date string to localized format
+     * @param {string} dateString - Date string to format
+     * @returns {string} Formatted date string
+     */
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.container} data-testid="loading-container">
+                <div className={styles.spinner}></div>
+                <p>Loading saved jobs...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className={styles.container}>
+            <header className={styles.header}>
+                <h1>Saved Jobs</h1>
+                <p>{savedJobs.length} {savedJobs.length === 1 ? "job" : "jobs"} saved</p>
+            </header>
+
+            {error && (
+                <div className={styles.errorAlert} role="alert">
+                    {error}
+                </div>
+            )}
+
+            {savedJobs.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <div className={styles.emptyIcon} aria-hidden="true">☆</div>
+                    <h2>No saved jobs yet</h2>
+                    <p>Jobs you save will appear here for easy access</p>
+                    <button
+                        className={styles.browseButton}
+                        onClick={() => navigate("/jobs")}
+                        aria-label="Browse available jobs"
+                    >
+                        Browse Jobs
+                    </button>
+                </div>
+            ) : (
+                <ul className={styles.jobsList} aria-label="Saved jobs list">
+                    {savedJobs.map((job) => (
+                        <li
+                            key={job._id || job.id}
+                            className={styles.jobCard}
+                            onClick={() => handleJobClick(job._id || job.id)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyPress={(e) => e.key === "Enter" && handleJobClick(job._id || job.id)}
+                            aria-label={`View details for ${job.title} at ${job.company?.name}`}
+                        >
+                            <div className={styles.jobLogo}>
+                                {job.company?.logo ? (
+                                    <img
+                                        src={job.company.logo}
+                                        alt={`${job.company.name} logo`}
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <div className={styles.logoPlaceholder}>
+                                        {job.company?.name?.charAt(0) || "C"}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className={styles.jobContent}>
+                                <div className={styles.jobHeader}>
+                                    <h3 className={styles.jobTitle}>{job.title}</h3>
+                                    <button
+                                        className={styles.unsaveButton}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleUnsaveJob(job._id || job.id);
+                                        }}
+                                        title="Remove from saved"
+                                        aria-label={`Unsave ${job.title}`}
+                                    >
+                                        ★
+                                    </button>
+                                </div>
+
+                                <p className={styles.companyName}>{job.company?.name}</p>
+
+                                <div className={styles.jobMeta}>
+                                    <span className={styles.location}>📍 {job.location}</span>
+                                    <span className={styles.jobType}>💼 {job.type || job.jobType}</span>
+                                    {job.salary && <span className={styles.salary}>💰 {job.salary}</span>}
+                                </div>
+
+                                {job.savedAt && (
+                                    <p className={styles.savedDate}>
+                                        Saved on {formatDate(job.savedAt)}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className={styles.jobActions}>
+                                <button
+                                    className={styles.applyButton}
+                                    onClick={(e) => handleApply(job._id || job.id, e)}
+                                    aria-label={`Apply for ${job.title}`}
+                                >
+                                    Apply Now
+                                </button>
+                                <button
+                                    className={styles.viewButton}
+                                    onClick={() => handleJobClick(job._id || job.id)}
+                                    aria-label={`View details for ${job.title}`}
+                                >
+                                    View Details
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
+export default SavedJobsPage;

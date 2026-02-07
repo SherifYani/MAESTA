@@ -1,0 +1,126 @@
+/**
+ * @file TypingIndicator.module.css
+ * @description Styles for typing indicator
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+.container {
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-card);
+    border-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-sm);
+    width: fit-content;
+    margin-bottom: var(--space-3);
+    margin-right: auto;
+    box-shadow: 0 1px 2px var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+    max-width: 80%;
+}
+
+.dots {
+    display: flex;
+    gap: var(--space-1);
+    align-items: center;
+    justify-content: center;
+}
+
+.dots span {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-muted-foreground);
+    border-radius: var(--radius-full);
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Accessibility: Visually hidden but accessible content */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .dots span {
+        animation: none;
+    }
+
+    .dots span:nth-child(1),
+    .dots span:nth-child(3) {
+        opacity: 0.5;
+    }
+
+    .dots span:nth-child(2) {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .container {
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-lg);
+    }
+
+    .dots span {
+        width: 7px;
+        height: 7px;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .container {
+        padding: var(--space-2) var(--space-3);
+        max-width: 85%;
+    }
+
+    .dots span {
+        width: 6px;
+        height: 6px;
+    }
+}
+
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+        max-width: 90%;
+    }
+
+    .dots span {
+        width: 5px;
+        height: 5px;
+    }
+}

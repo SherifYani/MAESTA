@@ -43,8 +43,8 @@ export default function OnboardingPage() {
         <ArrowLeft size={20} />
       </button>
       {/* {renderForm()} */}
-      <CompanyOnboarding />
-      {/* <JobSeekerOnboarding /> */}
+      {/* <CompanyOnboarding /> */}
+      <JobSeekerOnboarding />
       {/* <FreelancerOnboarding /> */}
       {/* <CompanyOnboarding /> */}
     </div>

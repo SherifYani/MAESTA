@@ -1,0 +1,274 @@
+/**
+ * @file SubscriptionManagement.module.css
+ * @description Styles for SubscriptionManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+/* Inherit base layout */
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Export Button ==================== */
+.exportButton {
+    composes: admin-btn admin-btn--secondary from global;
+    font-size: var(--admin-font-size-body);
+}
+
+/* ==================== Filter Select ==================== */
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+}
+
+.filterSelect:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+/* ==================== Content ==================== */
+.content {
+    composes: admin-content from global;
+}
+
+/* ==================== Plan Badges ==================== */
+.planBadge {
+    display: inline-block;
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.planBadge--basic {
+    background: rgba(100, 100, 100, 0.1);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.planBadge--pro {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgb(59, 130, 246);
+    border: 1px solid rgb(59, 130, 246);
+}
+
+.planBadge--enterprise {
+    background: rgba(168, 85, 247, 0.1);
+    color: rgb(168, 85, 247);
+    border: 1px solid rgb(168, 85, 247);
+}
+
+/* ==================== Status Badges ==================== */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.statusBadge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statusBadge--active {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.statusBadge--pending {
+    background: var(--admin-color-warning-subtle);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning);
+}
+
+.statusBadge--cancelled {
+    background: var(--admin-color-danger-subtle);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+/* ==================== Amount Styling ==================== */
+.amountActive {
+    font-weight: 700;
+    color: var(--color-success);
+    font-size: var(--admin-font-size-body);
+}
+
+.amountCancelled {
+    font-weight: 500;
+    color: var(--color-muted-foreground);
+    text-decoration: line-through;
+    font-size: var(--admin-font-size-small);
+}
+
+/* ==================== Billing Date ==================== */
+.billingDate {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-foreground);
+}
+
+.billingInactive {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+}
+
+/* ==================== Actions ==================== */
+.actions {
+    display: flex;
+    gap: var(--admin-space-xs);
+    align-items: center;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-primary);
+}
+
+.actionButton:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--admin-shadow-card);
+    background: var(--admin-glass-background-hover);
+}
+
+.actionButton:active {
+    transform: scale(0.95);
+}
+
+/* ==================== Actions Dropdown ==================== */
+.actions__dropdown {
+    position: relative;
+}
+
+.actions__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actions__toggle:hover {
+    background: var(--admin-glass-background-hover);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actions__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 180px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    box-shadow: var(--admin-shadow-dropdown);
+    padding: var(--admin-space-xs);
+    z-index: var(--admin-z-dropdown);
+    animation: menuAppear 150ms ease-out;
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.actions__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    width: 100%;
+    padding: var(--admin-space-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: var(--admin-font-size-small);
+    cursor: pointer;
+    border-radius: var(--admin-radius-md);
+    transition: background var(--admin-transition-fast);
+    text-align: left;
+}
+
+.actions__item:hover {
+    background: var(--admin-glass-background-hover);
+}
+
+.actions__item--danger {
+    color: var(--color-danger);
+}
+
+.actions__item--danger:hover {
+    background: var(--admin-color-danger-subtle);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .actions__menu {
+        right: auto;
+        left: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actionButton,
+    .actions__toggle {
+        width: 28px;
+        height: 28px;
+    }
+
+    .actions__menu {
+        min-width: 160px;
+    }
+}
