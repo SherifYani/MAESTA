@@ -1,0 +1,412 @@
+/**
+ * @file ChatInterface.module.css
+ * @description Styles for ChatInterface component with responsive two-panel layout
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+.container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - var(--header-height, 80px));
+    background-color: var(--color-background);
+    gap: 0;
+    overflow: hidden;
+}
+
+/* Panels */
+.listPanel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    height: 100%;
+    overflow: hidden;
+}
+
+.chatPanel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--color-background);
+    overflow: hidden;
+}
+
+/* Chat Header */
+.chatHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background-color: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    min-height: 72px;
+}
+
+.backButton {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: none;
+    color: var(--color-foreground);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: var(--color-accent);
+}
+
+.chatInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.status {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Messages Area */
+.messagesContainer {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-4) var(--space-6);
+    background: linear-gradient(to bottom, var(--color-background), var(--color-accent));
+}
+
+.messagesList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 100%;
+}
+
+.loadingState,
+.emptyState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: var(--color-muted-foreground);
+    text-align: center;
+}
+
+.typingContainer {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: var(--space-2);
+}
+
+/* Message Input */
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4) var(--space-6);
+}
+
+.filePreview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3);
+    margin-bottom: var(--space-3);
+    background-color: var(--color-accent);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.fileInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.fileName {
+    font-weight: var(--font-weight-medium);
+}
+
+.removeFile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    background: none;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.removeFile:hover {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+}
+
+.inputWrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-3);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputWrapper:focus-within {
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 3px var(--color-shadow-pink);
+}
+
+.attachButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: none;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.attachButton:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-pink);
+}
+
+.fileInput {
+    display: none;
+}
+
+.messageInput {
+    flex: 1;
+    min-height: 2.5rem;
+    max-height: 120px;
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: none;
+    color: var(--color-foreground);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+}
+
+.messageInput::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+.sendButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.sendButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.sendButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.sendButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-muted);
+    box-shadow: none;
+}
+
+/* No Conversation State */
+.noConversation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-lg);
+}
+
+/* Mobile Visibility Classes */
+.showMobile,
+.hideMobile {
+    display: flex;
+}
+
+/* Responsive Design - Tablet */
+@media (max-width: 60.5rem) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .chatHeader {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .messagesContainer {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .inputContainer {
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 40rem) {
+    .container {
+        height: calc(100vh - 60px);
+    }
+
+    .backButton {
+        display: flex;
+    }
+
+    .listPanel.hideMobile {
+        display: none;
+    }
+
+    .chatPanel.hideMobile {
+        display: none;
+    }
+
+    .chatHeader {
+        padding: var(--space-2) var(--space-3);
+        min-height: 60px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .name {
+        font-size: var(--font-size-sm);
+    }
+
+    .status {
+        font-size: var(--font-size-xs);
+    }
+
+    .messagesContainer {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .inputContainer {
+        padding: var(--space-2);
+    }
+
+    .inputWrapper {
+        padding: var(--space-1);
+        gap: var(--space-2);
+    }
+
+    .attachButton,
+    .sendButton {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .messageInput {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Dark Mode Support */
+.dark .listPanel {
+    background-color: var(--color-card);
+    border-right-color: var(--color-border);
+}
+
+.dark .chatHeader {
+    background-color: var(--color-card);
+    border-bottom-color: var(--color-border);
+}
+
+.dark .messagesContainer {
+    background: linear-gradient(to bottom, var(--color-background), var(--color-translucent-white-1));
+}
+
+.dark .inputContainer {
+    background-color: var(--color-card);
+    border-top-color: var(--color-border);
+}
+
+.dark .inputWrapper {
+    background-color: var(--color-input);
+    border-color: var(--color-border);
+}
+
+.dark .sendButton {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-black);
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

@@ -54,6 +54,12 @@ import SubscriptionPlansPage from './pages/SubscriptionPlansPage';
 import PaymentPage from './pages/PaymentPage';
 import { EscrowDashboard, TransactionList } from './components/payment';
 
+// Notification Pages
+import { NotificationsCenterPage, NotificationSettingsPage } from './pages/notifications';
+
+// Chat Page
+import ChatPage from './pages/chat/ChatPage';
+
 // Context
 import { GigProvider } from './context/GigContext';
 
@@ -288,6 +294,14 @@ function App() {
           {/* Subscription and Payment Routes */}
           <Route path="/subscription/plans" element={<SubscriptionPlansPage />} />
           <Route path="/subscription/payment/:planId" element={<PaymentPage />} />
+
+          {/* Notification Routes */}
+          <Route path="/notifications" element={<NotificationsCenterPage />} />
+          <Route path="/notifications/settings" element={<NotificationSettingsPage />} />
+
+          {/* Chat Routes */}
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/:conversationId" element={<ChatPage />} />
         </Route>
 
         {/* Dashboard Routes */}

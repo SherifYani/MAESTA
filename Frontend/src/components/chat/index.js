@@ -11,3 +11,4 @@ export { default as MessageBubble } from './MessageBubble';
 export { default as TypingIndicator } from './TypingIndicator';
 export { default as ReadReceipt } from './ReadReceipt';
 export { default as FileUploader } from './FileUploader';
+export { default as ChatInterface } from './ChatInterface';

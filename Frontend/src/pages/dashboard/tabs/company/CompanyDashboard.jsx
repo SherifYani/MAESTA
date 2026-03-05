@@ -59,6 +59,7 @@ import {
   Filter,
   Download,
   RefreshCw,
+  Mail,
 } from "lucide-react";
 import styles from "./CompanyDashboard.module.css";
 
@@ -267,19 +268,20 @@ const CompanyDashboard = () => {
         <StatsGrid metrics={calculateQuickInsights()} />
       </section>
 
-      {/* Main Content Grid */}
+      {/* Main Content - Single Column Layout */}
       <div className={styles.contentGrid}>
-        {/* Left Column */}
-        <div className={styles.leftColumn}>
-          {/* Company Summary */}
+        {/* Row 1: Company Summary (Full Width) */}
+        <div className={styles.fullWidthRow}>
           <div className={styles.widget}>
             <CompanySummary
               profile={dashboardData.profile}
               stats={dashboardData.profile.stats}
             />
           </div>
+        </div>
 
-          {/* New Applicants Widget */}
+        {/* Row 2: New Applicants Widget (Full Width) */}
+        <div className={styles.fullWidthRow}>
           <div className={styles.widget}>
             <Card
               title="New Applicants"
@@ -300,9 +302,8 @@ const CompanyDashboard = () => {
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className={styles.rightColumn}>
-          {/* Published Jobs Widget */}
+        {/* Row 3: Published Jobs + About Company (Two Columns) */}
+        <div className={styles.twoColumnRow}>
           <div className={styles.widget}>
             <Card
               title="Active Jobs"
@@ -322,44 +323,93 @@ const CompanyDashboard = () => {
             </Card>
           </div>
 
-          {/* Performance Analytics Widget */}
           <div className={styles.widget}>
             <Card
-              title="Performance Metrics"
-              subtitle="Key recruitment insights"
-              className={styles.activityCard}
-              action={
-                <Link to="/dashboard/performance-analytics">
-                  <Button variant="ghost" size="small">
-                    View Details <ArrowUpRight size={14} />
-                  </Button>
-                </Link>
-              }>
-              <PerformanceAnalyticsWidget
-                analytics={dashboardData.performanceAnalytics}
-                onViewDetails={() => console.log('View analytics details')}
-              />
+              title="About Company"
+              subtitle="Company information"
+              className={styles.activityCard}>
+              <div className={styles.aboutCompanyContent}>
+                <p className={styles.companyDescription}>
+                  {dashboardData.profile.description}
+                </p>
+                <div className={styles.companyDetails}>
+                  <div className={styles.detailItem}>
+                    <Building size={16} />
+                    <span>{dashboardData.profile.industry}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <MapPin size={16} />
+                    <span>{dashboardData.profile.location}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <Users size={16} />
+                    <span>{dashboardData.profile.size}</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Row 4: Hiring Team + Quick Stats (Two Columns) */}
+        <div className={styles.twoColumnRow}>
+          <div className={styles.widget}>
+            <Card
+              title="Hiring Team"
+              subtitle="Primary contacts for recruitment"
+              className={styles.activityCard}>
+              <div className={styles.teamList}>
+                {dashboardData.profile.hiringTeam?.slice(0, 3).map((member) => (
+                  <div key={member.id} className={styles.teamMember}>
+                    <div className={styles.memberAvatar}>
+                      {member.name.charAt(0)}
+                    </div>
+                    <div className={styles.memberInfo}>
+                      <span className={styles.memberName}>{member.name}</span>
+                      <span className={styles.memberRole}>{member.role}</span>
+                    </div>
+                    <a
+                      href={`mailto:${member.email}`}
+                      className={styles.memberEmail}>
+                      <Mail size={14} />
+                    </a>
+                  </div>
+                ))}
+              </div>
             </Card>
           </div>
 
-          {/* Job Metrics Chart */}
           <div className={styles.widget}>
             <Card
-              title="Application Trends"
-              subtitle="Monthly application volume"
-              className={styles.chartCard}>
-              <JobMetricsChart
-                data={
-                  dashboardData.performanceAnalytics.applicationSources?.map(
-                    (item) => ({
-                      name: item.source,
-                      value: item.count,
-                    })
-                  ) || []
-                }
-                type="pie"
-                height={200}
-              />
+              title="Quick Stats"
+              subtitle="Key performance metrics"
+              className={styles.activityCard}>
+              <div className={styles.statsList}>
+                <div className={styles.statItem}>
+                  <span className={styles.statKey}>Total Jobs Posted</span>
+                  <span className={styles.statValue}>
+                    {dashboardData.profile.stats?.totalJobsPosted || 0}
+                  </span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statKey}>Open Positions</span>
+                  <span className={styles.statValue}>
+                    {dashboardData.profile.stats?.openPositions || 0}
+                  </span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statKey}>Interview Rate</span>
+                  <span className={styles.statValue}>
+                    {dashboardData.profile.stats?.interviewRate || 0}%
+                  </span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statKey}>Total Hires</span>
+                  <Badge variant="success">
+                    {dashboardData.profile.stats?.hireRate || 0}% success
+                  </Badge>
+                </div>
+              </div>
             </Card>
           </div>
         </div>
@@ -421,7 +471,7 @@ const CompanyDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

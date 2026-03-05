@@ -492,10 +492,6 @@
                 var(--color-primary-black) 100%);
     }
 
-    .socialLink {
-        background-color: color-mix(in oklch, var(--color-muted), black 50%);
-    }
-
     .backToTopButton {
         border-color: var(--color-border);
     }

@@ -15,7 +15,13 @@ const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({
+        id: 'user-123',
+        name: 'Demo User',
+        email: 'demo@example.com',
+        role: 'jobseeker',
+        avatar: 'https://via.placeholder.com/150'
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -31,6 +37,15 @@ export const AuthProvider = ({ children }) => {
                     console.error('Failed to load user:', err);
                     tokenService.clearToken();
                 }
+            } else {
+                // FORCE MOCK USER FOR PROTOTYPE
+                setUser({
+                    id: 'user-123',
+                    name: 'Demo User',
+                    email: 'demo@example.com',
+                    role: 'jobseeker',
+                    avatar: 'https://via.placeholder.com/150'
+                });
             }
             setLoading(false);
         };

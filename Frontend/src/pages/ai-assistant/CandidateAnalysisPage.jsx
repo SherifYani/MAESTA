@@ -113,19 +113,6 @@ const CandidateAnalysisPage = () => {
             </header>
 
             <main className={styles.content}>
-                {/* Job Description Section */}
-                <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Job Description</h2>
-                    <textarea
-                        value={jobDescription}
-                        onChange={(e) => setJobDescription(e.target.value)}
-                        placeholder="Enter job description and requirements..."
-                        rows={6}
-                        className={styles.jobDescriptionInput}
-                        aria-label="Job description input"
-                    />
-                </section>
-
                 {/* Upload Section */}
                 <section className={styles.section}>
                     <h2 className={styles.sectionTitle}> Upload Resumes</h2>

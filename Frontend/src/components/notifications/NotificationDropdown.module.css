@@ -1,0 +1,255 @@
+/**
+ * @file NotificationDropdown.module.css
+ * @description Styles for NotificationDropdown component with glassmorphism effect
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    width: 25rem;
+    max-height: 32rem;
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    animation: dropdownSlideIn 0.2s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.actionButton:hover {
+    background-color: var(--color-accent);
+    transform: scale(1.05);
+}
+
+.actionButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.actionButton:active {
+    transform: scale(0.95);
+}
+
+.actionIcon {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--color-muted-foreground);
+}
+
+.actionButton:hover .actionIcon {
+    color: var(--color-foreground);
+}
+
+.tabs {
+    display: flex;
+    padding: var(--space-2) var(--space-4);
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-muted);
+}
+
+.tab {
+    flex: 1;
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: var(--color-accent);
+    color: var(--color-foreground);
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: -2px;
+}
+
+.activeTab {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+}
+
+.activeTab:hover {
+    background-color: var(--color-vivid-pink);
+    color: var(--color-primary-white);
+}
+
+.notificationList {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 24rem;
+}
+
+.footer {
+    padding: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-muted);
+}
+
+.viewAllButton {
+    width: 100%;
+    padding: var(--space-2);
+    border: none;
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.viewAllButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.viewAllButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.viewAllButton:active {
+    transform: translateY(0);
+}
+
+/* Dark theme adjustments */
+.dark .dropdown {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark .activeTab {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-black);
+}
+
+.dark .activeTab:hover {
+    background-color: var(--color-submit-pink-1);
+}
+
+.dark .viewAllButton {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-black);
+}
+
+/* Responsive Design - Tablet (60.5rem / 968px) */
+@media (max-width: 60.5rem) {
+    .dropdown {
+        width: 22rem;
+        max-height: 28rem;
+    }
+
+    .notificationList {
+        max-height: 20rem;
+    }
+}
+
+/* Responsive Design - Mobile (40rem / 640px) */
+@media (max-width: 40rem) {
+    .dropdown {
+        width: calc(100vw - 2rem);
+        max-width: 22rem;
+        max-height: 26rem;
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    @keyframes dropdownSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(50%) translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(50%) translateY(0);
+        }
+    }
+
+    .header {
+        padding: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-base);
+    }
+
+    .tabs {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .tab {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-xs);
+    }
+
+    .notificationList {
+        max-height: 18rem;
+    }
+
+    .footer {
+        padding: var(--space-2);
+    }
+}

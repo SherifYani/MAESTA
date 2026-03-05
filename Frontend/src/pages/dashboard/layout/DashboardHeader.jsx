@@ -13,20 +13,18 @@ import { useContext, useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
-  Bell,
   ChevronDown,
   Menu,
   X,
   User,
   Settings,
-  Calendar,
-  FileText,
   CreditCard,
   HelpCircle,
   LogOut,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
 import ThemeToggle from "../../../components/common/ThemeToggle";
+import { NotificationBell } from "../../../components/notifications";
 import styles from "./DashboardHeader.module.css";
 
 /**
@@ -43,15 +41,12 @@ import styles from "./DashboardHeader.module.css";
  */
 const DashboardHeader = ({
   user = null,
-  notifications = [],
   userMenuItems = [],
   onSearch = () => { },
-  onNotificationClick = () => { },
   onLogout = () => { },
   onProfileClick = () => { },
 }) => {
   const { currentRole, toggleSidebar, isMobile } = useContext(DashboardContext);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,75 +60,7 @@ const DashboardHeader = ({
     role: currentRole,
   }), [currentRole]);
 
-  // Default user menu items
-  const defaultUserMenuItems = useMemo(() => [
-    {
-      id: "profile",
-      label: "Profile Settings",
-      icon: "User",
-      href: "/profile",
-    },
-    { id: "account", label: "Account", icon: "Settings", href: "/account" },
-    { id: "billing", label: "Billing", icon: "CreditCard", href: "/billing" },
-    { id: "divider", type: "divider" },
-    { id: "help", label: "Help & Support", icon: "HelpCircle", href: "/help" },
-    {
-      id: "logout",
-      label: "Logout",
-      icon: "LogOut",
-      href: "#",
-      isLogout: true,
-    },
-  ], []);
 
-  // Default notifications with stable timestamps for this session
-  const defaultNotifications = useMemo(() => [
-    {
-      id: "1",
-      title: "New Proposal Received",
-      message: "You have received a new proposal for your project",
-      type: "info",
-      timestamp: new Date(Date.now() - 5 * 60000), // 5 minutes ago
-      read: false,
-      actionUrl: "/proposals",
-      icon: "FileText",
-    },
-    {
-      id: "2",
-      title: "Project Deadline",
-      message: "Your project deadline is approaching in 3 days",
-      type: "warning",
-      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-      read: false,
-      actionUrl: "/projects",
-      icon: "Calendar",
-    },
-    {
-      id: "3",
-      title: "Payment Processed",
-      message: "Your payment has been processed successfully",
-      type: "success",
-      timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-      read: true,
-      actionUrl: "/payments",
-      icon: "CreditCard",
-    },
-  ], []);
-
-  // Initialize state with props or defaults
-  const [localNotifications, setLocalNotifications] = useState(() =>
-    notifications.length > 0 ? notifications : defaultNotifications
-  );
-
-  // Update local state when props change
-  useEffect(() => {
-    if (notifications.length > 0) {
-      setLocalNotifications(notifications);
-    }
-  }, [notifications]);
-
-  // Derived state for unread count
-  const unreadCount = localNotifications.filter((n) => !n.read).length;
 
   /**
    * Format role name for display
@@ -172,6 +99,27 @@ const DashboardHeader = ({
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
+  // Default user menu items
+  const defaultUserMenuItems = useMemo(() => [
+    {
+      id: "profile",
+      label: "Profile Settings",
+      icon: "User",
+      href: "/profile",
+    },
+    { id: "account", label: "Account", icon: "Settings", href: "/account" },
+    { id: "billing", label: "Billing", icon: "CreditCard", href: "/billing" },
+    { id: "divider", type: "divider" },
+    { id: "help", label: "Help & Support", icon: "HelpCircle", href: "/help" },
+    {
+      id: "logout",
+      label: "Logout",
+      icon: "LogOut",
+      href: "#",
+      isLogout: true,
+    },
+  ], []);
+
   /**
    * Get icon component by name
    * @param {string} iconName - Name of the icon
@@ -184,30 +132,8 @@ const DashboardHeader = ({
       CreditCard: CreditCard,
       HelpCircle: HelpCircle,
       LogOut: LogOut,
-      FileText: FileText,
-      Calendar: Calendar,
     };
     return iconMap[iconName] || null;
-  };
-
-  /**
-   * Handle notification click
-   * @param {Object} notification - Notification object
-   */
-  const handleNotificationClick = (notification) => {
-    // Mark as read
-    if (!notification.read) {
-      setLocalNotifications((prev) =>
-        prev.map((n) => (n.id === notification.id ? { ...n, read: true } : n))
-      );
-    }
-
-    onNotificationClick(notification);
-
-    // Close dropdown if it's a click action
-    if (notification.actionUrl) {
-      setShowNotifications(false);
-    }
   };
 
   /**
@@ -232,12 +158,7 @@ const DashboardHeader = ({
     onSearch(searchQuery);
   };
 
-  /**
-   * Mark all notifications as read
-   */
-  const markAllAsRead = () => {
-    setLocalNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+
 
   // Current user data
   const currentUser = user || defaultUser;
@@ -289,89 +210,8 @@ const DashboardHeader = ({
         {/* Theme Toggle */}
         <ThemeToggle />
 
-        {/* Notifications with Dropdown */}
-        <div className={styles.notificationContainer}>
-          <button
-            className={`${styles.iconButton} ${showNotifications ? styles.active : ""
-              }`}
-            aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ""
-              }`}
-            onClick={() => setShowNotifications(!showNotifications)}>
-            <Bell className={styles.notificationIcon} size={20} />
-            {unreadCount > 0 && (
-              <span className={styles.notificationBadge}>{unreadCount}</span>
-            )}
-          </button>
-
-          {/* Notifications Dropdown */}
-          {showNotifications && (
-            <div className={styles.notificationDropdown}>
-              <div className={styles.dropdownHeader}>
-                <h3 className={styles.dropdownTitle}>Notifications</h3>
-                <div className={styles.dropdownActions}>
-                  {unreadCount > 0 && (
-                    <button
-                      className={styles.markAllButton}
-                      onClick={markAllAsRead}>
-                      Mark all as read
-                    </button>
-                  )}
-                  <button
-                    className={styles.closeDropdown}
-                    onClick={() => setShowNotifications(false)}>
-                    <X size={16} />
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.notificationList}>
-                {localNotifications.length > 0 ? (
-                  localNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`${styles.notificationItem} ${notification.read ? styles.read : ""
-                        }`}
-                      onClick={() => handleNotificationClick(notification)}>
-                      <div
-                        className={`${styles.notificationDot} ${styles[`dot-${notification.type}`]
-                          }`}></div>
-                      <div className={styles.notificationContent}>
-                        <p className={styles.notificationTitle}>
-                          {notification.title}
-                        </p>
-                        <p className={styles.notificationText}>
-                          {notification.message}
-                        </p>
-                        <span className={styles.notificationTime}>
-                          {formatRelativeTime(notification.timestamp)}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className={styles.emptyNotifications}>
-                    <Bell size={32} />
-                    <p>No notifications</p>
-                  </div>
-                )}
-              </div>
-
-              {localNotifications.length > 0 && (
-                <div className={styles.dropdownFooter}>
-                  <button
-                    className={styles.viewAllButton}
-                    onClick={() => {
-                      // Navigate to notifications page
-                      window.location.href = "/notifications";
-                      setShowNotifications(false);
-                    }}>
-                    View All Notifications
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        {/* Notifications */}
+        <NotificationBell />
 
         {/* User Profile with Dropdown */}
         <div className={styles.userProfileContainer}>

@@ -143,30 +143,6 @@ const StatisticsDashboard = () => {
                     </div>
                 </div>
 
-                {/* Revenue Chart */}
-                <div className={styles.chartCard}>
-                    <div className={styles.chartCard__header}>
-                        <div className={styles.chartCard__title}>
-                            <DollarSign size={20} className={styles.chartCard__icon} />
-                            <h3>Revenue Overview</h3>
-                        </div>
-                        <span className={styles.chartCard__subtitle}>
-                            ${(filteredRevenueData.reduce((sum, d) => sum + d.revenue, 0) / 1000).toFixed(0)}k total
-                        </span>
-                    </div>
-                    <div className={styles.chartCard__body}>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={filteredRevenueData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.3} />
-                                <XAxis dataKey="name" stroke="var(--color-muted-foreground)" />
-                                <YAxis stroke="var(--color-muted-foreground)" />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="revenue" fill="var(--color-chart-2)" radius={[8, 8, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
                 {/* Job Postings Chart */}
                 <div className={styles.chartCard}>
                     <div className={styles.chartCard__header}>

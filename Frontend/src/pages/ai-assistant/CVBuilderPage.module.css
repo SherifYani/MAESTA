@@ -10,7 +10,7 @@
 
 /* Container */
 .container {
-  max-width: 56.25rem;
+  max-width: 87.5rem;
   /* 900px */
   margin: 0 auto;
   padding: var(--space-8);

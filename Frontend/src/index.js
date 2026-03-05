@@ -6,6 +6,8 @@ import App from "./App";
 import ThemeToggle from "./components/common/ThemeToggle";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SubscriptionProvider } from "./context/SubscriptionContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -17,11 +19,15 @@ root.render(
         v7_relativeSplatPath: true,
       }}
     >
-      <ProfileProvider>
-        <SubscriptionProvider>
-          <App />
-        </SubscriptionProvider>
-      </ProfileProvider>
+      <AuthProvider>
+        <ProfileProvider>
+          <SubscriptionProvider>
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
+          </SubscriptionProvider>
+        </ProfileProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

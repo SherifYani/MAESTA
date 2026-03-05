@@ -49,11 +49,9 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   border-radius: var(--radius-full);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -66,12 +64,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-translucent-white-1),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-translucent-white-1),
+      transparent);
   animation: shimmer 2s infinite;
 }
 
@@ -114,8 +110,8 @@
 }
 
 .actionItem.completed .checkbox {
-  background-color: var(--color-chart-2);
-  border-color: var(--color-chart-2);
+  background-color: var(--color-vivid-pink);
+  border-color: var(--color-vivid-pink);
 }
 
 /* ==========================================================================
@@ -371,6 +367,7 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+
   .actionItem,
   .checkbox,
   .progressFill,
@@ -413,6 +410,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }

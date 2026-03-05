@@ -1,0 +1,463 @@
+/**
+ * @file NotificationSettingsPage.module.css
+ * @description Styles for NotificationSettingsPage component
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+.container {
+    min-height: 100vh;
+    background-color: var(--color-background);
+    padding: var(--space-6);
+    padding-bottom: calc(var(--space-20) + var(--space-6));
+    /* Space for footer */
+}
+
+/* Header */
+.header {
+    max-width: 800px;
+    margin: 0 auto var(--space-10);
+}
+
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-6);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent-pink);
+}
+
+.backButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* Content */
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* Section */
+.section {
+    background-color: var(--color-card);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sectionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    flex-shrink: 0;
+}
+
+.sectionTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.sectionDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* Settings List */
+.settingsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.settingItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease;
+}
+
+.settingItem:hover {
+    background-color: var(--color-accent);
+}
+
+.settingInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.settingLabel {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-1);
+}
+
+.settingHint {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+/* Toggle Switch */
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-muted);
+    transition: all 0.3s ease;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-border);
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: "";
+    height: 1.25rem;
+    width: 1.25rem;
+    left: 0.125rem;
+    bottom: 0.125rem;
+    background-color: var(--color-card);
+    transition: all 0.3s ease;
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked+.toggleSlider {
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    border-color: var(--color-accent-pink);
+}
+
+.toggle input:checked+.toggleSlider:before {
+    transform: translateX(1.25rem);
+}
+
+.toggle input:focus-visible+.toggleSlider {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.toggle:hover .toggleSlider {
+    border-color: var(--color-accent-pink);
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4) var(--space-6);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.footerContent {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.resetButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.resetButton:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
+}
+
+.resetButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.actionButtons {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.cancelButton {
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancelButton:hover:not(:disabled) {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent-pink);
+}
+
+.cancelButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancelButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.saveButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-primary-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.saveButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.saveButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.saveButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* Responsive Design - Tablet (60.5rem / 968px) */
+@media (max-width: 60.5rem) {
+    .section {
+        padding: var(--space-4);
+    }
+
+    .sectionHeader {
+        gap: var(--space-3);
+    }
+
+    .sectionIcon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .settingItem {
+        padding: var(--space-3);
+    }
+}
+
+/* Responsive Design - Mobile (40rem / 640px) */
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-4);
+        padding-bottom: calc(var(--space-24) + var(--space-4));
+    }
+
+    .header {
+        margin-bottom: var(--space-6);
+    }
+
+    .title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .content {
+        gap: var(--space-4);
+    }
+
+    .section {
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+    }
+
+    .sectionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .sectionIcon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .sectionTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .settingItem {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-3);
+    }
+
+    .toggle {
+        align-self: flex-end;
+    }
+
+    .footer {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .footerContent {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .resetButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .actionButtons {
+        width: 100%;
+        flex-direction: column-reverse;
+    }
+
+    .cancelButton,
+    .saveButton {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark Theme Support */
+.dark .section {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .footer {
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .sectionIcon {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-black);
+}
+
+.dark .toggleSlider {
+    background-color: var(--color-translucent-white-1);
+}
+
+.dark .toggle input:checked+.toggleSlider {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+}
+
+.dark .saveButton {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-black);
+}

@@ -11,6 +11,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import { NotificationBell } from "../notifications";
 import styles from "./LandingHeader.module.css";
 
 /**
@@ -99,7 +100,7 @@ const LandingHeader = () => {
         { label: "Smart Search", path: "/ai/smart-search" },
         { label: "CV Builder", path: "/ai/cv-builder" },
         { label: "Candidate Analysis", path: "/ai/candidate-analysis" },
-        { label: "Post AI Job", path: "/ai/post-job" },
+        // { label: "Post AI Job", path: "/ai/post-job" },
       ]
     },
     { id: "plans", label: "Plans", path: "/subscription/plans" },
@@ -223,6 +224,9 @@ const LandingHeader = () => {
 
         {/* Desktop Actions Section */}
         <div className={styles.actions}>
+          {/* Notification Bell */}
+          <NotificationBell className={styles.notificationBell} />
+
           <div className={styles.authButtons}>
             <Link
               to="/login"
