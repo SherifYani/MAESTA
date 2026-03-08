@@ -10,7 +10,7 @@
  */
 
 import { useContext, useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
   ChevronDown,
@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
+import { useAuth } from "../../../context/AuthContext";
 import ThemeToggle from "../../../components/common/ThemeToggle";
 import { NotificationBell } from "../../../components/notifications";
 import styles from "./DashboardHeader.module.css";
@@ -47,18 +48,21 @@ const DashboardHeader = ({
   onProfileClick = () => { },
 }) => {
   const { currentRole, toggleSidebar, isMobile } = useContext(DashboardContext);
+  const { user: authUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Memoize default values to prevent re-creation on every render
+  // Build the display user from AuthContext, falling back to props or defaults
   const defaultUser = useMemo(() => ({
     id: "1",
-    name: "Sherif Talaat",
-    email: "sherif@maesta.com",
-    avatarInitials: "ST",
-    role: currentRole,
-  }), [currentRole]);
+    name: authUser?.name || "Demo User",
+    email: authUser?.email || "",
+    avatarInitials: authUser?.avatarInitials ||
+      (authUser?.name ? authUser.name.split(" ").map(n => n[0]).join("").toUpperCase() : "DU"),
+    role: authUser?.role || currentRole,
+  }), [authUser, currentRole]);
 
 
 
@@ -137,12 +141,12 @@ const DashboardHeader = ({
   };
 
   /**
-   * Handle menu item click
-   * @param {Object} item - Menu item
+   * Handle logout — calls AuthContext.logout() then navigates to mock-login
    */
   const handleMenuItemClick = (item) => {
     if (item.isLogout) {
-      onLogout();
+      logout();
+      navigate('/mock-login', { replace: true });
     } else if (onProfileClick) {
       onProfileClick(item);
     }

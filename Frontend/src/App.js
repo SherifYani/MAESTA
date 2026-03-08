@@ -20,6 +20,10 @@ import ForgetPasswordPage from "./pages/auth/ForgetPasswordPage.jsx";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
 import VerificationEmailPage from "./pages/auth/VerificationEmailPage.jsx";
 import LoginForm from "./pages/Login.jsx";
+import MockLoginPage from "./pages/auth/MockLoginPage.jsx";
+
+// Route Guard
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 // Onboarding
 import OnboardingPage from "./pages/onboarding/OnboardingPage.jsx";
@@ -256,14 +260,15 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/mock-login" element={<MockLoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/forget" element={<ForgetPasswordPage />} />
         <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<OnboardingPage />} />
 
-        {/* Main Layout Routes */}
-        <Route element={<MainLayout />}>
+        {/* Main Layout Routes — requires authentication */}
+        <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           {/* Job Pages - Public Routes */}
           <Route path="/jobs" element={<JobSearchPage />} />
           <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
@@ -304,8 +309,8 @@ function App() {
           <Route path="/chat/:conversationId" element={<ChatPage />} />
         </Route>
 
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* Dashboard Routes — requires authentication */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           {/* General Routes for all roles */}
           <Route index element={<Dashboard />} />
           <Route path="profile" element={<RoleBasedProfile />} />

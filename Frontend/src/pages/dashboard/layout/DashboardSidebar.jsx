@@ -28,17 +28,6 @@ import styles from "./DashboardSidebar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 /**
- * Role switcher configuration - maps roles to icons
- */
-const ROLE_SWITCHER_CONFIG = [
-  // { id: "client", label: "Client", icon: Briefcase },
-  // { id: "freelancer", label: "Freelancer", icon: UserPlus },
-  { id: "company", label: "Employer", icon: Users },
-  { id: "jobseeker", label: "Job Seeker", icon: Briefcase },
-  { id: "admin", label: "Admin", icon: Shield },
-];
-
-/**
  * Sidebar component for dashboard navigation with mobile drawer
  * @param {Object} props - Component props
  * @param {boolean} props.isOpen - Whether sidebar is open
@@ -147,29 +136,6 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
               );
             })}
           </ul>
-        </div>
-
-        {/* Role Switcher */}
-        <div className={styles.navSection}>
-          <h3 className={styles.navSectionTitle}>Switch Role</h3>
-          <div className={styles.roleSelector}>
-            {ROLE_SWITCHER_CONFIG.map((role) => {
-              const IconComponent = role.icon;
-              const isActive = currentRole === role.id;
-              return (
-                <button
-                  key={role.id}
-                  className={`${styles.roleButton} ${isActive ? styles.active : ""
-                    }`}
-                  onClick={() => handleRoleChange(role.id)}
-                  title={`Switch to ${role.label}`}
-                  type="button">
-                  <IconComponent className={styles.roleIcon} size={18} />
-                  <span className={styles.roleLabel}>{role.label}</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </nav>
 

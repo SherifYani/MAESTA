@@ -2,6 +2,9 @@
  * @file AdminStatsCard.module.css
  * @description Styles for AdminStatsCard component
  * Follows BEM methodology and uses variables from globals.css
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-03-08
  */
 
 /* ==========================================================================
@@ -251,7 +254,7 @@
 
     .card__trend {
         font-size: 0.75rem;
-        padding: var(--space-0-5) var(--space-1-5);
+        padding: var(--space-1) var(--space-1-5);
     }
 }
 

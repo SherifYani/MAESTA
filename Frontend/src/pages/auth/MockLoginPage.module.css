@@ -1,0 +1,239 @@
+/**
+ * @file MockLoginPage.module.css
+ * @description Styles for the MockLoginPage — uses design tokens from globals.css
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 05-03-2026
+ */
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Page wrapper — full-screen centered layout
+────────────────────────────────────────────────────────────────────────────── */
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background);
+    padding: var(--space-4);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ambient decorative glow */
+.bgGlow {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 50% at 30% 20%, var(--color-radial-pink-1), transparent),
+        radial-gradient(ellipse 50% 40% at 70% 80%, var(--color-radial-pink-2), transparent);
+    pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Card
+────────────────────────────────────────────────────────────────────────────── */
+.card {
+    position: relative;
+    z-index: 1;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-10) var(--space-8);
+    width: 100%;
+    max-width: 560px;
+    box-shadow:
+        0 4px 24px var(--color-translucent-white-1),
+        0 1px 4px var(--color-shadow-pink);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Header
+────────────────────────────────────────────────────────────────────────────── */
+.header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.logo {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.12em;
+    color: var(--color-accent-pink);
+    margin-bottom: var(--space-4);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Role cards grid
+────────────────────────────────────────────────────────────────────────────── */
+.rolesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+/* Admin card spans full width */
+.rolesGrid> :last-child {
+    grid-column: 1 / -1;
+}
+
+.roleCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-input);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.roleCard:hover {
+    border-color: var(--color-accent-pink);
+    background: var(--color-accent);
+}
+
+.roleCard.selected {
+    border-color: var(--role-color, var(--color-accent-pink));
+    background: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--role-color, var(--color-accent-pink)) 15%, transparent);
+}
+
+.roleIcon {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-1);
+}
+
+.roleLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.roleDesc {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-normal);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Login button
+────────────────────────────────────────────────────────────────────────────── */
+.loginBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: var(--space-5);
+}
+
+.loginBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-select-pink), var(--color-submit-pink-1));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px var(--color-shadow-pink);
+}
+
+.loginBtn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Spinner inside button */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: var(--radius-full);
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Disclaimer notice
+────────────────────────────────────────────────────────────────────────────── */
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-translucent-white-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-relaxed);
+}
+
+.notice strong {
+    color: var(--color-foreground);
+}
+
+.notice svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--color-accent-pink);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Responsive
+────────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 40rem) {
+    .card {
+        padding: var(--space-8) var(--space-5);
+    }
+
+    .rolesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .rolesGrid> :last-child {
+        grid-column: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+    }
+
+    .loginBtn {
+        transition: none;
+    }
+}

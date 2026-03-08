@@ -1,15 +1,27 @@
 /**
  * @file UserManagement.jsx
- * @description User Management Interface for Admin Dashboard
+ * @description User Management Interface for Admin Dashboard.
+ *   Acts as the data controller for AdminDataTable:
+ *   owns all filter → sort → paginate logic and passes
+ *   controlled props to the table.
  * @author Sherif Talaat
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Added currentPage and sortConfig state
+ * - Replaced simple filteredUsers useMemo with full filter→sort→paginate pipeline
+ * - Added handleSearch, handleSort, handlePageChange handlers
+ * - Passes all controlled props to AdminDataTable
+ * - AdminToolbar onSearchChange now calls handleSearch (string) not setSearchTerm (event)
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { MoreVertical, Edit, Trash, CheckCircle, Ban, UserPlus, Users, UserCheck, UserX, Shield } from 'lucide-react';
+import {
+    MoreVertical, Edit, Trash, CheckCircle, Ban,
+    UserPlus, Users, UserCheck, UserX, Shield,
+} from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
@@ -17,102 +29,153 @@ import AdminDataTable from '../shared/AdminDataTable';
 import { usersData } from '../../config/adminMockData';
 import styles from './UserManagement.module.css';
 
+// Number of rows to display per page
+const PAGE_SIZE = 10;
+
 /**
- * User Management Component for administering platform users.
- * Follows data-intensive page pattern with stats grid.
- * @returns {JSX.Element} Rendered user management interface.
+ * User Management Component.
+ * All data transformation (filter, sort, paginate) lives here;
+ * AdminDataTable is a purely controlled, presentational component.
+ * @returns {JSX.Element}
  */
 const UserManagement = () => {
+    // ── Data source ─────────────────────────────────────────────────────────
+    const [users, setUsers] = useState(usersData);
+
+    // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [users, setUsers] = useState(usersData);
+
+    // ── Sort state ───────────────────────────────────────────────────────────
+    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+
+    // ── Pagination state ─────────────────────────────────────────────────────
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // ── Action dropdown state ─────────────────────────────────────────────────
     const [selectedUser, setSelectedUser] = useState(null);
 
-    /**
-     * Filters users based on search term, role, and status filters.
-     */
+    // =========================================================================
+    // Data pipeline: filter → sort → paginate
+    // =========================================================================
+
+    /** 1. Filter */
     const filteredUsers = useMemo(() => {
-        return users.filter(user => {
-            const matchesSearch =
-                user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        return users.filter((user) => {
+            const term = searchTerm.toLowerCase();
+            const matchesSearch = !searchTerm
+                || user.name.toLowerCase().includes(term)
+                || user.email.toLowerCase().includes(term)
+                || user.role.toLowerCase().includes(term);
+
             const matchesRole = roleFilter === 'all' || user.role === roleFilter;
             const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+
             return matchesSearch && matchesRole && matchesStatus;
         });
-    }, [searchTerm, roleFilter, statusFilter, users]);
+    }, [users, searchTerm, roleFilter, statusFilter]);
+
+    /** 2. Sort */
+    const sortedUsers = useMemo(() => {
+        if (!sortConfig.key) return filteredUsers;
+        return [...filteredUsers].sort((a, b) => {
+            let aVal = a[sortConfig.key] ?? '';
+            let bVal = b[sortConfig.key] ?? '';
+            if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+            if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredUsers, sortConfig]);
+
+    /** 3. Paginate */
+    const totalItems = sortedUsers.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+    const paginatedUsers = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return sortedUsers.slice(start, start + PAGE_SIZE);
+    }, [sortedUsers, currentPage]);
+
+    // =========================================================================
+    // Handlers
+    // =========================================================================
+
+    /** Update search term AND reset to page 1 */
+    const handleSearch = useCallback((term) => {
+        setSearchTerm(term);
+        setCurrentPage(1);
+    }, []);
 
     /**
-     * Calculates user statistics.
+     * Toggle sort direction if same key; switch to new key asc if different.
+     * Always resets to page 1.
      */
-    const userStats = useMemo(() => {
-        const total = users.length;
-        const active = users.filter(user => user.status === 'active').length;
-        const inactive = users.filter(user => user.status === 'inactive').length;
-        const banned = users.filter(user => user.status === 'banned').length;
+    const handleSort = useCallback((key) => {
+        setSortConfig((prev) => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+        setCurrentPage(1);
+    }, []);
 
-        const roleCounts = users.reduce((acc, user) => {
-            acc[user.role] = (acc[user.role] || 0) + 1;
-            return acc;
-        }, {});
+    /** Navigate to a page (guarded) */
+    const handlePageChange = useCallback((page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    }, [totalPages]);
 
-        return {
-            total,
-            active,
-            inactive,
-            banned,
-            jobseekers: roleCounts['jobseeker'] || 0,
-            employers: roleCounts['employer'] || 0,
-            freelancers: roleCounts['freelancer'] || 0,
-        };
-    }, [users]);
-
+    /** Activate / deactivate a user */
     const handleToggleStatus = useCallback((id, currentStatus) => {
         const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-        setUsers(prev => prev.map(user =>
-            user.id === id ? { ...user, status: newStatus } : user
-        ));
+        setUsers((prev) =>
+            prev.map((user) => user.id === id ? { ...user, status: newStatus } : user)
+        );
         setSelectedUser(null);
     }, []);
 
+    /** Ban / unban a user */
     const handleToggleBan = useCallback((id, currentStatus) => {
         const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
-        setUsers(prev => prev.map(user =>
-            user.id === id ? { ...user, status: newStatus } : user
-        ));
+        setUsers((prev) =>
+            prev.map((user) => user.id === id ? { ...user, status: newStatus } : user)
+        );
         setSelectedUser(null);
     }, []);
 
+    /** Delete a user after confirmation */
     const handleDeleteUser = useCallback((id, name) => {
-        if (window.confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) {
-            setUsers(prev => prev.filter(user => user.id !== id));
+        if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+            setUsers((prev) => prev.filter((user) => user.id !== id));
             setSelectedUser(null);
         }
     }, []);
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+    // =========================================================================
+    // Cell renderers
+    // =========================================================================
 
-    /**
-     * Generates a consistent color for avatar based on user name.
-     */
+    /** Avatar colour derived from the first character of the user's name */
     const getAvatarColor = (name) => {
-        const colors = [
+        const colours = [
             'var(--color-chart-1)',
             'var(--color-chart-2)',
             'var(--color-chart-3)',
             'var(--color-chart-4)',
-            'var(--color-chart-5)'
+            'var(--color-chart-5)',
         ];
-        const index = name.charCodeAt(0) % colors.length;
-        return colors[index];
+        return colours[name.charCodeAt(0) % colours.length];
     };
 
     const renderUserInfo = (row) => (
         <div className={styles.userInfo}>
-            <div className={styles.userInfo__avatar} style={{ backgroundColor: getAvatarColor(row.name) }}>
+            <div
+                className={styles.userInfo__avatar}
+                style={{ backgroundColor: getAvatarColor(row.name) }}
+            >
                 {row.name.charAt(0).toUpperCase()}
             </div>
             <div className={styles.userInfo__details}>
@@ -123,7 +186,9 @@ const UserManagement = () => {
     );
 
     const renderRoleBadge = (row) => (
-        <span className={`${styles.roleBadge} ${styles[`roleBadge--${row.role.replace('_', '-')}`]}`}>
+        <span
+            className={`${styles.roleBadge} ${styles[`roleBadge--${row.role.replace('_', '-')}`]}`}
+        >
             {row.role.replace('_', ' ')}
         </span>
     );
@@ -185,41 +250,34 @@ const UserManagement = () => {
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     );
 
+    // =========================================================================
+    // Column definitions
+    // =========================================================================
+
     const columns = [
-        {
-            header: 'User',
-            accessor: 'name',
-            render: renderUserInfo
-        },
-        {
-            header: 'Role',
-            accessor: 'role',
-            render: renderRoleBadge
-        },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: renderStatusBadge
-        },
-        {
-            header: 'Last Active',
-            accessor: 'lastActive',
-            render: renderLastActive
-        },
-        {
-            header: 'Joined',
-            accessor: 'joinedDate'
-        },
-        {
-            header: 'Actions',
-            render: renderActions
-        }
+        { header: 'User', accessor: 'name', render: renderUserInfo },
+        { header: 'Role', accessor: 'role', render: renderRoleBadge },
+        { header: 'Status', accessor: 'status', render: renderStatusBadge },
+        { header: 'Last Active', accessor: 'lastActive', render: renderLastActive },
+        { header: 'Joined', accessor: 'joinDate' },
+        { header: 'Actions', sortable: false, render: renderActions },
     ];
 
-    // Stats for the grid
+    // =========================================================================
+    // Stats grid data (unchanged from original)
+    // =========================================================================
+
+    const userStats = useMemo(() => {
+        const total = users.length;
+        const active = users.filter((u) => u.status === 'active').length;
+        const inactive = users.filter((u) => u.status === 'inactive').length;
+        const banned = users.filter((u) => u.status === 'banned').length;
+        return { total, active, inactive, banned };
+    }, [users]);
+
     const statsData = [
         {
             id: 'total',
@@ -228,7 +286,7 @@ const UserManagement = () => {
             icon: Users,
             change: '+12%',
             trend: 'up',
-            description: 'All registered users'
+            description: 'All registered users',
         },
         {
             id: 'active',
@@ -237,7 +295,7 @@ const UserManagement = () => {
             icon: UserCheck,
             change: '+8%',
             trend: 'up',
-            description: 'Currently active'
+            description: 'Currently active',
         },
         {
             id: 'inactive',
@@ -246,7 +304,7 @@ const UserManagement = () => {
             icon: UserX,
             change: '-3%',
             trend: 'down',
-            description: 'Inactive accounts'
+            description: 'Inactive accounts',
         },
         {
             id: 'banned',
@@ -255,9 +313,13 @@ const UserManagement = () => {
             icon: Ban,
             change: userStats.banned > 0 ? `+${userStats.banned}` : '0',
             trend: 'neutral',
-            description: 'Banned users'
-        }
+            description: 'Banned users',
+        },
     ];
+
+    // =========================================================================
+    // Render
+    // =========================================================================
 
     return (
         <div className={styles.container}>
@@ -274,33 +336,42 @@ const UserManagement = () => {
 
             <AdminStatsGrid stats={statsData} columns={4} />
 
+            {/*
+             * AdminToolbar: search + role/status <select> filters.
+             * onSearchChange receives a string (event.target.value from the toolbar)
+             * and we pipe it through handleSearch so that currentPage resets.
+             */}
             <AdminToolbar
-                searchPlaceholder="Search by name or email..."
+                searchPlaceholder="Search by name, email, or role..."
                 searchValue={searchTerm}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
                         <select
                             className={styles.filterSelect}
                             value={roleFilter}
-                            onChange={(e) => setRoleFilter(e.target.value)}
+                            onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by role"
                         >
                             <option value="all">All Roles</option>
-                            <option value="jobseeker">Jobseeker</option>
-                            <option value="employer">Employer</option>
+                            <option value="job_seeker">Job Seeker</option>
+                            <option value="company">Company</option>
                             <option value="freelancer">Freelancer</option>
+                            <option value="client">Client</option>
+                            <option value="admin">Admin</option>
                         </select>
+
                         <select
                             className={styles.filterSelect}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by status"
                         >
                             <option value="all">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                             <option value="banned">Banned</option>
+                            <option value="pending">Pending</option>
                         </select>
                     </>
                 }
@@ -308,9 +379,26 @@ const UserManagement = () => {
 
             <main className={styles.content}>
                 <AdminDataTable
+                    // Data (current page only)
                     columns={columns}
-                    data={filteredUsers}
+                    data={paginatedUsers}
                     className={styles.dataTable}
+                    // Controlled search
+                    searchTerm={searchTerm}
+                    onSearchChange={handleSearch}
+                    // Controlled sort
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    // Controlled pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    pageSize={PAGE_SIZE}
+                    /* Feature flags – search is handled by AdminToolbar above the table */
+                    searchable={false}
+                    filterable={true}
+                    pagination={true}
                 />
             </main>
         </div>

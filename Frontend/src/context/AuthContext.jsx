@@ -1,10 +1,19 @@
 /**
  * @file AuthContext.jsx
- * @description Authentication context - manages user authentication state globally
+ * @description Authentication context - manages user authentication state globally.
+ *              Supports mock (localStorage-based) auth for prototype and real API auth for production.
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-02-2026
-**/
+ * @version 2.0.0
+ * @date 05-03-2026
+ *
+ * @changes (v2.0.0):
+ * - Removed hardcoded mock user — isAuthenticated is now derived from real localStorage state
+ * - Added safe JSON.parse with try/catch for localStorage reads
+ * - login() now accepts (userObj, token) and persists both to localStorage
+ * - logout() clears token, user, and any redirectAfterLogin from localStorage
+ * - Handles edge cases: token present but no user → clears storage and deauthenticates
+ * - Handles edge cases: user present but missing role → defaults to 'jobseeker'
+ **/
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import authService from '../services/authService';
@@ -14,50 +23,103 @@ const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
+/**
+ * Safely reads and parses a JSON value from localStorage.
+ * Returns null on any parse error or missing key.
+ * @param {string} key
+ * @returns {any|null}
+ */
+const safeGetJSON = (key) => {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch {
+        return null;
+    }
+};
+
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState({
-        id: 'user-123',
-        name: 'Demo User',
-        email: 'demo@example.com',
-        role: 'jobseeker',
-        avatar: 'https://via.placeholder.com/150'
-    });
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // ─── Initialisation ──────────────────────────────────────────────────────────
     useEffect(() => {
-        // Load user data on page load
-        const loadUser = async () => {
-            const token = tokenService.getToken();
-            if (token) {
+        const initAuth = async () => {
+            const token = localStorage.getItem('token');
+            const storedUser = safeGetJSON('user');
+
+            if (token && storedUser) {
+                // Validate role — default to 'jobseeker' if missing
+                if (!storedUser.role) {
+                    storedUser.role = 'jobseeker';
+                }
+                setUser(storedUser);
+                setLoading(false);
+                return;
+            }
+
+            // Token exists but no user object → storage is corrupt, clean it up
+            if (token && !storedUser) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setLoading(false);
+                return;
+            }
+
+            // No token at all → try real API (for when backend is connected)
+            const apiToken = tokenService.getToken();
+            if (apiToken) {
                 try {
                     const userData = await authService.getCurrentUser();
                     setUser(userData);
                 } catch (err) {
-                    console.error('Failed to load user:', err);
+                    console.error('Failed to load user from API:', err);
                     tokenService.clearToken();
                 }
-            } else {
-                // FORCE MOCK USER FOR PROTOTYPE
-                setUser({
-                    id: 'user-123',
-                    name: 'Demo User',
-                    email: 'demo@example.com',
-                    role: 'jobseeker',
-                    avatar: 'https://via.placeholder.com/150'
-                });
             }
+
             setLoading(false);
         };
 
-        loadUser();
+        initAuth();
     }, []);
 
-    const login = async (credentials) => {
+    // ─── Mock / Real Login ────────────────────────────────────────────────────────
+    /**
+     * Logs the user in.
+     * For mock logins: call login(userObj, mockToken).
+     * For real API logins: call login(credentials) — this proxies to authService.login().
+     *
+     * @param {Object} userObjOrCredentials
+     * @param {string} [token] - If provided, used directly (mock mode). If omitted, performs real API call.
+     */
+    const login = async (userObjOrCredentials, token = null) => {
         try {
             setError(null);
-            const data = await authService.login(credentials);
-            setUser(data.user);
+
+            // Mock login path — token supplied directly
+            if (token) {
+                const userObj = {
+                    ...userObjOrCredentials,
+                    role: userObjOrCredentials.role || 'jobseeker',
+                };
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(userObj));
+                setUser(userObj);
+                return { user: userObj, token };
+            }
+
+            // Real API login path
+            const data = await authService.login(userObjOrCredentials);
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                setUser(data.user);
+            }
             return data;
         } catch (err) {
             setError(err.message || 'Login failed');
@@ -65,6 +127,27 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // ─── Logout ───────────────────────────────────────────────────────────────────
+    /**
+     * Clears all auth state — localStorage token, user, and any post-login redirect.
+     */
+    const logout = async () => {
+        try {
+            // Attempt API logout (no-op if not connected)
+            await authService.logout();
+        } catch {
+            // Swallow — always clear local state regardless
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('redirectAfterLogin');
+            tokenService.clearToken?.();
+            setUser(null);
+            setError(null);
+        }
+    };
+
+    // ─── Remaining Auth Methods (real API) ────────────────────────────────────────
     const register = async (userData) => {
         try {
             setError(null);
@@ -73,16 +156,6 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             setError(err.message || 'Registration failed');
             throw err;
-        }
-    };
-
-    const logout = async () => {
-        try {
-            await authService.logout();
-            setUser(null);
-            setError(null);
-        } catch (err) {
-            setError(err.message || 'Logout failed');
         }
     };
 
@@ -150,6 +223,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // ─── Context Value ────────────────────────────────────────────────────────────
     const value = {
         user,
         loading,
@@ -165,7 +239,7 @@ export const AuthProvider = ({ children }) => {
         loginWithLinkedIn,
         changePassword,
         setUser,
-        setError
+        setError,
     };
 
     return (

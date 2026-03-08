@@ -5,10 +5,15 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Migrated to controlled AdminDataTable pattern
+ * - Added currentPage, sortConfig state
+ * - Implemented filter → sort → paginate pipeline
+ * - Added handleSearch, handleSort, handlePageChange handlers
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Eye, Edit, Trash, FileText, Briefcase } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
@@ -16,62 +21,100 @@ import AdminDataTable from '../shared/AdminDataTable';
 import { jobsData } from '../../config/adminMockData';
 import styles from './JobManagement.module.css';
 
+const PAGE_SIZE = 10;
+
 /**
- * Job Management component for administering job postings.
- * Follows task-focused page pattern.
- * @returns {JSX.Element} The rendered job management interface.
+ * Job Management component — fully controlled parent for AdminDataTable.
+ * @returns {JSX.Element}
  */
 const JobManagement = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
     const [jobs, setJobs] = useState(jobsData);
 
-    /**
-     * Filters jobs based on search term and status filter.
-     */
+    // ── Filter state ─────────────────────────────────────────────────────────
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+
+    // ── Sort state ───────────────────────────────────────────────────────────
+    const [sortConfig, setSortConfig] = useState({ key: 'title', direction: 'asc' });
+
+    // ── Pagination state ─────────────────────────────────────────────────────
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // =========================================================================
+    // Stats (on full dataset)
+    // =========================================================================
+    const jobStats = useMemo(() => ({
+        active: jobs.filter(j => j.status === 'active').length,
+        pending: jobs.filter(j => j.status === 'pending').length,
+        expired: jobs.filter(j => j.status === 'expired').length,
+        flagged: jobs.filter(j => j.reports > 0).length,
+    }), [jobs]);
+
+    // =========================================================================
+    // Data pipeline: filter → sort → paginate
+    // =========================================================================
+
     const filteredJobs = useMemo(() => {
+        const term = searchTerm.toLowerCase();
         return jobs.filter(job => {
-            const matchesSearch =
-                job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.company.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = !searchTerm
+                || job.title.toLowerCase().includes(term)
+                || job.company.toLowerCase().includes(term);
             const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
             return matchesSearch && matchesStatus;
         });
-    }, [searchTerm, statusFilter, jobs]);
+    }, [jobs, searchTerm, statusFilter]);
 
-    /**
-     * Calculates job statistics
-     */
-    const jobStats = useMemo(() => {
-        return {
-            active: jobs.filter(job => job.status === 'active').length,
-            pending: jobs.filter(job => job.status === 'pending').length,
-            expired: jobs.filter(job => job.status === 'expired').length,
-            flagged: jobs.filter(job => job.reports > 0).length
-        };
-    }, [jobs]);
+    const sortedJobs = useMemo(() => {
+        if (!sortConfig.key) return filteredJobs;
+        return [...filteredJobs].sort((a, b) => {
+            let aVal = a[sortConfig.key] ?? '';
+            let bVal = b[sortConfig.key] ?? '';
+            if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+            if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredJobs, sortConfig]);
 
-    /**
-     * Handles search input changes.
-     */
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
+    const totalItems = sortedJobs.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
-    /**
-     * Handles job deletion with confirmation.
-     */
-    const handleDeleteJob = (id, title) => {
-        const confirmDelete = window.confirm(`Are you sure you want to delete "${title}"?`);
-        if (confirmDelete) {
-            console.log(`Deleting job ${id}: ${title}`);
-            setJobs(jobs.filter(job => job.id !== id));
+    const paginatedJobs = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return sortedJobs.slice(start, start + PAGE_SIZE);
+    }, [sortedJobs, currentPage]);
+
+    // =========================================================================
+    // Handlers
+    // =========================================================================
+    const handleSearch = useCallback((term) => {
+        setSearchTerm(term);
+        setCurrentPage(1);
+    }, []);
+
+    const handleSort = useCallback((key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+        setCurrentPage(1);
+    }, []);
+
+    const handlePageChange = useCallback((page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    }, [totalPages]);
+
+    const handleDeleteJob = useCallback((id, title) => {
+        if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
+            setJobs(prev => prev.filter(job => job.id !== id));
         }
-    };
+    }, []);
 
-    /**
-     * Renders job information with icon and details.
-     */
+    // =========================================================================
+    // Cell renderers
+    // =========================================================================
     const renderJobInfo = (row) => (
         <div className={styles.jobInfo}>
             <div className={styles.jobInfo__icon}>
@@ -79,25 +122,17 @@ const JobManagement = () => {
             </div>
             <div className={styles.jobInfo__details}>
                 <h3 className={styles.jobInfo__title}>{row.title}</h3>
-                <p className={styles.jobInfo__meta}>
-                    {row.company} • {row.type}
-                </p>
+                <p className={styles.jobInfo__meta}>{row.company} • {row.type}</p>
             </div>
         </div>
     );
 
-    /**
-     * Renders status badge with appropriate styling.
-     */
     const renderStatusBadge = (row) => (
         <span className={`${styles.statusBadge} ${styles[`statusBadge--${row.status}`]}`}>
             {row.status}
         </span>
     );
 
-    /**
-     * Renders report count with appropriate styling.
-     */
     const renderReports = (row) => (
         <span
             className={row.reports > 0 ? styles.reportCountDanger : styles.reportCount}
@@ -107,9 +142,6 @@ const JobManagement = () => {
         </span>
     );
 
-    /**
-     * Renders action buttons for job management.
-     */
     const renderActions = (row) => (
         <div className={styles.actions}>
             <button
@@ -137,37 +169,21 @@ const JobManagement = () => {
         </div>
     );
 
+    // =========================================================================
+    // Column definitions
+    // =========================================================================
     const columns = [
-        {
-            header: 'Job Title',
-            accessor: 'title',
-            render: renderJobInfo
-        },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: renderStatusBadge
-        },
-        {
-            header: 'Applications',
-            accessor: 'applications'
-        },
-        {
-            header: 'Reports',
-            accessor: 'reports',
-            render: renderReports
-        },
-        {
-            header: 'Posted',
-            accessor: 'postedDate'
-        },
-        {
-            header: 'Actions',
-            render: renderActions
-        }
+        { header: 'Job Title', accessor: 'title', render: renderJobInfo },
+        { header: 'Status', accessor: 'status', render: renderStatusBadge },
+        { header: 'Applications', accessor: 'applications' },
+        { header: 'Reports', accessor: 'reports', render: renderReports },
+        { header: 'Posted', accessor: 'postedDate' },
+        { header: 'Actions', sortable: false, render: renderActions },
     ];
 
-    // Header badge showing active jobs
+    // =========================================================================
+    // Render
+    // =========================================================================
     const headerBadge = (
         <span className={styles.headerBadge}>
             <Briefcase size={14} />
@@ -186,19 +202,20 @@ const JobManagement = () => {
             <AdminToolbar
                 searchPlaceholder="Search by job title or company..."
                 searchValue={searchTerm}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
                         <select
                             className={styles.filterSelect}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by status"
                         >
                             <option value="all">All Status</option>
                             <option value="active">Active</option>
                             <option value="pending">Pending</option>
                             <option value="expired">Expired</option>
+                            <option value="review">Under Review</option>
                         </select>
                     </>
                 }
@@ -220,8 +237,18 @@ const JobManagement = () => {
             <main className={styles.content}>
                 <AdminDataTable
                     columns={columns}
-                    data={filteredJobs}
+                    data={paginatedJobs}
                     className={styles.dataTable}
+                    searchable={false}
+                    filterable={true}
+                    pagination={totalItems > PAGE_SIZE}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    pageSize={PAGE_SIZE}
                 />
             </main>
         </div>

@@ -47,20 +47,29 @@
 /* ==================== Filter Select ==================== */
 .filterSelect {
     padding: var(--admin-space-sm) var(--admin-space-md);
-    background: var(--admin-glass-background);
-    border: var(--admin-glass-border);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
     border-radius: var(--admin-radius-md);
     font-size: var(--admin-font-size-body);
     color: var(--color-foreground);
     cursor: pointer;
-    transition: all var(--admin-transition-fast);
+    transition: background-color var(--admin-transition-fast),
+        border-color var(--admin-transition-fast),
+        box-shadow var(--admin-transition-fast);
     outline: none;
     min-width: 150px;
+    appearance: auto;
+}
+
+.filterSelect:hover {
+    background-color: var(--color-input-hover);
+    border-color: var(--color-ring);
 }
 
 .filterSelect:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
 }
 
 /* ==================== Content ==================== */
@@ -77,24 +86,36 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
+/* basic */
 .planBadge--basic {
-    background: rgba(100, 100, 100, 0.1);
-    color: var(--color-muted-foreground);
-    border: 1px solid var(--color-border);
+    background: rgba(100, 116, 139, 0.1);
+    color: rgb(71, 85, 105);
+    border: 1px solid rgba(100, 116, 139, 0.4);
 }
 
+/* growth */
+.planBadge--growth {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+/* professional / pro (both point here) */
+.planBadge--professional,
 .planBadge--pro {
     background: rgba(59, 130, 246, 0.1);
-    color: rgb(59, 130, 246);
-    border: 1px solid rgb(59, 130, 246);
+    color: rgb(37, 99, 235);
+    border: 1px solid rgba(59, 130, 246, 0.4);
 }
 
+/* enterprise */
 .planBadge--enterprise {
     background: rgba(168, 85, 247, 0.1);
-    color: rgb(168, 85, 247);
-    border: 1px solid rgb(168, 85, 247);
+    color: rgb(147, 51, 234);
+    border: 1px solid rgba(168, 85, 247, 0.4);
 }
 
 /* ==================== Status Badges ==================== */
@@ -123,9 +144,9 @@
 }
 
 .statusBadge--pending {
-    background: var(--admin-color-warning-subtle);
-    color: var(--color-warning);
-    border: 1px solid var(--color-warning);
+    background: rgba(251, 191, 36, 0.1);
+    color: rgb(161, 98, 7);
+    border: 1px solid rgba(251, 191, 36, 0.4);
 }
 
 .statusBadge--cancelled {

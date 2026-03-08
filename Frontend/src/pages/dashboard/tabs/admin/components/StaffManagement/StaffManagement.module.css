@@ -42,20 +42,29 @@
 
 .filterSelect {
     padding: var(--admin-space-sm) var(--admin-space-md);
-    background: var(--admin-glass-background);
-    border: var(--admin-glass-border);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
     border-radius: var(--admin-radius-md);
     font-size: var(--admin-font-size-body);
     color: var(--color-foreground);
     cursor: pointer;
-    transition: all var(--admin-transition-fast);
+    transition: background-color var(--admin-transition-fast),
+        border-color var(--admin-transition-fast),
+        box-shadow var(--admin-transition-fast);
     outline: none;
     min-width: 150px;
+    appearance: auto;
+}
+
+.filterSelect:hover {
+    background-color: var(--color-input-hover);
+    border-color: var(--color-ring);
 }
 
 .filterSelect:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
 }
 
 .content {
@@ -76,22 +85,35 @@
     flex-shrink: 0;
 }
 
+/* super-admin → class super-admin (role.toLowerCase().replace(' ', '-')) */
+.roleBadge--super-admin {
+    background: rgba(244, 63, 94, 0.12);
+    color: rgb(190, 18, 60);
+    border: 1px solid rgba(244, 63, 94, 0.5);
+}
+
 .roleBadge--admin {
     background: rgba(239, 68, 68, 0.1);
-    color: rgb(239, 68, 68);
-    border: 1px solid rgb(239, 68, 68);
+    color: rgb(220, 38, 38);
+    border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .roleBadge--moderator {
     background: rgba(59, 130, 246, 0.1);
-    color: rgb(59, 130, 246);
-    border: 1px solid rgb(59, 130, 246);
+    color: rgb(37, 99, 235);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.roleBadge--analyst {
+    background: rgba(245, 158, 11, 0.1);
+    color: rgb(180, 83, 9);
+    border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .roleBadge--support {
-    background: var(--admin-color-success-subtle);
-    color: var(--color-success);
-    border: 1px solid var(--color-success);
+    background: rgba(34, 197, 94, 0.1);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 94, 0.4);
 }
 
 .statusIndicator {
@@ -110,11 +132,15 @@
 }
 
 .statusIndicator--active {
-    color: var(--color-success);
+    color: rgb(22, 163, 74);
 }
 
 .statusIndicator--inactive {
     color: var(--color-muted-foreground);
+}
+
+.statusIndicator--banned {
+    color: rgb(220, 38, 38);
 }
 
 .actions__dropdown {

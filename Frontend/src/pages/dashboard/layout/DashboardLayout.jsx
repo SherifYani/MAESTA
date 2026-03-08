@@ -21,6 +21,7 @@ import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
 import styles from "./DashboardLayout.module.css";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 /**
  * Dashboard context for managing role and sidebar state
@@ -35,7 +36,9 @@ export const DashboardContext = createContext();
  * @returns {JSX.Element} The rendered dashboard layout
  */
 const DashboardLayout = ({ children }) => {
-  const [currentRole, setCurrentRole] = useState("company");
+  // Seed role from the logged-in user; fall back to 'jobseeker' if not set
+  const { user } = useAuth();
+  const [currentRole, setCurrentRole] = useState(user?.role ?? 'jobseeker');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const resizeTimeoutRef = useRef(null);

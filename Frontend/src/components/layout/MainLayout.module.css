@@ -5,7 +5,7 @@
  * @date 2026-02-07
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
+ * @last-modified-date 2026-03-08
  */
 
 /* ==========================================================================
@@ -272,24 +272,5 @@
 
     .footer {
         border-top-width: 2px;
-    }
-}
-
-/* ==========================================================================
-   Safe Area Support for Modern Browsers
-   ========================================================================== */
-
-@supports (padding: max(0px)) {
-    .layoutContainer {
-        padding-left: max(var(--space-4), env(safe-area-inset-left));
-        padding-right: max(var(--space-4), env(safe-area-inset-right));
-        padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-    }
-
-    @media (max-width: 40rem) {
-        .layoutContainer {
-            padding-left: max(var(--space-2), env(safe-area-inset-left));
-            padding-right: max(var(--space-2), env(safe-area-inset-right));
-        }
     }
 }

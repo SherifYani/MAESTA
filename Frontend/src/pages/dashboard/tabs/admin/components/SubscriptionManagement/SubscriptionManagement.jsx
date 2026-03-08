@@ -5,7 +5,12 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Migrated to controlled AdminDataTable pattern
+ * - Added currentPage, sortConfig state
+ * - Implemented filter → sort → paginate pipeline
+ * - Added handleSearch, handleSort, handlePageChange handlers
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -26,60 +31,106 @@ import AdminDataTable from '../shared/AdminDataTable';
 import { subscriptionsData } from '../../config/adminMockData';
 import styles from './SubscriptionManagement.module.css';
 
+const PAGE_SIZE = 10;
+
 /**
- * Subscription Management component for handling user subscriptions and billing.
- * Follows data-intensive page pattern with revenue metrics.
- * @returns {JSX.Element} The rendered subscription management interface.
+ * Subscription Management component — fully controlled parent for AdminDataTable.
+ * @returns {JSX.Element}
  */
 const SubscriptionManagement = () => {
     const [subscriptions, setSubscriptions] = useState(subscriptionsData);
+
+    // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [planFilter, setPlanFilter] = useState('all');
+
+    // ── Sort state ───────────────────────────────────────────────────────────
+    const [sortConfig, setSortConfig] = useState({ key: 'user', direction: 'asc' });
+
+    // ── Pagination state ─────────────────────────────────────────────────────
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // ── Action dropdown ───────────────────────────────────────────────────────
     const [selectedSubscription, setSelectedSubscription] = useState(null);
 
-    /**
-     * Calculates subscription statistics.
-     */
+    // =========================================================================
+    // Stats (on full dataset, not filtered)
+    // =========================================================================
     const subscriptionStats = useMemo(() => {
-        const totalRevenue = subscriptions.reduce((sum, sub) => sum + sub.amount, 0);
-        const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
-        const mrr = activeSubscriptions.reduce((sum, sub) => sum + sub.amount, 0);
-        const arr = mrr * 12;
-        const activeCount = activeSubscriptions.length;
-        const cancelledCount = subscriptions.filter(sub => sub.status === 'cancelled').length;
+        const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
+        const mrr = activeSubscriptions.reduce((sum, s) => sum + s.amount, 0);
+        const cancelledCount = subscriptions.filter(s => s.status === 'cancelled').length;
         const cancellationRate = ((cancelledCount / subscriptions.length) * 100).toFixed(1);
-
         return {
-            totalRevenue,
             mrr,
-            arr,
-            activeCount,
+            arr: mrr * 12,
+            activeCount: activeSubscriptions.length,
             cancelledCount,
-            cancellationRate
+            cancellationRate,
         };
     }, [subscriptions]);
 
-    /**
-     * Filters subscriptions based on search term and filters.
-     */
+    // =========================================================================
+    // Data pipeline: filter → sort → paginate
+    // =========================================================================
+
     const filteredSubscriptions = useMemo(() => {
+        const term = searchTerm.toLowerCase();
         return subscriptions.filter(sub => {
-            const matchesSearch =
-                sub.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                sub.id.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = !searchTerm
+                || sub.user.toLowerCase().includes(term)
+                || sub.id.toLowerCase().includes(term)
+                || sub.plan.toLowerCase().includes(term);
             const matchesStatus = statusFilter === 'all' || sub.status === statusFilter;
             const matchesPlan = planFilter === 'all' || sub.plan.toLowerCase() === planFilter;
             return matchesSearch && matchesStatus && matchesPlan;
         });
     }, [subscriptions, searchTerm, statusFilter, planFilter]);
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+    const sortedSubscriptions = useMemo(() => {
+        if (!sortConfig.key) return filteredSubscriptions;
+        return [...filteredSubscriptions].sort((a, b) => {
+            let aVal = a[sortConfig.key] ?? '';
+            let bVal = b[sortConfig.key] ?? '';
+            if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+            if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredSubscriptions, sortConfig]);
+
+    const totalItems = sortedSubscriptions.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+    const paginatedSubscriptions = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return sortedSubscriptions.slice(start, start + PAGE_SIZE);
+    }, [sortedSubscriptions, currentPage]);
+
+    // =========================================================================
+    // Handlers
+    // =========================================================================
+    const handleSearch = useCallback((term) => {
+        setSearchTerm(term);
+        setCurrentPage(1);
+    }, []);
+
+    const handleSort = useCallback((key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+        setCurrentPage(1);
+    }, []);
+
+    const handlePageChange = useCallback((page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    }, [totalPages]);
 
     const handleDownloadInvoice = useCallback((subscription) => {
-        console.log(`Downloading invoice for ${subscription.id}: ${subscription.invoiceId}`);
+        console.log(`Downloading invoice ${subscription.invoiceId} for ${subscription.user}`);
         alert(`Downloading invoice ${subscription.invoiceId} for ${subscription.user}`);
     }, []);
 
@@ -96,6 +147,9 @@ const SubscriptionManagement = () => {
         }
     }, [handleUpdateStatus]);
 
+    // =========================================================================
+    // Cell renderers
+    // =========================================================================
     const renderPlanBadge = (row) => (
         <span className={`${styles.planBadge} ${styles[`planBadge--${row.plan.toLowerCase()}`]}`}>
             {row.plan}
@@ -116,9 +170,7 @@ const SubscriptionManagement = () => {
     );
 
     const renderNextBilling = (row) => {
-        if (row.status !== 'active') {
-            return <span className={styles.billingInactive}>-</span>;
-        }
+        if (row.status !== 'active') return <span className={styles.billingInactive}>-</span>;
         return <span className={styles.billingDate}>{row.nextBilling}</span>;
     };
 
@@ -167,45 +219,25 @@ const SubscriptionManagement = () => {
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     );
 
+    // =========================================================================
+    // Column definitions
+    // =========================================================================
     const columns = [
-        {
-            header: 'User',
-            accessor: 'user'
-        },
-        {
-            header: 'Plan',
-            accessor: 'plan',
-            render: renderPlanBadge
-        },
-        {
-            header: 'Amount',
-            accessor: 'amount',
-            render: renderAmount
-        },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: renderStatusBadge
-        },
-        {
-            header: 'Next Billing',
-            accessor: 'nextBilling',
-            render: renderNextBilling
-        },
-        {
-            header: 'Start Date',
-            accessor: 'startDate'
-        },
-        {
-            header: 'Actions',
-            render: renderActions
-        }
+        { header: 'User', accessor: 'user' },
+        { header: 'Plan', accessor: 'plan', render: renderPlanBadge },
+        { header: 'Amount', accessor: 'amount', render: renderAmount },
+        { header: 'Status', accessor: 'status', render: renderStatusBadge },
+        { header: 'Next Billing', accessor: 'nextBilling', render: renderNextBilling },
+        { header: 'Start Date', accessor: 'startDate' },
+        { header: 'Actions', sortable: false, render: renderActions },
     ];
 
-    // Stats for the grid
+    // =========================================================================
+    // Stats grid
+    // =========================================================================
     const statsData = [
         {
             id: 'mrr',
@@ -214,7 +246,7 @@ const SubscriptionManagement = () => {
             icon: DollarSign,
             change: '+12%',
             trend: 'up',
-            description: 'Current MRR'
+            description: 'Current MRR',
         },
         {
             id: 'arr',
@@ -223,7 +255,7 @@ const SubscriptionManagement = () => {
             icon: TrendingUp,
             change: '+15%',
             trend: 'up',
-            description: 'Projected ARR'
+            description: 'Projected ARR',
         },
         {
             id: 'active',
@@ -232,7 +264,7 @@ const SubscriptionManagement = () => {
             icon: Users,
             change: '+8%',
             trend: 'up',
-            description: 'Currently active'
+            description: 'Currently active',
         },
         {
             id: 'churn',
@@ -241,10 +273,13 @@ const SubscriptionManagement = () => {
             icon: XCircle,
             change: '-2%',
             trend: 'down',
-            description: 'Lower is better'
-        }
+            description: 'Lower is better',
+        },
     ];
 
+    // =========================================================================
+    // Render
+    // =========================================================================
     return (
         <div className={styles.container}>
             <AdminPageHeader
@@ -263,24 +298,25 @@ const SubscriptionManagement = () => {
             <AdminToolbar
                 searchPlaceholder="Search by user or subscription ID..."
                 searchValue={searchTerm}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
                         <select
                             className={styles.filterSelect}
                             value={planFilter}
-                            onChange={(e) => setPlanFilter(e.target.value)}
+                            onChange={(e) => { setPlanFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by plan"
                         >
                             <option value="all">All Plans</option>
                             <option value="basic">Basic</option>
-                            <option value="pro">Pro</option>
+                            <option value="growth">Growth</option>
+                            <option value="professional">Professional</option>
                             <option value="enterprise">Enterprise</option>
                         </select>
                         <select
                             className={styles.filterSelect}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by status"
                         >
                             <option value="all">All Status</option>
@@ -295,8 +331,18 @@ const SubscriptionManagement = () => {
             <main className={styles.content}>
                 <AdminDataTable
                     columns={columns}
-                    data={filteredSubscriptions}
+                    data={paginatedSubscriptions}
                     className={styles.dataTable}
+                    searchable={false}
+                    filterable={true}
+                    pagination={true}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    pageSize={PAGE_SIZE}
                 />
             </main>
         </div>

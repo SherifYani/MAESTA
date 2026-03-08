@@ -5,7 +5,12 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Migrated to controlled AdminDataTable pattern
+ * - Added currentPage, sortConfig state
+ * - Implemented filter → sort → paginate pipeline
+ * - Added handleSearch, handleSort, handlePageChange handlers
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -17,63 +22,103 @@ import AdminDataTable from '../shared/AdminDataTable';
 import { staffData as initialStaffData } from '../../config/adminMockData';
 import styles from './StaffManagement.module.css';
 
+const PAGE_SIZE = 10;
+
 /**
- * Staff Management component for managing admin users and permissions.
- * Follows data-intensive page pattern with staff metrics.
- * @returns {JSX.Element} The rendered staff management interface.
+ * Staff Management component — fully controlled parent for AdminDataTable.
+ * @returns {JSX.Element}
  */
 const StaffManagement = () => {
     const [staffData, setStaffData] = useState(initialStaffData);
+
+    // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
+
+    // ── Sort state ───────────────────────────────────────────────────────────
+    const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+
+    // ── Pagination state ─────────────────────────────────────────────────────
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // ── Action dropdown ───────────────────────────────────────────────────────
     const [selectedStaff, setSelectedStaff] = useState(null);
 
-    /**
-     * Calculate staff statistics
-     */
+    // =========================================================================
+    // Stats (on full dataset)
+    // =========================================================================
     const staffStats = useMemo(() => {
         const total = staffData.length;
         const active = staffData.filter(s => s.status === 'active').length;
         const inactive = staffData.filter(s => s.status === 'inactive').length;
-
-        const roleCounts = staffData.reduce((acc, staff) => {
-            acc[staff.role] = (acc[staff.role] || 0) + 1;
+        const roleCounts = staffData.reduce((acc, s) => {
+            acc[s.role] = (acc[s.role] || 0) + 1;
             return acc;
         }, {});
-
         return {
             total,
             active,
             inactive,
             admins: roleCounts['Admin'] || 0,
-            moderators: roleCounts['Moderator'] || 0,
-            support: roleCounts['Support'] || 0
         };
     }, [staffData]);
 
-    /**
-     * Filter staff members
-     */
+    // =========================================================================
+    // Data pipeline: filter → sort → paginate
+    // =========================================================================
+
     const filteredStaff = useMemo(() => {
+        const term = searchTerm.toLowerCase();
         return staffData.filter(staff => {
-            const matchesSearch =
-                staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                staff.email.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = !searchTerm
+                || staff.name.toLowerCase().includes(term)
+                || staff.email.toLowerCase().includes(term)
+                || staff.role.toLowerCase().includes(term);
             const matchesRole = roleFilter === 'all' || staff.role === roleFilter;
             return matchesSearch && matchesRole;
         });
     }, [staffData, searchTerm, roleFilter]);
 
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+    const sortedStaff = useMemo(() => {
+        if (!sortConfig.key) return filteredStaff;
+        return [...filteredStaff].sort((a, b) => {
+            let aVal = a[sortConfig.key] ?? '';
+            let bVal = b[sortConfig.key] ?? '';
+            if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+            if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredStaff, sortConfig]);
 
-    const handleEditRole = useCallback((id, newRole) => {
-        setStaffData(prev => prev.map(staff =>
-            staff.id === id ? { ...staff, role: newRole } : staff
-        ));
-        setSelectedStaff(null);
+    const totalItems = sortedStaff.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+    const paginatedStaff = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return sortedStaff.slice(start, start + PAGE_SIZE);
+    }, [sortedStaff, currentPage]);
+
+    // =========================================================================
+    // Handlers
+    // =========================================================================
+    const handleSearch = useCallback((term) => {
+        setSearchTerm(term);
+        setCurrentPage(1);
     }, []);
+
+    const handleSort = useCallback((key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+        setCurrentPage(1);
+    }, []);
+
+    const handlePageChange = useCallback((page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    }, [totalPages]);
 
     const handleResendInvite = useCallback((staff) => {
         console.log(`Resending invitation to ${staff.email}`);
@@ -87,6 +132,9 @@ const StaffManagement = () => {
         setSelectedStaff(null);
     }, []);
 
+    // =========================================================================
+    // Cell renderers
+    // =========================================================================
     const renderRoleBadge = (row) => {
         const roleClass = row.role.toLowerCase().replace(' ', '-');
         return (
@@ -138,35 +186,21 @@ const StaffManagement = () => {
         </div>
     );
 
+    // =========================================================================
+    // Column definitions
+    // =========================================================================
     const columns = [
-        {
-            header: 'Name',
-            accessor: 'name'
-        },
-        {
-            header: 'Email',
-            accessor: 'email'
-        },
-        {
-            header: 'Role',
-            accessor: 'role',
-            render: renderRoleBadge
-        },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: renderStatus
-        },
-        {
-            header: 'Last Login',
-            accessor: 'lastLogin'
-        },
-        {
-            header: 'Actions',
-            render: renderActions
-        }
+        { header: 'Name', accessor: 'name' },
+        { header: 'Email', accessor: 'email' },
+        { header: 'Role', accessor: 'role', render: renderRoleBadge },
+        { header: 'Status', accessor: 'status', render: renderStatus },
+        { header: 'Last Login', accessor: 'lastLogin' },
+        { header: 'Actions', sortable: false, render: renderActions },
     ];
 
+    // =========================================================================
+    // Stats grid
+    // =========================================================================
     const statsData = [
         {
             id: 'total',
@@ -175,7 +209,7 @@ const StaffManagement = () => {
             icon: Users,
             change: '+2',
             trend: 'up',
-            description: 'All staff members'
+            description: 'All staff members',
         },
         {
             id: 'active',
@@ -184,7 +218,7 @@ const StaffManagement = () => {
             icon: UserCheck,
             change: '+1',
             trend: 'up',
-            description: 'Currently active'
+            description: 'Currently active',
         },
         {
             id: 'inactive',
@@ -193,7 +227,7 @@ const StaffManagement = () => {
             icon: UserX,
             change: '0',
             trend: 'neutral',
-            description: 'Inactive accounts'
+            description: 'Inactive accounts',
         },
         {
             id: 'admins',
@@ -202,10 +236,13 @@ const StaffManagement = () => {
             icon: Shield,
             change: '0',
             trend: 'neutral',
-            description: 'Admin permissions'
-        }
+            description: 'Admin permissions',
+        },
     ];
 
+    // =========================================================================
+    // Render
+    // =========================================================================
     return (
         <div className={styles.container}>
             <AdminPageHeader
@@ -222,19 +259,21 @@ const StaffManagement = () => {
             <AdminStatsGrid stats={statsData} columns={4} />
 
             <AdminToolbar
-                searchPlaceholder="Search by name or email..."
+                searchPlaceholder="Search by name, email, or role..."
                 searchValue={searchTerm}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <select
                         className={styles.filterSelect}
                         value={roleFilter}
-                        onChange={(e) => setRoleFilter(e.target.value)}
+                        onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
                         aria-label="Filter by role"
                     >
                         <option value="all">All Roles</option>
+                        <option value="Super Admin">Super Admin</option>
                         <option value="Admin">Admin</option>
                         <option value="Moderator">Moderator</option>
+                        <option value="Analyst">Analyst</option>
                         <option value="Support">Support</option>
                     </select>
                 }
@@ -243,8 +282,18 @@ const StaffManagement = () => {
             <main className={styles.content}>
                 <AdminDataTable
                     columns={columns}
-                    data={filteredStaff}
+                    data={paginatedStaff}
                     className={styles.dataTable}
+                    searchable={false}
+                    filterable={true}
+                    pagination={true}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    pageSize={PAGE_SIZE}
                 />
             </main>
         </div>

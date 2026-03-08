@@ -5,10 +5,15 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Migrated to controlled AdminDataTable pattern
+ * - Added currentPage, sortConfig state
+ * - Implemented filter → sort → paginate pipeline
+ * - Added handleSearch, handleSort, handlePageChange handlers
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, Shield } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
@@ -16,72 +21,112 @@ import AdminDataTable from '../shared/AdminDataTable';
 import { reportsData } from '../../config/adminMockData';
 import styles from './ContentModeration.module.css';
 
+const PAGE_SIZE = 10;
+
 /**
- * Content Moderation component for handling user reports and content management.
- * Follows task-focused page pattern with integrated header status.
- * @returns {JSX.Element} The rendered content moderation interface.
+ * Content Moderation component — fully controlled parent for AdminDataTable.
+ * @returns {JSX.Element}
  */
 const ContentModeration = () => {
     const [reports, setReports] = useState(reportsData);
+
+    // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
-    /**
-     * Filters reports based on search and status
-     */
+    // ── Sort state ───────────────────────────────────────────────────────────
+    const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
+
+    // ── Pagination state ─────────────────────────────────────────────────────
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // =========================================================================
+    // Summary counts (on full dataset)
+    // =========================================================================
+    const pendingCount = useMemo(() => reports.filter(r => r.status === 'pending').length, [reports]);
+    const resolvedCount = useMemo(() => reports.filter(r => r.status === 'resolved').length, [reports]);
+
+    // =========================================================================
+    // Data pipeline: filter → sort → paginate
+    // =========================================================================
+
     const filteredReports = useMemo(() => {
+        const term = searchTerm.toLowerCase();
         return reports.filter(report => {
-            const matchesSearch =
-                report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                report.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                report.reporter.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = !searchTerm
+                || report.id.toLowerCase().includes(term)
+                || report.reason.toLowerCase().includes(term)
+                || report.reporter.toLowerCase().includes(term)
+                || report.type.toLowerCase().includes(term);
             const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
             return matchesSearch && matchesStatus;
         });
     }, [reports, searchTerm, statusFilter]);
 
-    /**
-     * Handles report actions (dismiss, warn, remove).
-     * @param {string} id - The report ID.
-     * @param {string} action - The action to perform.
-     */
-    const handleAction = (id, action) => {
+    const sortedReports = useMemo(() => {
+        if (!sortConfig.key) return filteredReports;
+        return [...filteredReports].sort((a, b) => {
+            let aVal = a[sortConfig.key] ?? '';
+            let bVal = b[sortConfig.key] ?? '';
+            if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+            if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+            if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredReports, sortConfig]);
+
+    const totalItems = sortedReports.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+    const paginatedReports = useMemo(() => {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        return sortedReports.slice(start, start + PAGE_SIZE);
+    }, [sortedReports, currentPage]);
+
+    // =========================================================================
+    // Handlers
+    // =========================================================================
+    const handleSearch = useCallback((term) => {
+        setSearchTerm(term);
+        setCurrentPage(1);
+    }, []);
+
+    const handleSort = useCallback((key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+        setCurrentPage(1);
+    }, []);
+
+    const handlePageChange = useCallback((page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    }, [totalPages]);
+
+    const handleAction = useCallback((id, action) => {
         console.log(`Report ${id} action: ${action}`);
-        setReports(reports.map(report =>
+        setReports(prev => prev.map(report =>
             report.id === id
                 ? {
                     ...report,
                     status: action === 'dismiss' ? 'resolved' : 'removed',
                     lastAction: action,
-                    resolvedAt: new Date().toISOString()
+                    resolvedAt: new Date().toISOString(),
                 }
                 : report
         ));
-    };
+    }, []);
 
-    /**
-     * Handles search input change
-     */
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    /**
-     * Renders a status badge with appropriate styling.
-     * @param {Object} row - The report row data.
-     * @returns {JSX.Element} The status badge element.
-     */
+    // =========================================================================
+    // Cell renderers
+    // =========================================================================
     const renderStatusBadge = (row) => (
         <span className={`${styles.statusBadge} ${styles[`statusBadge--${row.status}`]}`}>
             {row.status}
         </span>
     );
 
-    /**
-     * Renders action buttons for pending reports.
-     * @param {Object} row - The report row data.
-     * @returns {JSX.Element} The action buttons container.
-     */
     const renderActions = (row) => (
         <div className={styles.actions}>
             {row.status === 'pending' ? (
@@ -117,36 +162,23 @@ const ContentModeration = () => {
         </div>
     );
 
+    // =========================================================================
+    // Column definitions
+    // =========================================================================
     const columns = [
-        {
-            header: 'Report ID',
-            accessor: 'id',
-            render: (row) => <span className={styles.idCell}>#{row.id}</span>
-        },
+        { header: 'Report ID', accessor: 'id', render: (row) => <span className={styles.idCell}>#{row.id}</span> },
         { header: 'Type', accessor: 'type' },
-        {
-            header: 'Reason',
-            accessor: 'reason',
-            render: (row) => <span className={styles.reason}>{row.reason}</span>
-        },
+        { header: 'Reason', accessor: 'reason', render: (row) => <span className={styles.reason}>{row.reason}</span> },
         { header: 'Target ID', accessor: 'targetId' },
         { header: 'Reporter', accessor: 'reporter' },
         { header: 'Date', accessor: 'date' },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: renderStatusBadge
-        },
-        {
-            header: 'Actions',
-            render: renderActions
-        }
+        { header: 'Status', accessor: 'status', render: renderStatusBadge },
+        { header: 'Actions', sortable: false, render: renderActions },
     ];
 
-    const pendingCount = reports.filter(report => report.status === 'pending').length;
-    const resolvedCount = reports.filter(report => report.status === 'resolved').length;
-
-    // Status badge for header
+    // =========================================================================
+    // Render
+    // =========================================================================
     const statusBadge = (
         <span className={styles.headerBadge}>
             <Shield size={14} />
@@ -163,20 +195,22 @@ const ContentModeration = () => {
             />
 
             <AdminToolbar
-                searchPlaceholder="Search by report ID, reason, or reporter..."
+                searchPlaceholder="Search by report ID, type, reason, or reporter..."
                 searchValue={searchTerm}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
                         <select
                             className={styles.filterSelect}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                             aria-label="Filter by status"
                         >
                             <option value="all">All Status</option>
                             <option value="pending">Pending</option>
+                            <option value="investigating">Investigating</option>
                             <option value="resolved">Resolved</option>
+                            <option value="dismissed">Dismissed</option>
                             <option value="removed">Removed</option>
                         </select>
                     </>
@@ -196,8 +230,18 @@ const ContentModeration = () => {
             <main className={styles.content}>
                 <AdminDataTable
                     columns={columns}
-                    data={filteredReports}
+                    data={paginatedReports}
                     className={styles.dataTable}
+                    searchable={false}
+                    filterable={true}
+                    pagination={totalItems > PAGE_SIZE}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    pageSize={PAGE_SIZE}
                 />
             </main>
         </div>

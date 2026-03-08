@@ -3,6 +3,12 @@
  * @description Comprehensive mock data for Admin Dashboard development
  * @author Sherif Talaat
  * @date 2026-02-07
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-08
+ * @changes:
+ * - Expanded usersData to 40 entries for pagination testing
+ * - Added mockUsers alias export
  */
 
 // ============================================================================
@@ -22,7 +28,7 @@ export const adminStats = {
 };
 
 // ============================================================================
-// User Management Data
+// User Management Data (40 entries)
 // ============================================================================
 
 export const usersData = [
@@ -40,8 +46,39 @@ export const usersData = [
     { id: "USER-012", name: "Sophia Martinez", email: "sophia@global.org", role: "company", status: "active", joinDate: "2023-11-10", lastActive: "4 hours ago" },
     { id: "USER-013", name: "Daniel White", email: "dan@code.ninja", role: "freelancer", status: "active", joinDate: "2024-03-01", lastActive: "10 mins ago" },
     { id: "USER-014", name: "Olivia Thompson", email: "olivia@hire.me", role: "client", status: "active", joinDate: "2024-02-20", lastActive: "1 day ago" },
-    { id: "USER-015", name: "William Clark", email: "bill@enterprises.net", role: "company", status: "pending", joinDate: "2024-03-25", lastActive: "Just now" }
+    { id: "USER-015", name: "William Clark", email: "bill@enterprises.net", role: "company", status: "pending", joinDate: "2024-03-25", lastActive: "Just now" },
+    { id: "USER-016", name: "Chloe Walker", email: "chloe@uxlab.io", role: "freelancer", status: "active", joinDate: "2024-01-10", lastActive: "2 days ago" },
+    { id: "USER-017", name: "Ethan Harris", email: "ethan@jobhunt.co", role: "job_seeker", status: "active", joinDate: "2024-02-28", lastActive: "6 hours ago" },
+    { id: "USER-018", name: "Amelia Jackson", email: "amelia@bigbrand.com", role: "company", status: "inactive", joinDate: "2023-09-14", lastActive: "2 weeks ago" },
+    { id: "USER-019", name: "Noah Garcia", email: "noah@gig.works", role: "freelancer", status: "active", joinDate: "2024-03-05", lastActive: "45 mins ago" },
+    { id: "USER-020", name: "Isabella Lee", email: "isabella@client.net", role: "client", status: "active", joinDate: "2024-02-10", lastActive: "3 hours ago" },
+    { id: "USER-021", name: "Mason Robinson", email: "mason@devshop.io", role: "freelancer", status: "banned", joinDate: "2023-08-22", lastActive: "1 month ago" },
+    { id: "USER-022", name: "Ava Martinez", email: "ava@seekwork.com", role: "job_seeker", status: "active", joinDate: "2024-03-12", lastActive: "Yesterday" },
+    { id: "USER-023", name: "Liam Young", email: "liam@corp.io", role: "company", status: "active", joinDate: "2024-01-30", lastActive: "8 hours ago" },
+    { id: "USER-024", name: "Charlotte Hall", email: "charlotte@admin.io", role: "admin", status: "active", joinDate: "2023-07-01", lastActive: "1 hour ago" },
+    { id: "USER-025", name: "Benjamin Allen", email: "ben@contractor.dev", role: "freelancer", status: "inactive", joinDate: "2023-12-20", lastActive: "3 weeks ago" },
+    { id: "USER-026", name: "Harper Scott", email: "harper@talent.io", role: "job_seeker", status: "pending", joinDate: "2024-03-24", lastActive: "Just now" },
+    { id: "USER-027", name: "Evelyn King", email: "evelyn@ventures.co", role: "client", status: "active", joinDate: "2024-02-05", lastActive: "4 days ago" },
+    { id: "USER-028", name: "Alexander Wright", email: "alex@techfirm.com", role: "company", status: "banned", joinDate: "2023-10-15", lastActive: "6 months ago" },
+    { id: "USER-029", name: "Abigail Lopez", email: "abigail@gigs.net", role: "freelancer", status: "active", joinDate: "2024-01-15", lastActive: "2 hours ago" },
+    { id: "USER-030", name: "Henry Hill", email: "henry@findjob.io", role: "job_seeker", status: "inactive", joinDate: "2023-11-30", lastActive: "5 weeks ago" },
+    { id: "USER-031", name: "Mia Green", email: "mia@staffing.org", role: "company", status: "active", joinDate: "2024-02-18", lastActive: "Just now" },
+    { id: "USER-032", name: "Sebastian Adams", email: "seb@superadmin.io", role: "admin", status: "active", joinDate: "2023-06-01", lastActive: "15 mins ago" },
+    { id: "USER-033", name: "Ella Baker", email: "ella@hire.studio", role: "client", status: "pending", joinDate: "2024-03-20", lastActive: "3 hours ago" },
+    { id: "USER-034", name: "Jack Gonzalez", email: "jack@remotedev.io", role: "freelancer", status: "active", joinDate: "2024-01-08", lastActive: "20 mins ago" },
+    { id: "USER-035", name: "Scarlett Nelson", email: "scarlett@applynow.com", role: "job_seeker", status: "active", joinDate: "2024-03-02", lastActive: "7 hours ago" },
+    { id: "USER-036", name: "Lucas Carter", email: "lucas@startups.co", role: "company", status: "active", joinDate: "2024-02-22", lastActive: "2 days ago" },
+    { id: "USER-037", name: "Grace Mitchell", email: "grace@portfolio.dev", role: "freelancer", status: "pending", joinDate: "2024-03-19", lastActive: "1 day ago" },
+    { id: "USER-038", name: "Owen Perez", email: "owen@projectowner.com", role: "client", status: "inactive", joinDate: "2023-10-25", lastActive: "4 weeks ago" },
+    { id: "USER-039", name: "Avery Roberts", email: "avery@seeker.net", role: "job_seeker", status: "banned", joinDate: "2024-01-20", lastActive: "2 weeks ago" },
+    { id: "USER-040", name: "Zoe Turner", email: "zoe@gigmaster.io", role: "freelancer", status: "active", joinDate: "2024-03-10", lastActive: "50 mins ago" },
 ];
+
+/**
+ * Alias for usersData – use either name depending on context.
+ * @type {Array}
+ */
+export const mockUsers = usersData;
 
 // ============================================================================
 // Job Management Data
@@ -59,7 +96,7 @@ export const jobsData = [
     { id: "JOB-109", title: "Sales Representative", company: "Growth Hackers", type: "Commission", status: "pending", postedDate: "2024-03-24", reports: 0 },
     { id: "JOB-110", title: "Data Scientist", company: "AI Solutions", type: "Full-time", status: "active", postedDate: "2024-03-10", reports: 0 },
     { id: "JOB-111", title: "Social Media Intern", company: "Viral Agency", type: "Internship", status: "review", postedDate: "2024-03-23", reports: 5 },
-    { id: "JOB-112", title: "Customer Support Lead", company: "HelpDesk Pro", type: "Full-time", status: "active", postedDate: "2024-03-05", reports: 0 }
+    { id: "JOB-112", title: "Customer Support Lead", company: "HelpDesk Pro", type: "Full-time", status: "active", postedDate: "2024-03-05", reports: 0 },
 ];
 
 // ============================================================================
@@ -76,7 +113,7 @@ export const reportsData = [
     { id: "RPT-207", type: "Portfolio", targetId: "PRT-552", reason: "Copyright infringement", status: "pending", date: "2024-03-25", reporter: "artist_og" },
     { id: "RPT-208", type: "Job Listing", targetId: "JOB-108", reason: "Scam job posting", status: "investigating", date: "2024-03-22", reporter: "scam_watch" },
     { id: "RPT-209", type: "Comment", targetId: "CMT-342", reason: "Spam/Self-promotion", status: "resolved", date: "2024-03-20", reporter: "auto_mod" },
-    { id: "RPT-210", type: "User Profile", targetId: "USER-009", reason: "Fake credentials", status: "dismissed", date: "2024-03-15", reporter: "recruiter_jane" }
+    { id: "RPT-210", type: "User Profile", targetId: "USER-009", reason: "Fake credentials", status: "dismissed", date: "2024-03-15", reporter: "recruiter_jane" },
 ];
 
 // ============================================================================
@@ -95,7 +132,7 @@ export const activitiesData = [
     { id: 9, type: "user_signup", user: "William Clark", action: "registered as Company", time: "8 hours ago", timestamp: "2024-03-25T06:30:00Z" },
     { id: 10, type: "job_post", user: "Growth Hackers", action: "posted new job 'Sales Representative'", time: "12 hours ago", timestamp: "2024-03-25T02:30:00Z" },
     { id: 11, type: "job_application", user: "Lisa Anderson", action: "applied for 'Content Writer'", time: "1 day ago", timestamp: "2024-03-24T14:30:00Z" },
-    { id: 12, type: "user_login", user: "Sarah Smith", action: "updated company profile", time: "1 day ago", timestamp: "2024-03-24T10:00:00Z" }
+    { id: 12, type: "user_login", user: "Sarah Smith", action: "updated company profile", time: "1 day ago", timestamp: "2024-03-24T10:00:00Z" },
 ];
 
 // ============================================================================
@@ -108,7 +145,7 @@ export const pendingActions = [
     { id: 3, title: "Approve pending job posts", count: 8, priority: "medium" },
     { id: 4, title: "System update scheduled", count: 1, priority: "low" },
     { id: 5, title: "Review specialized profile requests", count: 3, priority: "medium" },
-    { id: 6, title: "Process refund requests", count: 2, priority: "high" }
+    { id: 6, title: "Process refund requests", count: 2, priority: "high" },
 ];
 
 // ============================================================================
@@ -119,7 +156,7 @@ export const healthData = {
     uptime: "99.99%",
     api: { status: "operational", latency: "45ms" },
     database: { status: "operational", load: "24%" },
-    storage: { status: "operational", usage: "45%" }
+    storage: { status: "operational", usage: "45%" },
 };
 
 // ============================================================================
@@ -138,7 +175,7 @@ export const subscriptionsData = [
     { id: 'SUB-009', user: 'E-commerce Co', plan: 'Professional', status: 'cancelled', amount: 0, nextBilling: '-', users: 4, startDate: '2023-05-20', endDate: '2024-02-20', paymentMethod: 'paypal', invoiceId: 'INV-2024-009' },
     { id: 'SUB-010', user: 'Media Agency', plan: 'Enterprise', status: 'active', amount: 499, nextBilling: '2024-04-28', users: 15, startDate: '2023-10-01', paymentMethod: 'card', invoiceId: 'INV-2024-010' },
     { id: 'SUB-011', user: 'Freelancer Collective', plan: 'Growth', status: 'pending', amount: 199, nextBilling: '2024-04-30', users: 12, startDate: '2024-03-20', paymentMethod: 'card', invoiceId: 'INV-2024-011' },
-    { id: 'SUB-012', user: 'NonProfit Org', plan: 'Basic', status: 'active', amount: 29, nextBilling: '2024-04-05', users: 2, startDate: '2023-07-15', paymentMethod: 'card', invoiceId: 'INV-2024-012' }
+    { id: 'SUB-012', user: 'NonProfit Org', plan: 'Basic', status: 'active', amount: 29, nextBilling: '2024-04-05', users: 2, startDate: '2023-07-15', paymentMethod: 'card', invoiceId: 'INV-2024-012' },
 ];
 
 // ============================================================================
@@ -155,7 +192,7 @@ export const staffData = [
     { id: 7, name: 'Tom Hardy', email: 'tom@admin.com', role: 'Moderator', lastLogin: '4 hours ago', status: 'banned', permissions: [] },
     { id: 8, name: 'Natasha Romanoff', email: 'natasha@admin.com', role: 'Admin', lastLogin: 'just now', status: 'active', permissions: ['all'] },
     { id: 9, name: 'Bruce Banner', email: 'bruce@admin.com', role: 'Analyst', lastLogin: '1 month ago', status: 'inactive', permissions: ['read', 'analytics'] },
-    { id: 10, name: 'Tony Stark', email: 'tony@admin.com', role: 'Super Admin', lastLogin: '10 mins ago', status: 'active', permissions: ['all'] }
+    { id: 10, name: 'Tony Stark', email: 'tony@admin.com', role: 'Super Admin', lastLogin: '10 mins ago', status: 'active', permissions: ['all'] },
 ];
 
 // ============================================================================
@@ -174,7 +211,7 @@ export const userGrowthData = [
     { name: 'Sep', users: 29100, newUsers: 4300 },
     { name: 'Oct', users: 32500, newUsers: 3400 },
     { name: 'Nov', users: 36200, newUsers: 3700 },
-    { name: 'Dec', users: 40150, newUsers: 3950 }
+    { name: 'Dec', users: 40150, newUsers: 3950 },
 ];
 
 export const revenueData = [
@@ -189,7 +226,7 @@ export const revenueData = [
     { name: 'Sep', revenue: 81500, profit: 65000 },
     { name: 'Oct', revenue: 89200, profit: 71000 },
     { name: 'Nov', revenue: 98300, profit: 78000 },
-    { name: 'Dec', revenue: 112500, profit: 90000 }
+    { name: 'Dec', revenue: 112500, profit: 90000 },
 ];
 
 export const jobPostingsData = [
@@ -204,5 +241,5 @@ export const jobPostingsData = [
     { name: 'Sep', jobs: 5200, active: 4500 },
     { name: 'Oct', jobs: 5800, active: 5000 },
     { name: 'Nov', jobs: 6350, active: 5500 },
-    { name: 'Dec', jobs: 7200, active: 6300 }
+    { name: 'Dec', jobs: 7200, active: 6300 },
 ];
