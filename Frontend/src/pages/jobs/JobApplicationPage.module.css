@@ -8,13 +8,6 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-    max-width: 87.5rem;
-    margin: 0 auto;
-    padding: var(--space-8);
-}
-
 /* Header */
 .header {
     margin-bottom: var(--space-8);
@@ -301,20 +294,12 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
-    }
-
     .applicationForm {
         padding: var(--space-6);
     }
 }
 
 @media (max-width: 60.5rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .pageTitle {
         font-size: var(--font-size-xl);
     }
@@ -333,10 +318,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-3);
-    }
-
     .formRow {
         grid-template-columns: 1fr;
     }

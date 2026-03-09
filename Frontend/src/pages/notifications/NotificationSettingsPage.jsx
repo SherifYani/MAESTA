@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, RotateCcw, Bell, Mail, Smartphone } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import { NOTIFICATION_CATEGORIES } from '../../utils/notificationTypes';
+import { PageContainer } from '../../components/layout';
 import styles from './NotificationSettingsPage.module.css';
 
 /**
@@ -137,7 +138,7 @@ const NotificationSettingsPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer className={styles.container} size="md">
             {/* Header */}
             <header className={styles.header}>
                 <button
@@ -327,7 +328,7 @@ const NotificationSettingsPage = () => {
                     </div>
                 </footer>
             )}
-        </div>
+        </PageContainer>
     );
 };
 

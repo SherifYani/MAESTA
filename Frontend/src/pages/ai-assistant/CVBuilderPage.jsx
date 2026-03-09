@@ -15,6 +15,7 @@ import {
     Trash2, X, Loader2, Bot, Download, ArrowLeft
 } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
+import { PageContainer } from '../../components/layout';
 import styles from './CVBuilderPage.module.css';
 
 /**
@@ -553,7 +554,7 @@ const CVBuilderPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <header className={styles.header}>
                 <button
                     className={styles.backButton}
@@ -616,7 +617,7 @@ const CVBuilderPage = () => {
                     </button>
                 )}
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

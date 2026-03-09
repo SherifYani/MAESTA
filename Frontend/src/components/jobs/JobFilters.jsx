@@ -16,9 +16,7 @@ import {
     DollarSign,
     Clock,
     Briefcase,
-    Users,
-    Search,
-    MapPin
+    Users
 } from 'lucide-react';
 import { Button, Input } from '../common';
 import styles from './JobFilters.module.css';
@@ -321,44 +319,6 @@ const JobFilters = ({
                     <X size={16} aria-hidden="true" />
                     Clear all
                 </button>
-            </div>
-
-            {/* Search Section */}
-            <div className={styles.section}>
-                <div className={styles.sectionHeader}>
-                    <Search size={16} className={styles.sectionIcon} aria-hidden="true" />
-                    <span className={styles.sectionTitle}>Search</span>
-                </div>
-
-                <div className={styles.sectionContent}>
-                    <Input
-                        type="text"
-                        placeholder="Search jobs..."
-                        value={filters.keyword || ''}
-                        onChange={(e) => onFilterChange({ ...filters, keyword: e.target.value })}
-                        className={styles.searchInput}
-                        aria-label="Search jobs by keyword"
-                    />
-                </div>
-            </div>
-
-            {/* Location Section */}
-            <div className={styles.section}>
-                <div className={styles.sectionHeader}>
-                    <MapPin size={16} className={styles.sectionIcon} aria-hidden="true" />
-                    <span className={styles.sectionTitle}>Location</span>
-                </div>
-
-                <div className={styles.sectionContent}>
-                    <Input
-                        type="text"
-                        placeholder="City, state, or remote"
-                        value={filters.location || ''}
-                        onChange={(e) => onFilterChange({ ...filters, location: e.target.value })}
-                        className={styles.searchInput}
-                        aria-label="Filter by location"
-                    />
-                </div>
             </div>
 
             {/* Salary Section */}

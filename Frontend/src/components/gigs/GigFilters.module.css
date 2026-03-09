@@ -17,13 +17,10 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: var(--space-6);
-    height: fit-content;
-    position: sticky;
-    top: var(--space-6);
-    max-height: calc(100vh - var(--space-12));
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-accent-pink) var(--color-muted);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+    animation: slideDown 0.3s ease-out;
 }
 
 .container::-webkit-scrollbar {
@@ -45,11 +42,12 @@
    ========================================================================== */
 
 .header {
+    grid-column: 1 / -1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-6);
-    padding-bottom: var(--space-4);
+    margin-bottom: 0;
+    padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -118,7 +116,7 @@
    ========================================================================== */
 
 .section {
-    margin-bottom: var(--space-4);
+    margin-bottom: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -472,9 +470,10 @@
    ========================================================================== */
 
 .actions {
+    grid-column: 1 / -1;
     display: flex;
     gap: var(--space-3);
-    margin-top: var(--space-6);
+    margin-top: 0;
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-border);
 }
@@ -514,11 +513,6 @@
 
 /* Desktop large: 75rem (1200px) */
 @media (min-width: 75rem) {
-    .container {
-        padding: var(--space-8);
-        max-width: 20rem;
-    }
-
     .title {
         font-size: var(--font-size-xl);
     }
@@ -535,9 +529,7 @@
 /* Tablet landscape: 60.5rem (968px) */
 @media (max-width: 60.5rem) {
     .container {
-        position: static;
-        max-height: none;
-        margin-bottom: var(--space-6);
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 
     .budgetInputs {

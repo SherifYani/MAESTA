@@ -8,14 +8,6 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-    max-width: 87.5rem;
-    /* 1400px */
-    margin: 0 auto;
-    padding: var(--space-8);
-}
-
 /* Header */
 .header {
     text-align: center;
@@ -403,10 +395,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
-    }
-
     .backButton {
         position: relative;
         left: 0;
@@ -465,10 +453,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .searchTypeToggle {
         flex-direction: column;
         gap: var(--space-2);

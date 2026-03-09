@@ -8,13 +8,6 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-    max-width: 87.5rem;
-    margin: 0 auto;
-    padding: var(--space-8);
-}
-
 /* Header */
 .header {
     text-align: center;
@@ -387,10 +380,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
-    }
-
     .card {
         padding: var(--space-6);
         border-radius: var(--radius-xl);
@@ -429,10 +418,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .card {
         padding: var(--space-4);
         border-radius: var(--radius-lg);

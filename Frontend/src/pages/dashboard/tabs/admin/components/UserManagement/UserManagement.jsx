@@ -185,20 +185,26 @@ const UserManagement = () => {
         </div>
     );
 
-    const renderRoleBadge = (row) => (
-        <span
-            className={`${styles.roleBadge} ${styles[`roleBadge--${row.role.replace('_', '-')}`]}`}
-        >
-            {row.role.replace('_', ' ')}
-        </span>
-    );
+    const renderRoleBadge = (row) => {
+        const normalizedRole = row.role.toLowerCase().replace(/[_ ]/g, '-');
+        return (
+            <span
+                className={`${styles.roleBadge} ${styles[`roleBadge--${normalizedRole}`] || ''}`}
+            >
+                {row.role.replace('_', ' ')}
+            </span>
+        );
+    };
 
-    const renderStatusBadge = (row) => (
-        <span className={`${styles.statusBadge} ${styles[`statusBadge--${row.status}`]}`}>
-            <span className={styles.statusBadge__dot} />
-            {row.status}
-        </span>
-    );
+    const renderStatusBadge = (row) => {
+        const normalizedStatus = row.status.toLowerCase().replace(/[_ ]/g, '-');
+        return (
+            <span className={`${styles.statusBadge} ${styles[`statusBadge--${normalizedStatus}`] || ''}`}>
+                <span className={styles.statusBadge__dot} />
+                {row.status}
+            </span>
+        );
+    };
 
     const renderLastActive = (row) => (
         <div className={styles.lastActive}>

@@ -8,12 +8,8 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-    max-width: 87.5rem;
-    /* 1400px */
-    margin: 0 auto;
-    padding: var(--space-8);
+/* Page Grid */
+.pageGrid {
     display: grid;
     grid-template-columns: 1fr 21.875rem;
     /* 350px */
@@ -420,8 +416,7 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
+    .pageGrid {
         gap: var(--space-6);
     }
 
@@ -432,7 +427,7 @@
 }
 
 @media (max-width: 60.5rem) {
-    .container {
+    .pageGrid {
         grid-template-columns: 1fr;
     }
 
@@ -467,8 +462,7 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-4);
+    .pageGrid {
         gap: var(--space-4);
     }
 

@@ -7,15 +7,14 @@
 
 import React from 'react';
 import SubscriptionPlans from '../components/subscription/SubscriptionPlans';
+import { PageContainer } from '../components/layout';
 import styles from './SubscriptionPlansPage.module.css';
 
 const SubscriptionPlansPage = () => {
     return (
-        <div className={styles.page}>
-            <div className={styles.container}>
-                <SubscriptionPlans />
-            </div>
-        </div>
+        <PageContainer className={styles.page}>
+            <SubscriptionPlans />
+        </PageContainer>
     );
 };
 

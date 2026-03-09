@@ -12,6 +12,7 @@ import { useRole } from '../../hooks/useRole';
 import { Button, LoadingSpinner, Alert } from '../../components/common';
 import GigCard from '../../components/gigs/GigCard';
 import { Plus } from 'lucide-react';
+import { PageContainer } from '../../components/layout';
 import styles from './GigManagementPage.module.css';
 
 const GigManagementPage = () => {
@@ -39,26 +40,26 @@ const GigManagementPage = () => {
 
     if (isLoading) {
         return (
-            <div className={styles.loadingContainer}>
+            <PageContainer className={styles.loadingContainer}>
                 <LoadingSpinner size="large" />
-            </div>
+            </PageContainer>
         );
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageWrapper}>
             <header className={styles.header}>
-                <div className={styles.headerContent}>
+                <PageContainer className={styles.headerContent}>
                     <h1 className={styles.title}>My Gigs</h1>
                     {isClient() && (
                         <Button variant="primary" onClick={handleCreateGig} className={styles.createButton}>
                             <Plus size={16} /> Post New Gig
                         </Button>
                     )}
-                </div>
+                </PageContainer>
             </header>
 
-            <main className={styles.main}>
+            <PageContainer as="main" className={styles.main}>
                 <div className={styles.tabs}>
                     {['active', 'completed', 'drafts'].map(status => (
                         <button
@@ -104,7 +105,7 @@ const GigManagementPage = () => {
                         </div>
                     )}
                 </div>
-            </main>
+            </PageContainer>
         </div>
     );
 };

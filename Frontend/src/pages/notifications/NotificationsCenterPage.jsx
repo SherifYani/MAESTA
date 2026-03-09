@@ -24,6 +24,7 @@ import { NOTIFICATION_CATEGORIES } from '../../utils/notificationTypes';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import NotificationSkeleton from '../../components/notifications/NotificationSkeleton';
 import EmptyNotifications from '../../components/notifications/EmptyNotifications';
+import { PageContainer } from '../../components/layout';
 import styles from './NotificationsCenterPage.module.css';
 
 /**
@@ -154,7 +155,7 @@ const NotificationsCenterPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer className={styles.container}>
             {/* Page Header */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
@@ -326,7 +327,7 @@ const NotificationsCenterPage = () => {
                     )}
                 </main>
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

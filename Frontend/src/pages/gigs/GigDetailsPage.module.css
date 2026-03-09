@@ -5,11 +5,7 @@
  * @date 05-02-2026
  */
 
-.container {
-    min-height: 100vh;
-    background-color: var(--color-background);
-    padding: var(--space-6);
-}
+
 
 .header {
     display: flex;
@@ -26,8 +22,7 @@
 }
 
 .mainContent {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .gigOverview {
@@ -168,10 +163,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .tabContent {
         padding: var(--space-6);
     }
@@ -200,10 +191,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-3);
-    }
-
     .metadataGrid {
         grid-template-columns: 1fr;
     }

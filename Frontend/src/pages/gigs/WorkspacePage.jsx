@@ -15,6 +15,7 @@ import MilestoneTracker from '../../components/gigs/MilestoneTracker';
 import FileUpload from '../../components/gigs/FileUpload';
 import VideoCallUI from '../../components/video/VideoCallUI';
 import { Video, Calendar, Paperclip, MessageSquare } from 'lucide-react';
+import { PageContainer } from '../../components/layout';
 import styles from './WorkspacePage.module.css';
 
 const WorkspacePage = () => {
@@ -50,9 +51,9 @@ const WorkspacePage = () => {
 
     if (isLoading || !workspace) {
         return (
-            <div className={styles.loadingContainer}>
+            <PageContainer size="xl" className={styles.loadingContainer}>
                 <LoadingSpinner size="large" />
-            </div>
+            </PageContainer>
         );
     }
 
@@ -72,9 +73,9 @@ const WorkspacePage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageWrapper}>
             <header className={styles.header}>
-                <div className={styles.headerContent}>
+                <PageContainer size="xl" className={styles.headerContent}>
                     <div>
                         <h1 className={styles.title}>{workspace.title}</h1>
                         <span className={styles.statusBadge}>In Progress</span>
@@ -91,10 +92,10 @@ const WorkspacePage = () => {
                             Gig Details
                         </Button>
                     </div>
-                </div>
+                </PageContainer>
             </header>
 
-            <main className={styles.main}>
+            <PageContainer as="main" size="xl" className={styles.main}>
                 <div className={styles.layout}>
                     <div className={styles.leftPanel}>
                         <div className={styles.sectionHeader}>
@@ -124,7 +125,7 @@ const WorkspacePage = () => {
                         />
                     </div>
                 </div>
-            </main>
+            </PageContainer>
         </div>
     );
 };

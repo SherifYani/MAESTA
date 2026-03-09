@@ -13,6 +13,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
+import { PageContainer } from '../../components/layout';
 import styles from './JobPostingPage.module.css';
 
 /**
@@ -450,7 +451,7 @@ const JobPostingPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <header className={styles.header}>
                 <h1 className={styles.title}>Post a New Job</h1>
                 <p className={styles.subtitle}>Fill in the details to create a new job listing</p>
@@ -523,7 +524,7 @@ const JobPostingPage = () => {
                     )}
                 </div>
             </form>
-        </div>
+        </PageContainer>
     );
 };
 

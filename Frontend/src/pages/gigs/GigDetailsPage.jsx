@@ -12,6 +12,7 @@ import { useRole } from '../../hooks/useRole';
 import GigCard from '../../components/gigs/GigCard';
 import BidForm from '../../components/gigs/BidForm';
 import { Button, LoadingSpinner, Alert } from '../../components/common';
+import { PageContainer } from '../../components/layout';
 import styles from './GigDetailsPage.module.css';
 
 const GigDetailsPage = () => {
@@ -63,7 +64,7 @@ const GigDetailsPage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <header className={styles.header}>
                 <Button variant="secondary" onClick={() => navigate('/gigs')}>
                     ← Back to Gigs
@@ -222,7 +223,7 @@ const GigDetailsPage = () => {
                     </div>
                 )}
             </main>
-        </div>
+        </PageContainer>
     );
 };
 

@@ -13,6 +13,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
+import { PageContainer } from '../../components/layout';
 import styles from './JobDetailsPage.module.css';
 
 /**
@@ -146,7 +147,7 @@ const JobDetailsPage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <PageContainer className={styles.pageGrid}>
             <main className={styles.mainContent}>
                 <article className={styles.jobHeader}>
                     <div className={styles.companyLogo}>
@@ -351,7 +352,7 @@ const JobDetailsPage = () => {
                     </div>
                 )}
             </aside>
-        </div>
+        </PageContainer>
     );
 };
 

@@ -11,7 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import { useGig } from '../../context/GigContext';
 import GigCard from '../../components/gigs/GigCard';
 import GigFilters from '../../components/gigs/GigFilters';
+import { PageContainer } from '../../components/layout';
 import { Button, Input, LoadingSpinner } from '../../components/common';
+import { Filter, Search } from 'lucide-react';
 import styles from './GigListingPage.module.css';
 
 /**
@@ -21,6 +23,7 @@ import styles from './GigListingPage.module.css';
 const GigListingPage = () => {
     const navigate = useNavigate();
     const { gigs, isLoading, error, fetchGigs } = useGig();
+    const [showFilters, setShowFilters] = useState(false);
 
     const [filters, setFilters] = useState({
         search: '',
@@ -83,7 +86,7 @@ const GigListingPage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <PageContainer className={styles.pageContainer} size="lg">
             <header className={styles.header}>
                 <h1 className={styles.title}>Find Your Next Project</h1>
                 <p className={styles.subtitle}>
@@ -99,8 +102,9 @@ const GigListingPage = () => {
             </header>
 
             <div className={styles.content}>
-                <aside className={styles.sidebar}>
+                <div className={styles.controlsBar}>
                     <div className={styles.searchSection}>
+                        <Search className={styles.searchIcon} size={18} />
                         <Input
                             type="text"
                             placeholder="Search gigs by title, skills..."
@@ -109,7 +113,7 @@ const GigListingPage = () => {
                             className={styles.searchInput}
                         />
                         <Button
-                            variant="secondary"
+                            variant="primary"
                             onClick={applyFilters}
                             className={styles.searchButton}
                         >
@@ -117,12 +121,22 @@ const GigListingPage = () => {
                         </Button>
                     </div>
 
+                    <button
+                        className={`${styles.filterToggleButton} ${showFilters ? styles.active : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
+                        <Filter size={16} />
+                        Filters {Object.values(filters).some(f => f && f !== 'all' && f.length !== 0 && typeof f !== 'object') ? '•' : ''}
+                    </button>
+                </div>
+
+                {showFilters && (
                     <GigFilters
                         filters={filters}
                         onFilterChange={handleFilterChange}
                         onApplyFilters={applyFilters}
                     />
-                </aside>
+                )}
 
                 <main className={styles.mainContent}>
                     {error && (
@@ -178,7 +192,7 @@ const GigListingPage = () => {
                     )}
                 </main>
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

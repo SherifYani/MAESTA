@@ -12,9 +12,10 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Loader2, Sparkles, RefreshCw, Check, Rocket } from "lucide-react";
+import { ArrowLeft, Rocket, Bot, Loader2, Sparkles, RefreshCw, Check } from "lucide-react";
 import aiAssistantService from "../../services/aiAssistantService";
 import jobService from "../../services/jobService";
+import { PageContainer } from "../../components/layout";
 import styles from "./AIPostingPage.module.css";
 
 /**
@@ -171,7 +172,7 @@ Basic Requirements:
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer size="xl">
             <header className={styles.header}>
                 <button
                     className={styles.backButton}
@@ -494,7 +495,7 @@ Basic Requirements:
                     </div>
                 )}
             </main>
-        </div>
+        </PageContainer>
     );
 };
 

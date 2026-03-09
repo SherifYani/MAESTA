@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, User, X, Loader2, Bot, Lightbulb, Upload } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
+import { PageContainer } from '../../components/layout';
 import styles from './CandidateAnalysisPage.module.css';
 
 /**
@@ -97,7 +98,7 @@ const CandidateAnalysisPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <header className={styles.header}>
                 <button
                     className={styles.backButton}
@@ -261,7 +262,7 @@ const CandidateAnalysisPage = () => {
                     </section>
                 )}
             </main>
-        </div>
+        </PageContainer>
     );
 };
 

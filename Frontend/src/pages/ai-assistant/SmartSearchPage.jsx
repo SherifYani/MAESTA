@@ -17,6 +17,7 @@ import {
     MapPin, Banknote, Clock, FileText
 } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
+import { PageContainer } from '../../components/layout';
 import styles from './SmartSearchPage.module.css';
 
 /**
@@ -96,7 +97,7 @@ const SmartSearchPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <header className={styles.header}>
                 <button
                     className={styles.backButton}
@@ -292,7 +293,7 @@ const SmartSearchPage = () => {
                     <p className={styles.emptySubtitle}>Try adjusting your search criteria</p>
                 </div>
             )}
-        </div>
+        </PageContainer>
     );
 };
 

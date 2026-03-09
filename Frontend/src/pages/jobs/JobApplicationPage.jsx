@@ -13,6 +13,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
+import { PageContainer } from '../../components/layout';
 import styles from './JobApplicationPage.module.css';
 
 /**
@@ -144,7 +145,7 @@ const JobApplicationPage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <div className={styles.header}>
                 <button
                     className={styles.backButton}
@@ -286,7 +287,7 @@ const JobApplicationPage = () => {
                     </button>
                 </div>
             </form>
-        </div>
+        </PageContainer>
     );
 };
 

@@ -10,6 +10,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGig } from '../../context/GigContext';
 import BidForm from '../../components/gigs/BidForm';
 import { LoadingSpinner, Alert, Button } from '../../components/common';
+import { PageContainer } from '../../components/layout';
 import styles from './GigBiddingPage.module.css';
 
 const GigBiddingPage = () => {
@@ -35,25 +36,25 @@ const GigBiddingPage = () => {
 
     if (isLoading || !currentGig) {
         return (
-            <div className={styles.loadingContainer}>
+            <PageContainer className={styles.loadingContainer}>
                 <LoadingSpinner size="large" />
-            </div>
+            </PageContainer>
         );
     }
 
     if (error) {
         return (
-            <div className={styles.container}>
+            <PageContainer>
                 <Alert type="error" message={error} />
                 <Button onClick={() => navigate('/gigs')}>Back to Gigs</Button>
-            </div>
+            </PageContainer>
         );
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageWrapper}>
             <header className={styles.header}>
-                <div className={styles.headerContent}>
+                <PageContainer className={styles.headerContent}>
                     <h1 className={styles.title}>Submit a Proposal</h1>
                     <div className={styles.gigSummary}>
                         <h2 className={styles.gigTitle}>{currentGig.title}</h2>
@@ -63,10 +64,10 @@ const GigBiddingPage = () => {
                             <span>Posted {new Date(currentGig.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
-                </div>
+                </PageContainer>
             </header>
 
-            <main className={styles.main}>
+            <PageContainer as="main" className={styles.main}>
                 <div className={styles.formContainer}>
                     <BidForm
                         gigId={id}
@@ -89,7 +90,7 @@ const GigBiddingPage = () => {
                         </div>
                     </div>
                 </div>
-            </main>
+            </PageContainer>
         </div>
     );
 };

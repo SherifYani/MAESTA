@@ -10,8 +10,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Search, MapPin, Filter } from 'lucide-react';
+import { Input, Button } from '../../components/common';
 import jobService from '../../services/jobService';
 import JobFilters from '../../components/jobs/JobFilters';
+import { PageContainer } from '../../components/layout';
 import styles from './JobSearchPage.module.css';
 
 /**
@@ -23,6 +26,7 @@ const JobSearchPage = () => {
     const navigate = useNavigate();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({
         keyword: '',
         location: '',
@@ -147,7 +151,7 @@ const JobSearchPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <PageContainer>
             <div className={styles.header}>
                 <h1 className={styles.title}>Job Search</h1>
                 <p className={styles.subtitle}>
@@ -156,15 +160,62 @@ const JobSearchPage = () => {
             </div>
 
             <div className={styles.content}>
-                <aside className={styles.sidebar}>
-                    <JobFilters
-                        filters={filters}
-                        onFilterChange={handleFilterChange}
-                        onApplyFilters={fetchJobs}
-                        onClearFilters={resetFilters}
-                        availableSkills={availableSkills}
-                    />
-                </aside>
+                <div className={styles.controlsBar}>
+                    <div className={styles.searchSection}>
+                        <Search size={18} className={styles.searchIcon} aria-hidden="true" />
+                        <Input
+                            type="text"
+                            placeholder="Search jobs..."
+                            value={filters.keyword || ''}
+                            onChange={(e) => handleFilterChange({ keyword: e.target.value })}
+                            className={styles.searchInput}
+                            aria-label="Search jobs by keyword"
+                        />
+                    </div>
+
+                    <div className={styles.searchSection}>
+                        <MapPin size={18} className={styles.locationIcon} aria-hidden="true" />
+                        <Input
+                            type="text"
+                            placeholder="City, state, or remote"
+                            value={filters.location || ''}
+                            onChange={(e) => handleFilterChange({ location: e.target.value })}
+                            className={styles.locationInput}
+                            aria-label="Filter by location"
+                        />
+                    </div>
+
+                    <Button
+                        variant="primary"
+                        onClick={fetchJobs}
+                        className={styles.searchButton}
+                    >
+                        Search
+                    </Button>
+
+                    <button
+                        type="button"
+                        className={`${styles.filterToggleButton} ${showFilters ? styles.active : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                        aria-expanded={showFilters}
+                        aria-controls="job-filters"
+                    >
+                        <Filter size={16} aria-hidden="true" />
+                        Filters
+                    </button>
+                </div>
+
+                {showFilters && (
+                    <div id="job-filters">
+                        <JobFilters
+                            filters={filters}
+                            onFilterChange={handleFilterChange}
+                            onApplyFilters={fetchJobs}
+                            onClearFilters={resetFilters}
+                            availableSkills={availableSkills}
+                        />
+                    </div>
+                )}
 
                 <main className={styles.mainContent}>
                     {loading ? (
@@ -296,7 +347,7 @@ const JobSearchPage = () => {
                     )}
                 </main>
             </div>
-        </div>
+        </PageContainer>
     );
 };
 

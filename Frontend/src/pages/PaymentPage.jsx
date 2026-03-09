@@ -10,6 +10,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSubscription } from '../context/SubscriptionContext';
 import PaymentCheckout from '../components/subscription/PaymentCheckout';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { PageContainer } from '../components/layout';
 import styles from './PaymentPage.module.css';
 
 const PaymentPage = () => {
@@ -84,7 +85,7 @@ const PaymentPage = () => {
 
     return (
         <div className={styles.page}>
-            <div className={styles.container}>
+            <PageContainer className={styles.pageContainer}>
                 {/* Page Header */}
                 <div className={styles.header}>
                     <h1 className={styles.title}>
@@ -116,7 +117,7 @@ const PaymentPage = () => {
                         loading={loading}
                     />
                 </div>
-            </div>
+            </PageContainer>
         </div>
     );
 };

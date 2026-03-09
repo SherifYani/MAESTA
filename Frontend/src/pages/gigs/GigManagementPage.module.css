@@ -5,7 +5,7 @@
  * @date 05-02-2026
  */
 
-.container {
+.pageWrapper {
     min-height: 100vh;
     background-color: var(--color-background);
 }
@@ -20,14 +20,9 @@
 .header {
     background-color: var(--color-card);
     border-bottom: 1px solid var(--color-border);
-    padding: var(--space-8) 0;
-    margin-bottom: var(--space-8);
 }
 
 .headerContent {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-6);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,9 +42,7 @@
 }
 
 .main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-6) var(--space-12);
+    padding-bottom: var(--space-12);
 }
 
 .tabs {
@@ -118,10 +111,5 @@
     .createButton {
         width: 100%;
         justify-content: center;
-    }
-
-    .headerContent,
-    .main {
-        padding: 0 var(--space-4);
     }
 }

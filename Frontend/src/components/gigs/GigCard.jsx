@@ -49,9 +49,11 @@ const formatBudget = (budget) => {
  * @returns {string} Formatted relative date.
  */
 const formatDate = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return 'Just now';
 
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Recently';
+
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -130,6 +132,7 @@ const GigCard = ({
         client = {},
         bidCount = 0,
         createdAt,
+        postedDate,
         isFeatured = false,
         isUrgent = false
     } = gig;
@@ -212,9 +215,9 @@ const GigCard = ({
                 </div>
 
                 <div className={styles.metaInfo}>
-                    <span className={styles.date} title={new Date(createdAt).toLocaleDateString()}>
+                    <span className={styles.date} title={createdAt || postedDate ? new Date(createdAt || postedDate).toLocaleDateString() : 'Date unavailable'}>
                         <Calendar size={14} aria-hidden="true" />
-                        {formatDate(createdAt)}
+                        {formatDate(createdAt || postedDate)}
                     </span>
 
                     <span className={styles.bidCount} aria-label={`${bidCount} bids received`}>
@@ -400,7 +403,7 @@ GigCard.propTypes = {
             completedProjects: PropTypes.number
         }),
         bidCount: PropTypes.number,
-        createdAt: PropTypes.string.isRequired,
+        createdAt: PropTypes.string,
         isFeatured: PropTypes.bool,
         isUrgent: PropTypes.bool
     }).isRequired,

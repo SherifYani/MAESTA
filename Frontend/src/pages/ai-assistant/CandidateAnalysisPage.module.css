@@ -8,14 +8,6 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-    max-width: 62.5rem;
-    /* 1000px */
-    margin: 0 auto;
-    padding: var(--space-8);
-}
-
 /* Header */
 .header {
     margin-bottom: var(--space-8);
@@ -412,10 +404,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
-    }
-
     .section {
         padding: var(--space-5);
     }
@@ -451,10 +439,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .section {
         padding: var(--space-4);
         border-radius: var(--radius-lg);

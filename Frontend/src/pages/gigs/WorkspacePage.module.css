@@ -5,7 +5,7 @@
  * @date 05-02-2026
  */
 
-.container {
+.pageWrapper {
     min-height: 100vh;
     background-color: var(--color-background);
     display: flex;
@@ -22,17 +22,12 @@
 .header {
     background-color: var(--color-card);
     border-bottom: 1px solid var(--color-border);
-    padding: var(--space-4) 0;
 }
 
 .headerContent {
-    max-width: 1400px;
-    /* Wider for workspace */
-    margin: 0 auto;
-    padding: 0 var(--space-6);
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .title {
@@ -66,9 +61,6 @@
 
 .main {
     flex: 1;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: var(--space-6);
     width: 100%;
 }
 

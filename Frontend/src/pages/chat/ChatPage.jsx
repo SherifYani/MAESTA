@@ -15,6 +15,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ChatProvider, useChat } from '../../context/ChatContext';
 import ChatInterface from '../../components/chat/ChatInterface';
+import { PageContainer } from '../../components/layout';
 import styles from './ChatPage.module.css';
 
 /**
@@ -33,9 +34,9 @@ const ChatPageContent = () => {
     }, [conversationId, selectConversation]);
 
     return (
-        <div className={styles.container}>
+        <PageContainer className={styles.container} size="full">
             <ChatInterface />
-        </div>
+        </PageContainer>
     );
 };
 

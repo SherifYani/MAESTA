@@ -13,6 +13,7 @@
     height: calc(100vh - var(--header-height, 80px));
     overflow: hidden;
     background-color: var(--color-background);
+    padding: 0 !important;
 }
 
 /* Dark Mode Support */

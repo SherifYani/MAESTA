@@ -337,9 +337,9 @@ const GigFilters = ({
     }, [filters]);
 
     return (
-        <aside
+        <div
             className={styles.container}
-            aria-label="Gig filters"
+            aria-label="Gig filters panel"
         >
             {/* Header */}
             <div className={styles.header}>
@@ -369,25 +369,6 @@ const GigFilters = ({
                     <X size={16} aria-hidden="true" />
                     Clear all
                 </button>
-            </div>
-
-            {/* Search Section */}
-            <div className={styles.section}>
-                <div className={styles.sectionHeader}>
-                    <Search size={16} className={styles.sectionIcon} aria-hidden="true" />
-                    <span className={styles.sectionTitle}>Search</span>
-                </div>
-
-                <div className={styles.sectionContent}>
-                    <Input
-                        type="text"
-                        placeholder="Search gigs..."
-                        value={filters.search || ''}
-                        onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
-                        className={styles.searchInput}
-                        aria-label="Search gigs by title or description"
-                    />
-                </div>
             </div>
 
             {/* Budget Section */}
@@ -640,7 +621,7 @@ const GigFilters = ({
                     Apply Filters
                 </Button>
             </div>
-        </aside>
+        </div>
     );
 };
 

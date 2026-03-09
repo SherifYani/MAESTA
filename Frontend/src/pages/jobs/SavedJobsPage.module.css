@@ -7,11 +7,12 @@
  * @last-modified-date 2026-02-06
  */
 
-.container {
-    max-width: 87.5rem;
-    margin: 0 auto;
-    padding: var(--space-8);
-    background-color: var(--color-background);
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
 }
 
 .header {
@@ -297,10 +298,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-    .container {
-        padding: var(--space-6);
-    }
-
     .header h1 {
         font-size: var(--font-size-xl);
     }
@@ -328,10 +325,6 @@
 }
 
 @media (max-width: 40rem) {
-    .container {
-        padding: var(--space-4);
-    }
-
     .jobCard {
         flex-direction: column;
         gap: var(--space-4);

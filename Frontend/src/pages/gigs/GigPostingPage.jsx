@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGig } from '../../context/GigContext';
 import GigPostForm from '../../components/gigs/GigPostForm';
 import { Button, Alert } from '../../components/common';
+import { PageContainer } from '../../components/layout';
 import styles from './GigPostingPage.module.css';
 
 const GigPostingPage = () => {
@@ -36,9 +37,9 @@ const GigPostingPage = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageWrapper}>
             <header className={styles.header}>
-                <div className={styles.headerContent}>
+                <PageContainer className={styles.headerContent}>
                     <Button variant="ghost" onClick={() => navigate('/gigs')} className={styles.backButton}>
                         ← Back to Gigs
                     </Button>
@@ -47,10 +48,10 @@ const GigPostingPage = () => {
                         Find the perfect talent for your next project.
                         Provide as much detail as possible to attract the best freelancers.
                     </p>
-                </div>
+                </PageContainer>
             </header>
 
-            <main className={styles.main}>
+            <PageContainer as="main" className={styles.main}>
                 {error && (
                     <div className={styles.alertWrapper}>
                         <Alert type="error" message={error} />
@@ -63,7 +64,7 @@ const GigPostingPage = () => {
                         onSaveDraft={handleSaveDraft}
                     />
                 </div>
-            </main>
+            </PageContainer>
         </div>
     );
 };

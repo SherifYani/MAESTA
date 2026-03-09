@@ -8,15 +8,6 @@
  * @last-modified-date 2026-02-05
  */
 
-/* Container */
-.container {
-  width: 50%;
-  max-width: 87.5rem;
-  /* 1400px */
-  margin: 0 auto;
-  padding: var(--space-6);
-}
-
 /* Header */
 .header {
   text-align: center;
@@ -362,10 +353,6 @@
 
 /* Responsive Design */
 @media (max-width: 75rem) {
-  .container {
-    padding: var(--space-6);
-  }
-
   .form {
     padding: var(--space-6);
   }
@@ -403,10 +390,6 @@
 }
 
 @media (max-width: 40rem) {
-  .container {
-    padding: var(--space-4);
-  }
-
   .title {
     font-size: var(--font-size-xl);
   }

@@ -13,6 +13,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import jobService from "../../services/jobService";
+import { PageContainer } from "../../components/layout";
 import styles from "./SavedJobsPage.module.css";
 
 /**
@@ -92,15 +93,15 @@ const SavedJobsPage = () => {
 
     if (loading) {
         return (
-            <div className={styles.container} data-testid="loading-container">
+            <PageContainer size="xl" data-testid="loading-container" className={styles.loadingContainer}>
                 <div className={styles.spinner}></div>
                 <p>Loading saved jobs...</p>
-            </div>
+            </PageContainer>
         );
     }
 
     return (
-        <div className={styles.container}>
+        <PageContainer size="xl">
             <header className={styles.header}>
                 <h1>Saved Jobs</h1>
                 <p>{savedJobs.length} {savedJobs.length === 1 ? "job" : "jobs"} saved</p>
@@ -202,7 +203,7 @@ const SavedJobsPage = () => {
                     ))}
                 </ul>
             )}
-        </div>
+        </PageContainer>
     );
 };
 
