@@ -1,0 +1,2564 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "JobMagnet API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Admin/pending-approvals": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Admin/approve/{userId}": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/register/step1": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep1Request"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep1Request"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep1Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/register/step2": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep2Request"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep2Request"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterStep2Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/logout-all": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Chat/conversations": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Chat/messages/{otherUserId}": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "parameters": [
+          {
+            "name": "otherUserId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Chat/messages": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Chat/messages/{senderId}/read": {
+      "put": {
+        "tags": [
+          "Chat"
+        ],
+        "parameters": [
+          {
+            "name": "senderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Chat/messages/{messageId}": {
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Companies/me": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Companies"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompanyRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompanyRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompanyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Companies/{companyId}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/summary": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Freelancers/me": {
+      "get": {
+        "tags": [
+          "Freelancers"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Freelancers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFreelancerRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFreelancerRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFreelancerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Freelancers/{userId}": {
+      "get": {
+        "tags": [
+          "Freelancers"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Freelancers/portfolio": {
+      "post": {
+        "tags": [
+          "Freelancers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Freelancers"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Freelancers/portfolio/{portfolioId}": {
+      "put": {
+        "tags": [
+          "Freelancers"
+        ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPortfolioItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Freelancers"
+        ],
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs": {
+      "get": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Gigs"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/{id}": {
+      "get": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGigRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/my-gigs": {
+      "get": {
+        "tags": [
+          "Gigs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/{id}/proposals": {
+      "post": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitProposalRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitProposalRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitProposalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/proposals/my": {
+      "get": {
+        "tags": [
+          "Gigs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/proposals/{proposalId}/status": {
+      "put": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Gigs/proposals/{proposalId}": {
+      "delete": {
+        "tags": [
+          "Gigs"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "Keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "JobType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ExperienceLevel",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SalaryMin",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "SalaryMax",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/{id}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/my-postings": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/{id}/status": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "boolean"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "boolean"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/{id}/apply": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyToJobRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyToJobRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyToJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/applications/my": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/{id}/applications": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/applications/{applicationId}/status": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/applications/{applicationId}": {
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/{id}/save": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Jobs/saved": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/me": {
+      "get": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobSeekerRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobSeekerRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobSeekerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/{userId}": {
+      "get": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/experience": {
+      "post": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/experience/{id}": {
+      "put": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddWorkExperienceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/education": {
+      "post": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/education/{id}": {
+      "put": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEducationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/JobSeeker/skills": {
+      "put": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSkillsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSkillsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSkillsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "JobSeeker"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Notifications/unread": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Notifications/{id}/read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Notifications/read-all": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Notifications/{id}": {
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Payments/balance": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Payments/transactions": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Payments/deposit": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Payments/withdraw": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Profile/me": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Profile/{userId}": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddEducationRequest": {
+        "type": "object",
+        "properties": {
+          "degree": {
+            "type": "string",
+            "nullable": true
+          },
+          "institution": {
+            "type": "string",
+            "nullable": true
+          },
+          "fieldOfStudy": {
+            "type": "string",
+            "nullable": true
+          },
+          "startYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "endYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isCurrent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AddPortfolioItemRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "completionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AddWorkExperienceRequest": {
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "isCurrent": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplyToJobRequest": {
+        "type": "object",
+        "properties": {
+          "coverLetter": {
+            "type": "string",
+            "nullable": true
+          },
+          "cvUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateGigRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "budget": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "expectedDurationDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateJobRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobType": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceLevel": {
+            "type": "string",
+            "nullable": true
+          },
+          "salaryMin": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepositRequest": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogoutRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RefreshRequest": {
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterStep1Request": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "minLength": 8,
+            "type": "string"
+          },
+          "firstName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "lastName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "profilePictureUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterStep2Request": {
+        "required": [
+          "userType"
+        ],
+        "type": "object",
+        "properties": {
+          "userType": {
+            "minLength": 1,
+            "pattern": "^(Freelancer|Employer|JobSeeker|Client)$",
+            "type": "string"
+          },
+          "professionalTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hourlyRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "portfolioUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentVerificationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactPerson": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "cvUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredJobType": {
+            "type": "string",
+            "nullable": true
+          },
+          "legalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "identityDocumentUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyIndustry": {
+            "type": "string",
+            "nullable": true
+          },
+          "companySize": {
+            "type": "string",
+            "nullable": true
+          },
+          "foundedYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "companyCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyWebsite": {
+            "type": "string",
+            "nullable": true
+          },
+          "commercialRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "commercialRegistrationFileUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyLogoUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "properties": {
+          "receiverId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubmitProposalRequest": {
+        "type": "object",
+        "properties": {
+          "bidAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "estimatedDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "coverLetter": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCompanyRequest": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "companySize": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "foundedYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateFreelancerRequest": {
+        "type": "object",
+        "properties": {
+          "professionalTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hourlyRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "portfolioUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateJobSeekerRequest": {
+        "type": "object",
+        "properties": {
+          "professionalTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "cvUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredJobType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "profilePictureUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateSkillsRequest": {
+        "type": "object",
+        "properties": {
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WithdrawRequest": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountDetails": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "أدخل التوكن بالصيغة التالية: Bearer {token}",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

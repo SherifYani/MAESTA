@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JobMagnet.Core\JobMagnet.Core.csproj" />
+    <ProjectReference Include="..\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
