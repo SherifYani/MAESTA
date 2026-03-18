@@ -3,14 +3,9 @@
  * @description Staff Management Interface for Admin Dashboard
  * @author Sherif Talaat
  * @date 2026-02-06
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-08
- * @changes:
- * - Migrated to controlled AdminDataTable pattern
- * - Added currentPage, sortConfig state
- * - Implemented filter → sort → paginate pipeline
- * - Added handleSearch, handleSort, handlePageChange handlers
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -19,6 +14,7 @@ import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { staffData as initialStaffData } from '../../config/adminMockData';
 import styles from './StaffManagement.module.css';
 
@@ -263,19 +259,18 @@ const StaffManagement = () => {
                 searchValue={searchTerm}
                 onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={roleFilter}
-                        onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
-                        aria-label="Filter by role"
-                    >
-                        <option value="all">All Roles</option>
-                        <option value="Super Admin">Super Admin</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Moderator">Moderator</option>
-                        <option value="Analyst">Analyst</option>
-                        <option value="Support">Support</option>
-                    </select>
+                        onChange={(val) => { setRoleFilter(val); setCurrentPage(1); }}
+                        options={[
+                            { value: "all", label: "All Roles" },
+                            { value: "Super Admin", label: "Super Admin" },
+                            { value: "Admin", label: "Admin" },
+                            { value: "Moderator", label: "Moderator" },
+                            { value: "Analyst", label: "Analyst" },
+                            { value: "Support", label: "Support" },
+                        ]}
+                    />
                 }
             />
 

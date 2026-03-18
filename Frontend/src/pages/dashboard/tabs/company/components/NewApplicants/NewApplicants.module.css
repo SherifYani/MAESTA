@@ -2,11 +2,15 @@
  * @file NewApplicants.module.css
  * @description CSS Module for NewApplicants component
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2025-01-22
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-22
+ * @last-modified-date 2026-03-16
+ *
+ * @changes:
+ * - Fixed checkbox color to the theme color
+ * - Edit the Styles to apply New select component
  */
 
 /* ==========================================================================
@@ -426,8 +430,7 @@
 }
 
 .gridCardCheckbox input[type="checkbox"]:checked {
-    background: var(--color-accent-pink);
-    border-color: var(--color-accent-pink);
+    accent-color: var(--color-accent-pink);
 }
 
 .avatar {
@@ -706,8 +709,7 @@
 
 .rowCheckbox:checked,
 .headerCheckbox:checked {
-    background: var(--color-accent-pink);
-    border-color: var(--color-accent-pink);
+    accent-color: var(--color-accent-pink);
 }
 
 .applicantCell {

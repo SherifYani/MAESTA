@@ -5,7 +5,7 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-16
  */
 
 
@@ -18,6 +18,7 @@ import PlanCard from './PlanCard';
 import BillingToggle from './BillingToggle';
 import { Shield, RefreshCw, CheckCircle, Zap } from 'lucide-react';
 import { calculateYearlySavings } from '../../mocks/subscriptionData';
+import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './SubscriptionPlans.module.css';
 
 /**
@@ -181,19 +182,13 @@ const SubscriptionPlans = () => {
                 <label htmlFor="plan-sort" className={styles.sortLabel}>
                     Sort by:
                 </label>
-                <select
-                    id="plan-sort"
-                    className={styles.sortSelect}
+                <GeneralSelect
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(selectedValue) => setSortBy(selectedValue)}
+                    options={sortOptions.map(option => ({ value: option.id, label: option.label }))}
+                    className={styles.sortSelect}
                     aria-label="Sort plans"
-                >
-                    {sortOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
+                />
             </div>
         );
     };

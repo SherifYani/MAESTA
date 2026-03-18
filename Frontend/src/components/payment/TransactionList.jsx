@@ -2,10 +2,11 @@
  * @file TransactionList.jsx
  * @description Transaction history list component with filtering and export capabilities
  * @author Sherif Talaat
+ * @version 1.0.1
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-16
  */
 
 
@@ -14,6 +15,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Download, FileText, Filter, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useSubscription } from '../../context/SubscriptionContext';
+import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './TransactionList.module.css';
 
 /**
@@ -235,18 +237,13 @@ const TransactionList = () => {
         return (
             <div className={styles.dateRangeFilter}>
                 <Calendar size={16} className={styles.dateRangeIcon} />
-                <select
-                    className={styles.dateRangeSelect}
+                <GeneralSelect
                     value={dateRange}
-                    onChange={(e) => setDateRange(e.target.value)}
+                    onChange={(selectedValue) => setDateRange(selectedValue)}
+                    options={dateRanges.map(range => ({ value: range.id, label: range.label }))}
+                    className={styles.dateRangeSelect}
                     aria-label="Select date range"
-                >
-                    {dateRanges.map((range) => (
-                        <option key={range.id} value={range.id}>
-                            {range.label}
-                        </option>
-                    ))}
-                </select>
+                />
             </div>
         );
     };

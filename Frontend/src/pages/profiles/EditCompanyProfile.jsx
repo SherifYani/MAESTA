@@ -17,6 +17,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
+import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
 
@@ -321,20 +322,20 @@ export default function EditCompanyProfile() {
                 <label htmlFor="companySize" className="edit__label">
                   Company Size
                 </label>
-                <select
-                  id="companySize"
-                  name="companySize"
-                  value={formData.companySize}
-                  onChange={handleInputChange}
+                <GeneralSelect
+                  value={formData.companySize || "1-10 employees"}
+                  onChange={(selectedValue) => handleInputChange({ target: { name: "companySize", value: selectedValue } })}
+                  options={[
+                    { value: "1-10 employees", label: "1-10 employees" },
+                    { value: "11-50 employees", label: "11-50 employees" },
+                    { value: "51-200 employees", label: "51-200 employees" },
+                    { value: "201-500 employees", label: "201-500 employees" },
+                    { value: "501-1000 employees", label: "501-1000 employees" },
+                    { value: "1000+ employees", label: "1000+ employees" }
+                  ]}
                   className="edit__select"
-                  aria-label="Company size">
-                  <option value="1-10 employees">1-10 employees</option>
-                  <option value="11-50 employees">11-50 employees</option>
-                  <option value="51-200 employees">51-200 employees</option>
-                  <option value="201-500 employees">201-500 employees</option>
-                  <option value="501-1000 employees">501-1000 employees</option>
-                  <option value="1000+ employees">1000+ employees</option>
-                </select>
+                  aria-label="Company size"
+                />
               </div>
 
               <div className="edit__field">
@@ -446,18 +447,19 @@ export default function EditCompanyProfile() {
                         className="edit__label">
                         Role
                       </label>
-                      <select
-                        id={`member-role-${index}`}
-                        value={member.role}
-                        onChange={(event) =>
-                          handleMemberChange(index, "role", event.target.value)
+                      <GeneralSelect
+                        value={member.role || "Member"}
+                        onChange={(selectedValue) =>
+                          handleMemberChange(index, "role", selectedValue)
                         }
+                        options={[
+                          { value: "Admin", label: "Admin" },
+                          { value: "HR_Manager", label: "HR Manager" },
+                          { value: "Member", label: "Member" }
+                        ]}
                         className="edit__select"
-                        aria-label={`Team member ${index + 1} role`}>
-                        <option value="Admin">Admin</option>
-                        <option value="HR_Manager">HR Manager</option>
-                        <option value="Member">Member</option>
-                      </select>
+                        aria-label={`Team member ${index + 1} role`}
+                      />
                     </div>
 
                     <div className="edit__field">
@@ -579,19 +581,20 @@ export default function EditCompanyProfile() {
                         className="edit__label">
                         Job Type
                       </label>
-                      <select
-                        id={`job-type-${index}`}
-                        value={job.jobType}
-                        onChange={(event) =>
-                          handleJobChange(index, "jobType", event.target.value)
+                      <GeneralSelect
+                        value={job.jobType || "Full-time"}
+                        onChange={(selectedValue) =>
+                          handleJobChange(index, "jobType", selectedValue)
                         }
+                        options={[
+                          { value: "Full-time", label: "Full-time" },
+                          { value: "Part-time", label: "Part-time" },
+                          { value: "Contract", label: "Contract" },
+                          { value: "Internship", label: "Internship" }
+                        ]}
                         className="edit__select"
-                        aria-label={`Job ${index + 1} type`}>
-                        <option value="Full-time">Full-time</option>
-                        <option value="Part-time">Part-time</option>
-                        <option value="Contract">Contract</option>
-                        <option value="Internship">Internship</option>
-                      </select>
+                        aria-label={`Job ${index + 1} type`}
+                      />
                     </div>
 
                     <div className="edit__field">
@@ -600,17 +603,18 @@ export default function EditCompanyProfile() {
                         className="edit__label">
                         Status
                       </label>
-                      <select
-                        id={`job-status-${index}`}
-                        value={job.status}
-                        onChange={(event) =>
-                          handleJobChange(index, "status", event.target.value)
+                      <GeneralSelect
+                        value={job.status || "Open"}
+                        onChange={(selectedValue) =>
+                          handleJobChange(index, "status", selectedValue)
                         }
+                        options={[
+                          { value: "Open", label: "Open" },
+                          { value: "Closed", label: "Closed" }
+                        ]}
                         className="edit__select"
-                        aria-label={`Job ${index + 1} status`}>
-                        <option value="Open">Open</option>
-                        <option value="Closed">Closed</option>
-                      </select>
+                        aria-label={`Job ${index + 1} status`}
+                      />
                     </div>
                   </div>
                 </article>

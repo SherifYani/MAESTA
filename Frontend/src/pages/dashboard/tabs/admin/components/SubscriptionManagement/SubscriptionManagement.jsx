@@ -3,19 +3,13 @@
  * @description Subscription Management Interface for Admin Dashboard
  * @author Sherif Talaat
  * @date 2026-02-06
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-08
- * @changes:
- * - Migrated to controlled AdminDataTable pattern
- * - Added currentPage, sortConfig state
- * - Implemented filter → sort → paginate pipeline
- * - Added handleSearch, handleSort, handlePageChange handlers
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
 import {
-    CreditCard,
     Download,
     TrendingUp,
     Users,
@@ -28,6 +22,7 @@ import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { subscriptionsData } from '../../config/adminMockData';
 import styles from './SubscriptionManagement.module.css';
 
@@ -301,29 +296,27 @@ const SubscriptionManagement = () => {
                 onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
-                        <select
-                            className={styles.filterSelect}
+                        <GeneralSelect
                             value={planFilter}
-                            onChange={(e) => { setPlanFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by plan"
-                        >
-                            <option value="all">All Plans</option>
-                            <option value="basic">Basic</option>
-                            <option value="growth">Growth</option>
-                            <option value="professional">Professional</option>
-                            <option value="enterprise">Enterprise</option>
-                        </select>
-                        <select
-                            className={styles.filterSelect}
+                            onChange={(val) => { setPlanFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Plans" },
+                                { value: "basic", label: "Basic" },
+                                { value: "growth", label: "Growth" },
+                                { value: "professional", label: "Professional" },
+                                { value: "enterprise", label: "Enterprise" },
+                            ]}
+                        />
+                        <GeneralSelect
                             value={statusFilter}
-                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by status"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="pending">Pending</option>
-                        </select>
+                            onChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Status" },
+                                { value: "active", label: "Active" },
+                                { value: "cancelled", label: "Cancelled" },
+                                { value: "pending", label: "Pending" },
+                            ]}
+                        />
                     </>
                 }
             />

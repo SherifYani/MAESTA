@@ -4,9 +4,13 @@
  * @author Sherif Talaat
  * @version 2.0.0
  * @date 10-10-2025
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
  */
 
 import PropTypes from "prop-types";
+import GeneralSelect from "../common/GeneralSelect";
 import "../../styles/components/form-components.css";
 
 /**
@@ -39,21 +43,18 @@ function FormSelect({
     return (
         <div className={containerClass}>
             <div className="form-select__wrapper">
-                <i className={`${icon} form-select__icon left`} />
-                <i className={`fa-solid fa-angle-down form-select__icon right`} />
-                <select
+                <GeneralSelect
                     name={name}
                     value={value}
-                    onChange={onChange}
-                    required={required}
+                    onChange={(selectedValue) => {
+                        // Synthesize a DOM-event-like object so handlers that
+                        // use e.target.name / e.target.value still work.
+                        onChange({ target: { name, value: selectedValue } });
+                    }}
+                    options={options}
+                    icon={icon}
                     className="form-select__field"
-                >
-                    {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
+                />
             </div>
         </div>
     );

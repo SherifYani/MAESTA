@@ -6,15 +6,9 @@
  *   controlled props to the table.
  * @author Sherif Talaat
  * @date 2026-02-06
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-08
- * @changes:
- * - Added currentPage and sortConfig state
- * - Replaced simple filteredUsers useMemo with full filter→sort→paginate pipeline
- * - Added handleSearch, handleSort, handlePageChange handlers
- * - Passes all controlled props to AdminDataTable
- * - AdminToolbar onSearchChange now calls handleSearch (string) not setSearchTerm (event)
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -26,6 +20,7 @@ import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { usersData } from '../../config/adminMockData';
 import styles from './UserManagement.module.css';
 
@@ -353,32 +348,30 @@ const UserManagement = () => {
                 onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
-                        <select
-                            className={styles.filterSelect}
+                        <GeneralSelect
                             value={roleFilter}
-                            onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by role"
-                        >
-                            <option value="all">All Roles</option>
-                            <option value="job_seeker">Job Seeker</option>
-                            <option value="company">Company</option>
-                            <option value="freelancer">Freelancer</option>
-                            <option value="client">Client</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                            onChange={(val) => { setRoleFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Roles" },
+                                { value: "job_seeker", label: "Job Seeker" },
+                                { value: "company", label: "Company" },
+                                { value: "freelancer", label: "Freelancer" },
+                                { value: "client", label: "Client" },
+                                { value: "admin", label: "Admin" },
+                            ]}
+                        />
 
-                        <select
-                            className={styles.filterSelect}
+                        <GeneralSelect
                             value={statusFilter}
-                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by status"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="banned">Banned</option>
-                            <option value="pending">Pending</option>
-                        </select>
+                            onChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Status" },
+                                { value: "active", label: "Active" },
+                                { value: "inactive", label: "Inactive" },
+                                { value: "banned", label: "Banned" },
+                                { value: "pending", label: "Pending" },
+                            ]}
+                        />
                     </>
                 }
             />

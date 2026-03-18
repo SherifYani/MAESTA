@@ -5,7 +5,7 @@
  * @date 2026-02-05
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-05
+ * @last-modified-date 2026-03-16
  */
 
 
@@ -16,6 +16,7 @@ import { ArrowLeft, Rocket, Bot, Loader2, Sparkles, RefreshCw, Check } from "luc
 import aiAssistantService from "../../services/aiAssistantService";
 import jobService from "../../services/jobService";
 import { PageContainer } from "../../components/layout";
+import GeneralSelect from "../../components/common/GeneralSelect";
 import styles from "./AIPostingPage.module.css";
 
 /**
@@ -257,62 +258,59 @@ Basic Requirements:
                                     <label htmlFor="industry" className={styles.formLabel}>
                                         Industry *
                                     </label>
-                                    <select
-                                        id="industry"
-                                        className={styles.formSelect}
+                                    <GeneralSelect
                                         value={simpleInput.industry}
-                                        onChange={(e) => handleInputChange("industry", e.target.value)}
-                                        required
-                                        aria-required="true"
-                                    >
-                                        <option value="">Select Industry</option>
-                                        <option value="technology">Information Technology</option>
-                                        <option value="marketing">Marketing</option>
-                                        <option value="finance">Finance</option>
-                                        <option value="healthcare">Healthcare</option>
-                                        <option value="education">Education</option>
-                                        <option value="other">Other</option>
-                                    </select>
+                                        onChange={(selectedValue) => handleInputChange("industry", selectedValue)}
+                                        options={[
+                                            { value: "", label: "Select Industry" },
+                                            { value: "technology", label: "Information Technology" },
+                                            { value: "marketing", label: "Marketing" },
+                                            { value: "finance", label: "Finance" },
+                                            { value: "healthcare", label: "Healthcare" },
+                                            { value: "education", label: "Education" },
+                                            { value: "other", label: "Other" }
+                                        ]}
+                                        className={styles.formSelect}
+                                        aria-label="Industry"
+                                    />
                                 </div>
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="experienceLevel" className={styles.formLabel}>
                                         Experience Level *
                                     </label>
-                                    <select
-                                        id="experienceLevel"
-                                        className={styles.formSelect}
+                                    <GeneralSelect
                                         value={simpleInput.experienceLevel}
-                                        onChange={(e) =>
-                                            handleInputChange("experienceLevel", e.target.value)
+                                        onChange={(selectedValue) =>
+                                            handleInputChange("experienceLevel", selectedValue)
                                         }
-                                        required
-                                        aria-required="true"
-                                    >
-                                        <option value="">Select Level</option>
-                                        <option value="entry">Beginner (0-2 years)</option>
-                                        <option value="mid">Intermediate (3-5 years)</option>
-                                        <option value="senior">Expert (5+ years)</option>
-                                    </select>
+                                        options={[
+                                            { value: "", label: "Select Level" },
+                                            { value: "entry", label: "Beginner (0-2 years)" },
+                                            { value: "mid", label: "Intermediate (3-5 years)" },
+                                            { value: "senior", label: "Expert (5+ years)" }
+                                        ]}
+                                        className={styles.formSelect}
+                                        aria-label="Experience Level"
+                                    />
                                 </div>
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="workType" className={styles.formLabel}>
                                         Work Type *
                                     </label>
-                                    <select
-                                        id="workType"
-                                        className={styles.formSelect}
+                                    <GeneralSelect
                                         value={simpleInput.workType}
-                                        onChange={(e) => handleInputChange("workType", e.target.value)}
-                                        required
-                                        aria-required="true"
-                                    >
-                                        <option value="">Select Type</option>
-                                        <option value="onsite">From Office</option>
-                                        <option value="remote">Remote</option>
-                                        <option value="hybrid">Hybrid</option>
-                                    </select>
+                                        onChange={(selectedValue) => handleInputChange("workType", selectedValue)}
+                                        options={[
+                                            { value: "", label: "Select Type" },
+                                            { value: "onsite", label: "From Office" },
+                                            { value: "remote", label: "Remote" },
+                                            { value: "hybrid", label: "Hybrid" }
+                                        ]}
+                                        className={styles.formSelect}
+                                        aria-label="Work Type"
+                                    />
                                 </div>
 
                                 <div className={`${styles.formGroup} ${styles.formGroupFull}`}>

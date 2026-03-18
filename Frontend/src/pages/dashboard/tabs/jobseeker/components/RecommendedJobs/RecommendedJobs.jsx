@@ -5,12 +5,9 @@
  * @author Sherif Talaat
  * @version 1.0.1
  * @date 2026-1-19
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-1-20
- *
- * @changes:-
- * - add icon to empty state instead of text
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo } from "react";
@@ -29,6 +26,7 @@ import {
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import styles from "./RecommendedJobs.module.css";
 
 /**
@@ -42,8 +40,8 @@ import styles from "./RecommendedJobs.module.css";
  */
 const RecommendedJobs = ({
   jobs = [],
-  onJobSave = () => {},
-  onJobApply = () => {},
+  onJobSave = () => { },
+  onJobApply = () => { },
 }) => {
   const [filters, setFilters] = useState({
     jobType: "all",
@@ -241,34 +239,34 @@ const RecommendedJobs = ({
 
         <div className={styles.headerActions}>
           <button
-            className={`${styles.filterToggle} ${
-              showFilters ? styles.active : ""
-            }`}
+            className={`${styles.filterToggle} ${showFilters ? styles.active : ""
+              }`}
             onClick={() => setShowFilters(!showFilters)}>
             <Filter size={16} />
             Filter{" "}
             {Object.values(filters).filter((f) => f !== "all" && f !== false)
               .length > 0 && (
-              <span className={styles.filterCount}>
-                {
-                  Object.values(filters).filter(
-                    (f) => f !== "all" && f !== false,
-                  ).length
-                }
-              </span>
-            )}
+                <span className={styles.filterCount}>
+                  {
+                    Object.values(filters).filter(
+                      (f) => f !== "all" && f !== false,
+                    ).length
+                  }
+                </span>
+              )}
           </button>
 
           <div className={styles.sortDropdown}>
-            <select
+            <GeneralSelect
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className={styles.sortSelect}>
-              <option value="match">Sort by: Best Match</option>
-              <option value="date">Sort by: Newest</option>
-              <option value="salary">Sort by: Salary</option>
-            </select>
-            <ChevronDown size={16} className={styles.sortIcon} />
+              onChange={setSortBy}
+              label="Sort By"
+              options={[
+                { value: "match", label: "Sort by: Best Match" },
+                { value: "date", label: "Sort by: Newest" },
+                { value: "salary", label: "Sort by: Salary" },
+              ]}
+            />
           </div>
         </div>
       </div>
@@ -282,9 +280,8 @@ const RecommendedJobs = ({
               {uniqueJobTypes.map((type) => (
                 <button
                   key={type}
-                  className={`${styles.filterOption} ${
-                    filters.jobType === type ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${filters.jobType === type ? styles.active : ""
+                    }`}
                   onClick={() =>
                     setFilters((prev) => ({ ...prev, jobType: type }))
                   }>
@@ -300,9 +297,8 @@ const RecommendedJobs = ({
               {uniqueLocations.map((location) => (
                 <button
                   key={location}
-                  className={`${styles.filterOption} ${
-                    filters.location === location ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${filters.location === location ? styles.active : ""
+                    }`}
                   onClick={() => setFilters((prev) => ({ ...prev, location }))}>
                   {location === "all" ? "All Locations" : location}
                 </button>
@@ -316,9 +312,8 @@ const RecommendedJobs = ({
               {["all", "90", "70", "50"].map((score) => (
                 <button
                   key={score}
-                  className={`${styles.filterOption} ${
-                    filters.matchScore === score ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${filters.matchScore === score ? styles.active : ""
+                    }`}
                   onClick={() =>
                     setFilters((prev) => ({ ...prev, matchScore: score }))
                   }>
@@ -358,9 +353,8 @@ const RecommendedJobs = ({
         {filteredJobs.map((job) => (
           <article
             key={job.id}
-            className={`${styles.jobCard} ${
-              expandedJobId === job.id ? styles.expanded : ""
-            }`}
+            className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ""
+              }`}
             onClick={() => toggleJobDetails(job.id)}
             role="button"
             tabIndex={0}
@@ -392,7 +386,7 @@ const RecommendedJobs = ({
                   }>
                   {job.isSaved ?
                     <BookmarkCheck size={20} />
-                  : <Bookmark size={20} />}
+                    : <Bookmark size={20} />}
                 </button>
                 {renderMatchBadge(job.matchScore)}
               </div>

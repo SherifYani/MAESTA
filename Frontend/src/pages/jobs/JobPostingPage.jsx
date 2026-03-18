@@ -3,9 +3,9 @@
  * @description Job posting page for companies to create new job listings
  * @author Sherif Talaat
  * @date 2026-02-05
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-05
+ * @last-modified-date 2026-03-16
  */
 
 
@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
 import { PageContainer } from '../../components/layout';
+import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './JobPostingPage.module.css';
 
 /**
@@ -269,36 +270,34 @@ const JobPostingPage = () => {
 
                             <div className={styles.formGroup}>
                                 <label htmlFor="jobType">Job Type *</label>
-                                <select
-                                    id="jobType"
-                                    name="jobType"
-                                    value={formData.jobType}
-                                    onChange={handleInputChange}
+                                <GeneralSelect
+                                    value={formData.jobType || "full-time"}
+                                    onChange={(selectedValue) => handleInputChange({ target: { name: "jobType", value: selectedValue } })}
+                                    options={[
+                                        { value: "full-time", label: "Full Time" },
+                                        { value: "part-time", label: "Part Time" },
+                                        { value: "contract", label: "Contract" },
+                                        { value: "internship", label: "Internship" }
+                                    ]}
                                     aria-label="Job type"
-                                >
-                                    <option value="full-time">Full Time</option>
-                                    <option value="part-time">Part Time</option>
-                                    <option value="contract">Contract</option>
-                                    <option value="internship">Internship</option>
-                                </select>
+                                />
                             </div>
                         </div>
 
                         <div className={styles.formRow}>
                             <div className={styles.formGroup}>
                                 <label htmlFor="experienceLevel">Experience Level</label>
-                                <select
-                                    id="experienceLevel"
-                                    name="experienceLevel"
-                                    value={formData.experienceLevel}
-                                    onChange={handleInputChange}
+                                <GeneralSelect
+                                    value={formData.experienceLevel || "entry"}
+                                    onChange={(selectedValue) => handleInputChange({ target: { name: "experienceLevel", value: selectedValue } })}
+                                    options={[
+                                        { value: "entry", label: "Entry Level" },
+                                        { value: "mid", label: "Mid Level" },
+                                        { value: "senior", label: "Senior Level" },
+                                        { value: "executive", label: "Executive" }
+                                    ]}
                                     aria-label="Experience level"
-                                >
-                                    <option value="entry">Entry Level</option>
-                                    <option value="mid">Mid Level</option>
-                                    <option value="senior">Senior Level</option>
-                                    <option value="executive">Executive</option>
-                                </select>
+                                />
                             </div>
 
                             <div className={styles.formGroup}>
@@ -330,18 +329,17 @@ const JobPostingPage = () => {
                         <div className={styles.salarySection}>
                             <label htmlFor="salaryCurrency">Salary Range</label>
                             <div className={styles.salaryInputs}>
-                                <select
-                                    id="salaryCurrency"
-                                    name="salaryCurrency"
-                                    value={formData.salaryCurrency}
-                                    onChange={handleInputChange}
+                                <GeneralSelect
+                                    value={formData.salaryCurrency || "USD"}
+                                    onChange={(selectedValue) => handleInputChange({ target: { name: "salaryCurrency", value: selectedValue } })}
+                                    options={[
+                                        { value: "USD", label: "USD" },
+                                        { value: "EUR", label: "EUR" },
+                                        { value: "GBP", label: "GBP" },
+                                        { value: "EGP", label: "EGP" }
+                                    ]}
                                     aria-label="Salary currency"
-                                >
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="GBP">GBP</option>
-                                    <option value="EGP">EGP</option>
-                                </select>
+                                />
                                 <input
                                     type="number"
                                     id="salaryMin"

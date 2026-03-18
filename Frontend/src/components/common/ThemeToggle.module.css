@@ -6,7 +6,7 @@
  * @date 18-1-2026
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 18-1-2026
+ * @last-modified-date 16-3-2026
  */
 
 /* ==========================================================================
@@ -31,44 +31,8 @@
   box-shadow: 0 2px 8px var(--color-shadow-pink);
 }
 
-/* Gradient background overlay */
-.button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    var(--color-radial-pink-1) 0%,
-    var(--color-radial-pink-2) 50%,
-    var(--color-radial-pink-3) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 0;
-}
-
 .button:hover:not(:disabled)::before {
   opacity: 1;
-}
-
-/* Ripple effect on hover */
-.button::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(
-    circle,
-    var(--color-accent-pink),
-    transparent 70%
-  );
-  opacity: 0;
-  border-radius: var(--radius-full);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
-  z-index: 0;
 }
 
 .button:hover:not(:disabled)::after {
@@ -115,10 +79,12 @@
 }
 
 @keyframes pulseGlow {
+
   0%,
   100% {
     box-shadow: 0 2px 8px var(--color-shadow-pink);
   }
+
   50% {
     box-shadow: 0 4px 20px var(--color-shadow-pink),
       0 0 30px var(--color-radial-pink-2);
@@ -134,15 +100,19 @@
   0% {
     transform: scale(1) rotate(0deg);
   }
+
   25% {
     transform: scale(1.2) rotate(-15deg);
   }
+
   50% {
     transform: scale(0.9) rotate(180deg);
   }
+
   75% {
     transform: scale(1.1) rotate(345deg);
   }
+
   100% {
     transform: scale(1) rotate(360deg);
   }
@@ -168,11 +138,9 @@
 
 /* Sun icon for dark mode - warm golden glow */
 .button[data-theme="dark"] {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-muted) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
 }
 
 .button[data-theme="dark"] .icon {
@@ -189,11 +157,9 @@
 
 /* Moon icon for light mode - cool silver tone */
 .button[data-theme="light"] {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-background) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
 }
 
 .button[data-theme="light"] .icon {
@@ -215,6 +181,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -231,11 +198,13 @@
     height: 0;
     opacity: 0.5;
   }
+
   50% {
     width: 80px;
     height: 80px;
     opacity: 0.3;
   }
+
   100% {
     width: 100px;
     height: 100px;
@@ -255,11 +224,9 @@
   left: 50%;
   transform: translateX(-50%) translateY(8px);
   padding: var(--space-2) var(--space-4);
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-muted) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
   color: var(--color-foreground);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -304,10 +271,12 @@
 
 /* Floating animation for idle state */
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-4px);
   }
@@ -322,32 +291,26 @@
    ========================================================================== */
 
 :global(.dark) .button {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-background) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
   border-color: var(--color-border);
   color: var(--color-foreground);
   box-shadow: 0 2px 12px var(--color-shadow-pink);
 }
 
 :global(.dark) .button:hover:not(:disabled) {
-  background: linear-gradient(
-    135deg,
-    var(--color-muted) 0%,
-    var(--color-card) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-muted) 0%,
+      var(--color-card) 100%);
   border-color: var(--color-accent-pink);
   box-shadow: 0 8px 32px var(--color-shadow-pink);
 }
 
 :global(.dark) .button[data-theme="light"] {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-background) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
 }
 
 :global(.dark) .button[data-theme="light"] .icon {
@@ -357,11 +320,9 @@
 }
 
 :global(.dark) .button[data-theme="dark"] {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-muted) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
 }
 
 :global(.dark) .button[data-theme="dark"] .icon {
@@ -371,11 +332,9 @@
 }
 
 :global(.dark) .button[aria-label]::before {
-  background: linear-gradient(
-    135deg,
-    var(--color-card) 0%,
-    var(--color-muted) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
   border-color: var(--color-accent-pink);
   box-shadow: 0 6px 24px var(--color-shadow-pink);
 }
@@ -385,6 +344,7 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+
   .button,
   .icon,
   .button::before,
@@ -520,9 +480,11 @@
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(0.9);
   }
+
   100% {
     transform: scale(0.95);
   }
@@ -536,11 +498,13 @@
 }
 
 @keyframes glowPulse {
+
   0%,
   100% {
     box-shadow: 0 0 0 3px var(--color-background),
       0 0 0 6px var(--color-accent-pink), 0 8px 24px var(--color-shadow-pink);
   }
+
   50% {
     box-shadow: 0 0 0 3px var(--color-background),
       0 0 0 6px var(--color-vivid-pink), 0 12px 32px var(--color-shadow-pink);
@@ -554,4 +518,188 @@
     color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Dropdown Styles
+   ========================================================================== */
+
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-4));
+  right: 0;
+  width: 320px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5);
+  box-shadow: 0 10px 40px var(--color-shadow-pink);
+  z-index: 1000;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-5) 0;
+}
+
+/* Mode Container */
+.modeContainer {
+  display: flex;
+  background: var(--color-muted);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  gap: 2px;
+}
+
+.modeButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.modeButton:hover {
+  color: var(--color-foreground);
+  background: var(--color-card);
+}
+
+.modeButton.active {
+  background: var(--color-card);
+  color: var(--color-accent-pink);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.modeIcon {
+  stroke-width: 2.5;
+}
+
+/* Theme Grid */
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.themeOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.themeOption:hover {
+  background: var(--color-muted);
+}
+
+.themeOption.activeTheme {
+  background: var(--color-muted);
+  border-color: var(--color-border);
+  box-shadow: 0 2px 10px var(--color-shadow-pink);
+}
+
+.themePreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.themeBubble {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.themeOption:hover .themeBubble {
+  transform: scale(1.1);
+}
+
+.themeName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+}
+
+.themeCheckIcon,
+.checkIcon {
+  color: var(--color-vivid-pink);
+}
+
+/* Dark mode overwrites for dropdown background to increase contrast */
+:global(.dark) .dropdown {
+  background: linear-gradient(135deg, var(--color-card), var(--color-background));
+  border-color: var(--color-border);
+}
+
+@media (max-width: 40rem) {
+  .dropdown {
+    width: 280px;
+    right: -10px;
+    padding: var(--space-4);
+  }
+
+  .modeButton span {
+    display: none;
+    /* Icon only on mobile */
+  }
+
+  .themeOption {
+    padding: var(--space-2);
+  }
 }

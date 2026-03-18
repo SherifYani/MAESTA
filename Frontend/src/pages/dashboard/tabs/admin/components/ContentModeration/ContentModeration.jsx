@@ -5,12 +5,7 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-08
- * @changes:
- * - Migrated to controlled AdminDataTable pattern
- * - Added currentPage, sortConfig state
- * - Implemented filter → sort → paginate pipeline
- * - Added handleSearch, handleSort, handlePageChange handlers
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -18,6 +13,7 @@ import { AlertTriangle, CheckCircle, XCircle, Shield } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { reportsData } from '../../config/adminMockData';
 import styles from './ContentModeration.module.css';
 
@@ -200,19 +196,18 @@ const ContentModeration = () => {
                 onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
-                        <select
-                            className={styles.filterSelect}
+                        <GeneralSelect
                             value={statusFilter}
-                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by status"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="investigating">Investigating</option>
-                            <option value="resolved">Resolved</option>
-                            <option value="dismissed">Dismissed</option>
-                            <option value="removed">Removed</option>
-                        </select>
+                            onChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Status" },
+                                { value: "pending", label: "Pending" },
+                                { value: "investigating", label: "Investigating" },
+                                { value: "resolved", label: "Resolved" },
+                                { value: "dismissed", label: "Dismissed" },
+                                { value: "removed", label: "Removed" },
+                            ]}
+                        />
                     </>
                 }
                 actions={

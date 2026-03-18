@@ -2,11 +2,11 @@
  * @file DashboardHeader.module.css
  * @description Modern header styles with glassmorphism and interactive elements
  * @author Sherif Talaat
- * @version 3.0.0
+ * @version 3.1.0
  * @date 2025-12-19
  * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-19
+ * @last-modified-date 2026-03-16
  */
 
 /* ==========================================================================
@@ -23,19 +23,13 @@
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 72px;
   gap: var(--space-4);
 
   /* Subtle shadow for depth */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* Enhance glass effect in dark mode */
-:global(.dark) .header {
-  background: rgba(24, 24, 27, 0.8);
-  backdrop-filter: blur(20px) saturate(180%);
 }
 
 /* ==========================================================================
@@ -95,22 +89,18 @@
   margin: 0;
   color: var(--color-foreground);
   white-space: nowrap;
-  background: linear-gradient(
-    135deg,
-    var(--color-foreground) 0%,
-    var(--color-muted-foreground) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-foreground) 0%,
+      var(--color-muted-foreground) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .roleBadge {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   color: var(--color-primary-white);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
@@ -123,10 +113,12 @@
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     box-shadow: 0 2px 8px var(--color-shadow-pink);
   }
+
   50% {
     box-shadow: 0 4px 12px var(--color-shadow-pink);
   }
@@ -265,10 +257,12 @@
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.1);
   }
@@ -294,6 +288,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -431,11 +426,9 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -510,11 +503,9 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -573,6 +564,7 @@
   background: var(--color-border);
   margin: var(--space-2) 0;
 }
+
 /* Notification item states */
 .notificationItem {
   padding: var(--space-3) var(--space-4);
@@ -735,6 +727,7 @@
     width: auto;
   }
 }
+
 /* ==========================================================================
    Responsive Design - Tablet (60.5rem / 968px)
    ========================================================================== */

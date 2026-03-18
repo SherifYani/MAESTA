@@ -2,15 +2,18 @@
  * @file AssistantSettings.jsx
  * @description AI Assistant settings panel component
  * @author Sherif Talaat
+ * @verison 1.1.0
  * @date 2026-02-06
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-16
  */
 
 
 
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import GeneralSelect from "../common/GeneralSelect";
 import styles from "./AssistantSettings.module.css";
 
 /**
@@ -85,16 +88,16 @@ const AssistantSettings = ({ onClose }) => {
                     <label htmlFor="language" className={styles.label}>
                         Language
                     </label>
-                    <select
-                        id="language"
-                        className={styles.select}
+                    <GeneralSelect
                         value={settings.language}
-                        onChange={(e) => handleSettingChange("language", e.target.value)}
+                        onChange={(selectedValue) => handleSettingChange("language", selectedValue)}
+                        options={[
+                            { value: "ar", label: "Arabic" },
+                            { value: "en", label: "English" }
+                        ]}
+                        className={styles.select}
                         aria-label="Select language"
-                    >
-                        <option value="ar">Arabic</option>
-                        <option value="en">English</option>
-                    </select>
+                    />
                 </div>
 
                 {/* Voice Enabled Setting */}

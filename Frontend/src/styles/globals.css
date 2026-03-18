@@ -1,13 +1,15 @@
 /**
  * @file globals.css
- * @description Global CSS variables, theme definitions, and base styles for the entire application
+ * @description Global CSS variables, theme definitions, and base styles for the entire application.
+ *              Includes the full multi-theme system: Sand (default), Rose, Forest, Slate, Ink, Graphite.
+ *              Each theme provides a complete light and dark variant with all variable groups:
+ *              Core UI, Accent Palette, Radial Gradients, Interactive States, and Overlays.
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 3.0.0
  * @date 2025-10-10
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-11
- *
+ * @last-modified-date 2026-03-16
  */
 
 @import './animations.css';
@@ -55,9 +57,9 @@
 
 :root {
   --space-1: 0.25rem;
-  /* 4px */
+  /* 4px  */
   --space-2: 0.5rem;
-  /* 8px */
+  /* 8px  */
   --space-3: 0.75rem;
   /* 12px */
   --space-4: 1rem;
@@ -83,9 +85,9 @@
 :root {
   --radius-none: 0;
   --radius-sm: 0.25rem;
-  /* 4px */
+  /* 4px  */
   --radius-md: 0.5rem;
-  /* 8px */
+  /* 8px  */
   --radius-lg: 0.75rem;
   /* 12px */
   --radius-xl: 1rem;
@@ -96,9 +98,15 @@
 }
 
 /* ==========================================================================
-   Light Theme (Default)
-   Optimized for Eye Comfort and Professional Context
+   THEME: SAND (Default)
+   Warm neutral — bronze-gold accents, timeless professional base.
+   This is the default theme applied to :root — no theme class required.
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Sand — Light (Default)
+   Optimized for Eye Comfort and Professional Context
+   -------------------------------------------------------------------------- */
 
 :root {
   /* Core UI Colors - Strengthened for clarity and confidence */
@@ -152,52 +160,40 @@
   --color-sidebar-ring: oklch(0.54 0.02 72);
 
   /* ========================================================================
-     CUSTOM JOB MAGNET COLORS - LIGHT THEME
-     Enhanced for Professional Context
+     CUSTOM JOB MAGNET COLORS — SAND LIGHT
+     MAESTA Metallic Accent Palette — Bronze/Gold
      ======================================================================== */
 
-  /* Primary Base Colors - Strengthened for confidence */
+  /* Primary Base Colors */
   --color-primary-black: #f5f5f0;
   --color-primary-white: #1a1a1a;
 
-  /* MAESTA Metallic Accent Palette - Deeper bronze/gold for presence */
+  /* Accent Palette - Deeper bronze/gold for presence */
   --color-accent-pink: #b8945f;
   --color-vivid-pink: #c9a152;
   --color-light-pink: #ede4ce;
+  --color-select-pink: #a67c3d;
+  --color-submit-pink-1: #b8945f;
+  --color-submit-pink-2: #c9a152;
+  --color-shadow-pink: rgba(184, 148, 95, 0.20);
 
   /* Radial Gradients - Increased opacity for depth */
   --color-radial-pink-1: rgb(184 148 95 / 0.12);
   --color-radial-pink-2: rgb(201 161 82 / 0.08);
   --color-radial-pink-3: rgb(201 161 82 / 0.05);
 
-  /* Translucent White Overlays - Adjusted for new darker base */
-  --color-translucent-white-1: rgb(0 0 0 / 0.06);
-  --color-translucent-white-2: rgb(0 0 0 / 0.1);
-  /* increased for definition */
-  --color-translucent-white-3: rgb(0 0 0 / 0.04);
-  --color-translucent-white-4: rgb(0 0 0 / 0.78);
-  --color-translucent-white-5: rgb(0 0 0 / 0.65);
-
-  /* Translucent Black - Adjusted for stronger base colors */
-  --color-translucent-black-1: rgb(255 255 255 / 0.88);
-  /* Interactive Elements - Deeper for confidence */
-  --color-select-pink: #a67c3d;
-  --color-submit-pink-1: #b8945f;
-  --color-submit-pink-2: #c9a152;
-
-  /* Shadow & Effects - Increased opacity for depth */
-  --color-shadow-pink: rgba(184, 148, 95, 0.2);
-  --color-transparent: transparent;
-
-  /* Interactive States - Adjusted for new base values */
+  /* Interactive States */
   --color-input-hover: oklch(0.91 0.008 76);
   --color-accent-hover: oklch(0.86 0.015 72);
+
+  /* Misc */
+  --color-transparent: transparent;
 }
 
-/* ==========================================================================
-   Dark Theme
-   Optimized for Low Light - Warm, grounded, reduced eye strain
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   Sand — Dark
+   Optimized for Low Light — Warm, grounded, reduced eye strain
+   -------------------------------------------------------------------------- */
 
 .dark {
   /* Core UI Colors - Warmer base, reduced cold blue tones */
@@ -207,10 +203,10 @@
   --color-card: oklch(0.18 0.009 285);
   --color-card-foreground: oklch(0.93 0.006 80);
 
-  --color-popover: oklch(0.2 0.009 285);
+  --color-popover: oklch(0.20 0.009 285);
   --color-popover-foreground: oklch(0.93 0.006 80);
 
-  --color-primary: oklch(0.9 0.006 80);
+  --color-primary: oklch(0.90 0.006 80);
   --color-primary-foreground: oklch(0.15 0.008 285);
 
   --color-secondary: oklch(0.26 0.008 285);
@@ -222,7 +218,7 @@
   --color-accent: oklch(0.26 0.008 285);
   --color-accent-foreground: oklch(0.92 0.006 80);
 
-  --color-destructive: oklch(0.4 0.1 25);
+  --color-destructive: oklch(0.40 0.1 25);
   --color-destructive-foreground: oklch(0.93 0.1 25);
 
   --color-border: oklch(0.29 0.008 285);
@@ -233,7 +229,7 @@
   --color-chart-1: oklch(0.72 0.22 264.376);
   --color-chart-2: oklch(0.75 0.16 162.48);
   --color-chart-3: oklch(0.78 0.18 70.08);
-  --color-chart-4: oklch(0.7 0.24 303.9);
+  --color-chart-4: oklch(0.70 0.24 303.9);
   --color-chart-5: oklch(0.72 0.23 16.439);
 
   /* Sidebar Colors - Warmer, more grounded */
@@ -247,7 +243,7 @@
   --color-sidebar-ring: oklch(0.58 0.008 78);
 
   /* ========================================================================
-     CUSTOM JOB MAGNET COLORS - DARK THEME
+     CUSTOM JOB MAGNET COLORS — SAND DARK
      Replaced silver with warm bronze/graphite for comfort
      ======================================================================== */
 
@@ -255,40 +251,33 @@
   --color-primary-black: #0d0d0e;
   --color-primary-white: #f5f5f7;
 
-  /* MAESTA Metallic Accent Palette - Warm bronze/copper instead of silver */
+  /* Accent Palette - Warm bronze/copper instead of silver */
   --color-accent-pink: #9d866f;
   --color-vivid-pink: #b39a7e;
   --color-light-pink: #2d2a26;
-
-  /* Radial Gradients - Warm bronze glow instead of silver */
-  --color-radial-pink-1: rgb(157 134 111 / 0.14);
-  /* warm bronze glow, increased opacity */
-  --color-radial-pink-2: rgb(179 154 126 / 0.1);
-  --color-radial-pink-3: rgb(179 154 126 / 0.06);
-
-  /* Translucent White Overlays - Reduced for eye comfort in dark mode */
-  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
-  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
-  --color-translucent-white-3: rgb(255 255 255 / 0.04);
-  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
-  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
-
-  /* Translucent Black - Warmer overlay for depth */
-  --color-translucent-black-1: rgba(13, 13, 14, 0.42);
-
-  /* Interactive Elements - Warm bronze tones, not cold gray */
   --color-select-pink: #887561;
   --color-submit-pink-1: #9d866f;
   --color-submit-pink-2: #b39a7e;
-
-  /* Shadow & Effects - Warm shadows for cohesion */
   --color-shadow-pink: rgba(157, 134, 111, 0.28);
+
+  /* Radial Gradients - Warm bronze glow, increased opacity */
+  --color-radial-pink-1: rgb(157 134 111 / 0.14);
+  --color-radial-pink-2: rgb(179 154 126 / 0.10);
+  --color-radial-pink-3: rgb(179 154 126 / 0.06);
 
   /* Interactive States - Warmer hover states */
   --color-input-hover: oklch(0.24 0.009 285);
   --color-accent-hover: oklch(0.31 0.009 285);
 
-  /* Dark theme gradients - Warmer progression */
+  /* Translucent Overlays - Reduced for eye comfort in dark mode */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgb(255 255 255 / 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(13, 13, 14, 0.42);
+
+  /* Gradients - Warmer progression */
   --gradient-registration: linear-gradient(135deg,
       var(--color-primary-black) 0%,
       oklch(0.15 0.008 285) 30%,
@@ -305,7 +294,983 @@
 }
 
 /* ==========================================================================
+   THEME: ROSE / MAUVE
+   Dusty rose meets warm mauve — sophisticated, human, premium.
+   Usage: add class "theme-rose" to <html> element.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Rose — Light
+   -------------------------------------------------------------------------- */
+
+:root.theme-rose {
+  /* Core UI Colors */
+  --color-background: oklch(0.93 0.012 10);
+  --color-foreground: oklch(0.14 0.010 10);
+
+  --color-card: oklch(0.96 0.010 10);
+  --color-card-foreground: oklch(0.14 0.010 10);
+
+  --color-popover: oklch(0.96 0.010 10);
+  --color-popover-foreground: oklch(0.14 0.010 10);
+
+  --color-primary: oklch(0.14 0.010 10);
+  --color-primary-foreground: oklch(0.96 0.010 10);
+
+  --color-secondary: oklch(0.83 0.022 8);
+  --color-secondary-foreground: oklch(0.14 0.010 10);
+
+  --color-muted: oklch(0.86 0.018 8);
+  --color-muted-foreground: oklch(0.42 0.010 8);
+
+  --color-accent: oklch(0.86 0.018 8);
+  --color-accent-foreground: oklch(0.14 0.010 10);
+
+  --color-destructive: oklch(0.92 0.10 25);
+  --color-destructive-foreground: oklch(0.40 0.20 25);
+
+  --color-border: oklch(0.82 0.022 8);
+  --color-input: oklch(0.90 0.014 9);
+  --color-ring: oklch(0.55 0.025 8);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.170 162.480);
+  --color-chart-3: oklch(0.769 0.188 70.080);
+  --color-chart-4: oklch(0.627 0.265 303.900);
+  --color-chart-5: oklch(0.645 0.246 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.90 0.013 10);
+  --color-sidebar-foreground: oklch(0.14 0.010 10);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.90 0.013 10);
+  --color-sidebar-accent: oklch(0.83 0.022 8);
+  --color-sidebar-accent-foreground: oklch(0.14 0.010 10);
+  --color-sidebar-border: oklch(0.82 0.022 8);
+  --color-sidebar-ring: oklch(0.55 0.025 8);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — ROSE LIGHT
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #f5f0f0;
+  --color-primary-white: #1a1010;
+
+  /* Accent Palette - Dusty terracotta-rose */
+  --color-accent-pink: #b87878;
+  --color-vivid-pink: #c98a6a;
+  --color-light-pink: #f0dcd8;
+  --color-select-pink: #8c5252;
+  --color-submit-pink-1: #b87878;
+  --color-submit-pink-2: #c98a6a;
+  --color-shadow-pink: rgba(184, 120, 120, 0.22);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(184 120 120 / 0.12);
+  --color-radial-pink-2: rgb(201 138 106 / 0.08);
+  --color-radial-pink-3: rgb(201 138 106 / 0.05);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.93 0.014 10);
+  --color-accent-hover: oklch(0.88 0.022 8);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
+  --color-translucent-white-2: rgb(0 0 0 / 0.10);
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
+
+  --color-transparent: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Rose — Dark
+   -------------------------------------------------------------------------- */
+
+:root.theme-rose.dark {
+  /* Core UI Colors */
+  --color-background: oklch(0.14 0.014 345);
+  --color-foreground: oklch(0.93 0.008 10);
+
+  --color-card: oklch(0.17 0.016 345);
+  --color-card-foreground: oklch(0.93 0.008 10);
+
+  --color-popover: oklch(0.19 0.016 345);
+  --color-popover-foreground: oklch(0.93 0.008 10);
+
+  --color-primary: oklch(0.91 0.008 10);
+  --color-primary-foreground: oklch(0.14 0.014 345);
+
+  --color-secondary: oklch(0.24 0.014 345);
+  --color-secondary-foreground: oklch(0.93 0.008 10);
+
+  --color-muted: oklch(0.27 0.014 345);
+  --color-muted-foreground: oklch(0.65 0.008 10);
+
+  --color-accent: oklch(0.24 0.014 345);
+  --color-accent-foreground: oklch(0.93 0.008 10);
+
+  --color-destructive: oklch(0.40 0.10 25);
+  --color-destructive-foreground: oklch(0.93 0.10 25);
+
+  --color-border: oklch(0.27 0.014 345);
+  --color-input: oklch(0.19 0.015 345);
+  --color-ring: oklch(0.52 0.022 8);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.480);
+  --color-chart-3: oklch(0.78 0.18 70.080);
+  --color-chart-4: oklch(0.70 0.24 303.900);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.16 0.015 345);
+  --color-sidebar-foreground: oklch(0.93 0.008 10);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.16 0.015 345);
+  --color-sidebar-accent: oklch(0.24 0.014 345);
+  --color-sidebar-accent-foreground: oklch(0.93 0.008 10);
+  --color-sidebar-border: oklch(0.27 0.014 345);
+  --color-sidebar-ring: oklch(0.52 0.022 8);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — ROSE DARK
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #0e0909;
+  --color-primary-white: #f5f0f0;
+
+  /* Accent Palette - Muted warm rose */
+  --color-accent-pink: #9d7070;
+  --color-vivid-pink: #b38a7a;
+  --color-light-pink: oklch(0.22 0.018 345);
+  --color-select-pink: #6b4040;
+  --color-submit-pink-1: #9d7070;
+  --color-submit-pink-2: #b38a7a;
+  --color-shadow-pink: rgba(157, 112, 112, 0.28);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(157 112 112 / 0.14);
+  --color-radial-pink-2: rgb(179 138 122 / 0.10);
+  --color-radial-pink-3: rgb(179 138 122 / 0.06);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.20 0.016 345);
+  --color-accent-hover: oklch(0.30 0.016 345);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(20, 10, 10, 0.42);
+
+  /* Gradients */
+  --gradient-registration: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.14 0.014 345) 30%,
+      oklch(0.17 0.016 345) 60%,
+      oklch(0.14 0.014 345) 80%,
+      var(--color-primary-black) 100%);
+
+  --gradient-onboarding: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.14 0.014 345) 25%,
+      oklch(0.20 0.016 345) 40%,
+      oklch(0.14 0.014 345) 60%,
+      var(--color-primary-black) 100%);
+}
+
+/* ==========================================================================
+   THEME: FOREST / SAGE
+   Grounded sage greens — calm, trustworthy, nature-rooted.
+   Usage: add class "theme-forest" to <html> element.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Forest — Light
+   -------------------------------------------------------------------------- */
+
+:root.theme-forest {
+  /* Core UI Colors */
+  --color-background: oklch(0.92 0.014 145);
+  --color-foreground: oklch(0.13 0.015 145);
+
+  --color-card: oklch(0.95 0.012 145);
+  --color-card-foreground: oklch(0.13 0.015 145);
+
+  --color-popover: oklch(0.95 0.012 145);
+  --color-popover-foreground: oklch(0.13 0.015 145);
+
+  --color-primary: oklch(0.13 0.015 145);
+  --color-primary-foreground: oklch(0.95 0.012 145);
+
+  --color-secondary: oklch(0.78 0.028 145);
+  --color-secondary-foreground: oklch(0.13 0.015 145);
+
+  --color-muted: oklch(0.80 0.024 145);
+  --color-muted-foreground: oklch(0.40 0.012 145);
+
+  --color-accent: oklch(0.80 0.024 145);
+  --color-accent-foreground: oklch(0.13 0.015 145);
+
+  --color-destructive: oklch(0.92 0.10 25);
+  --color-destructive-foreground: oklch(0.40 0.20 25);
+
+  --color-border: oklch(0.77 0.028 145);
+  --color-input: oklch(0.90 0.016 144);
+  --color-ring: oklch(0.52 0.030 145);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.170 162.480);
+  --color-chart-3: oklch(0.769 0.188 70.080);
+  --color-chart-4: oklch(0.627 0.265 303.900);
+  --color-chart-5: oklch(0.645 0.246 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.90 0.015 145);
+  --color-sidebar-foreground: oklch(0.13 0.015 145);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.90 0.015 145);
+  --color-sidebar-accent: oklch(0.78 0.028 145);
+  --color-sidebar-accent-foreground: oklch(0.13 0.015 145);
+  --color-sidebar-border: oklch(0.77 0.028 145);
+  --color-sidebar-ring: oklch(0.52 0.030 145);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — FOREST LIGHT
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #f0f5f0;
+  --color-primary-white: #101a10;
+
+  /* Accent Palette - Sage green */
+  --color-accent-pink: #6b9e72;
+  --color-vivid-pink: #7ab882;
+  --color-light-pink: #d4ead6;
+  --color-select-pink: #4a7250;
+  --color-submit-pink-1: #6b9e72;
+  --color-submit-pink-2: #7ab882;
+  --color-shadow-pink: rgba(107, 158, 114, 0.22);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(107 158 114 / 0.12);
+  --color-radial-pink-2: rgb(122 184 130 / 0.08);
+  --color-radial-pink-3: rgb(122 184 130 / 0.05);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.92 0.016 145);
+  --color-accent-hover: oklch(0.87 0.030 145);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
+  --color-translucent-white-2: rgb(0 0 0 / 0.10);
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
+
+  --color-transparent: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Forest — Dark
+   -------------------------------------------------------------------------- */
+
+:root.theme-forest.dark {
+  /* Core UI Colors */
+  --color-background: oklch(0.13 0.018 155);
+  --color-foreground: oklch(0.93 0.010 145);
+
+  --color-card: oklch(0.16 0.020 155);
+  --color-card-foreground: oklch(0.93 0.010 145);
+
+  --color-popover: oklch(0.18 0.020 155);
+  --color-popover-foreground: oklch(0.93 0.010 145);
+
+  --color-primary: oklch(0.91 0.010 145);
+  --color-primary-foreground: oklch(0.13 0.018 155);
+
+  --color-secondary: oklch(0.23 0.018 155);
+  --color-secondary-foreground: oklch(0.93 0.010 145);
+
+  --color-muted: oklch(0.26 0.018 155);
+  --color-muted-foreground: oklch(0.66 0.010 145);
+
+  --color-accent: oklch(0.23 0.018 155);
+  --color-accent-foreground: oklch(0.93 0.010 145);
+
+  --color-destructive: oklch(0.40 0.10 25);
+  --color-destructive-foreground: oklch(0.93 0.10 25);
+
+  --color-border: oklch(0.26 0.018 155);
+  --color-input: oklch(0.18 0.019 155);
+  --color-ring: oklch(0.55 0.028 145);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.480);
+  --color-chart-3: oklch(0.78 0.18 70.080);
+  --color-chart-4: oklch(0.70 0.24 303.900);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.15 0.019 155);
+  --color-sidebar-foreground: oklch(0.93 0.010 145);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.15 0.019 155);
+  --color-sidebar-accent: oklch(0.23 0.018 155);
+  --color-sidebar-accent-foreground: oklch(0.93 0.010 145);
+  --color-sidebar-border: oklch(0.26 0.018 155);
+  --color-sidebar-ring: oklch(0.55 0.028 145);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — FOREST DARK
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #090e09;
+  --color-primary-white: #f0f5f0;
+
+  /* Accent Palette - Deep sage */
+  --color-accent-pink: #5c8c63;
+  --color-vivid-pink: #74a87c;
+  --color-light-pink: oklch(0.21 0.022 155);
+  --color-select-pink: #3e6044;
+  --color-submit-pink-1: #5c8c63;
+  --color-submit-pink-2: #74a87c;
+  --color-shadow-pink: rgba(92, 140, 99, 0.28);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(92 140 99 / 0.14);
+  --color-radial-pink-2: rgb(116 168 124 / 0.10);
+  --color-radial-pink-3: rgb(116 168 124 / 0.06);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.19 0.020 155);
+  --color-accent-hover: oklch(0.30 0.020 155);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(10, 14, 10, 0.42);
+
+  /* Gradients */
+  --gradient-registration: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.13 0.018 155) 30%,
+      oklch(0.16 0.020 155) 60%,
+      oklch(0.13 0.018 155) 80%,
+      var(--color-primary-black) 100%);
+
+  --gradient-onboarding: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.13 0.018 155) 25%,
+      oklch(0.19 0.020 155) 40%,
+      oklch(0.13 0.018 155) 60%,
+      var(--color-primary-black) 100%);
+}
+
+/* ==========================================================================
+   THEME: SLATE / CORPORATE
+   Cool blue-grey — sharp, precise, executive confidence.
+   Usage: add class "theme-slate" to <html> element.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Slate — Light
+   -------------------------------------------------------------------------- */
+
+:root.theme-slate {
+  /* Core UI Colors */
+  --color-background: oklch(0.92 0.008 230);
+  --color-foreground: oklch(0.13 0.010 230);
+
+  --color-card: oklch(0.95 0.006 230);
+  --color-card-foreground: oklch(0.13 0.010 230);
+
+  --color-popover: oklch(0.95 0.006 230);
+  --color-popover-foreground: oklch(0.13 0.010 230);
+
+  --color-primary: oklch(0.13 0.010 230);
+  --color-primary-foreground: oklch(0.95 0.006 230);
+
+  --color-secondary: oklch(0.78 0.018 230);
+  --color-secondary-foreground: oklch(0.13 0.010 230);
+
+  --color-muted: oklch(0.80 0.015 230);
+  --color-muted-foreground: oklch(0.42 0.008 230);
+
+  --color-accent: oklch(0.80 0.015 230);
+  --color-accent-foreground: oklch(0.13 0.010 230);
+
+  --color-destructive: oklch(0.92 0.10 25);
+  --color-destructive-foreground: oklch(0.40 0.20 25);
+
+  --color-border: oklch(0.77 0.018 230);
+  --color-input: oklch(0.90 0.009 230);
+  --color-ring: oklch(0.52 0.022 230);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.170 162.480);
+  --color-chart-3: oklch(0.769 0.188 70.080);
+  --color-chart-4: oklch(0.627 0.265 303.900);
+  --color-chart-5: oklch(0.645 0.246 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.90 0.009 230);
+  --color-sidebar-foreground: oklch(0.13 0.010 230);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.90 0.009 230);
+  --color-sidebar-accent: oklch(0.78 0.018 230);
+  --color-sidebar-accent-foreground: oklch(0.13 0.010 230);
+  --color-sidebar-border: oklch(0.77 0.018 230);
+  --color-sidebar-ring: oklch(0.52 0.022 230);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — SLATE LIGHT
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #f0f2f5;
+  --color-primary-white: #101318;
+
+  /* Accent Palette - Steel blue */
+  --color-accent-pink: #5a7fa8;
+  --color-vivid-pink: #6b92bc;
+  --color-light-pink: #d0dff0;
+  --color-select-pink: #3a5f88;
+  --color-submit-pink-1: #5a7fa8;
+  --color-submit-pink-2: #6b92bc;
+  --color-shadow-pink: rgba(90, 127, 168, 0.20);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(90 127 168 / 0.12);
+  --color-radial-pink-2: rgb(107 146 188 / 0.08);
+  --color-radial-pink-3: rgb(107 146 188 / 0.05);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.92 0.009 230);
+  --color-accent-hover: oklch(0.87 0.020 230);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
+  --color-translucent-white-2: rgb(0 0 0 / 0.10);
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
+
+  --color-transparent: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Slate — Dark
+   -------------------------------------------------------------------------- */
+
+:root.theme-slate.dark {
+  /* Core UI Colors */
+  --color-background: oklch(0.14 0.012 240);
+  --color-foreground: oklch(0.93 0.006 225);
+
+  --color-card: oklch(0.17 0.013 240);
+  --color-card-foreground: oklch(0.93 0.006 225);
+
+  --color-popover: oklch(0.19 0.013 240);
+  --color-popover-foreground: oklch(0.93 0.006 225);
+
+  --color-primary: oklch(0.91 0.006 225);
+  --color-primary-foreground: oklch(0.14 0.012 240);
+
+  --color-secondary: oklch(0.24 0.012 240);
+  --color-secondary-foreground: oklch(0.93 0.006 225);
+
+  --color-muted: oklch(0.27 0.012 240);
+  --color-muted-foreground: oklch(0.66 0.006 225);
+
+  --color-accent: oklch(0.24 0.012 240);
+  --color-accent-foreground: oklch(0.93 0.006 225);
+
+  --color-destructive: oklch(0.40 0.10 25);
+  --color-destructive-foreground: oklch(0.93 0.10 25);
+
+  --color-border: oklch(0.27 0.012 240);
+  --color-input: oklch(0.19 0.013 240);
+  --color-ring: oklch(0.56 0.020 230);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.480);
+  --color-chart-3: oklch(0.78 0.18 70.080);
+  --color-chart-4: oklch(0.70 0.24 303.900);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.16 0.013 240);
+  --color-sidebar-foreground: oklch(0.93 0.006 225);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.16 0.013 240);
+  --color-sidebar-accent: oklch(0.24 0.012 240);
+  --color-sidebar-accent-foreground: oklch(0.93 0.006 225);
+  --color-sidebar-border: oklch(0.27 0.012 240);
+  --color-sidebar-ring: oklch(0.56 0.020 230);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — SLATE DARK
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #090c10;
+  --color-primary-white: #f0f2f5;
+
+  /* Accent Palette - Deeper steel blue */
+  --color-accent-pink: #4a6e98;
+  --color-vivid-pink: #5c82b0;
+  --color-light-pink: oklch(0.22 0.015 240);
+  --color-select-pink: #2e4e78;
+  --color-submit-pink-1: #4a6e98;
+  --color-submit-pink-2: #5c82b0;
+  --color-shadow-pink: rgba(74, 110, 152, 0.28);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(74 110 152 / 0.14);
+  --color-radial-pink-2: rgb(92 130 176 / 0.10);
+  --color-radial-pink-3: rgb(92 130 176 / 0.06);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.21 0.013 240);
+  --color-accent-hover: oklch(0.31 0.013 240);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(10, 12, 16, 0.42);
+
+  /* Gradients */
+  --gradient-registration: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.14 0.012 240) 30%,
+      oklch(0.17 0.013 240) 60%,
+      oklch(0.14 0.012 240) 80%,
+      var(--color-primary-black) 100%);
+
+  --gradient-onboarding: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.14 0.012 240) 25%,
+      oklch(0.21 0.013 240) 40%,
+      oklch(0.14 0.012 240) 60%,
+      var(--color-primary-black) 100%);
+}
+
+/* ==========================================================================
+   THEME: INK / NAVY
+   Deep authoritative navy — commanding, intelligent, classic.
+   Usage: add class "theme-ink" to <html> element.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Ink — Light
+   -------------------------------------------------------------------------- */
+
+:root.theme-ink {
+  /* Core UI Colors */
+  --color-background: oklch(0.92 0.010 255);
+  --color-foreground: oklch(0.12 0.015 255);
+
+  --color-card: oklch(0.95 0.008 255);
+  --color-card-foreground: oklch(0.12 0.015 255);
+
+  --color-popover: oklch(0.95 0.008 255);
+  --color-popover-foreground: oklch(0.12 0.015 255);
+
+  --color-primary: oklch(0.12 0.015 255);
+  --color-primary-foreground: oklch(0.95 0.008 255);
+
+  --color-secondary: oklch(0.77 0.022 255);
+  --color-secondary-foreground: oklch(0.12 0.015 255);
+
+  --color-muted: oklch(0.80 0.018 255);
+  --color-muted-foreground: oklch(0.42 0.010 255);
+
+  --color-accent: oklch(0.80 0.018 255);
+  --color-accent-foreground: oklch(0.12 0.015 255);
+
+  --color-destructive: oklch(0.92 0.10 25);
+  --color-destructive-foreground: oklch(0.40 0.20 25);
+
+  --color-border: oklch(0.76 0.022 255);
+  --color-input: oklch(0.90 0.011 255);
+  --color-ring: oklch(0.48 0.028 255);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.170 162.480);
+  --color-chart-3: oklch(0.769 0.188 70.080);
+  --color-chart-4: oklch(0.627 0.265 303.900);
+  --color-chart-5: oklch(0.645 0.246 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.90 0.011 255);
+  --color-sidebar-foreground: oklch(0.12 0.015 255);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.90 0.011 255);
+  --color-sidebar-accent: oklch(0.77 0.022 255);
+  --color-sidebar-accent-foreground: oklch(0.12 0.015 255);
+  --color-sidebar-border: oklch(0.76 0.022 255);
+  --color-sidebar-ring: oklch(0.48 0.028 255);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — INK LIGHT
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #f0f2f8;
+  --color-primary-white: #080e20;
+
+  /* Accent Palette - Deep navy-indigo */
+  --color-accent-pink: #3d5c9e;
+  --color-vivid-pink: #4d6eb2;
+  --color-light-pink: #ccd4f0;
+  --color-select-pink: #1e3880;
+  --color-submit-pink-1: #3d5c9e;
+  --color-submit-pink-2: #4d6eb2;
+  --color-shadow-pink: rgba(61, 92, 158, 0.22);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(61 92 158 / 0.14);
+  --color-radial-pink-2: rgb(77 110 178 / 0.09);
+  --color-radial-pink-3: rgb(77 110 178 / 0.05);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.92 0.011 255);
+  --color-accent-hover: oklch(0.87 0.024 255);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
+  --color-translucent-white-2: rgb(0 0 0 / 0.10);
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
+
+  --color-transparent: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Ink — Dark
+   -------------------------------------------------------------------------- */
+
+:root.theme-ink.dark {
+  /* Core UI Colors */
+  --color-background: oklch(0.12 0.020 260);
+  --color-foreground: oklch(0.94 0.008 250);
+
+  --color-card: oklch(0.15 0.022 260);
+  --color-card-foreground: oklch(0.94 0.008 250);
+
+  --color-popover: oklch(0.17 0.022 260);
+  --color-popover-foreground: oklch(0.94 0.008 250);
+
+  --color-primary: oklch(0.92 0.008 250);
+  --color-primary-foreground: oklch(0.12 0.020 260);
+
+  --color-secondary: oklch(0.22 0.020 260);
+  --color-secondary-foreground: oklch(0.94 0.008 250);
+
+  --color-muted: oklch(0.25 0.020 260);
+  --color-muted-foreground: oklch(0.68 0.008 250);
+
+  --color-accent: oklch(0.22 0.020 260);
+  --color-accent-foreground: oklch(0.94 0.008 250);
+
+  --color-destructive: oklch(0.40 0.10 25);
+  --color-destructive-foreground: oklch(0.93 0.10 25);
+
+  --color-border: oklch(0.25 0.020 260);
+  --color-input: oklch(0.17 0.021 260);
+  --color-ring: oklch(0.52 0.026 255);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.480);
+  --color-chart-3: oklch(0.78 0.18 70.080);
+  --color-chart-4: oklch(0.70 0.24 303.900);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.14 0.021 260);
+  --color-sidebar-foreground: oklch(0.94 0.008 250);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.14 0.021 260);
+  --color-sidebar-accent: oklch(0.22 0.020 260);
+  --color-sidebar-accent-foreground: oklch(0.94 0.008 250);
+  --color-sidebar-border: oklch(0.25 0.020 260);
+  --color-sidebar-ring: oklch(0.52 0.026 255);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — INK DARK
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #060812;
+  --color-primary-white: #f0f2f8;
+
+  /* Accent Palette - Rich deep navy */
+  --color-accent-pink: #3050a0;
+  --color-vivid-pink: #4060b8;
+  --color-light-pink: oklch(0.20 0.024 260);
+  --color-select-pink: #1a3480;
+  --color-submit-pink-1: #3050a0;
+  --color-submit-pink-2: #4060b8;
+  --color-shadow-pink: rgba(48, 80, 160, 0.30);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(48 80 160 / 0.16);
+  --color-radial-pink-2: rgb(64 96 184 / 0.11);
+  --color-radial-pink-3: rgb(64 96 184 / 0.06);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.19 0.022 260);
+  --color-accent-hover: oklch(0.29 0.022 260);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(6, 8, 20, 0.42);
+
+  /* Gradients */
+  --gradient-registration: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.12 0.020 260) 30%,
+      oklch(0.15 0.022 260) 60%,
+      oklch(0.12 0.020 260) 80%,
+      var(--color-primary-black) 100%);
+
+  --gradient-onboarding: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.12 0.020 260) 25%,
+      oklch(0.19 0.022 260) 40%,
+      oklch(0.12 0.020 260) 60%,
+      var(--color-primary-black) 100%);
+}
+
+/* ==========================================================================
+   THEME: GRAPHITE / EXECUTIVE
+   Pure achromatic luxury — stripped back, unapologetically minimal.
+   Usage: add class "theme-graphite" to <html> element.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Graphite — Light
+   -------------------------------------------------------------------------- */
+
+:root.theme-graphite {
+  /* Core UI Colors */
+  --color-background: oklch(0.91 0.002 0);
+  --color-foreground: oklch(0.12 0 0);
+
+  --color-card: oklch(0.94 0.002 0);
+  --color-card-foreground: oklch(0.12 0 0);
+
+  --color-popover: oklch(0.94 0.002 0);
+  --color-popover-foreground: oklch(0.12 0 0);
+
+  --color-primary: oklch(0.12 0 0);
+  --color-primary-foreground: oklch(0.94 0.002 0);
+
+  --color-secondary: oklch(0.76 0.003 0);
+  --color-secondary-foreground: oklch(0.12 0 0);
+
+  --color-muted: oklch(0.79 0.003 0);
+  --color-muted-foreground: oklch(0.40 0 0);
+
+  --color-accent: oklch(0.79 0.003 0);
+  --color-accent-foreground: oklch(0.12 0 0);
+
+  --color-destructive: oklch(0.92 0.10 25);
+  --color-destructive-foreground: oklch(0.40 0.20 25);
+
+  --color-border: oklch(0.76 0.003 0);
+  --color-input: oklch(0.89 0.002 0);
+  --color-ring: oklch(0.50 0.002 0);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.488 0.243 264.376);
+  --color-chart-2: oklch(0.696 0.170 162.480);
+  --color-chart-3: oklch(0.769 0.188 70.080);
+  --color-chart-4: oklch(0.627 0.265 303.900);
+  --color-chart-5: oklch(0.645 0.246 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.89 0.002 0);
+  --color-sidebar-foreground: oklch(0.12 0 0);
+  --color-sidebar-primary: oklch(0.488 0.243 264.376);
+  --color-sidebar-primary-foreground: oklch(0.89 0.002 0);
+  --color-sidebar-accent: oklch(0.76 0.003 0);
+  --color-sidebar-accent-foreground: oklch(0.12 0 0);
+  --color-sidebar-border: oklch(0.76 0.003 0);
+  --color-sidebar-ring: oklch(0.50 0.002 0);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — GRAPHITE LIGHT
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #f2f2f2;
+  --color-primary-white: #141414;
+
+  /* Accent Palette - Achromatic grey */
+  --color-accent-pink: #707070;
+  --color-vivid-pink: #888888;
+  --color-light-pink: #e0e0e0;
+  --color-select-pink: #484848;
+  --color-submit-pink-1: #707070;
+  --color-submit-pink-2: #888888;
+  --color-shadow-pink: rgba(112, 112, 112, 0.18);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(112 112 112 / 0.10);
+  --color-radial-pink-2: rgb(136 136 136 / 0.07);
+  --color-radial-pink-3: rgb(136 136 136 / 0.04);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.91 0.002 0);
+  --color-accent-hover: oklch(0.86 0.004 0);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgb(0 0 0 / 0.06);
+  --color-translucent-white-2: rgb(0 0 0 / 0.10);
+  --color-translucent-white-3: rgb(0 0 0 / 0.04);
+  --color-translucent-white-4: rgb(0 0 0 / 0.78);
+  --color-translucent-white-5: rgb(0 0 0 / 0.65);
+  --color-translucent-black-1: rgb(255 255 255 / 0.88);
+
+  --color-transparent: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Graphite — Dark
+   -------------------------------------------------------------------------- */
+
+:root.theme-graphite.dark {
+  /* Core UI Colors */
+  --color-background: oklch(0.12 0.001 0);
+  --color-foreground: oklch(0.93 0.002 0);
+
+  --color-card: oklch(0.15 0.001 0);
+  --color-card-foreground: oklch(0.93 0.002 0);
+
+  --color-popover: oklch(0.17 0.001 0);
+  --color-popover-foreground: oklch(0.93 0.002 0);
+
+  --color-primary: oklch(0.91 0.002 0);
+  --color-primary-foreground: oklch(0.12 0.001 0);
+
+  --color-secondary: oklch(0.22 0.001 0);
+  --color-secondary-foreground: oklch(0.93 0.002 0);
+
+  --color-muted: oklch(0.26 0.001 0);
+  --color-muted-foreground: oklch(0.65 0.002 0);
+
+  --color-accent: oklch(0.22 0.001 0);
+  --color-accent-foreground: oklch(0.93 0.002 0);
+
+  --color-destructive: oklch(0.40 0.10 25);
+  --color-destructive-foreground: oklch(0.93 0.10 25);
+
+  --color-border: oklch(0.26 0.001 0);
+  --color-input: oklch(0.17 0.001 0);
+  --color-ring: oklch(0.48 0.002 0);
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.72 0.22 264.376);
+  --color-chart-2: oklch(0.75 0.16 162.480);
+  --color-chart-3: oklch(0.78 0.18 70.080);
+  --color-chart-4: oklch(0.70 0.24 303.900);
+  --color-chart-5: oklch(0.72 0.23 16.439);
+
+  /* Sidebar Colors */
+  --color-sidebar: oklch(0.14 0.001 0);
+  --color-sidebar-foreground: oklch(0.93 0.002 0);
+  --color-sidebar-primary: oklch(0.72 0.22 264.376);
+  --color-sidebar-primary-foreground: oklch(0.14 0.001 0);
+  --color-sidebar-accent: oklch(0.22 0.001 0);
+  --color-sidebar-accent-foreground: oklch(0.93 0.002 0);
+  --color-sidebar-border: oklch(0.26 0.001 0);
+  --color-sidebar-ring: oklch(0.48 0.002 0);
+
+  /* ========================================================================
+     CUSTOM JOB MAGNET COLORS — GRAPHITE DARK
+     ======================================================================== */
+
+  /* Primary Base Colors */
+  --color-primary-black: #0c0c0c;
+  --color-primary-white: #f2f2f2;
+
+  /* Accent Palette - Dark achromatic grey */
+  --color-accent-pink: #606060;
+  --color-vivid-pink: #787878;
+  --color-light-pink: oklch(0.20 0.001 0);
+  --color-select-pink: #404040;
+  --color-submit-pink-1: #606060;
+  --color-submit-pink-2: #787878;
+  --color-shadow-pink: rgba(96, 96, 96, 0.28);
+
+  /* Radial Gradients */
+  --color-radial-pink-1: rgb(96 96 96 / 0.12);
+  --color-radial-pink-2: rgb(120 120 120 / 0.08);
+  --color-radial-pink-3: rgb(120 120 120 / 0.05);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.19 0.001 0);
+  --color-accent-hover: oklch(0.29 0.001 0);
+
+  /* Translucent Overlays */
+  --color-translucent-white-1: rgba(255, 255, 255, 0.07);
+  --color-translucent-white-2: rgba(255, 255, 255, 0.85);
+  --color-translucent-white-3: rgba(255, 255, 255, 0.04);
+  --color-translucent-white-4: rgba(255, 255, 255, 0.92);
+  --color-translucent-white-5: rgba(255, 255, 255, 0.75);
+  --color-translucent-black-1: rgba(12, 12, 12, 0.42);
+
+  /* Gradients */
+  --gradient-registration: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.12 0.001 0) 30%,
+      oklch(0.15 0.001 0) 60%,
+      oklch(0.12 0.001 0) 80%,
+      var(--color-primary-black) 100%);
+
+  --gradient-onboarding: linear-gradient(135deg,
+      var(--color-primary-black) 0%,
+      oklch(0.12 0.001 0) 25%,
+      oklch(0.19 0.001 0) 40%,
+      oklch(0.12 0.001 0) 60%,
+      var(--color-primary-black) 100%);
+}
+
+/* ==========================================================================
    Shorthand Aliases (Backward Compatibility)
+   These aliases point to the active theme's variables automatically.
    ========================================================================== */
 
 :root {
@@ -334,6 +1299,10 @@
   --accent-pink: var(--color-accent-pink);
   --vivid-pink: var(--color-vivid-pink);
   --light-pink: var(--color-light-pink);
+  --select-pink: var(--color-select-pink);
+  --submit-pink-1: var(--color-submit-pink-1);
+  --submit-pink-2: var(--color-submit-pink-2);
+  --shadow-pink: var(--color-shadow-pink);
   --radial-pink-1: var(--color-radial-pink-1);
   --radial-pink-2: var(--color-radial-pink-2);
   --radial-pink-3: var(--color-radial-pink-3);
@@ -343,10 +1312,6 @@
   --translucent-white-4: var(--color-translucent-white-4);
   --translucent-white-5: var(--color-translucent-white-5);
   --translucent-black-1: var(--color-translucent-black-1);
-  --select-pink: var(--color-select-pink);
-  --submit-pink-1: var(--color-submit-pink-1);
-  --submit-pink-2: var(--color-submit-pink-2);
-  --shadow-pink: var(--color-shadow-pink);
   --transparent: var(--color-transparent);
 }
 
@@ -387,7 +1352,8 @@ a {
 
 /* Smooth color transitions for theme switching */
 * {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -401,21 +1367,72 @@ a {
   *::after {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
-    transition-duration: 0.01ms t;
+    /* Fixed typo from v2: removed trailing 't' from transition-duration value */
+    transition-duration: 0.01ms;
     scroll-behavior: auto;
   }
 }
 
-/* High contrast mode support */
+/* High contrast mode support — ensures accent colors remain distinguishable */
 @media (prefers-contrast: high) {
   :root {
     --color-accent-pink: #b8945f;
     --color-submit-pink-1: #b8945f;
   }
 
+  :root.theme-rose {
+    --color-accent-pink: #b87878;
+    --color-submit-pink-1: #b87878;
+  }
+
+  :root.theme-forest {
+    --color-accent-pink: #6b9e72;
+    --color-submit-pink-1: #6b9e72;
+  }
+
+  :root.theme-slate {
+    --color-accent-pink: #5a7fa8;
+    --color-submit-pink-1: #5a7fa8;
+  }
+
+  :root.theme-ink {
+    --color-accent-pink: #3d5c9e;
+    --color-submit-pink-1: #3d5c9e;
+  }
+
+  :root.theme-graphite {
+    --color-accent-pink: #707070;
+    --color-submit-pink-1: #707070;
+  }
+
   .dark {
     --color-accent-pink: #9d866f;
     --color-submit-pink-1: #9d866f;
+  }
+
+  :root.theme-rose.dark {
+    --color-accent-pink: #9d7070;
+    --color-submit-pink-1: #9d7070;
+  }
+
+  :root.theme-forest.dark {
+    --color-accent-pink: #5c8c63;
+    --color-submit-pink-1: #5c8c63;
+  }
+
+  :root.theme-slate.dark {
+    --color-accent-pink: #4a6e98;
+    --color-submit-pink-1: #4a6e98;
+  }
+
+  :root.theme-ink.dark {
+    --color-accent-pink: #3050a0;
+    --color-submit-pink-1: #3050a0;
+  }
+
+  :root.theme-graphite.dark {
+    --color-accent-pink: #606060;
+    --color-submit-pink-1: #606060;
   }
 }
 
@@ -430,10 +1447,10 @@ a {
 
 /* ==========================================================================
    Custom Scrollbar Styling
-   Applied globally - matches light/dark theme aesthetic
+   Applied globally — matches the active theme's accent automatically
    ========================================================================== */
 
-/* Firefox scrollbar styling */
+/* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent-pink) var(--color-muted);

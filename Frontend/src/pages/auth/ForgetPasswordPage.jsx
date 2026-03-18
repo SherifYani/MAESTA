@@ -1,3 +1,13 @@
+/**
+ * ForgetPasswordPage Component
+ * @description Allows users to request a password reset link via email
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 05-12-2025
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
 
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -8,18 +18,13 @@ import {
   isFormValid,
   debounceValidation,
 } from "../../utils/form-validation";
+import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../components/common/Footer";
 import "../../styles/auth-pages.css";
 import "../../styles/shared/_form-base.css";
 import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
-/**
- * ForgetPasswordPage Component
- * @description Allows users to request a password reset link via email
- * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-12-2025
- */
 function ForgetPasswordPage() {
   // Form state
   const [formData, setFormData] = useState({
@@ -120,7 +125,9 @@ function ForgetPasswordPage() {
   // Render success state
   if (isSubmitted) {
     return (
-      <div className="page-container fade-in">
+      <div>
+        <AuthHeader />
+        <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">
             <div className="form-icon">
@@ -161,13 +168,17 @@ function ForgetPasswordPage() {
               </p>
             </div>
           </div>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="page-container fade-in">
+    <div>
+      <AuthHeader />
+      <div className="page-container fade-in">
       <div className="form-card slide-up">
         <div className="form-header">
           <div className="form-icon">
@@ -234,6 +245,8 @@ function ForgetPasswordPage() {
           </div>
         </form>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }

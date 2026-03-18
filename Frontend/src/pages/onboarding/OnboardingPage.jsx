@@ -1,7 +1,19 @@
+/**
+ * @file CompanyMemberOnboarding.jsx
+ * @description Company member onboarding page with company search and database alignment
+ * @author Sherif Talaat
+ * @version 1.4.0
+ * @date 24-10-2025
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
 import JobSeekerOnboarding from "./JobSeekerOnboarding";
 // import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
 import { ArrowLeft } from "lucide-react";
+import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../components/common/Footer";
 // import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 
 export default function OnboardingPage() {
@@ -35,18 +47,22 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <button
-        className="registration-page__back-button"
-        aria-label="Go back"
-        onClick={handleBackNavigation}>
-        <ArrowLeft size={20} />
-      </button>
-      {/* {renderForm()} */}
-      {/* <CompanyOnboarding /> */}
-      <JobSeekerOnboarding />
-      {/* <FreelancerOnboarding /> */}
-      {/* <CompanyOnboarding /> */}
+    <div>
+      <AuthHeader />
+      <div className="min-h-screen">
+        <button
+          className="registration-page__back-button"
+          aria-label="Go back"
+          onClick={handleBackNavigation}>
+          <ArrowLeft size={20} />
+        </button>
+        {/* {renderForm()} */}
+        {/* <CompanyOnboarding /> */}
+        <JobSeekerOnboarding />
+        {/* <FreelancerOnboarding /> */}
+        {/* <CompanyOnboarding /> */}
+      </div>
+      <Footer />
     </div>
   );
 }

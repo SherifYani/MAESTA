@@ -5,6 +5,9 @@
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2026-03-08
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
  */
 
 /* ==========================================================================
@@ -15,7 +18,7 @@
     background-color: var(--color-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 4px 24px var(--color-shadow-pink);
     backdrop-filter: blur(10px);
     animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -44,8 +47,12 @@
     padding: var(--space-6);
     border-bottom: 1px solid var(--color-border);
     background-color: var(--color-translucent-white-1);
+    border-top-left-radius: var(--radius-xl);
+    border-top-right-radius: var(--radius-xl);
     flex-wrap: wrap;
     gap: var(--space-4);
+    position: relative;
+    z-index: 20;
 }
 
 .title {
@@ -275,6 +282,8 @@
     padding: var(--space-4) var(--space-6);
     border-top: 1px solid var(--color-border);
     background-color: var(--color-translucent-white-1);
+    border-bottom-left-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
     flex-wrap: wrap;
     gap: var(--space-4);
 }

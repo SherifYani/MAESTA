@@ -1,12 +1,17 @@
 /**
  * @file NotificationSkeleton.module.css
- * @description Styles for NotificationSkeleton component with shimmer animation
+ * @description Enhanced styles for NotificationSkeleton component with shimmer animation
  * @author Sherif Talaat
  * @date 2026-02-07
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
+ * @last-modified-date 2026-03-16
  */
+
+:root {
+    --shimmer-duration: 1.5s;
+    --shimmer-timing: ease-in-out;
+}
 
 .skeletonItem {
     display: flex;
@@ -14,6 +19,9 @@
     gap: var(--space-3);
     padding: var(--space-4);
     border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
 }
 
 .iconSkeleton {
@@ -23,10 +31,10 @@
     border-radius: var(--radius-full);
     background: linear-gradient(90deg,
             var(--color-muted) 0%,
-            var(--color-accent) 50%,
-            var(--color-muted) 100%);
+            var(--color-accent) 30%,
+            var(--color-muted) 60%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer var(--shimmer-duration) var(--shimmer-timing) infinite;
 }
 
 .contentSkeleton {
@@ -42,10 +50,10 @@
     border-radius: var(--radius-sm);
     background: linear-gradient(90deg,
             var(--color-muted) 0%,
-            var(--color-accent) 50%,
-            var(--color-muted) 100%);
+            var(--color-accent) 30%,
+            var(--color-muted) 60%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer var(--shimmer-duration) var(--shimmer-timing) infinite;
 }
 
 .messageSkeleton {
@@ -54,10 +62,10 @@
     border-radius: var(--radius-sm);
     background: linear-gradient(90deg,
             var(--color-muted) 0%,
-            var(--color-accent) 50%,
-            var(--color-muted) 100%);
+            var(--color-accent) 30%,
+            var(--color-muted) 60%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite 0.2s;
+    animation: shimmer var(--shimmer-duration) var(--shimmer-timing) infinite 0.2s;
 }
 
 @keyframes shimmer {
@@ -67,6 +75,17 @@
 
     100% {
         background-position: 200% 0;
+    }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+
+    .iconSkeleton,
+    .titleSkeleton,
+    .messageSkeleton {
+        animation: none;
+        background: var(--color-muted);
     }
 }
 
@@ -81,5 +100,13 @@
         width: 2rem;
         height: 2rem;
         min-width: 2rem;
+    }
+
+    .titleSkeleton {
+        height: 0.875rem;
+    }
+
+    .messageSkeleton {
+        height: 0.75rem;
     }
 }

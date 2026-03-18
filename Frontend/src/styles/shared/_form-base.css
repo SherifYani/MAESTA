@@ -4,9 +4,9 @@
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 05-12-2025
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 05-12-2025
+ * @last-modified-date 2026-03-16
  */
 
 @import "../globals.css";
@@ -27,11 +27,9 @@
   border: 2px solid var(--translucent-black-1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 20px var(--shadow-pink);
-  background-image: radial-gradient(
-      circle at 10% 20%,
+  background-image: radial-gradient(circle at 10% 20%,
       var(--radial-pink-1) 0%,
-      transparent 20%
-    ),
+      transparent 20%),
     radial-gradient(circle at 90% 80%, var(--radial-pink-2) 0%, transparent 20%);
   animation: formSlideIn 0.3s ease-out;
 }
@@ -53,6 +51,8 @@
   box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
   transform: translateY(-2px);
   animation: formGlowPulse 2s infinite;
+  z-index: 10;
+  position: relative;
 }
 
 /* ==========================================================================
@@ -241,6 +241,7 @@
 
 /* === Breakpoint: 75rem (≈1200px) === */
 @media (max-width: 75rem) {
+
   /* Shared Form Fields */
   .form-input__field,
   .form-textarea__field,
@@ -285,6 +286,7 @@
 
 /* === Breakpoint: 60.5rem (≈968px) === */
 @media (max-width: 60.5rem) {
+
   .form-input__field,
   .form-textarea__field,
   .form-select__field {
@@ -325,6 +327,7 @@
 
 /* === Breakpoint: 40rem (≈640px) === */
 @media (max-width: 40rem) {
+
   .form-input__field,
   .form-textarea__field,
   .form-select__field {
@@ -431,6 +434,7 @@
 
 /* === Reduced Motion Support === */
 @media (prefers-reduced-motion: reduce) {
+
   .form-input__wrapper,
   .form-textarea__wrapper,
   .form-select__wrapper {

@@ -17,6 +17,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
+import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
 
@@ -513,21 +514,23 @@ export default function EditJobSeekerProfile() {
                       aria-label={`Skill ${index + 1} name`}
                       maxLength={50}
                     />
-                    <select
-                      value={skill.proficiencyLevel}
-                      onChange={(event) =>
+                    <GeneralSelect
+                      value={skill.proficiencyLevel || "Beginner"}
+                      onChange={(selectedValue) =>
                         handleSkillChange(
                           index,
                           "proficiencyLevel",
-                          event.target.value
+                          selectedValue
                         )
                       }
+                      options={[
+                        { value: "Beginner", label: "Beginner" },
+                        { value: "Intermediate", label: "Intermediate" },
+                        { value: "Expert", label: "Expert" }
+                      ]}
                       className="edit__skill-select"
-                      aria-label={`Skill ${index + 1} proficiency level`}>
-                      <option value="Beginner">Beginner</option>
-                      <option value="Intermediate">Intermediate</option>
-                      <option value="Expert">Expert</option>
-                    </select>
+                      aria-label={`Skill ${index + 1} proficiency level`}
+                    />
                     <button
                       type="button"
                       className="edit__remove-skill-btn"

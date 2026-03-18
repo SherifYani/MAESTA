@@ -5,7 +5,7 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-16
  */
 
 /* ==========================================================================
@@ -16,9 +16,9 @@
     position: relative;
     background: linear-gradient(180deg,
             var(--color-card) 0%,
-            var(--color-primary-black) 100%);
+            var(--color-background) 100%);
     border-top: 1px solid var(--color-border);
-    color: var(--color-primary-white);
+    color: var(--color-foreground);
     margin-top: auto;
 }
 
@@ -29,7 +29,7 @@
 .footerTop {
     padding: var(--space-12) var(--space-4) var(--space-8);
     background-color: color-mix(in oklch,
-            var(--color-primary-black),
+            var(--color-background),
             transparent 10%);
 }
 
@@ -61,7 +61,7 @@
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
     background: linear-gradient(135deg,
-            var(--color-primary-white),
+            var(--color-foreground),
             var(--color-accent-pink));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -140,7 +140,7 @@
     width: 2.5rem;
     height: 2.5rem;
     background-color: var(--color-muted);
-    color: var(--color-primary-white);
+    color: var(--color-foreground);
     border-radius: var(--radius-full);
     transition: all 0.2s ease;
 }
@@ -164,7 +164,7 @@
 
 .navigationSections {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--space-6);
 }
 
@@ -177,7 +177,7 @@
 .sectionTitle {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-primary-white);
+    color: var(--color-foreground);
     margin: 0;
     position: relative;
     padding-bottom: var(--space-2);
@@ -248,7 +248,7 @@
 
 .footerBottom {
     padding: var(--space-6) var(--space-4);
-    background-color: var(--color-primary-black);
+    background-color: var(--color-background);
     border-top: 1px solid var(--color-border);
 }
 
@@ -349,7 +349,7 @@
 
 .backToTopButton:hover {
     background-color: var(--color-accent-pink);
-    color: var(--color-primary-white);
+    color: var(--color-foreground);
     border-color: var(--color-accent-pink);
     transform: translateY(-2px);
 }
@@ -364,7 +364,7 @@
     left: 0;
     right: 0;
     background-color: var(--color-destructive);
-    color: var(--color-primary-white);
+    color: var(--color-foreground);
     padding: var(--space-1);
     text-align: center;
     font-size: var(--font-size-xs);
@@ -486,12 +486,6 @@
    ========================================================================== */
 
 @media (prefers-color-scheme: dark) {
-    .footer {
-        background: linear-gradient(180deg,
-                var(--color-card) 0%,
-                var(--color-primary-black) 100%);
-    }
-
     .backToTopButton {
         border-color: var(--color-border);
     }

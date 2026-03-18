@@ -3,15 +3,16 @@
  * @description Job search page with filters, pagination, and job cards
  * @author Sherif Talaat
  * @date 2026-02-05
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Filter } from 'lucide-react';
 import { Input, Button } from '../../components/common';
+import GeneralSelect from '../../components/common/GeneralSelect';
 import jobService from '../../services/jobService';
 import JobFilters from '../../components/jobs/JobFilters';
 import { PageContainer } from '../../components/layout';
@@ -240,15 +241,17 @@ const JobSearchPage = () => {
                                     </span>
                                 </div>
                                 <div className={styles.sortOptions}>
-                                    <select
+                                    <GeneralSelect
+                                        value={filters.sortBy || "relevance"}
+                                        onChange={(selectedValue) => handleFilterChange({ sortBy: selectedValue })}
+                                        options={[
+                                            { value: "relevance", label: "Most Relevant" },
+                                            { value: "date", label: "Newest" },
+                                            { value: "salary", label: "Highest Salary" }
+                                        ]}
                                         className={styles.sortSelect}
-                                        onChange={(e) => handleFilterChange({ sortBy: e.target.value })}
                                         aria-label="Sort jobs by"
-                                    >
-                                        <option value="relevance">Most Relevant</option>
-                                        <option value="date">Newest</option>
-                                        <option value="salary">Highest Salary</option>
-                                    </select>
+                                    />
                                 </div>
                             </div>
 

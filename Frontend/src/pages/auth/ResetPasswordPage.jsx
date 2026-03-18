@@ -1,4 +1,14 @@
 
+/**
+ * ResetPasswordPage Component
+ * @description Allows users to set a new password with strength validation
+ * @author Sherif Talaat
+ * @version 1.1.0
+ * @date 05-12-2025
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
 import { useState, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import FormInput from "../../components/forms/FormInput";
@@ -10,18 +20,13 @@ import {
   isFormValid,
   debounceValidation,
 } from "../../utils/form-validation";
+import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../components/common/Footer";
 import "../../styles/shared/_form-base.css";
 import "../../styles/auth-pages.css";
 import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
-/**
- * ResetPasswordPage Component
- * @description Allows users to set a new password with strength validation
- * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-12-2025
- */
 function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -176,223 +181,221 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className="page-container fade-in">
-      <div className="form-card slide-up">
-        <div className="form-header">
-          <div className="form-icon">
-            <i className="fa-solid fa-window-restore"></i>
-          </div>
-          <h1 className="form-title">Reset Password</h1>
-          <p className="form-subtitle">
-            Create a new password for your account
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="form-body" noValidate>
-          {errors.form && (
-            <div className="form-error-message">
-              <i className="fa-solid fa-exclamation-triangle"></i>
-              <span>{errors.form}</span>
+    <div>
+      <AuthHeader />
+      <div className="page-container fade-in">
+        <div className="form-card slide-up">
+          <div className="form-header">
+            <div className="form-icon">
+              <i className="fa-solid fa-window-restore"></i>
             </div>
-          )}
-
-          {/* New Password */}
-          <div className="password-field-group">
-            <FormInput
-              icon="fa-solid fa-lock"
-              type={showPassword ? "text" : "password"}
-              name="newPassword"
-              placeholder="New Password"
-              value={formData.newPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-              showPasswordToggle
-              showPassword={showPassword}
-              onTogglePassword={togglePasswordVisibility}
-              hasError={!!errors.newPassword}
-              className={errors.newPassword ? "form-input--error" : ""}
-            />
-
-            {errors.newPassword && (
-              <div className="field-error-message">
-                <i className="fa-solid fa-circle-exclamation"></i>
-                <span>{errors.newPassword}</span>
-              </div>
-            )}
-
-            {/* Password Strength Indicator */}
-            {formData.newPassword && (
-              <div className="password-strength-container">
-                <div className="password-strength-bar">
-                  <div
-                    className="password-strength-fill"
-                    style={{
-                      width: `${passwordStrength}%`,
-                      backgroundColor: getStrengthColor(),
-                      boxShadow: `0 0 10px ${getStrengthColor()}40`,
-                    }}
-                  />
-                </div>
-
-                <div className="password-strength-info">
-                  <span className="strength-text">
-                    Strength: <strong>{strengthText}</strong>
-                  </span>
-                  <span className="strength-percentage">
-                    {Math.round(passwordStrength)}%
-                  </span>
-                </div>
-
-                {/* Password Requirements */}
-                <div className="password-requirements">
-                  <p className="requirements-title">Password must contain:</p>
-                  <ul className="requirements-list">
-                    <li
-                      className={
-                        passwordValidation.minLength
-                          ? "requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.minLength ? "fa-check" : "fa-xmark"
-                        } requirement-icon`}
-                      />
-                      At least 8 characters
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasUppercase
-                          ? "requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasUppercase
-                            ? "fa-check"
-                            : "fa-xmark"
-                        } requirement-icon`}
-                      />
-                      One uppercase letter
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasLowercase
-                          ? "requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasLowercase
-                            ? "fa-check"
-                            : "fa-xmark"
-                        } requirement-icon`}
-                      />
-                      One lowercase letter
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasNumber
-                          ? "requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasNumber ? "fa-check" : "fa-xmark"
-                        } requirement-icon`}
-                      />
-                      One number
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasSymbol
-                          ? "requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"
-                        } requirement-icon`}
-                      />
-                      One special character
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Confirm Password */}
-          <div className="password-field-group">
-            <FormInput
-              icon="fa-solid fa-lock"
-              type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
-              placeholder="Confirm New Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              required
-              showPasswordToggle
-              showPassword={showConfirmPassword}
-              onTogglePassword={toggleConfirmPasswordVisibility}
-              hasError={!!errors.confirmPassword}
-              className={errors.confirmPassword ? "form-input--error" : ""}
-            />
-
-            {errors.confirmPassword && (
-              <div className="field-error-message">
-                <i className="fa-solid fa-circle-exclamation"></i>
-                <span>{errors.confirmPassword}</span>
-              </div>
-            )}
-
-            {/* Password Match Indicator */}
-            {formData.confirmPassword &&
-              formData.newPassword &&
-              !errors.confirmPassword && (
-                <div className="password-match-indicator success">
-                  <i className="fa-solid fa-check-circle"></i>
-                  <span>Passwords match</span>
-                </div>
-              )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={!isFormValid(errors) || isLoading}
-            className={`form-submit-button ${
-              isLoading ? "form-submit-button--loading" : ""
-            }`}>
-            {isLoading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin"></i>
-                Updating...
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-check-double"></i>
-                Reset Password
-              </>
-            )}
-          </button>
-
-          <div className="form-footer">
-            <Link to="/login" className="form-link">
-              <i className="fa-solid fa-arrow-left"></i>
-              Back to Login
-            </Link>
-
-            <p className="form-help">
-              Remember your password?{" "}
-              <Link to="/login" className="form-link inline">
-                Sign in here
-              </Link>
+            <h1 className="form-title">Reset Password</h1>
+            <p className="form-subtitle">
+              Create a new password for your account
             </p>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit} className="form-body" noValidate>
+            {errors.form && (
+              <div className="form-error-message">
+                <i className="fa-solid fa-exclamation-triangle"></i>
+                <span>{errors.form}</span>
+              </div>
+            )}
+
+            {/* New Password */}
+            <div className="password-field-group">
+              <FormInput
+                icon="fa-solid fa-lock"
+                type={showPassword ? "text" : "password"}
+                name="newPassword"
+                placeholder="New Password"
+                value={formData.newPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                showPasswordToggle
+                showPassword={showPassword}
+                onTogglePassword={togglePasswordVisibility}
+                hasError={!!errors.newPassword}
+                className={errors.newPassword ? "form-input--error" : ""}
+              />
+
+              {errors.newPassword && (
+                <div className="field-error-message">
+                  <i className="fa-solid fa-circle-exclamation"></i>
+                  <span>{errors.newPassword}</span>
+                </div>
+              )}
+
+              {/* Password Strength Indicator */}
+              {formData.newPassword && (
+                <div className="password-strength-container">
+                  <div className="password-strength-bar">
+                    <div
+                      className="password-strength-fill"
+                      style={{
+                        width: `${passwordStrength}%`,
+                        backgroundColor: getStrengthColor(),
+                        boxShadow: `0 0 10px ${getStrengthColor()}40`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="password-strength-info">
+                    <span className="strength-text">
+                      Strength: <strong>{strengthText}</strong>
+                    </span>
+                    <span className="strength-percentage">
+                      {Math.round(passwordStrength)}%
+                    </span>
+                  </div>
+
+                  {/* Password Requirements */}
+                  <div className="password-requirements">
+                    <p className="requirements-title">Password must contain:</p>
+                    <ul className="requirements-list">
+                      <li
+                        className={
+                          passwordValidation.minLength
+                            ? "requirement-item--valid"
+                            : ""
+                        }>
+                        <i
+                          className={`fa-solid ${passwordValidation.minLength ? "fa-check" : "fa-xmark"
+                            } requirement-icon`}
+                        />
+                        At least 8 characters
+                      </li>
+                      <li
+                        className={
+                          passwordValidation.hasUppercase
+                            ? "requirement-item--valid"
+                            : ""
+                        }>
+                        <i
+                          className={`fa-solid ${passwordValidation.hasUppercase
+                              ? "fa-check"
+                              : "fa-xmark"
+                            } requirement-icon`}
+                        />
+                        One uppercase letter
+                      </li>
+                      <li
+                        className={
+                          passwordValidation.hasLowercase
+                            ? "requirement-item--valid"
+                            : ""
+                        }>
+                        <i
+                          className={`fa-solid ${passwordValidation.hasLowercase
+                              ? "fa-check"
+                              : "fa-xmark"
+                            } requirement-icon`}
+                        />
+                        One lowercase letter
+                      </li>
+                      <li
+                        className={
+                          passwordValidation.hasNumber
+                            ? "requirement-item--valid"
+                            : ""
+                        }>
+                        <i
+                          className={`fa-solid ${passwordValidation.hasNumber ? "fa-check" : "fa-xmark"
+                            } requirement-icon`}
+                        />
+                        One number
+                      </li>
+                      <li
+                        className={
+                          passwordValidation.hasSymbol
+                            ? "requirement-item--valid"
+                            : ""
+                        }>
+                        <i
+                          className={`fa-solid ${passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"
+                            } requirement-icon`}
+                        />
+                        One special character
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="password-field-group">
+              <FormInput
+                icon="fa-solid fa-lock"
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm New Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                showPasswordToggle
+                showPassword={showConfirmPassword}
+                onTogglePassword={toggleConfirmPasswordVisibility}
+                hasError={!!errors.confirmPassword}
+                className={errors.confirmPassword ? "form-input--error" : ""}
+              />
+
+              {errors.confirmPassword && (
+                <div className="field-error-message">
+                  <i className="fa-solid fa-circle-exclamation"></i>
+                  <span>{errors.confirmPassword}</span>
+                </div>
+              )}
+
+              {/* Password Match Indicator */}
+              {formData.confirmPassword &&
+                formData.newPassword &&
+                !errors.confirmPassword && (
+                  <div className="password-match-indicator success">
+                    <i className="fa-solid fa-check-circle"></i>
+                    <span>Passwords match</span>
+                  </div>
+                )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={!isFormValid(errors) || isLoading}
+              className={`form-submit-button ${isLoading ? "form-submit-button--loading" : ""
+                }`}>
+              {isLoading ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-check-double"></i>
+                  Reset Password
+                </>
+              )}
+            </button>
+
+            <div className="form-footer">
+              <Link to="/login" className="form-link">
+                <i className="fa-solid fa-arrow-left"></i>
+                Back to Login
+              </Link>
+
+              <p className="form-help">
+                Remember your password?{" "}
+                <Link to="/login" className="form-link inline">
+                  Sign in here
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

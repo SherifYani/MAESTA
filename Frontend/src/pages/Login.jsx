@@ -3,20 +3,23 @@
  * @description Login page component with email/password authentication and social login options.
  * Uses BEM methodology for CSS class naming and follows React functional component patterns.
  * @author Shahd Mohay
- * @version 2.0.1
+ * @version 2.0.2
  * @date 2025-12-11
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-1-18
+ * @last-modified-date 2025-3-16
  *
  * @changes
  * - add the Auth Header component
+ * - add the Footer component
+ * - fix the forgot password page
  */
 
 import React, { useState, useMemo } from "react";
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
 import "../styles/login.css";
 import AuthHeader from "../components/common/AuthHeader";
+import Footer from "../components/common/Footer";
 
 /**
  * LoginForm Component
@@ -350,7 +353,7 @@ export default function LoginForm() {
                   <span>Remember me</span>
                 </label>
                 <a
-                  href="#forgot-password"
+                  href="/forgotpassword"
                   className="auth-login__forgot"
                   aria-label="Forgot password? Reset it here">
                   Forgot password?
@@ -451,6 +454,7 @@ export default function LoginForm() {
           </section>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

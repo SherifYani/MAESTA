@@ -5,14 +5,8 @@
  * @date 2026-02-07
  * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
- * 
- * @requires ../../components/notifications/NotificationItem
- * @requires ../../components/notifications/NotificationSkeleton
- * @requires ../../components/notifications/EmptyNotifications
- * @requires ../../context/NotificationContext
- * @requires ../../utils/notificationHelpers
- * @requires ../../utils/notificationTypes
+ * @last-modified-date 2026-03-16
+ *
  */
 
 import React, { useState, useEffect } from 'react';

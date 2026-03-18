@@ -2,11 +2,11 @@
  * @file NewApplicants.jsx
  * @description Comprehensive applicant management system with filtering, sorting, and bulk actions
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2025-01-22
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-22
+ * @last-modified-date 2026-03-16
  */
 
 import {
@@ -36,6 +36,7 @@ import { useState, useEffect } from "react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
 import Card from "../../../../components/ui/Card";
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import styles from "./NewApplicants.module.css";
 
 /**
@@ -677,45 +678,41 @@ const NewApplicants = ({
                 </div>
 
                 <div className={styles.filterControls}>
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="new">New</option>
-                        <option value="reviewed">Reviewed</option>
-                        <option value="shortlisted">Shortlisted</option>
-                        <option value="interviewed">Interviewed</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
+                        onChange={setSelectedStatus}
+                        options={[
+                            { value: "all", label: "All Status" },
+                            { value: "new", label: "New" },
+                            { value: "reviewed", label: "Reviewed" },
+                            { value: "shortlisted", label: "Shortlisted" },
+                            { value: "interviewed", label: "Interviewed" },
+                            { value: "rejected", label: "Rejected" },
+                        ]}
+                    />
 
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={selectedJob}
-                        onChange={(e) => setSelectedJob(e.target.value)}
-                    >
-                        <option value="all">All Jobs</option>
-                        {jobs.map(jobId => {
-                            const job = applicants?.find(app => app.jobId === jobId);
-                            return job ? (
-                                <option key={jobId} value={jobId}>
-                                    {job.jobTitle}
-                                </option>
-                            ) : null;
-                        })}
-                    </select>
+                        onChange={setSelectedJob}
+                        options={[
+                            { value: "all", label: "All Jobs" },
+                            ...jobs.map(jobId => {
+                                const job = applicants?.find(app => app.jobId === jobId);
+                                return job ? { value: jobId, label: job.jobTitle } : null;
+                            }).filter(Boolean)
+                        ]}
+                    />
 
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                    >
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="matchScore">Highest Match Score</option>
-                        <option value="name">Name A-Z</option>
-                    </select>
+                        onChange={setSortBy}
+                        options={[
+                            { value: "newest", label: "Newest First" },
+                            { value: "oldest", label: "Oldest First" },
+                            { value: "matchScore", label: "Highest Match Score" },
+                            { value: "name", label: "Name A-Z" },
+                        ]}
+                    />
                 </div>
             </div>
 

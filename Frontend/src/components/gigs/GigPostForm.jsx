@@ -2,10 +2,11 @@
  * @file GigPostForm.jsx
  * @description Multi-step form for clients to post new gigs.
  * @author Sherif Talaat
+ * @version 1.0.1
  * @date 2026-02-05
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -26,6 +27,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { Button, Input, LoadingSpinner } from '../common';
+import GeneralSelect from '../common/GeneralSelect';
 import styles from './GigPostForm.module.css';
 
 /**
@@ -381,24 +383,16 @@ const GigPostForm = ({
                         Category *
                     </label>
                     <div className={styles.selectWrapper}>
-                        <select
-                            id="category"
-                            name="category"
+                        <GeneralSelect
                             value={formData.category}
-                            onChange={handleChange}
+                            onChange={(selectedValue) => handleChange({ target: { name: "category", value: selectedValue } })}
+                            options={[
+                                { value: "", label: "Select a category" },
+                                ...GIG_CATEGORIES.map(category => ({ value: category, label: category }))
+                            ]}
                             className={`${styles.select} ${validationErrors.category ? styles.inputError : ''}`}
-                            aria-required="true"
-                            aria-invalid={!!validationErrors.category}
-                            aria-describedby={validationErrors.category ? 'category-error' : undefined}
-                        >
-                            <option value="">Select a category</option>
-                            {GIG_CATEGORIES.map(category => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown size={16} className={styles.selectIcon} aria-hidden="true" />
+                            aria-label="Category"
+                        />
                     </div>
                     {validationErrors.category && (
                         <span id="category-error" className={styles.errorText}>

@@ -4,12 +4,9 @@
  * @author Shahd Mohay
  * @version 2.2.0
  * @date 11-10-2025
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-12-16
- *
- * Edit :
- *
+ * @last-modified-date 2026-03-16
  */
 
 import { ArrowLeft, Sparkles, TrendingUp, Users } from "lucide-react";
@@ -18,6 +15,7 @@ import "../../styles/globals.css";
 import RegisterForm from "../../components/forms/RegisterForm";
 import EnhancedBubble from "../../components/EnhancedBubble";
 import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../components/common/Footer";
 
 /**
  * RegistrationPage Component
@@ -90,6 +88,7 @@ function RegistrationPage() {
           <RegisterForm />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,9 @@
  * @description Styles for AdminToolbar component
  * @author Sherif Talaat
  * @date 2026-02-06
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
  */
 
 @import '../../../styles/_admin-design-tokens.css';
@@ -20,6 +23,8 @@
     backdrop-filter: var(--admin-glass-backdrop);
     box-shadow: var(--admin-shadow-toolbar);
     margin-bottom: var(--admin-space-lg);
+    position: relative;
+    z-index: 50;
 }
 
 .toolbar__left {

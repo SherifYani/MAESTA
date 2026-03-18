@@ -4,14 +4,13 @@
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2025-01-22
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-22
+ * @last-modified-date 2026-03-16
  */
 
 import {
     Search,
-    Filter,
     Plus,
     MoreVertical,
     Eye,
@@ -27,11 +26,11 @@ import {
     TrendingUp,
     AlertCircle,
     CheckCircle,
-    XCircle
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
 import Card from "../../../../components/ui/Card";
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import styles from "./PublishedJobs.module.css";
 import { useState, useEffect } from "react";
 
@@ -365,38 +364,36 @@ const PublishedJobs = ({
                 </div>
 
                 <div className={styles.filterControls}>
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="paused">Paused</option>
-                        <option value="closed">Closed</option>
-                    </select>
+                        onChange={setSelectedStatus}
+                        options={[
+                            { value: "all", label: "All Status" },
+                            { value: "active", label: "Active" },
+                            { value: "paused", label: "Paused" },
+                            { value: "closed", label: "Closed" },
+                        ]}
+                    />
 
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={selectedDepartment}
-                        onChange={(e) => setSelectedDepartment(e.target.value)}
-                    >
-                        <option value="all">All Departments</option>
-                        {departments.map(dept => (
-                            <option key={dept} value={dept}>{dept}</option>
-                        ))}
-                    </select>
+                        onChange={setSelectedDepartment}
+                        options={[
+                            { value: "all", label: "All Departments" },
+                            ...departments.map(dept => ({ value: dept, label: dept }))
+                        ]}
+                    />
 
-                    <select
-                        className={styles.filterSelect}
+                    <GeneralSelect
                         value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                    >
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="applications">Most Applications</option>
-                        <option value="deadline">Closest Deadline</option>
-                    </select>
+                        onChange={setSortBy}
+                        options={[
+                            { value: "newest", label: "Newest First" },
+                            { value: "oldest", label: "Oldest First" },
+                            { value: "applications", label: "Most Applications" },
+                            { value: "deadline", label: "Closest Deadline" },
+                        ]}
+                    />
                 </div>
             </div>
 

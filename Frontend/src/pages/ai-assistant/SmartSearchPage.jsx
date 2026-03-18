@@ -5,7 +5,7 @@
  * @date 2026-02-05
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-05
+ * @last-modified-date 2026-03-16
  */
 
 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
 import { PageContainer } from '../../components/layout';
+import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './SmartSearchPage.module.css';
 
 /**
@@ -180,39 +181,42 @@ const SmartSearchPage = () => {
             </form>
 
             <div className={styles.filters}>
-                <select
+                <GeneralSelect
                     value={filters.location}
-                    onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={(selectedValue) => setFilters(prev => ({ ...prev, location: selectedValue }))}
+                    options={[
+                        { value: "", label: "All Locations" },
+                        { value: "cairo", label: "Cairo" },
+                        { value: "alexandria", label: "Alexandria" },
+                        { value: "remote", label: "Remote" }
+                    ]}
                     className={styles.filterSelect}
                     aria-label="Filter by location"
-                >
-                    <option value="">All Locations</option>
-                    <option value="cairo">Cairo</option>
-                    <option value="alexandria">Alexandria</option>
-                    <option value="remote">Remote</option>
-                </select>
-                <select
+                />
+                <GeneralSelect
                     value={filters.experienceLevel}
-                    onChange={(e) => setFilters(prev => ({ ...prev, experienceLevel: e.target.value }))}
+                    onChange={(selectedValue) => setFilters(prev => ({ ...prev, experienceLevel: selectedValue }))}
+                    options={[
+                        { value: "", label: "All Levels" },
+                        { value: "entry", label: "Entry Level" },
+                        { value: "mid", label: "Mid Level" },
+                        { value: "senior", label: "Senior" }
+                    ]}
                     className={styles.filterSelect}
                     aria-label="Filter by experience level"
-                >
-                    <option value="">All Levels</option>
-                    <option value="entry">Entry Level</option>
-                    <option value="mid">Mid Level</option>
-                    <option value="senior">Senior</option>
-                </select>
-                <select
+                />
+                <GeneralSelect
                     value={filters.salary}
-                    onChange={(e) => setFilters(prev => ({ ...prev, salary: e.target.value }))}
+                    onChange={(selectedValue) => setFilters(prev => ({ ...prev, salary: selectedValue }))}
+                    options={[
+                        { value: "", label: "All Salaries" },
+                        { value: "0-10000", label: "Less than 10,000" },
+                        { value: "10000-20000", label: "10,000 - 20,000" },
+                        { value: "20000+", label: "More than 20,000" }
+                    ]}
                     className={styles.filterSelect}
                     aria-label="Filter by salary"
-                >
-                    <option value="">All Salaries</option>
-                    <option value="0-10000">Less than 10,000</option>
-                    <option value="10000-20000">10,000 - 20,000</option>
-                    <option value="20000+">More than 20,000</option>
-                </select>
+                />
             </div>
 
             {results.length > 0 && (

@@ -2,11 +2,11 @@
  * @file DashboardSidebar.module.css
  * @description Sidebar styles with responsive drawer behavior for mobile
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2025-12-19
  * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-19
+ * @last-modified-date 2026-03-16
  */
 
 /* ==========================================================================
@@ -28,12 +28,6 @@
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Enhance glass effect in dark mode */
-:global(.dark) .sidebar {
-  background: rgba(24, 24, 27, 0.95);
-  backdrop-filter: blur(20px) saturate(180%);
 }
 
 .sidebar.open {
@@ -75,11 +69,9 @@
   font-weight: var(--font-weight-bold);
   margin: 0;
   line-height: var(--line-height-tight);
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -258,11 +250,9 @@
 }
 
 .roleButton.active {
-  background: linear-gradient(
-    135deg,
-    rgba(184, 148, 95, 0.15),
-    rgba(201, 161, 82, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(184, 148, 95, 0.15),
+      rgba(201, 161, 82, 0.1));
   color: var(--color-accent-pink);
   border-color: var(--color-accent-pink);
   box-shadow: 0 2px 8px var(--color-shadow-pink);
@@ -307,11 +297,9 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-pink),
-    var(--color-vivid-pink)
-  );
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
   color: var(--color-primary-white);
   display: flex;
   align-items: center;

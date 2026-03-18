@@ -3,15 +3,13 @@
  * @description Statistics Dashboard for Admin with interactive charts and analytics
  * @author Sherif Talaat
  * @date 2026-02-06
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo } from 'react';
 import {
-    BarChart,
-    Bar,
     LineChart,
     Line,
     XAxis,
@@ -19,13 +17,13 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    Legend,
     AreaChart,
     Area
 } from 'recharts';
 import { Calendar, TrendingUp, Users, Briefcase, DollarSign } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { userGrowthData, revenueData, jobPostingsData } from '../../config/adminMockData';
 import styles from './StatisticsDashboard.module.css';
 
@@ -92,16 +90,15 @@ const StatisticsDashboard = () => {
                 filters={
                     <div className={styles.timeRangeSelector}>
                         <Calendar size={18} className={styles.timeRangeSelector__icon} />
-                        <select
-                            className={styles.timeRangeSelect}
+                        <GeneralSelect
                             value={timeRange}
-                            onChange={(e) => setTimeRange(e.target.value)}
-                            aria-label="Select time range"
-                        >
-                            <option value="3m">Last 3 Months</option>
-                            <option value="6m">Last 6 Months</option>
-                            <option value="1y">Last Year</option>
-                        </select>
+                            onChange={setTimeRange}
+                            options={[
+                                { value: "3m", label: "Last 3 Months" },
+                                { value: "6m", label: "Last 6 Months" },
+                                { value: "1y", label: "Last Year" },
+                            ]}
+                        />
                     </div>
                 }
             />

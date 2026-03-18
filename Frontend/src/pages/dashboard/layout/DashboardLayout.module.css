@@ -2,11 +2,11 @@
  * @file DashboardLayout.module.css
  * @description Modern CSS module for dashboard layout with attractive gradients and effects
  * @author Sherif Talaat
- * @version 3.0.0
+ * @version 3.1.0
  * @date 2025-12-20
  * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-01-19
+ * @last-modified-date 2026-03-16
  */
 
 /* ==========================================================================
@@ -59,16 +59,12 @@
   position: relative;
 
   /* Modern gradient background */
-  background: radial-gradient(
-      circle at 20% 10%,
+  background: radial-gradient(circle at 20% 10%,
       var(--color-radial-pink-1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
+      transparent 50%),
+    radial-gradient(circle at 80% 80%,
       var(--color-radial-pink-2) 0%,
-      transparent 50%
-    ),
+      transparent 50%),
     var(--color-background);
 
   /* Smooth scrolling */
@@ -86,18 +82,12 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 10px,
-    var(--color-translucent-white-1) 10px,
-    var(--color-translucent-white-1) 11px
-  );
+  background-image: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      var(--color-translucent-white-1) 10px,
+      var(--color-translucent-white-1) 11px);
   z-index: 0;
-}
-
-:global(.dark) .content::before {
-  opacity: 0.02;
 }
 
 /* ==========================================================================
@@ -120,6 +110,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -173,6 +164,7 @@
    ========================================================================== */
 
 @media (max-width: 40rem) {
+
   /* On mobile, sidebar is always overlay - no margin needed */
   .mainContent {
     margin-left: 0;
@@ -191,11 +183,9 @@
 
   /* Adjust gradient for mobile */
   .content {
-    background: radial-gradient(
-        circle at 50% 10%,
+    background: radial-gradient(circle at 50% 10%,
         var(--color-radial-pink-1) 0%,
-        transparent 40%
-      ),
+        transparent 40%),
       var(--color-background);
   }
 }

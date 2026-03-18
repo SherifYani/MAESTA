@@ -5,9 +5,9 @@
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2026-1-20
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-1-20
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo } from "react";
@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import styles from "./DetailedApplications.module.css";
 
 /**
@@ -362,17 +363,17 @@ const DetailedApplications = ({
           </button>
           
           <div className={styles.sortDropdown}>
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)}
-              className={styles.sortSelect}
-            >
-              <option value="date">Sort by: Newest</option>
-              <option value="match">Sort by: Match Score</option>
-              <option value="company">Sort by: Company</option>
-              <option value="status">Sort by: Status</option>
-            </select>
-            <ChevronDown size={16} className={styles.sortIcon} />
+            <GeneralSelect
+              value={sortBy}
+              onChange={setSortBy}
+              label="Sort By"
+              options={[
+                { value: "date", label: "Sort by: Newest" },
+                { value: "match", label: "Sort by: Match Score" },
+                { value: "company", label: "Sort by: Company" },
+                { value: "status", label: "Sort by: Status" },
+              ]}
+            />
           </div>
         </div>
         

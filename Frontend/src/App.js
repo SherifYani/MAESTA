@@ -3,9 +3,9 @@
  * @description Main application router with all route definitions
  * @author Mohamed Amin
  * @date 2025-10-01
- *
+ * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2025-2-6
+ * @last-modified-date 2026-03-16
  */
 
 import { useState } from 'react';
@@ -262,8 +262,8 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/mock-login" element={<MockLoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/forget" element={<ForgetPasswordPage />} />
-        <Route path="/reset" element={<ResetPasswordPage />} />
+        <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
+        <Route path="/resetpassword" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<OnboardingPage />} />
 

@@ -17,6 +17,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
+import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
 
@@ -395,22 +396,23 @@ export default function EditClientProfile() {
                         className="edit__label">
                         Status
                       </label>
-                      <select
-                        id={`project-status-${projectIndex}`}
-                        value={project.status}
-                        onChange={(event) =>
+                      <GeneralSelect
+                        value={project.status || "Open"}
+                        onChange={(selectedValue) =>
                           handleProjectChange(
                             projectIndex,
                             "status",
-                            event.target.value
+                            selectedValue
                           )
                         }
+                        options={[
+                          { value: "Open", label: "Open" },
+                          { value: "In Progress", label: "In Progress" },
+                          { value: "Completed", label: "Completed" }
+                        ]}
                         className="edit__select"
-                        aria-label={`Project ${projectIndex + 1} status`}>
-                        <option value="Open">Open</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                        aria-label={`Project ${projectIndex + 1} status`}
+                      />
                     </div>
 
                     <div className="edit__field edit__field--full">

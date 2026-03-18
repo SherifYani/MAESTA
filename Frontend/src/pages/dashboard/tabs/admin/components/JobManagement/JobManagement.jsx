@@ -5,12 +5,7 @@
  * @date 2026-02-06
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-08
- * @changes:
- * - Migrated to controlled AdminDataTable pattern
- * - Added currentPage, sortConfig state
- * - Implemented filter → sort → paginate pipeline
- * - Added handleSearch, handleSort, handlePageChange handlers
+ * @last-modified-date 2026-03-16
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -18,6 +13,7 @@ import { Eye, Edit, Trash, FileText, Briefcase } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
+import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { jobsData } from '../../config/adminMockData';
 import styles from './JobManagement.module.css';
 
@@ -205,18 +201,17 @@ const JobManagement = () => {
                 onSearchChange={(e) => handleSearch(e.target.value)}
                 filters={
                     <>
-                        <select
-                            className={styles.filterSelect}
+                        <GeneralSelect
                             value={statusFilter}
-                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                            aria-label="Filter by status"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="pending">Pending</option>
-                            <option value="expired">Expired</option>
-                            <option value="review">Under Review</option>
-                        </select>
+                            onChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}
+                            options={[
+                                { value: "all", label: "All Status" },
+                                { value: "active", label: "Active" },
+                                { value: "pending", label: "Pending" },
+                                { value: "expired", label: "Expired" },
+                                { value: "review", label: "Under Review" },
+                            ]}
+                        />
                     </>
                 }
                 actions={
