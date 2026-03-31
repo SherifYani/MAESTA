@@ -7,7 +7,7 @@
 **/
 
 import ApiService from './ApiService';
-import { aiRecommendations, conversationHistory, resumeAnalysisResult } from '../pages/ai-assistant/config/aiMockData';
+import { aiRecommendations, resumeAnalysisResult } from '../pages/ai-assistant/config/aiMockData';
 
 const aiAssistantService = {
     // Analyze resume and extract skills

@@ -10,7 +10,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   MapPin,
   Clock,
@@ -21,7 +21,8 @@ import {
   BookmarkCheck,
   Filter,
   X,
-  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   NotepadText,
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
@@ -52,12 +53,32 @@ const RecommendedJobs = ({
   const [sortBy, setSortBy] = useState("match");
   const [expandedJobId, setExpandedJobId] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   /**
    * Apply filters to jobs list
    * @param {Array} jobList - Array of job objects
    * @returns {Array} Filtered and sorted jobs
    */
+
+  /**
+   * Extract numeric value from salary string for sorting
+   * @param {string} salary - Salary string (e.g., "$80k - $110k")
+   * @returns {number} Average salary value
+   */
+  const extractSalaryValue = (salary) => {
+    if (!salary) return 0;
+    const numbers = salary.match(/\d+/g);
+    if (!numbers) return 0;
+
+    const values = numbers.map((num) => {
+      const multiplier = salary.includes("k") ? 1000 : 1;
+      return parseInt(num) * multiplier;
+    });
+
+    return values.length > 0 ? Math.max(...values) : 0;
+  };
+
   const filteredJobs = useMemo(() => {
     let result = [...jobs];
 
@@ -100,25 +121,15 @@ const RecommendedJobs = ({
     }
 
     return result;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobs, filters, sortBy]);
 
-  /**
-   * Extract numeric value from salary string for sorting
-   * @param {string} salary - Salary string (e.g., "$80k - $110k")
-   * @returns {number} Average salary value
-   */
-  const extractSalaryValue = (salary) => {
-    if (!salary) return 0;
-    const numbers = salary.match(/\d+/g);
-    if (!numbers) return 0;
+  // Reset to page 1 whenever filters or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, sortBy]);
 
-    const values = numbers.map((num) => {
-      const multiplier = salary.includes("k") ? 1000 : 1;
-      return parseInt(num) * multiplier;
-    });
 
-    return values.length > 0 ? Math.max(...values) : 0;
-  };
 
   /**
    * Get unique values for filter dropdowns
@@ -211,6 +222,21 @@ const RecommendedJobs = ({
     const config = typeMap[type] || { variant: "default", label: type };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
+
+  // Pagination
+  const ITEMS_PER_PAGE = 5;
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pagedJobs = filteredJobs.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+  const startDisplay = filteredJobs.length > 0 ? startIdx + 1 : 0;
+  const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredJobs.length);
+  const winSize = Math.min(5, totalPages);
+  let startPageNum;
+  if (totalPages <= 5) startPageNum = 1;
+  else if (currentPage <= 3) startPageNum = 1;
+  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
+  else startPageNum = currentPage - 2;
+  const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
 
   // If no jobs available
   if (jobs.length === 0) {
@@ -350,7 +376,7 @@ const RecommendedJobs = ({
 
       {/* Jobs List */}
       <div className={styles.jobsList}>
-        {filteredJobs.map((job) => (
+        {pagedJobs.map((job) => (
           <article
             key={job.id}
             className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ""
@@ -488,15 +514,41 @@ const RecommendedJobs = ({
         ))}
       </div>
 
-      {/* Footer */}
-      {filteredJobs.length > 0 && (
-        <div className={styles.footer}>
-          <p className={styles.showingText}>
-            Showing {filteredJobs.length} of {jobs.length} recommendations
-          </p>
-          <button className={styles.viewAllButton}>
-            View All Jobs <ArrowRight size={16} />
-          </button>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <div className={styles.paginationInfo}>
+            Showing {startDisplay}–{endDisplay} of {filteredJobs.length} recommendations
+          </div>
+          <div className={styles.paginationControls}>
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="Previous page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            {pageNumbers.map(num => (
+              <button
+                key={num}
+                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
+                onClick={() => setCurrentPage(num)}
+                aria-label={`Page ${num}`}
+                aria-current={currentPage === num ? 'page' : undefined}
+              >
+                {num}
+              </button>
+            ))}
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              aria-label="Next page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -22,7 +22,7 @@ export const useJobseekerLogic = (initialData) => {
     const [dashboardData, setDashboardData] = useState(() => {
         return initialData || getJobSeekerDashboardData();
     });
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
     // Derived Data

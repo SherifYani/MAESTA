@@ -293,10 +293,7 @@ export const getNewApplicantsData = (filters = {}) => {
 export const getPerformanceAnalyticsData = (options = {}) => {
   try {
     const { 
-      period = 'monthly', 
-      startDate = null, 
-      endDate = null,
-      compareWithPrevious = false
+      period = 'monthly'
     } = options;
     
     const analytics = COMPANY_PERFORMANCE_ANALYTICS;
@@ -623,7 +620,7 @@ export const exportCompanyData = async (dataType, options = {}) => {
 };
 
 // Export all functions
-export default {
+const companyDataService = {
   getCompanyDashboardData,
   getPublishedJobsData,
   getNewApplicantsData,
@@ -634,3 +631,5 @@ export default {
   bulkApplicantAction,
   exportCompanyData
 };
+
+export default companyDataService;

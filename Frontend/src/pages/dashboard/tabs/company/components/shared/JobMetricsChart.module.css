@@ -668,8 +668,8 @@
 
 /* Large screens (75rem = 1200px) */
 @media (max-width: 75rem) {
-    .jobMetricsChart {
-        padding: var(--space-6);
+    .chartContainer {
+        padding: var(--space-4);
     }
 
     .chartTitle {
@@ -687,6 +687,10 @@
 
 /* Medium screens (60.5rem = 968px) */
 @media (max-width: 60.5rem) {
+    .chartHeader {
+        flex-direction: column;
+    }
+
     .jobMetricsChart {
         padding: var(--space-5);
         border-radius: var(--radius-xl);
@@ -821,6 +825,7 @@
 
     .statValue {
         font-size: var(--font-size-base);
+        color: var(--color-foreground);
     }
 
     .loadingContainer,
@@ -942,7 +947,7 @@
 
     /* Disable all animations in print */
     * {
-        animation: none !important;
-        transition: none !important;
+        animation: none;
+        transition: none;
     }
 }

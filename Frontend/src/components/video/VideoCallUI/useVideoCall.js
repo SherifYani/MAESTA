@@ -28,7 +28,7 @@ export const useVideoCall = () => {
     ]);
 
     const [isSharing, setIsSharing] = useState(false);
-    const [isRecording, setIsRecording] = useState(true); // Demo: recording on start
+    const [isRecording] = useState(true); // Demo: recording on start
 
     const toggleMic = useCallback(() => {
         setLocalParticipant(prev => ({ ...prev, isMuted: !prev.isMuted }));

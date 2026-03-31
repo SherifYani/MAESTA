@@ -92,8 +92,8 @@ const jobService = {
             // Convert to clean numbers (remove commas)
             const cleanNumbers = numbers.map(n => parseInt(n.replace(/,/g, ''), 10));
 
-            // Calculate average
-            const avg = cleanNumbers.reduce((a, b) => a + b, 0) / cleanNumbers.length;
+            // Calculate average (not currently used directly if min/max overlaps)
+            // const avg = cleanNumbers.reduce((a, b) => a + b, 0) / cleanNumbers.length;
 
             // Adjust for currency (very rough approximation if needed, but assuming same currency for filter)
             // or just use raw numbers. The Mock data has mixed currencies but filters usually assume one.
@@ -144,7 +144,6 @@ const jobService = {
 
         if (datePosted && datePosted !== 'all') {
             const now = new Date();
-            const jobDate = new Date();
 
             filteredJobs = filteredJobs.filter(job => {
                 const posted = new Date(job.postedDate);

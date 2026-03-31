@@ -16,6 +16,8 @@
  */
 
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
 import "../styles/login.css";
 import AuthHeader from "../components/common/AuthHeader";
@@ -29,6 +31,9 @@ import Footer from "../components/common/Footer";
  * @returns {JSX.Element} The rendered login form with validation and user feedback.
  */
 export default function LoginForm() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   // State for password visibility toggle
   const [showPassword, setShowPassword] = useState(false);
 
@@ -134,32 +139,15 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+      await login({
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(
-          data.message || "Login failed. Please check your credentials."
-        );
-        return;
-      }
-
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-
-      // Navigate to dashboard after successful login
-      window.location.href = "/dashboard";
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || '/dashboard';
+      localStorage.removeItem('redirectAfterLogin');
+      
+      navigate(redirectTo);
     } catch (error) {
       setError(
         error.message || "An error occurred during login. Please try again."

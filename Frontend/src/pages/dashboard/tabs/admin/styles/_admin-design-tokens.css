@@ -110,14 +110,14 @@
 
     /* ==================== 🆕 Admin Background Colors (Eye Comfort) ==================== */
     /* 🔧 Added soft off-white instead of pure white to reduce eye strain */
-    --admin-bg-primary: #fafbfc;
-    --admin-bg-secondary: #f4f6f8;
-    --admin-bg-elevated: #ffffff;
+    --admin-bg-primary: var(--color-background);
+    --admin-bg-secondary: var(--color-sidebar);
+    --admin-bg-elevated: var(--color-card);
 
     /* 🔧 Text colors with optimal contrast ratios (WCAG AA+) */
-    --admin-text-primary: #1a202c;
-    --admin-text-secondary: #4a5568;
-    --admin-text-tertiary: #718096;
+    --admin-text-primary: var(--color-foreground);
+    --admin-text-secondary: var(--color-muted-foreground);
+    --admin-text-tertiary: var(--color-muted-foreground);
 }
 
 /* ==================== Dark Mode Overrides ==================== */
@@ -142,17 +142,17 @@
         --admin-shadow-toolbar: 0 2px 12px rgba(0, 0, 0, 0.3);
 
         /* 🔧 🆕 Dark mode background colors (warm neutrals) */
-        --admin-bg-primary: #0d1117;
+        --admin-bg-primary: var(--color-background);
         /* GitHub-style base */
-        --admin-bg-secondary: #161b22;
+        --admin-bg-secondary: var(--color-sidebar);
         /* Elevated surface */
-        --admin-bg-elevated: #1f2937;
+        --admin-bg-elevated: var(--color-card);
         /* Cards/modals */
 
         /* 🔧 Dark mode text with reduced brightness to prevent glare */
-        --admin-text-primary: #e6edf3;
-        --admin-text-secondary: #9198a1;
-        --admin-text-tertiary: #6e7681;
+        --admin-text-primary: var(--color-foreground);
+        --admin-text-secondary: var(--color-muted-foreground);
+        --admin-text-tertiary: var(--color-muted-foreground);
 
         /* 🔧 Adjusted subtle colors for dark mode visibility */
         --admin-color-success-subtle: rgba(34, 197, 94, 0.12);
@@ -175,13 +175,13 @@
 @media (prefers-contrast: high) {
     :root {
         --admin-glass-border: 1px solid rgba(0, 0, 0, 0.3);
-        --admin-text-primary: #000000;
+        --admin-text-primary: var(--color-primary-black);
     }
 }
 
 @media (prefers-contrast: high) and (prefers-color-scheme: dark) {
     :root {
         --admin-glass-border: 1px solid rgba(255, 255, 255, 0.3);
-        --admin-text-primary: #ffffff;
+        --admin-text-primary: var(--color-primary-white);
     }
 }

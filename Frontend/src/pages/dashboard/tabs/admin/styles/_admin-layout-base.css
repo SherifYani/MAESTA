@@ -166,7 +166,7 @@
 /* ==================== Responsive Breakpoints ==================== */
 
 /* Tablet and below */
-@media (max-width: 968px) {
+@media (max-width: 60.5rem) {
     .admin-page-container {
         padding: var(--admin-space-lg) var(--admin-space-md);
         gap: var(--admin-space-lg);
@@ -204,7 +204,7 @@
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
     .admin-page-container {
         padding: var(--admin-space-md);
         gap: var(--admin-space-md);
@@ -247,7 +247,7 @@
 
     .admin-content {
         box-shadow: none;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
     }
 
     .admin-card {

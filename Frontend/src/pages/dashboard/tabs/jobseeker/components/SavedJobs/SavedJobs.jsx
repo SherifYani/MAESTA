@@ -10,7 +10,7 @@
  * @last-modified-date 2026-1-20
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Bookmark,
   BookmarkCheck,
@@ -23,8 +23,8 @@ import {
   Send,
   Filter,
   X,
-  ChevronDown,
-  ExternalLink
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
@@ -53,6 +53,7 @@ const SavedJobs = ({
   });
   const [showFilters, setShowFilters] = useState(false);
   const [expandedJobId, setExpandedJobId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   /**
    * Apply filters to jobs list
@@ -87,6 +88,11 @@ const SavedJobs = ({
    */
   const uniqueTypes = [...new Set(jobs.map(job => job.type).filter(Boolean))];
   const uniqueStatuses = [...new Set(jobs.map(job => job.status).filter(Boolean))];
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   /**
    * Handle job removal
@@ -182,6 +188,21 @@ const SavedJobs = ({
       </div>
     );
   };
+
+  // Pagination
+  const ITEMS_PER_PAGE = 5;
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pagedJobs = filteredJobs.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+  const startDisplay = filteredJobs.length > 0 ? startIdx + 1 : 0;
+  const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredJobs.length);
+  const winSize = Math.min(5, totalPages);
+  let startPageNum;
+  if (totalPages <= 5) startPageNum = 1;
+  else if (currentPage <= 3) startPageNum = 1;
+  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
+  else startPageNum = currentPage - 2;
+  const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
 
   // If no saved jobs
   if (jobs.length === 0) {
@@ -306,7 +327,7 @@ const SavedJobs = ({
 
       {/* Jobs List */}
       <div className={styles.jobsList}>
-        {filteredJobs.map(job => (
+        {pagedJobs.map(job => (
           <article
             key={job.id}
             className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ''}`}
@@ -445,23 +466,41 @@ const SavedJobs = ({
         ))}
       </div>
 
-      {/* Footer */}
-      {filteredJobs.length > 0 && (
-        <div className={styles.footer}>
-          <div className={styles.footerStats}>
-            <span className={styles.statItem}>
-              <Bookmark size={14} /> {jobs.length} total saved
-            </span>
-            <span className={styles.statItem}>
-              <BookmarkCheck size={14} /> {jobs.filter(j => j.hasApplied).length} applied
-            </span>
-            <span className={styles.statItem}>
-              <Briefcase size={14} /> {filteredJobs.length} showing
-            </span>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <div className={styles.paginationInfo}>
+            Showing {startDisplay}–{endDisplay} of {filteredJobs.length} saved jobs
           </div>
-          <button className={styles.viewAllButton}>
-            View All Saved Jobs <ExternalLink size={14} />
-          </button>
+          <div className={styles.paginationControls}>
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="Previous page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            {pageNumbers.map(num => (
+              <button
+                key={num}
+                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
+                onClick={() => setCurrentPage(num)}
+                aria-label={`Page ${num}`}
+                aria-current={currentPage === num ? 'page' : undefined}
+              >
+                {num}
+              </button>
+            ))}
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              aria-label="Next page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         </div>
       )}
     </div>

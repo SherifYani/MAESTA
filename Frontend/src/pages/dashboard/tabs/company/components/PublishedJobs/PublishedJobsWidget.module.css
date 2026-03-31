@@ -172,13 +172,13 @@
    ========================================================================== */
 
 @media (max-width: 75rem) {
-    .jobHeader {
-        gap: var(--space-2);
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 60.5rem) {
-    .jobHeader {
+    .header {
         flex-direction: column;
         gap: var(--space-2);
     }
@@ -190,14 +190,13 @@
 }
 
 @media (max-width: 40rem) {
-    .jobItem {
-        padding: var(--space-3);
+    .statsGrid {
+        grid-template-columns: 1fr;
     }
 
     .jobTitle {
         font-size: var(--font-size-sm);
     }
-
     .jobMeta {
         flex-direction: column;
         align-items: flex-start;

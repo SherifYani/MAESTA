@@ -6,7 +6,7 @@
  * @date 2026-1-19
  * 
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-1-21
+ * @last-modified-date 2026-03-18
  */
 
 /* ==========================================================================
@@ -928,4 +928,62 @@
     width: 100%;
     justify-content: space-between;
   }
+}
+
+/* -- Pagination ---------------------------------------------------------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.paginationInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.paginationBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: var(--color-muted);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationBtnActive,
+.paginationBtnActive:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-weight: var(--font-weight-semibold);
+  cursor: default;
 }

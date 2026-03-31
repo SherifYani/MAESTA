@@ -3104,7 +3104,7 @@ export const getJobPerformanceSummary = () => {
 
 // ==================== EXPORT EVERYTHING ====================
 
-export default {
+const dashboardConfig = {
   ROLES,
   ROLE_METRICS,
   ROLE_NAVIGATION,
@@ -3154,3 +3154,5 @@ export default {
   getCompanyStatistics,
   getJobPerformanceSummary,
 };
+
+export default dashboardConfig;

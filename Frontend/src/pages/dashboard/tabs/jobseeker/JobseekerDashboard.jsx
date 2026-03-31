@@ -79,88 +79,111 @@ const JobseekerDashboard = () => {
 
       {/* Main Content Grid */}
       <div className={styles.contentGrid}>
-        {/* Left Column */}
-        <div className={styles.leftColumn}>
-          {/* Profile Summary */}
-          <ProfileSummaryCard
-            profile={profile}
-            onEdit={() => handleQuickAction('update-profile')}
-          />
 
-          {/* Recent Applications */}
-          <Card
-            title="Recent Applications"
-            subtitle={`${applications.length} active applications`}
-            className={styles.applicationsCard}
+        {/* Row 1: Profile Summary + Skills Analysis (side by side) */}
+        <div className={styles.twoColRow}>
+          <Card 
+            title="Profile Summary" 
+            subtitle="Your account overview" 
             variant="glass"
-            action={
-              <Link to="/dashboard/applications">
-                <Button variant="ghost" size="small">
-                  View All <ArrowUpRight size={14} />
-                </Button>
-              </Link>
-            }
+            className={styles.profileCard}
           >
-            <ApplicationsWidget
-              applications={applications}
-              onViewApplication={(id) => navigate(`/dashboard/applications/${id}`)}
+            <ProfileSummaryCard
+              profile={profile}
+              onEdit={() => handleQuickAction('update-profile')}
             />
           </Card>
-
-          {/* Skills Analysis */}
-          <SkillsAnalysisCard
-            skillsAnalysis={skillsAnalysis}
-            onEdit={() => navigate('/dashboard/profile/skills')}
-            onAssess={() => navigate('/dashboard/assessments')}
-          />
+          
+          <Card 
+            title="Skills Match Analysis" 
+            subtitle="Based on your profile data"
+            variant="glass"
+            className={styles.skillsCard}
+          >
+            <SkillsAnalysisCard
+              skillsAnalysis={skillsAnalysis}
+              onEdit={() => navigate('/dashboard/profile/skills')}
+              onAssess={() => navigate('/dashboard/assessments')}
+            />
+          </Card>
         </div>
 
-        {/* Right Column */}
-        <div className={styles.rightColumn}>
-          {/* Recommended Jobs */}
+        {/* Row 2: Recent Applications (full width) */}
+        <Card
+          title="Recent Applications"
+          subtitle={`${applications.length} active applications`}
+          className={styles.applicationsCard}
+          variant="glass"
+          action={
+            <Link to="/dashboard/applications">
+              <Button variant="ghost" size="small">
+                View All <ArrowUpRight size={14} />
+              </Button>
+            </Link>
+          }
+        >
+          <ApplicationsWidget
+            applications={applications}
+            onViewApplication={(id) => navigate(`/dashboard/applications/${id}`)}
+          />
+        </Card>
+
+        {/* Row 3: Recommended Jobs (full width) */}
+        <Card
+          title="Recommended For You"
+          subtitle="Based on your skills and preferences"
+          className={styles.recommendedCard}
+          variant="glass"
+          action={
+            <Link to="/dashboard/recommended-jobs">
+              <Button variant="ghost" size="small">
+                View All <ArrowUpRight size={14} />
+              </Button>
+            </Link>
+          }
+        >
+          <RecommendedJobsWidget
+            jobs={recommendedJobs}
+            onViewJob={(id) => navigate(`/jobs/${id}`)}
+            onSaveJob={(id) => handleSaveJob(id, true)}
+          />
+        </Card>
+
+        {/* Row 4: Saved Jobs (full width) */}
+        <Card
+          title="Saved Jobs"
+          subtitle={`${savedJobs.length} jobs saved for later`}
+          className={styles.savedJobsCard}
+          variant="glass"
+          action={
+            <Link to="/dashboard/saved-jobs">
+              <Button variant="ghost" size="small">
+                View All <ArrowUpRight size={14} />
+              </Button>
+            </Link>
+          }
+        >
+          <SavedJobsWidget
+            jobs={savedJobs}
+            onRemove={handleRemoveSavedJob}
+            onApply={(id) => navigate(`/jobs/${id}/apply`)}
+            onView={(id) => navigate(`/jobs/${id}`)}
+          />
+        </Card>
+
+        {/* Row 5: Pending Actions + Recent Activity (side by side) */}
+        <div className={styles.twoColRow}>
           <Card
-            title="Recommended For You"
-            subtitle="Based on your skills and preferences"
-            className={styles.recommendedCard}
+            title="Pending Actions"
+            subtitle={`${dashboardData.pendingActions?.length || 0} tasks to complete`}
+            className={styles.actionsCard}
             variant="glass"
-            action={
-              <Link to="/dashboard/recommended-jobs">
-                <Button variant="ghost" size="small">
-                  View All <ArrowUpRight size={14} />
-                </Button>
-              </Link>
-            }
           >
-            <RecommendedJobsWidget
-              jobs={recommendedJobs}
-              onViewJob={(id) => navigate(`/jobs/${id}`)}
-              onSaveJob={(id) => handleSaveJob(id, true)}
+            <PendingActions
+              actions={dashboardData.pendingActions || []}
+              onActionComplete={(id) => console.log('Complete', id)}
             />
           </Card>
-
-          {/* Saved Jobs */}
-          <Card
-            title="Saved Jobs"
-            subtitle={`${savedJobs.length} jobs saved for later`}
-            className={styles.savedJobsCard}
-            variant="glass"
-            action={
-              <Link to="/dashboard/saved-jobs">
-                <Button variant="ghost" size="small">
-                  View All <ArrowUpRight size={14} />
-                </Button>
-              </Link>
-            }
-          >
-            <SavedJobsWidget
-              jobs={savedJobs}
-              onRemove={handleRemoveSavedJob}
-              onApply={(id) => navigate(`/jobs/${id}/apply`)}
-              onView={(id) => navigate(`/jobs/${id}`)}
-            />
-          </Card>
-
-          {/* Recent Activity */}
           <Card
             title="Recent Activity"
             subtitle="Your latest interactions"
@@ -177,20 +200,8 @@ const JobseekerDashboard = () => {
               limit={5}
             />
           </Card>
-
-          {/* Pending Actions */}
-          <Card
-            title="Pending Actions"
-            subtitle={`${dashboardData.pendingActions?.length || 0} tasks to complete`}
-            className={styles.actionsCard}
-            variant="glass"
-          >
-            <PendingActions
-              actions={dashboardData.pendingActions || []}
-              onActionComplete={(id) => console.log('Complete', id)}
-            />
-          </Card>
         </div>
+
       </div>
     </div>
   );

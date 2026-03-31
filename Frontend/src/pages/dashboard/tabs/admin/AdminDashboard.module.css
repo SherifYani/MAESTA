@@ -150,7 +150,7 @@
   gap: var(--space-6);
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 60.5rem) {
   .contentLayout {
     grid-template-columns: 2fr 1fr;
   }
@@ -163,7 +163,7 @@
   gap: var(--space-6);
 }
 
-@media (max-width: 63.9rem) {
+@media (max-width: 60.5rem) {
   .contentLayout {
     grid-template-columns: 1fr;
   }

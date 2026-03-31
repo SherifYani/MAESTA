@@ -10,7 +10,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   FileText,
   Calendar,
@@ -22,11 +22,10 @@ import {
   Eye,
   Trash2,
   Filter,
-  ChevronDown,
-  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
   MapPin,
   DollarSign,
-  Users,
   BarChart
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
@@ -60,6 +59,7 @@ const DetailedApplications = ({
   const [showFilters, setShowFilters] = useState(false);
   const [expandedAppId, setExpandedAppId] = useState(null);
   const [sortBy, setSortBy] = useState("date");
+  const [currentPage, setCurrentPage] = useState(1);
 
   /**
    * Apply filters and sorting to applications
@@ -87,6 +87,8 @@ const DetailedApplications = ({
           break;
         case "quarter":
           cutoff.setMonth(now.getMonth() - 3);
+          break;
+        default:
           break;
       }
       
@@ -127,10 +129,17 @@ const DetailedApplications = ({
           (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99)
         );
         break;
+      default:
+        break;
     }
 
     return filtered;
   }, [applications, filters, sortBy]);
+
+  // Reset to page 1 whenever filters or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, sortBy]);
 
   /**
    * Get status icon and color
@@ -277,6 +286,21 @@ const DetailedApplications = ({
       matchScore: "all"
     });
   };
+
+  // Pagination
+  const ITEMS_PER_PAGE = 5;
+  const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pagedApplications = filteredApplications.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+  const startDisplay = filteredApplications.length > 0 ? startIdx + 1 : 0;
+  const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredApplications.length);
+  const winSize = Math.min(5, totalPages);
+  let startPageNum;
+  if (totalPages <= 5) startPageNum = 1;
+  else if (currentPage <= 3) startPageNum = 1;
+  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
+  else startPageNum = currentPage - 2;
+  const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
 
   // If no applications
   if (applications.length === 0) {
@@ -445,10 +469,7 @@ const DetailedApplications = ({
 
       {/* Applications List */}
       <div className={styles.applicationsList}>
-        {filteredApplications.map(application => {
-          const statusConfig = getStatusConfig(application.status);
-          const StatusIcon = statusConfig.icon;
-          
+        {pagedApplications.map(application => {
           return (
             <article 
               key={application.id} 
@@ -600,19 +621,40 @@ const DetailedApplications = ({
         })}
       </div>
 
-      {/* Footer */}
-      {filteredApplications.length > 0 && (
-        <div className={styles.footer}>
-          <div className={styles.footerInfo}>
-            Showing {filteredApplications.length} of {applications.length} applications
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <div className={styles.paginationInfo}>
+            Showing {startDisplay}–{endDisplay} of {filteredApplications.length} applications
           </div>
-          <div className={styles.footerActions}>
-            <Button variant="outline" size="sm">
-              Load More
-            </Button>
-            <Button variant="primary" size="sm">
-              <ExternalLink size={14} /> Application Analytics
-            </Button>
+          <div className={styles.paginationControls}>
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="Previous page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            {pageNumbers.map(num => (
+              <button
+                key={num}
+                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
+                onClick={() => setCurrentPage(num)}
+                aria-label={`Page ${num}`}
+                aria-current={currentPage === num ? 'page' : undefined}
+              >
+                {num}
+              </button>
+            ))}
+            <button
+              className={styles.paginationBtn}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              aria-label="Next page"
+            >
+              <ChevronRight size={16} />
+            </button>
           </div>
         </div>
       )}

@@ -9,8 +9,6 @@
  * @last-modified-date 2026-03-16
  */
 
-import { useEffect, useState } from "react";
-import { Sun, Moon, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Sun, Moon, Monitor, Check, Loader2 } from "lucide-react";
 import styles from "./ThemeToggle.module.css";

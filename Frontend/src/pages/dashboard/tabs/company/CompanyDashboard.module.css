@@ -498,12 +498,12 @@
       var(--color-vivid-pink),
       var(--color-accent-pink));
   -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+    linear-gradient(var(--color-primary-white) 0 0) content-box,
+    linear-gradient(var(--color-primary-white) 0 0);
   -webkit-mask-composite: xor;
   mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+    linear-gradient(var(--color-primary-white) 0 0) content-box,
+    linear-gradient(var(--color-primary-white) 0 0);
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -908,10 +908,24 @@
    ========================================================================== */
 
 @media print {
+  * {
+    background: transparent;
+    color: var(--color-foreground);
+    box-shadow: none;
+    text-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+
+  /* Disable all animations in print */
+  * {
+    animation: none;
+    transition: none;
+  }
+
   .companyDashboard {
     padding: 0;
     max-width: none;
-    background: white;
+    background: transparent;
   }
 
   .companyDashboard::before {

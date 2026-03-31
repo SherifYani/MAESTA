@@ -85,7 +85,6 @@
     display: flex;
     gap: var(--admin-space-sm);
     align-items: center;
-    flex-wrap: wrap;
 }
 
 /* ==================== Responsive Design ==================== */

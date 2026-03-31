@@ -146,7 +146,7 @@ const DashboardHeader = ({
   const handleMenuItemClick = (item) => {
     if (item.isLogout) {
       logout();
-      navigate('/mock-login', { replace: true });
+      navigate('/login', { replace: true });
     } else if (onProfileClick) {
       onProfileClick(item);
     }

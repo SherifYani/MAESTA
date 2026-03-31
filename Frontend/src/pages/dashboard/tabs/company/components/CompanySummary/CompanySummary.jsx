@@ -9,6 +9,8 @@
  * @last-modified-date 2026-01-28
  */
 
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Building,
   MapPin,
@@ -115,6 +117,31 @@ const CompanySummary = ({ profile, onEditProfile, onViewAnalytics }) => {
       </div>
     </div>
   );
+};
+
+CompanySummary.propTypes = {
+  profile: PropTypes.shape({
+    name: PropTypes.string,
+    tagline: PropTypes.string,
+    email: PropTypes.string,
+    website: PropTypes.string,
+    established: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    location: PropTypes.string,
+    industry: PropTypes.string,
+    employees: PropTypes.string,
+    description: PropTypes.string,
+    verification: PropTypes.shape({
+      email: PropTypes.bool,
+      company: PropTypes.bool
+    }),
+    team: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string,
+      role: PropTypes.string,
+      email: PropTypes.string
+    }))
+  }).isRequired,
+  onEditProfile: PropTypes.func.isRequired,
+  onViewAnalytics: PropTypes.func.isRequired
 };
 
 export default CompanySummary;

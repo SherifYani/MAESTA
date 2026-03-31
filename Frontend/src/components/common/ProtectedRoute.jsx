@@ -9,6 +9,7 @@
 
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 /**
  * Wraps a route to require authentication (and optionally a specific role).
@@ -24,13 +25,17 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
     // Wait for auth state to hydrate from localStorage before deciding
     if (loading) {
-        return null; // Avoids a flash-of-redirect on page refresh
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--color-bg)' }}>
+                <Loader2 className="animate-spin" size={32} style={{ color: 'var(--color-primary)' }} />
+            </div>
+        );
     }
 
     if (!isAuthenticated) {
         // Save the page the user tried to visit so we can redirect there after login
         localStorage.setItem('redirectAfterLogin', location.pathname + location.search);
-        return <Navigate to="/mock-login" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     if (requiredRole && user?.role !== requiredRole) {

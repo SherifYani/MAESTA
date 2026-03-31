@@ -125,7 +125,7 @@ export const validatePhoneNumber = (phone) => {
   const patterns = {
     international: /^\+[1-9]\d{1,14}$/, // E.164 format
     usCanada: /^(\+1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/,
-    general: /^[\+]?[(]?[\d\s\(\)\-]{10,}$/, // General pattern for most countries
+    general: /^[+]?[(]?[\d\s()-]{10,}$/, // General pattern for most countries
   };
 
   if (phone.length < 10) {
@@ -137,7 +137,7 @@ export const validatePhoneNumber = (phone) => {
   }
 
   // Check if phone contains only valid characters
-  const validChars = /^[\d\s\(\)\-\+\.]+$/;
+  const validChars = /^[\d\s()\-+.]+$/;
   if (!validChars.test(phone)) {
     return {
       isValid: false,
@@ -971,7 +971,7 @@ export const debounceValidation = (func, delay = 300) => {
 // EXPORT ALL VALIDATION FUNCTIONS
 // ============================================
 
-export default {
+const formValidation = {
   // General validations
   validateRequired,
   validateMinLength,
@@ -1016,3 +1016,5 @@ export default {
   getValidationState,
   debounceValidation,
 };
+
+export default formValidation;

@@ -1,21 +1,13 @@
 /**
  * @file AuthContext.jsx
  * @description Authentication context - manages user authentication state globally.
- *              Supports mock (localStorage-based) auth for prototype and real API auth for production.
+ *              Supports simulated API auth for prototyping, prepared for real API.
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 3.0.0
  * @date 05-03-2026
- *
- * @changes (v2.0.0):
- * - Removed hardcoded mock user — isAuthenticated is now derived from real localStorage state
- * - Added safe JSON.parse with try/catch for localStorage reads
- * - login() now accepts (userObj, token) and persists both to localStorage
- * - logout() clears token, user, and any redirectAfterLogin from localStorage
- * - Handles edge cases: token present but no user → clears storage and deauthenticates
- * - Handles edge cases: user present but missing role → defaults to 'jobseeker'
  **/
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
 import { tokenService } from '../lib/token-service';
 
@@ -23,141 +15,105 @@ const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
-/**
- * Safely reads and parses a JSON value from localStorage.
- * Returns null on any parse error or missing key.
- * @param {string} key
- * @returns {any|null}
- */
-const safeGetJSON = (key) => {
-    try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        return JSON.parse(raw);
-    } catch {
-        return null;
-    }
-};
-
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ─── Initialisation ──────────────────────────────────────────────────────────
-    useEffect(() => {
-        const initAuth = async () => {
-            const token = localStorage.getItem('token');
-            const storedUser = safeGetJSON('user');
+    // ─── Core Authentication Methods ──────────────────────────────────────────────
 
-            if (token && storedUser) {
-                // Validate role — default to 'jobseeker' if missing
-                if (!storedUser.role) {
-                    storedUser.role = 'jobseeker';
-                }
-                setUser(storedUser);
-                setLoading(false);
-                return;
-            }
-
-            // Token exists but no user object → storage is corrupt, clean it up
-            if (token && !storedUser) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                setLoading(false);
-                return;
-            }
-
-            // No token at all → try real API (for when backend is connected)
-            const apiToken = tokenService.getToken();
-            if (apiToken) {
-                try {
-                    const userData = await authService.getCurrentUser();
-                    setUser(userData);
-                } catch (err) {
-                    console.error('Failed to load user from API:', err);
-                    tokenService.clearToken();
-                }
-            }
-
+    /**
+     * Checks if there's a valid session token, and restores the user.
+     * Called automatically on mount, and can be called manually.
+     */
+    const checkAuth = useCallback(async () => {
+        const token = tokenService.getToken() || localStorage.getItem('token');
+        if (!token) {
+            setUser(null);
             setLoading(false);
-        };
+            return;
+        }
 
-        initAuth();
+        try {
+            setLoading(true);
+            const data = await authService.getCurrentUser();
+            if (data && data.user) {
+                // Ensure role has a default
+                if (!data.user.role) {
+                    data.user.role = 'jobseeker';
+                }
+                setUser(data.user);
+            }
+        } catch (err) {
+            console.error('Failed to restore session from token:', err);
+            tokenService.clearToken();
+            localStorage.removeItem('token');
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    // ─── Mock / Real Login ────────────────────────────────────────────────────────
-    /**
-     * Logs the user in.
-     * For mock logins: call login(userObj, mockToken).
-     * For real API logins: call login(credentials) — this proxies to authService.login().
-     *
-     * @param {Object} userObjOrCredentials
-     * @param {string} [token] - If provided, used directly (mock mode). If omitted, performs real API call.
-     */
-    const login = async (userObjOrCredentials, token = null) => {
+    // Initialisation on app load
+    useEffect(() => {
+        checkAuth();
+    }, [checkAuth]);
+
+    const login = async (credentials) => {
         try {
             setError(null);
+            setLoading(true);
 
-            // Mock login path — token supplied directly
-            if (token) {
-                const userObj = {
-                    ...userObjOrCredentials,
-                    role: userObjOrCredentials.role || 'jobseeker',
-                };
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(userObj));
-                setUser(userObj);
-                return { user: userObj, token };
-            }
-
-            // Real API login path
-            const data = await authService.login(userObjOrCredentials);
+            // Real/Simulated API login
+            const data = await authService.login(credentials);
+            
             if (data.token) {
+                tokenService.setToken(data.token);
                 localStorage.setItem('token', data.token);
             }
             if (data.user) {
-                localStorage.setItem('user', JSON.stringify(data.user));
-                setUser(data.user);
+                const userObj = { ...data.user, role: data.user.role || 'jobseeker' };
+                setUser(userObj);
             }
+            
             return data;
         } catch (err) {
             setError(err.message || 'Login failed');
             throw err;
+        } finally {
+            setLoading(false);
         }
     };
 
-    // ─── Logout ───────────────────────────────────────────────────────────────────
-    /**
-     * Clears all auth state — localStorage token, user, and any post-login redirect.
-     */
     const logout = async () => {
         try {
-            // Attempt API logout (no-op if not connected)
             await authService.logout();
         } catch {
-            // Swallow — always clear local state regardless
+            // Swallow network errors on logout
         } finally {
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
             localStorage.removeItem('redirectAfterLogin');
-            tokenService.clearToken?.();
+            tokenService.clearToken(); // Handles sessionStorage/localStorage inside
             setUser(null);
             setError(null);
         }
     };
 
-    // ─── Remaining Auth Methods (real API) ────────────────────────────────────────
     const register = async (userData) => {
         try {
             setError(null);
+            setLoading(true);
             const data = await authService.register(userData);
             return data;
         } catch (err) {
             setError(err.message || 'Registration failed');
             throw err;
+        } finally {
+            setLoading(false);
         }
     };
+
+    // ─── Remaining Auth Methods ───────────────────────────────────────────────────
 
     const forgotPassword = async (email) => {
         try {
@@ -229,6 +185,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         isAuthenticated: !!user,
+        checkAuth,
         login,
         register,
         logout,

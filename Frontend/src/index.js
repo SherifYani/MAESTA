@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 
 import App from "./App";
-import ThemeToggle from "./components/common/ThemeToggle";
 import { ProfileProvider } from "./context/ProfileContext";
 import { SubscriptionProvider } from "./context/SubscriptionContext";
 import { NotificationProvider } from "./context/NotificationContext";

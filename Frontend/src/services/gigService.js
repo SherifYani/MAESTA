@@ -69,7 +69,6 @@ const gigService = {
         const {
             search,
             budget,
-            type, // Mock data doesn't have type currently, so we'll ignore or assume all are compatible
             duration,
             skills,
             experienceLevel,

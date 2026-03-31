@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import styles from './MockLoginPage.module.css';
 
-// ─── Role Definitions ──────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Role Definitions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const ROLES = [
     {
@@ -62,7 +62,7 @@ const ROLES = [
     },
 ];
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const MockLoginPage = () => {
     const { login } = useAuth();
@@ -78,29 +78,24 @@ const MockLoginPage = () => {
     const handleDemoLogin = async () => {
         setIsLoggingIn(true);
 
-        const mockToken = `mock-jwt-${selectedRole}-${Date.now()}`;
-
-        const mockUser = {
-            id: `demo-${selectedRole}-001`,
-            name: getDemoName(selectedRole),
-            email: `demo-${selectedRole}@maesta.dev`,
-            role: selectedRole,
-            avatarInitials: getDemoInitials(selectedRole),
-            isVerified: true,
+        const credentials = {
+            email: getDemoEmail(selectedRole),
+            password: '123456'
         };
 
         // Small artificial delay so the button state is visible
-        await new Promise((r) => setTimeout(r, 350));
+        await new Promise((r) => setTimeout(r, 450));
 
         try {
-            await login(mockUser, mockToken);
+            await login(credentials);
 
             // Navigate to the page the user originally wanted, or /dashboard
             const redirectTo =
                 localStorage.getItem('redirectAfterLogin') || '/dashboard';
             localStorage.removeItem('redirectAfterLogin');
             navigate(redirectTo, { replace: true });
-        } catch {
+        } catch (err) {
+            console.error('Demo login failed:', err);
             setIsLoggingIn(false);
         }
     };
@@ -152,7 +147,7 @@ const MockLoginPage = () => {
                     ) : (
                         <LogIn size={18} />
                     )}
-                    {isLoggingIn ? 'Logging in…' : `Continue as ${ROLES.find(r => r.id === selectedRole)?.label}`}
+                    {isLoggingIn ? 'Logging inΓÇª' : `Continue as ${ROLES.find(r => r.id === selectedRole)?.label}`}
                 </button>
 
                 {/* Disclaimer */}
@@ -168,25 +163,30 @@ const MockLoginPage = () => {
     );
 };
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 function getDemoName(role) {
     const names = {
-        jobseeker: 'Jordan Lee',
-        company: 'Acme Corp HR',
-        freelancer: 'Sam Rivera',
-        client: 'Taylor Morgan',
+        jobseeker: 'John Doe',
+        company: 'Acme Inc',
         admin: 'Admin User',
     };
     return names[role] || 'Demo User';
 }
 
+function getDemoEmail(role) {
+    const emails = {
+        jobseeker: 'jobseeker@maesta.com',
+        company: 'company@maesta.com',
+        admin: 'admin@maesta.com',
+    };
+    return emails[role] || '';
+}
+
 function getDemoInitials(role) {
     const map = {
-        jobseeker: 'JL',
-        company: 'AC',
-        freelancer: 'SR',
-        client: 'TM',
+        jobseeker: 'JD',
+        company: 'AI',
         admin: 'AU',
     };
     return map[role] || 'DU';
