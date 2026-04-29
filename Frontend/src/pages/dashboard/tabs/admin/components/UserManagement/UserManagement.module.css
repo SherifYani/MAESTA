@@ -1,0 +1,361 @@
+/**
+ * @file UserManagement.module.css
+ * @description Styles for UserManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+/* Inherit base layout */
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Add Button ==================== */
+.addButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-vivid-pink));
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 102, 196, 0.3);
+}
+
+.addButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 102, 196, 0.4);
+    opacity: 0.95;
+}
+
+.addButton:active {
+    transform: scale(0.98);
+}
+
+/* ==================== Filter Select ==================== */
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    /* Use solid token so native <select> renders correctly in all browsers/themes */
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: background-color var(--admin-transition-fast),
+        border-color var(--admin-transition-fast),
+        box-shadow var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+    appearance: auto;
+}
+
+.filterSelect:hover {
+    background-color: var(--color-input-hover);
+    border-color: var(--color-ring);
+}
+
+.filterSelect:focus {
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
+}
+
+/* ==================== Content ==================== */
+.content {
+    composes: admin-content from global;
+}
+
+/* ==================== User Info Cell ==================== */
+.userInfo {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+}
+
+.userInfo__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: var(--admin-font-size-body);
+    flex-shrink: 0;
+}
+
+.userInfo__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-xs);
+    min-width: 0;
+}
+
+.userInfo__name {
+    font-weight: 600;
+    color: var(--color-foreground);
+    composes: admin-truncate from global;
+}
+
+.userInfo__email {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    composes: admin-truncate from global;
+}
+
+/* ==================== Role Badges ==================== */
+.roleBadge {
+    display: inline-block;
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+/* job_seeker → job-seeker (after replace('_','-')) */
+.roleBadge--job-seeker {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgb(59, 130, 246);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+/* company */
+.roleBadge--company {
+    background: rgba(245, 158, 11, 0.1);
+    color: rgb(217, 119, 6);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+/* freelancer */
+.roleBadge--freelancer {
+    background: rgba(168, 85, 247, 0.1);
+    color: rgb(168, 85, 247);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+/* client */
+.roleBadge--client {
+    background: rgba(20, 184, 166, 0.1);
+    color: rgb(13, 148, 136);
+    border: 1px solid rgba(20, 184, 166, 0.4);
+}
+
+/* admin */
+.roleBadge--admin {
+    background: rgba(244, 63, 94, 0.1);
+    color: rgb(225, 29, 72);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+/* Legacy aliases kept for backward compatibility */
+.roleBadge--jobseeker {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgb(59, 130, 246);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.roleBadge--employer {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+/* ==================== Status Badges ==================== */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.statusBadge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statusBadge--active {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.statusBadge--inactive {
+    background: rgba(100, 100, 100, 0.1);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.statusBadge--banned {
+    background: var(--admin-color-danger-subtle);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+.statusBadge--pending {
+    background: var(--admin-color-warning-subtle);
+    color: rgb(161, 98, 7);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+/* ==================== Last Active ==================== */
+.lastActive {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+}
+
+.lastActive__indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ==================== Actions Dropdown ==================== */
+.actions {
+    position: relative;
+}
+
+.actions__dropdown {
+    position: relative;
+}
+
+.actions__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actions__toggle:hover {
+    background: var(--admin-glass-background-hover);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actions__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 160px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    box-shadow: var(--admin-shadow-dropdown);
+    padding: var(--admin-space-xs);
+    z-index: var(--admin-z-dropdown);
+    animation: menuAppear 150ms ease-out;
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.actions__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    width: 100%;
+    padding: var(--admin-space-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: var(--admin-font-size-small);
+    cursor: pointer;
+    border-radius: var(--admin-radius-md);
+    transition: background var(--admin-transition-fast);
+    text-align: left;
+}
+
+.actions__item:hover {
+    background: var(--admin-glass-background-hover);
+}
+
+.actions__item--danger {
+    color: var(--color-danger);
+}
+
+.actions__item--danger:hover {
+    background: var(--admin-color-danger-subtle);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .userInfo__avatar {
+        width: 36px;
+        height: 36px;
+        font-size: var(--admin-font-size-small);
+    }
+
+    .actions__menu {
+        right: auto;
+        left: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .userInfo {
+        gap: var(--admin-space-xs);
+    }
+
+    .userInfo__avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .actions__menu {
+        min-width: 140px;
+    }
+}

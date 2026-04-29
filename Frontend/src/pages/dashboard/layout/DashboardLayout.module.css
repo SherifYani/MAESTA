@@ -1,0 +1,201 @@
+/**
+ * @file DashboardLayout.module.css
+ * @description Modern CSS module for dashboard layout with attractive gradients and effects
+ * @author Sherif Talaat
+ * @version 3.1.0
+ * @date 2025-12-20
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
+
+/* ==========================================================================
+   Dashboard Layout Base
+   ========================================================================== */
+
+.dashboardLayout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Main Content Area
+   ========================================================================== */
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+/* Desktop: When sidebar is open */
+.sidebarOpen {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+}
+
+/* Desktop: When sidebar is closed */
+.sidebarClosed {
+  margin-left: 70px;
+  width: calc(100% - 70px);
+}
+
+/* ==========================================================================
+   Content Area - Modern Design with Gradient Background
+   ========================================================================== */
+
+.content {
+  flex: 1;
+  padding: var(--space-6);
+  overflow-y: auto;
+  position: relative;
+
+  /* Modern gradient background */
+  background: radial-gradient(circle at 20% 10%,
+      var(--color-radial-pink-1) 0%,
+      transparent 50%),
+    radial-gradient(circle at 80% 80%,
+      var(--color-radial-pink-2) 0%,
+      transparent 50%),
+    var(--color-background);
+
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+}
+
+/* Add subtle pattern overlay in dark mode */
+.content::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background-image: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 10px,
+      var(--color-translucent-white-1) 10px,
+      var(--color-translucent-white-1) 11px);
+  z-index: 0;
+}
+
+/* ==========================================================================
+   Mobile Overlay
+   ========================================================================== */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Custom Scrollbar for Content Area
+   ========================================================================== */
+
+.content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: var(--radius-sm);
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-muted);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vivid-pink);
+}
+
+/* ==========================================================================
+   Responsive Design - Tablet (60.5rem / 968px)
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+  .content {
+    padding: var(--space-5);
+  }
+
+  .sidebarOpen {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+  }
+
+  .sidebarClosed {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile (40rem / 640px)
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+
+  /* On mobile, sidebar is always overlay - no margin needed */
+  .mainContent {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebarOpen,
+  .sidebarClosed {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .content {
+    padding: var(--space-4);
+  }
+
+  /* Adjust gradient for mobile */
+  .content {
+    background: radial-gradient(circle at 50% 10%,
+        var(--color-radial-pink-1) 0%,
+        transparent 40%),
+      var(--color-background);
+  }
+}
+
+/* ==========================================================================
+   Very Small Screens (320px)
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .content {
+    padding: var(--space-3);
+  }
+}

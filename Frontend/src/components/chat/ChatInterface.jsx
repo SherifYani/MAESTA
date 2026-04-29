@@ -1,0 +1,262 @@
+/**
+ * @file ChatInterface.jsx
+ * @description Main chat interface integrating conversation list, message history, and input (FR-601.1)
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ * 
+ * @requires ./ChatList
+ * @requires ./MessageBubble
+ * @requires ./TypingIndicator
+ * @requires ./ReadReceipt
+ * @requires ./FileUploader
+ * @requires ../../context/ChatContext
+ */
+
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Paperclip, X, ArrowLeft } from 'lucide-react';
+import { useChat } from '../../context/ChatContext';
+import ChatList from './ChatList';
+import MessageBubble from './MessageBubble';
+import TypingIndicator from './TypingIndicator';
+import FileUploader from './FileUploader';
+import styles from './ChatInterface.module.css';
+
+/**
+ * ChatInterface component - Main chat interface with conversations and messages
+ * @returns {JSX.Element} Rendered chat interface
+ */
+const ChatInterface = () => {
+    const {
+        conversations = [],
+        activeConversation,
+        messages = [],
+        loading,
+        selectConversation,
+        sendMessage,
+    } = useChat();
+
+    const [messageInput, setMessageInput] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [showMobileList, setShowMobileList] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef(null);
+    const fileInputRef = useRef(null);
+
+    /**
+     * Scroll to bottom of messages
+     */
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    /**
+     * Handle conversation selection
+     * @param {string} conversationId - ID of selected conversation
+     */
+    const handleSelectConversation = (conversationId) => {
+        selectConversation(conversationId);
+        setShowMobileList(false);
+    };
+
+    /**
+     * Handle message send
+     */
+    const handleSendMessage = async () => {
+        if (!messageInput.trim() && !selectedFile) return;
+        if (!activeConversation) return;
+
+        try {
+            await sendMessage(messageInput.trim(), selectedFile);
+            setMessageInput('');
+            setSelectedFile(null);
+        } catch (error) {
+            console.error('Failed to send message:', error);
+        }
+    };
+
+    /**
+     * Handle key press in input
+     * @param {KeyboardEvent} e - Keyboard event
+     */
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    };
+
+    /**
+     * Handle file selection
+     * @param {File} file - Selected file
+     */
+    const handleFileSelect = (file) => {
+        setSelectedFile(file);
+    };
+
+    /**
+     * Handle file remove
+     */
+    const handleFileRemove = () => {
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    /**
+     * Handle back button on mobile
+     */
+    const handleBackToList = () => {
+        setShowMobileList(true);
+    };
+
+    return (
+        <div className={styles.container}>
+            {/* Conversations List */}
+            <div className={`${styles.listPanel} ${showMobileList ? styles.showMobile : styles.hideMobile}`}>
+                <ChatList
+                    conversations={conversations}
+                    activeConversationId={activeConversation?.id}
+                    onSelectConversation={handleSelectConversation}
+                />
+            </div>
+
+            {/* Chat Area */}
+            <div className={`${styles.chatPanel} ${!showMobileList ? styles.showMobile : styles.hideMobile}`}>
+                {activeConversation ? (
+                    <>
+                        {/* Chat Header */}
+                        <header className={styles.chatHeader}>
+                            <button
+                                className={styles.backButton}
+                                onClick={handleBackToList}
+                                aria-label="Back to conversations"
+                            >
+                                <ArrowLeft size={20} />
+                            </button>
+
+                            <div className={styles.chatInfo}>
+                                <img
+                                    src={activeConversation.avatar || '/default-avatar.png'}
+                                    alt={`${activeConversation.name} avatar`}
+                                    className={styles.avatar}
+                                    width="40"
+                                    height="40"
+                                />
+                                <div className={styles.details}>
+                                    <h2 className={styles.name}>{activeConversation.name}</h2>
+                                    {activeConversation.isOnline && (
+                                        <span className={styles.status}>Online</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className={styles.headerActions}>
+                                {/* Additional header actions can go here */}
+                            </div>
+                        </header>
+
+                        {/* Messages Area */}
+                        <div className={styles.messagesContainer}>
+                            <div className={styles.messagesList} role="list" aria-label="Messages">
+                                {loading ? (
+                                    <div className={styles.loadingState}>
+                                        <p>Loading messages...</p>
+                                    </div>
+                                ) : messages.length === 0 ? (
+                                    <div className={styles.emptyState}>
+                                        <p>No messages yet. Start the conversation!</p>
+                                    </div>
+                                ) : (
+                                    messages.map((message) => (
+                                        <MessageBubble
+                                            key={message.id}
+                                            message={message}
+                                            isOwn={message.senderId === 'current-user'} // Replace with actual user ID comparison
+                                        />
+                                    ))
+                                )}
+
+                                {isTyping && (
+                                    <div className={styles.typingContainer}>
+                                        <TypingIndicator />
+                                    </div>
+                                )}
+
+                                <div ref={messagesEndRef} />
+                            </div>
+                        </div>
+
+                        {/* Message Input */}
+                        <div className={styles.inputContainer}>
+                            {/* File Preview */}
+                            {selectedFile && (
+                                <div className={styles.filePreview}>
+                                    <div className={styles.fileInfo}>
+                                        <Paperclip size={16} />
+                                        <span className={styles.fileName}>{selectedFile.name}</span>
+                                    </div>
+                                    <button
+                                        className={styles.removeFile}
+                                        onClick={handleFileRemove}
+                                        aria-label="Remove file"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className={styles.inputWrapper}>
+                                {/* File Upload Button */}
+                                <label className={styles.attachButton} htmlFor="file-upload">
+                                    <Paperclip size={20} />
+                                    <span className="sr-only">Attach file</span>
+                                </label>
+                                <FileUploader
+                                    id="file-upload"
+                                    ref={fileInputRef}
+                                    onFileSelect={handleFileSelect}
+                                    className={styles.fileInput}
+                                />
+
+                                {/* Text Input */}
+                                <textarea
+                                    className={styles.messageInput}
+                                    value={messageInput}
+                                    onChange={(e) => setMessageInput(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Type a message..."
+                                    rows={1}
+                                    aria-label="Message input"
+                                />
+
+                                {/* Send Button */}
+                                <button
+                                    className={styles.sendButton}
+                                    onClick={handleSendMessage}
+                                    disabled={!messageInput.trim() && !selectedFile}
+                                    aria-label="Send message"
+                                >
+                                    <Send size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className={styles.noConversation}>
+                        <p>Select a conversation to start messaging</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default ChatInterface;

@@ -1,0 +1,266 @@
+/**
+ * @file ApplicationsWidget.module.css
+ * @description Lightweight widget styles for Applications overview with premium design
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2026-01-28
+ */
+
+/* ==========================================================================
+   Applications Widget Container
+   ========================================================================== */
+
+.applicationsWidget {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.appList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* ==========================================================================
+   Application Item - Premium Card Style
+   ========================================================================== */
+
+.applicationItem {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-background),
+            var(--color-translucent-white-1));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gradient border effect on hover */
+.applicationItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-radial-pink-1),
+            transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.applicationItem:hover::before {
+    left: 100%;
+}
+
+.applicationItem:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Item Header
+   ========================================================================== */
+
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2);
+    gap: var(--space-3);
+}
+
+.jobInfo h4 {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.company {
+    margin: var(--space-1) 0 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Item Meta
+   ========================================================================== */
+
+.itemMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+}
+
+.date {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* ==========================================================================
+   Status Badges - Using Design System Colors
+   ========================================================================== */
+
+.statusBadge {
+    font-size: var(--font-size-2xs);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+/* Applied Status */
+.status_applied {
+    background: var(--color-chart-1);
+    color: var(--color-card);
+    border: 1px solid var(--color-chart-1);
+}
+
+/* Review Status */
+.status_review {
+    background: var(--color-chart-3);
+    color: var(--color-card);
+    border: 1px solid var(--color-chart-3);
+}
+
+/* Interview Status */
+.status_interview {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+    border: 1px solid var(--color-primary);
+}
+
+/* Offer Status */
+.status_offer {
+    background: var(--color-chart-2);
+    color: var(--color-card);
+    border: 1px solid var(--color-chart-2);
+}
+
+/* Rejected Status */
+.status_rejected {
+    background: var(--color-chart-5);
+    color: var(--color-card);
+    border: 1px solid var(--color-chart-5);
+}
+
+/* Under Review Status */
+.status_under-review {
+    background: var(--color-chart-4);
+    color: var(--color-card);
+    border: 1px solid var(--color-chart-4);
+}
+
+/* Accepted Status */
+.status_accepted {
+    background: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    border: 1px solid var(--color-accent-pink);
+}
+
+/* Withdrawn Status */
+.status_withdrawn {
+    background: var(--color-muted);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-8);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--color-border);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.emptyState p {
+    margin: var(--space-2) 0 0 0;
+    max-width: 300px;
+    line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+    .itemHeader {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .itemMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 40rem) {
+    .applicationItem {
+        padding: var(--space-3);
+    }
+
+    .jobInfo h4 {
+        font-size: var(--font-size-sm);
+    }
+
+    .emptyState {
+        padding: var(--space-6);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .applicationItem,
+    .applicationItem::before {
+        transition: none;
+    }
+
+    .applicationItem:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .applicationItem {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .statusBadge {
+        border-width: 2px;
+    }
+}

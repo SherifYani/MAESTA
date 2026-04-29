@@ -1,0 +1,62 @@
+/**
+ * @file GigPostingPage.module.css
+ * @description Styles for GigPostingPage component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.pageWrapper {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.header {
+    background: radial-gradient(circle at top right, var(--color-radial-pink-1), transparent 40%),
+        var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.backButton {
+    align-self: flex-start;
+    margin-bottom: var(--space-4);
+    color: var(--color-muted-foreground);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-muted-foreground);
+    max-width: 600px;
+}
+
+.main {
+    padding-bottom: var(--space-12);
+}
+
+.alertWrapper {
+    margin-bottom: var(--space-6);
+}
+
+.formWrapper {
+    background-color: transparent;
+    /* GigPostForm has its own card style container? Actually check GigPostForm.module.css */
+    /* GigPostForm container has bg color and border, so we just wrap it */
+}
+
+/* Responsive */
+.title {
+    font-size: var(--font-size-xl);
+}

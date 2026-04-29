@@ -1,0 +1,450 @@
+/**
+ * @file DashboardSidebar.module.css
+ * @description Sidebar styles with responsive drawer behavior for mobile
+ * @author Sherif Talaat
+ * @version 2.1.0
+ * @date 2025-12-19
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
+
+/* ==========================================================================
+   Sidebar Base - Desktop Behavior with Modern Design
+   ========================================================================== */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background: var(--color-card);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--color-border);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar.open {
+  width: 280px;
+}
+
+.sidebar.closed {
+  width: 70px;
+}
+
+/* ==========================================================================
+   Sidebar Header
+   ========================================================================== */
+
+.sidebarHeader {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  flex-shrink: 0;
+}
+
+.brand {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar.closed .brand {
+  opacity: 0;
+  width: 0;
+}
+
+.brandTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brandSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  display: block;
+  margin-top: var(--space-1);
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.toggleButton:hover {
+  background-color: var(--color-muted);
+  color: var(--color-accent-pink);
+  transform: scale(1.1);
+}
+
+.toggleIcon {
+  transition: transform 0.3s ease;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.navigation {
+  flex: 1;
+  padding: var(--space-4);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.navSection {
+  margin-bottom: var(--space-6);
+}
+
+.navSection:last-child {
+  margin-bottom: 0;
+}
+
+.navSectionTitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+  font-weight: var(--font-weight-medium);
+  transition: opacity 0.3s ease, height 0.3s ease;
+  white-space: nowrap;
+}
+
+.sidebar.closed .navSectionTitle {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  margin-bottom: var(--space-2);
+}
+
+.navItem:last-child {
+  margin-bottom: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3);
+  color: var(--color-foreground);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  gap: var(--space-3);
+  min-height: 44px;
+}
+
+.navLink:hover {
+  background-color: var(--color-muted);
+  color: var(--color-accent-pink);
+  transform: translateX(4px);
+  box-shadow: inset 3px 0 0 var(--color-accent-pink);
+}
+
+.navLink.active {
+  background-color: var(--color-translucent-white-1);
+  color: var(--color-accent-pink);
+  box-shadow: inset 3px 0 0 var(--color-accent-pink);
+}
+
+.navIcon {
+  flex-shrink: 0;
+}
+
+.navLabel {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.closed .navLabel {
+  opacity: 0;
+  width: 0;
+}
+
+.navBadge {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  min-width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Role Selector
+   ========================================================================== */
+
+.roleSelector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.roleButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: 1px solid var(--color-border);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: var(--space-3);
+  text-align: left;
+  min-height: 44px;
+}
+
+.roleButton:hover {
+  background-color: var(--color-muted);
+  color: var(--color-accent-pink);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-shadow-pink);
+}
+
+.roleButton.active {
+  background: linear-gradient(135deg,
+      rgba(184, 148, 95, 0.15),
+      rgba(201, 161, 82, 0.1));
+  color: var(--color-accent-pink);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.roleIcon {
+  flex-shrink: 0;
+}
+
+.roleLabel {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.closed .roleLabel {
+  opacity: 0;
+  width: 0;
+}
+
+/* ==========================================================================
+   Sidebar Footer
+   ========================================================================== */
+
+.sidebarFooter {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+.avatarText {
+  line-height: 1;
+}
+
+.userInfo {
+  flex: 1;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+  min-width: 0;
+}
+
+.sidebar.closed .userInfo {
+  opacity: 0;
+  width: 0;
+}
+
+.userName {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   Responsive Design - Tablet (60.5rem / 968px)
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+  .sidebar.open {
+    width: 260px;
+  }
+
+  .sidebarHeader {
+    padding: var(--space-3);
+  }
+
+  .navigation {
+    padding: var(--space-3);
+  }
+
+  .navSection {
+    margin-bottom: var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile (40rem / 640px)
+   Mobile: Sidebar becomes full-screen drawer overlay
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+  .sidebar {
+    width: 280px;
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar.closed {
+    width: 280px;
+    transform: translateX(-100%);
+  }
+
+  /* Always show brand on mobile */
+  .sidebar.mobile .brand {
+    opacity: 1;
+    width: auto;
+  }
+
+  /* Always show labels on mobile */
+  .sidebar.mobile .navLabel,
+  .sidebar.mobile .roleLabel,
+  .sidebar.mobile .userInfo {
+    opacity: 1;
+    width: auto;
+  }
+
+  /* Always show section titles on mobile */
+  .sidebar.mobile .navSectionTitle {
+    opacity: 1;
+    height: auto;
+    margin-bottom: var(--space-3);
+  }
+
+  .sidebarHeader {
+    padding: var(--space-4);
+    min-height: 64px;
+  }
+
+  .navigation {
+    padding: var(--space-4);
+  }
+
+  /* Increase touch target sizes for mobile */
+  .navLink {
+    padding: var(--space-4);
+    min-height: 48px;
+  }
+
+  .roleButton {
+    padding: var(--space-4);
+    min-height: 48px;
+  }
+
+  .sidebarFooter {
+    padding: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Very Small Screens (320px)
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .sidebar {
+    width: 100%;
+  }
+
+  .sidebar.closed {
+    width: 100%;
+  }
+}

@@ -1,0 +1,223 @@
+/**
+ * @file StaffManagement.module.css
+ * @description Styles for StaffManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+.container {
+    composes: admin-page-container from global;
+}
+
+.addButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-vivid-pink));
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 102, 196, 0.3);
+}
+
+.addButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 102, 196, 0.4);
+    opacity: 0.95;
+}
+
+.addButton:active {
+    transform: scale(0.98);
+}
+
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: background-color var(--admin-transition-fast),
+        border-color var(--admin-transition-fast),
+        box-shadow var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+    appearance: auto;
+}
+
+.filterSelect:hover {
+    background-color: var(--color-input-hover);
+    border-color: var(--color-ring);
+}
+
+.filterSelect:focus {
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
+}
+
+.content {
+    composes: admin-content from global;
+}
+
+.roleBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+}
+
+.roleBadge__icon {
+    flex-shrink: 0;
+}
+
+/* super-admin → class super-admin (role.toLowerCase().replace(' ', '-')) */
+.roleBadge--super-admin {
+    background: rgba(244, 63, 94, 0.12);
+    color: rgb(190, 18, 60);
+    border: 1px solid rgba(244, 63, 94, 0.5);
+}
+
+.roleBadge--admin {
+    background: rgba(239, 68, 68, 0.1);
+    color: rgb(220, 38, 38);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.roleBadge--moderator {
+    background: rgba(59, 130, 246, 0.1);
+    color: rgb(37, 99, 235);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.roleBadge--analyst {
+    background: rgba(245, 158, 11, 0.1);
+    color: rgb(180, 83, 9);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.roleBadge--support {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.statusIndicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+    text-transform: capitalize;
+}
+
+.statusIndicator__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statusIndicator--active {
+    color: rgb(22, 163, 74);
+}
+
+.statusIndicator--inactive {
+    color: var(--color-muted-foreground);
+}
+
+.statusIndicator--banned {
+    color: rgb(220, 38, 38);
+}
+
+.actions__dropdown {
+    position: relative;
+}
+
+.actions__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actions__toggle:hover {
+    background: var(--admin-glass-background-hover);
+    box-shadow: var(--admin-shadow-card);
+}
+
+.actions__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    min-width: 160px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    box-shadow: var(--admin-shadow-dropdown);
+    padding: var(--admin-space-xs);
+    z-index: var(--admin-z-dropdown);
+    animation: menuAppear 150ms ease-out;
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.actions__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+    width: 100%;
+    padding: var(--admin-space-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: var(--admin-font-size-small);
+    cursor: pointer;
+    border-radius: var(--admin-radius-md);
+    transition: background var(--admin-transition-fast);
+    text-align: left;
+}
+
+.actions__item:hover {
+    background: var(--admin-glass-background-hover);
+}
+
+@media (max-width: 640px) {
+    .actions__menu {
+        right: auto;
+        left: 0;
+    }
+}

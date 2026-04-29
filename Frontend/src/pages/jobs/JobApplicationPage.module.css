@@ -1,0 +1,353 @@
+/**
+ * @file JobApplicationPage.module.css
+ * @description Contains all styles for the JobApplicationPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Header */
+.header {
+    margin-bottom: var(--space-8);
+}
+
+.backButton {
+    background: none;
+    border: none;
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    padding: 0;
+    transition: color 0.2s ease;
+}
+
+.backButton:hover,
+.backButton:focus {
+    text-decoration: underline;
+    outline: none;
+}
+
+.pageTitle {
+    font-size: var(--font-size-2xl);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+/* Job Summary */
+.jobSummary {
+    background: var(--color-card);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 var(--space-1) var(--space-6) var(--color-translucent-white-1);
+    margin-bottom: var(--space-8);
+}
+
+.jobTitle {
+    font-size: var(--font-size-xl);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.companyName {
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-1);
+}
+
+.location {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+/* Error Alert */
+.errorAlert {
+    background: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-sm);
+}
+
+/* Form */
+.applicationForm {
+    background: var(--color-card);
+    padding: var(--space-8);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 var(--space-1) var(--space-6) var(--color-translucent-white-1);
+}
+
+.formGroup {
+    margin-bottom: var(--space-6);
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.required {
+    color: var(--color-destructive);
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-sans);
+    background: var(--color-input);
+    color: var(--color-foreground);
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 3px var(--color-shadow-pink);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: var(--space-25);
+    line-height: var(--line-height-normal);
+}
+
+.charCount {
+    display: block;
+    text-align: right;
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-top: var(--space-1);
+}
+
+/* File Upload */
+.fileUpload {
+    position: relative;
+}
+
+.fileUpload input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.fileUploadLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-input);
+    text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    min-height: var(--space-32);
+}
+
+.fileUpload:hover .fileUploadLabel {
+    border-color: var(--color-accent-pink);
+    background: var(--color-input-hover);
+}
+
+.uploadIcon {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-2);
+}
+
+.fileTypes {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-top: var(--space-1);
+}
+
+.fileName {
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Form Row */
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+}
+
+/* Form Actions */
+.formActions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: flex-end;
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+.cancelButton {
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.cancelButton:hover,
+.cancelButton:focus {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.submitButton {
+    padding: var(--space-3) var(--space-8);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: var(--font-size-sm);
+}
+
+.submitButton:hover:not(:disabled),
+.submitButton:focus:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-select-pink), var(--color-submit-pink-1));
+    transform: translateY(-1px);
+    box-shadow: 0 var(--space-1) var(--space-3) var(--color-shadow-pink);
+}
+
+.submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Loading & Success */
+.loadingContainer,
+.successContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--space-100);
+    text-align: center;
+}
+
+.spinner {
+    width: var(--space-10);
+    height: var(--space-10);
+    border: 3px solid var(--color-muted);
+    border-top-color: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+    animation: spin 0.8s linear infinite;
+    margin-bottom: var(--space-4);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.successIcon {
+    width: var(--space-20);
+    height: var(--space-20);
+    background: var(--color-chart-2);
+    color: var(--color-primary-white);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-6);
+}
+
+.successContainer h2 {
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-xl);
+}
+
+.redirectText {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-4);
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .applicationForm {
+        padding: var(--space-6);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .pageTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .jobSummary {
+        padding: var(--space-4);
+    }
+
+    .applicationForm {
+        padding: var(--space-4);
+    }
+
+    .formRow {
+        gap: var(--space-4);
+    }
+}
+
+@media (max-width: 40rem) {
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .formActions {
+        flex-direction: column-reverse;
+        gap: var(--space-3);
+    }
+
+    .cancelButton,
+    .submitButton {
+        width: 100%;
+        text-align: center;
+    }
+
+    .successIcon {
+        width: var(--space-16);
+        height: var(--space-16);
+        font-size: var(--font-size-xl);
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+    }
+
+    .submitButton,
+    .cancelButton {
+        transition: none;
+    }
+}

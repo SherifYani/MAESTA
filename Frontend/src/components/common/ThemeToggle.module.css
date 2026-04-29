@@ -1,0 +1,705 @@
+/**
+ * @file ThemeToggle.module.css
+ * @description Modern CSS Module for the theme toggle component
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 18-1-2026
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 16-3-2026
+ */
+
+/* ==========================================================================
+   Theme Toggle Component - Modern Design
+   ========================================================================== */
+
+.button {
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--color-foreground);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.button:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.button:hover:not(:disabled)::after {
+  width: 100px;
+  height: 100px;
+  opacity: 0.15;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-3px) rotate(5deg);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(-1px) rotate(0deg) scale(0.95);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-full);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+/* Compact version */
+.compact {
+  width: 40px;
+  height: 40px;
+}
+
+/* Loading state */
+.loading {
+  cursor: wait;
+  opacity: 0.7;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+  }
+
+  50% {
+    box-shadow: 0 4px 20px var(--color-shadow-pink),
+      0 0 30px var(--color-radial-pink-2);
+  }
+}
+
+/* Animating state with enhanced bounce */
+.animating {
+  animation: bounceRotate 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes bounceRotate {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  25% {
+    transform: scale(1.2) rotate(-15deg);
+  }
+
+  50% {
+    transform: scale(0.9) rotate(180deg);
+  }
+
+  75% {
+    transform: scale(1.1) rotate(345deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+/* Icon styling with smooth transitions */
+.icon {
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  stroke-width: 2.5;
+  stroke: currentColor;
+  fill: none;
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 2px 4px var(--color-shadow-pink));
+}
+
+.button:hover:not(:disabled) .icon {
+  transform: rotate(20deg) scale(1.1);
+  filter: drop-shadow(0 4px 8px var(--color-shadow-pink));
+}
+
+/* Sun icon for dark mode - warm golden glow */
+.button[data-theme="dark"] {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
+}
+
+.button[data-theme="dark"] .icon {
+  color: var(--color-vivid-pink);
+  stroke: var(--color-vivid-pink);
+  filter: drop-shadow(0 0 8px var(--color-radial-pink-2));
+}
+
+.button[data-theme="dark"]:hover:not(:disabled) .icon {
+  color: var(--color-accent-pink);
+  stroke: var(--color-accent-pink);
+  filter: drop-shadow(0 0 12px var(--color-radial-pink-1));
+}
+
+/* Moon icon for light mode - cool silver tone */
+.button[data-theme="light"] {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
+}
+
+.button[data-theme="light"] .icon {
+  color: var(--color-muted-foreground);
+  stroke: var(--color-muted-foreground);
+}
+
+.button[data-theme="light"]:hover:not(:disabled) .icon {
+  color: var(--color-accent-pink);
+  stroke: var(--color-accent-pink);
+}
+
+/* Spinner animation for loading state */
+.spinner {
+  animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced focus ripple effect */
+.button:focus:not(:active)::after {
+  animation: focusRipple 0.8s ease-out;
+}
+
+@keyframes focusRipple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+
+  50% {
+    width: 80px;
+    height: 80px;
+    opacity: 0.3;
+  }
+
+  100% {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+}
+
+/* Modern tooltip with gradient background */
+.tooltipWrapper {
+  position: relative;
+}
+
+.button[aria-label]::before {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: calc(100% + var(--space-3));
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  pointer-events: none;
+  border: 2px solid var(--color-accent-pink);
+  z-index: 1001;
+  box-shadow: 0 4px 20px var(--color-shadow-pink);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Tooltip arrow */
+.button[aria-label]::after {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + var(--space-1));
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--color-accent-pink);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.button:hover[aria-label]::before,
+.button:hover[aria-label]::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Floating animation for idle state */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.button:not(:hover):not(:active):not(:disabled) {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Dark Theme Support
+   ========================================================================== */
+
+:global(.dark) .button {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
+  border-color: var(--color-border);
+  color: var(--color-foreground);
+  box-shadow: 0 2px 12px var(--color-shadow-pink);
+}
+
+:global(.dark) .button:hover:not(:disabled) {
+  background: linear-gradient(135deg,
+      var(--color-muted) 0%,
+      var(--color-card) 100%);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 8px 32px var(--color-shadow-pink);
+}
+
+:global(.dark) .button[data-theme="light"] {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
+}
+
+:global(.dark) .button[data-theme="light"] .icon {
+  color: var(--color-foreground);
+  stroke: var(--color-foreground);
+  filter: drop-shadow(0 0 6px var(--color-radial-pink-3));
+}
+
+:global(.dark) .button[data-theme="dark"] {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
+}
+
+:global(.dark) .button[data-theme="dark"] .icon {
+  color: var(--color-vivid-pink);
+  stroke: var(--color-vivid-pink);
+  filter: drop-shadow(0 0 10px var(--color-radial-pink-1));
+}
+
+:global(.dark) .button[aria-label]::before {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-muted) 100%);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 6px 24px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .button,
+  .icon,
+  .button::before,
+  .button::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .button:hover:not(:disabled) .icon {
+    transform: none;
+  }
+
+  .spinner {
+    animation: none;
+  }
+
+  .animating {
+    animation: none;
+  }
+
+  .loading {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   High Contrast Mode
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+  .button {
+    border-width: 3px;
+  }
+
+  .button:focus-visible {
+    outline-width: 4px;
+  }
+
+  .button[data-theme="dark"] .icon {
+    color: var(--color-vivid-pink);
+    stroke: var(--color-vivid-pink);
+    filter: none;
+  }
+
+  .button[data-theme="light"] .icon {
+    color: var(--color-foreground);
+    stroke: var(--color-foreground);
+    filter: none;
+  }
+
+  .icon {
+    stroke-width: 3;
+  }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet: 40rem (640px) */
+@media (min-width: 40rem) {
+  .button {
+    width: 46px;
+    height: 46px;
+  }
+
+  .compact {
+    width: 42px;
+    height: 42px;
+  }
+
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Desktop: 60.5rem (968px) */
+@media (min-width: 60.5rem) {
+  .button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .compact {
+    width: 44px;
+    height: 44px;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .button[aria-label]::before {
+    font-size: var(--font-size-base);
+    padding: var(--space-3) var(--space-5);
+  }
+}
+
+/* Large Desktop: 75rem (1200px) */
+@media (min-width: 75rem) {
+  .button {
+    width: 52px;
+    height: 52px;
+  }
+
+  .compact {
+    width: 48px;
+    height: 48px;
+  }
+
+  .icon {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* ==========================================================================
+   Interactive States Enhancement
+   ========================================================================== */
+
+/* Active state with scale animation */
+.button:active:not(:disabled) {
+  animation: pressScale 0.2s ease;
+}
+
+@keyframes pressScale {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(0.95);
+  }
+}
+
+/* Glow effect on focus */
+.button:focus-visible:not(:active) {
+  box-shadow: 0 0 0 3px var(--color-background),
+    0 0 0 6px var(--color-accent-pink), 0 8px 24px var(--color-shadow-pink);
+  animation: glowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--color-background),
+      0 0 0 6px var(--color-accent-pink), 0 8px 24px var(--color-shadow-pink);
+  }
+
+  50% {
+    box-shadow: 0 0 0 3px var(--color-background),
+      0 0 0 6px var(--color-vivid-pink), 0 12px 32px var(--color-shadow-pink);
+  }
+}
+
+/* Smooth theme transition wrapper */
+.themeTransition {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Dropdown Styles
+   ========================================================================== */
+
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-4));
+  right: 0;
+  width: 320px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5);
+  box-shadow: 0 10px 40px var(--color-shadow-pink);
+  z-index: 1000;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-5) 0;
+}
+
+/* Mode Container */
+.modeContainer {
+  display: flex;
+  background: var(--color-muted);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  gap: 2px;
+}
+
+.modeButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.modeButton:hover {
+  color: var(--color-foreground);
+  background: var(--color-card);
+}
+
+.modeButton.active {
+  background: var(--color-card);
+  color: var(--color-accent-pink);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.modeIcon {
+  stroke-width: 2.5;
+}
+
+/* Theme Grid */
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.themeOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.themeOption:hover {
+  background: var(--color-muted);
+}
+
+.themeOption.activeTheme {
+  background: var(--color-muted);
+  border-color: var(--color-border);
+  box-shadow: 0 2px 10px var(--color-shadow-pink);
+}
+
+.themePreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.themeBubble {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.themeOption:hover .themeBubble {
+  transform: scale(1.1);
+}
+
+.themeName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+}
+
+.themeCheckIcon,
+.checkIcon {
+  color: var(--color-vivid-pink);
+}
+
+/* Dark mode overwrites for dropdown background to increase contrast */
+:global(.dark) .dropdown {
+  background: linear-gradient(135deg, var(--color-card), var(--color-background));
+  border-color: var(--color-border);
+}
+
+@media (max-width: 40rem) {
+  .dropdown {
+    width: 280px;
+    right: -10px;
+    padding: var(--space-4);
+  }
+
+  .modeButton span {
+    display: none;
+    /* Icon only on mobile */
+  }
+
+  .themeOption {
+    padding: var(--space-2);
+  }
+}

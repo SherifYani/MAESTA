@@ -1,0 +1,496 @@
+/**
+ * @file RecentJobPosts.module.css
+ * @description CSS Module for RecentJobPosts component using design system variables from globals.css
+ * @author Sherif Talaat
+ * @version 3.0.0
+ * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
+ */
+
+.recentJobPosts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.jobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ===== Job Card ===== */
+.jobCard {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-card);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.jobCard::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary),
+    var(--color-accent-pink)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.jobCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-primary);
+}
+
+.jobCard:hover::before {
+  opacity: 1;
+}
+
+.jobCard:focus-within {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* ===== Job Header ===== */
+.jobHeader {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.jobIconContainer {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-accent-pink) 100%
+  );
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.jobIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary-white);
+}
+
+.jobInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.jobTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jobMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.companyName {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.metaSeparator {
+  color: var(--color-border);
+  font-size: var(--font-size-xs);
+}
+
+.jobLocation {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.metaIcon {
+  color: var(--color-muted-foreground);
+}
+
+.jobStatus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.jobCard:hover .statusBadge {
+  transform: scale(1.05);
+}
+
+.statusIcon {
+  flex-shrink: 0;
+}
+
+.priorityBadge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* ===== Job Details ===== */
+.jobDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.detailIcon {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+.detailLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.detailValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== Skills Section ===== */
+.skillsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skillsLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.skillTag {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-pink);
+  background-color: var(--color-light-pink);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.jobCard:hover .skillTag {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border-color: var(--color-accent-pink);
+}
+
+.moreSkills {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+  align-self: center;
+}
+
+/* ===== Duration Badge ===== */
+.durationBadge {
+  align-self: flex-start;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  background-color: var(--color-background);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  transition: all var(--transition-fast);
+}
+
+.jobCard:hover .durationBadge {
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
+}
+
+.durationIcon {
+  flex-shrink: 0;
+}
+
+/* ===== No Jobs State ===== */
+.noJobs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  gap: var(--space-3);
+}
+
+.noJobsIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-border);
+  margin-bottom: var(--space-2);
+}
+
+.noJobsText {
+  font-size: var(--font-size-base);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+.noJobsSubtext {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .jobHeader {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .jobStatus {
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .detailRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .detailItem {
+    justify-content: space-between;
+  }
+
+  .skillsList {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .jobCard {
+    padding: var(--space-3);
+  }
+
+  .jobIconContainer {
+    width: 36px;
+    height: 36px;
+  }
+
+  .jobIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .jobTitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .jobMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .metaSeparator {
+    display: none;
+  }
+}
+
+/* ===== Dark Theme Adjustments ===== */
+.dark .jobCard {
+  background-color: var(--color-card);
+  border-color: var(--color-border);
+}
+
+.dark .jobIconContainer {
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary) 0%,
+    var(--color-accent-pink) 100%
+  );
+}
+
+.dark .skillTag {
+  background-color: var(--color-secondary);
+  color: var(--color-accent-pink);
+}
+
+.dark .jobCard:hover .skillTag {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+}
+
+.dark .durationBadge {
+  background-color: var(--color-background);
+  border-color: var(--color-border);
+}
+
+.dark .jobCard:hover .durationBadge {
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
+}
+
+/* ===== Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+  .jobCard,
+  .statusBadge,
+  .skillTag,
+  .durationBadge {
+    transition: none;
+  }
+
+  .jobCard:hover {
+    transform: none;
+  }
+
+  .jobCard:hover .statusBadge {
+    transform: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .jobCard {
+    border: 2px solid var(--color-foreground);
+  }
+
+  .jobCard:hover {
+    border-color: var(--color-accent-pink);
+  }
+
+  .jobCard::before {
+    background: var(--color-accent-pink);
+  }
+
+  .statusBadge,
+  .priorityBadge,
+  .skillTag {
+    border: 1px solid currentColor;
+  }
+
+  .durationBadge {
+    border: 2px solid var(--color-foreground);
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .recentJobPosts {
+    break-inside: avoid;
+  }
+
+  .jobCard {
+    break-inside: avoid;
+    border: 1px solid #000;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .jobCard:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .jobCard::before {
+    display: none;
+  }
+
+  .statusBadge,
+  .priorityBadge,
+  .skillTag {
+    background: white !important;
+    color: black !important;
+    border: 1px solid black;
+  }
+
+  .jobIconContainer {
+    background: #f0f0f0 !important;
+  }
+
+  .jobIcon {
+    color: #000 !important;
+  }
+
+  .durationBadge {
+    background: white;
+    color: black;
+    border: 1px solid black;
+  }
+}

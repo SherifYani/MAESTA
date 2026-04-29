@@ -1,0 +1,70 @@
+/**
+ * @file ReadReceipt.module.css
+ * @description Styles for read receipts
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+.container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--space-1);
+    line-height: 1;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    display: block;
+}
+
+.sent {
+    color: var(--color-translucent-white-5);
+}
+
+.delivered {
+    color: var(--color-translucent-white-4);
+}
+
+.read {
+    color: var(--color-sidebar-primary);
+}
+
+/* Accessibility: Visually hidden but accessible content */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .icon {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .icon {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+@media (max-width: 40rem) {
+    .icon {
+        width: 10px;
+        height: 10px;
+    }
+}

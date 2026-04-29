@@ -1,0 +1,73 @@
+/**
+ * @file EmptyNotifications.module.css
+ * @description Styles for EmptyNotifications component
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12) var(--space-4);
+    text-align: center;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+    margin-bottom: var(--space-4);
+}
+
+.icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-muted-foreground);
+}
+
+.message {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* Responsive Design - Mobile (40rem / 640px) */
+@media (max-width: 40rem) {
+    .emptyState {
+        padding: var(--space-8) var(--space-4);
+    }
+
+    .iconWrapper {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .message {
+        font-size: var(--font-size-base);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-xs);
+    }
+}

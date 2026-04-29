@@ -1,7 +1,113 @@
-*.log
-*.txt
+
+# ========================================
+# .NET / Visual Studio
+# ========================================
 bin/
 obj/
-.vs/
 *.user
-node_modules
+*.suo
+*.cache
+*.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+*.exe
+*.pdb
+*.dll
+*.config
+!packages.config
+!web.config
+
+# Entity Framework
+*.edmx.diagram
+*.edmx.sql
+
+# Visual Studio
+.vs/
+.vscode/          # fixed from "*.vscode/" to ".vscode/"
+*.sln.docstates
+
+# ========================================
+# React / Node.js
+# ========================================
+node_modules/
+build/
+dist/
+coverage/
+.npm/
+.yarn/
+.yarn-cache/
+.yarnrc
+.pnp.*
+.next/
+.cache/
+.eslintcache
+stylelintcache
+*.tgz
+*.lock
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# ========================================
+# Logs & runtime data
+# ========================================
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# Database / data files
+# ========================================
+*.mdf
+*.ldf
+*.ndf
+*.sqlite
+*.db
+*.bak
+
+# ========================================
+# IDE / System files
+# ========================================
+.idea/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.tmp
+*.temp
+
+# ========================================
+# Build artifacts & caches
+# ========================================
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+*.iso
+*.bak
+*.old
+tmp/
+temp/
+__pycache__/
+
+# ========================================
+# Optional: VS Code settings (keep shared ones only)
+# ========================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

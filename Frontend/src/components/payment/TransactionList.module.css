@@ -1,0 +1,696 @@
+/**
+ * @file TransactionList.module.css
+ * @description Styles for TransactionList component using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.container {
+    padding: var(--space-6);
+    max-width: 120rem;
+    margin: 0 auto;
+    background-color: var(--color-background);
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+    line-height: var(--line-height-tight);
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+.exportButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exportButton:hover:not(:disabled) {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-color: var(--color-accent);
+}
+
+.exportButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.exportIcon {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Controls
+   ========================================================================== */
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    align-items: center;
+}
+
+.searchContainer {
+    flex: 1;
+    min-width: 12rem;
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--color-ring);
+    background-color: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.searchInput::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+.dateRangeFilter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.dateRangeIcon {
+    color: var(--color-muted-foreground);
+    flex-shrink: 0;
+}
+
+.dateRangeSelect {
+    background: none;
+    border: none;
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    outline: none;
+}
+
+.dateRangeSelect:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.filterIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+}
+
+.filterIcon {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.filterLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Filters
+   ========================================================================== */
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.filterButton {
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filterButton:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-color: var(--color-accent);
+}
+
+.filterButtonActive {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+}
+
+.filterButtonActive:hover {
+    background-color: var(--color-vivid-pink);
+    border-color: var(--color-vivid-pink);
+}
+
+/* ==========================================================================
+   Transactions List
+   ========================================================================== */
+
+.transactionsSection {
+    margin-bottom: var(--space-8);
+}
+
+.transactionsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.transactionCard {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.transactionCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+    border-color: var(--color-ring);
+}
+
+.transactionCard::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+/* Transaction type color variants */
+.transactionCard--payment::before {
+    background-color: var(--color-chart-2);
+}
+
+.transactionCard--withdrawal::before {
+    background-color: var(--color-chart-1);
+}
+
+.transactionCard--commission::before {
+    background-color: var(--color-chart-4);
+}
+
+.transactionCard--refund::before {
+    background-color: var(--color-chart-3);
+}
+
+.transactionCard--deposit::before {
+    background-color: var(--color-chart-2);
+}
+
+.transactionHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.transactionIcon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transactionIconSvg {
+    color: var(--color-foreground);
+}
+
+.transactionInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.transactionDescription {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+    line-height: var(--line-height-tight);
+    word-wrap: break-word;
+}
+
+.transactionMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.transactionType {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.transactionDate {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.transactionAmount {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-align: right;
+    line-height: var(--line-height-tight);
+    white-space: nowrap;
+}
+
+.amountPositive {
+    color: var(--color-chart-2);
+}
+
+.amountNegative {
+    color: var(--color-destructive);
+}
+
+.transactionFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.transactionIdContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.transactionIdLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.transactionId {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-muted-foreground);
+    background-color: var(--color-muted);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+}
+
+.transactionActions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.statusBadge {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status color variants */
+.statusBadge--completed {
+    background-color: var(--color-chart-2);
+    color: var(--color-primary-white);
+}
+
+.statusBadge--pending {
+    background-color: var(--color-chart-3);
+    color: var(--color-foreground);
+}
+
+.statusBadge--failed {
+    background-color: var(--color-destructive);
+    color: var(--color-primary-white);
+}
+
+.statusBadge--processing {
+    background-color: var(--color-chart-1);
+    color: var(--color-primary-white);
+}
+
+.invoiceLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-chart-1);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all 0.2s ease;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+}
+
+.invoiceLink:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    text-decoration: none;
+}
+
+.invoiceIcon {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-muted-foreground);
+}
+
+.emptyIcon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto var(--space-4);
+    color: var(--color-muted);
+}
+
+.emptyIconSvg {
+    opacity: 0.5;
+}
+
+.emptyTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.emptyText {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-4) 0;
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: var(--line-height-normal);
+}
+
+.clearFiltersButton {
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clearFiltersButton:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+/* ==========================================================================
+   Footer Summary
+   ========================================================================== */
+
+.footer {
+    padding: var(--space-4);
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    justify-content: space-between;
+}
+
+.summaryItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.summaryLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.summaryValue {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchContainer {
+        width: 100%;
+    }
+
+    .transactionAmount {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .filters {
+        overflow-x: auto;
+        padding-bottom: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    .transactionHeader {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
+
+    .transactionAmount {
+        text-align: left;
+    }
+
+    .transactionFooter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+
+    .summary {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .exportButton {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--space-2);
+    }
+
+    .filterButton {
+        font-size: var(--font-size-xs);
+        padding: var(--space-1) var(--space-3);
+    }
+
+    .transactionCard {
+        padding: var(--space-3);
+    }
+
+    .transactionDescription {
+        font-size: var(--font-size-sm);
+    }
+
+    .emptyState {
+        padding: var(--space-8) var(--space-3);
+    }
+
+    .emptyTitle {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .transactionCard {
+        background-color: var(--color-card);
+    }
+
+    .searchInput {
+        background-color: var(--color-input);
+    }
+
+    .exportButton,
+    .filterButton {
+        background-color: var(--color-card);
+    }
+
+    .transactionId {
+        background-color: var(--color-muted);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .transactionCard,
+    .exportButton,
+    .filterButton,
+    .invoiceLink {
+        transition: none;
+    }
+
+    .transactionCard:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .transactionCard {
+        border-width: 2px;
+    }
+
+    .statusBadge {
+        border: 1px solid currentColor;
+    }
+}
+
+/* ==========================================================================
+   Focus States
+   ========================================================================== */
+
+.filterButton:focus-visible,
+.exportButton:focus-visible,
+.searchInput:focus-visible,
+.dateRangeSelect:focus-visible,
+.clearFiltersButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.transactionCard:focus-within {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}

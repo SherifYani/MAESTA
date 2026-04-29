@@ -1,0 +1,53 @@
+/**
+ * @file PageContainer.module.css
+ * @description Styles for PageContainer layout component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 08-03-2026
+ */
+
+/* Base Container Rules */
+.container {
+    width: 100%;
+    margin: 0 auto;
+    /* Responsive padding using design tokens: 2rem top/bottom, 1rem left/right */
+    padding: var(--space-8) var(--space-4);
+}
+
+/* 
+ * Size Variants 
+ * Adjust these max-widths to perfectly align with your design system
+ */
+
+.container--sm {
+    max-width: 50rem;
+    /* 800px */
+}
+
+.container--md {
+    max-width: 62.5rem;
+    /* 1000px */
+}
+
+.container--lg {
+    max-width: 75rem;
+    /* 1200px */
+}
+
+.container--xl {
+    max-width: 87.5rem;
+    /* 1400px */
+}
+
+/* Full width, but retains the horizontal safety padding to prevent edge-hugging */
+.container--full {
+    max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 40rem) {
+    .container {
+        /* Reduce padding slightly on mobile */
+        padding: var(--space-6) var(--space-3);
+    }
+}

@@ -1,0 +1,537 @@
+/**
+ * @file AdminDataTable.module.css
+ * @description Styles for AdminDataTable component with glassmorphism effect
+ * Follows BEM methodology and uses variables from globals.css
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-03-08
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
+
+/* ==========================================================================
+   Container & Layout
+   ========================================================================== */
+
+.container {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: visible;
+    box-shadow: 0 4px 24px var(--color-shadow-pink);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Header & Controls (BEM: header, controls)
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-translucent-white-1);
+    border-top-left-radius: var(--radius-xl);
+    border-top-right-radius: var(--radius-xl);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    position: relative;
+    z-index: 20;
+}
+
+.title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Search Component (BEM: search)
+   ========================================================================== */
+
+.search {
+    position: relative;
+    width: 240px;
+}
+
+.search__icon {
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+}
+
+.search__input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.search__input:focus {
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
+}
+
+.search__input::placeholder {
+    color: var(--color-muted-foreground);
+    opacity: 0.7;
+}
+
+/* ==========================================================================
+   Filter Button (BEM: filterButton)
+   ========================================================================== */
+
+.filterButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.filterButton:hover,
+.filterButton:focus-visible {
+    background-color: var(--color-accent);
+    border-color: var(--color-ring);
+    color: var(--color-accent-foreground);
+}
+
+.filterButton:focus-visible {
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+/* ==========================================================================
+   Table Wrapper
+   ========================================================================== */
+
+.tableWrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* ==========================================================================
+   Table Styles (BEM: table, table__head, table__row, etc.)
+   ========================================================================== */
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 600px;
+}
+
+.table__head {
+    background-color: var(--color-muted);
+}
+
+.table__headerCell {
+    padding: var(--space-4) var(--space-6);
+    text-align: left;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted-foreground);
+    border-bottom: 2px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-input);
+    cursor: pointer;
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.table__headerCell:hover {
+    background-color: var(--color-accent);
+}
+
+.headerCellContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.sortIndicator {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-xs);
+    opacity: 0.5;
+}
+
+.sortIndicatorActive {
+    color: var(--color-accent-pink);
+    opacity: 1;
+}
+
+.table__row {
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.table__rowClickable {
+    cursor: pointer;
+}
+
+.table__rowClickable:hover,
+.table__rowClickable:focus-visible {
+    background-color: var(--color-accent);
+    outline: none;
+}
+
+.table__row:nth-child(odd) {
+    background-color: var(--color-translucent-white-3);
+}
+
+.table__row:nth-child(even) {
+    background-color: var(--color-translucent-white-1);
+}
+
+.table__row:last-child .table__cell {
+    border-bottom: none;
+}
+
+.table__cell {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   Empty State (BEM: emptyState)
+   ========================================================================== */
+
+.emptyState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16) var(--space-6);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    text-align: center;
+}
+
+.emptyState__content {
+    max-width: 400px;
+}
+
+.emptyState__title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-3) 0;
+}
+
+.emptyState__description {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+/* ==========================================================================
+   Pagination (BEM: pagination)
+   ========================================================================== */
+
+.pagination {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-translucent-white-1);
+    border-bottom-left-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.pagination__info {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.pagination__controls {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.pagination__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.pagination__button:not(:disabled):hover,
+.pagination__button:focus-visible {
+    background-color: var(--color-accent);
+    border-color: var(--color-ring);
+    color: var(--color-accent-foreground);
+}
+
+.pagination__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination__buttonActive {
+    background-color: var(--color-accent-pink);
+    border-color: var(--color-accent-pink);
+    color: var(--color-primary-black);
+    font-weight: var(--font-weight-semibold);
+}
+
+.pagination__buttonActive:hover,
+.pagination__buttonActive:focus-visible {
+    background-color: var(--color-vivid-pink);
+    border-color: var(--color-vivid-pink);
+    color: var(--color-primary-black);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Breakpoint: 75rem (1200px) */
+@media (max-width: 75rem) {
+    .container {
+        border-radius: var(--radius-lg);
+    }
+
+    .header {
+        padding: var(--space-4);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .table__headerCell,
+    .table__cell {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .pagination {
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
+/* Breakpoint: 60.5rem (968px) */
+@media (max-width: 60.5rem) {
+    .container {
+        border-radius: var(--radius-md);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+
+    .title {
+        text-align: center;
+    }
+
+    .controls {
+        justify-content: center;
+    }
+
+    .search {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .table__headerCell,
+    .table__cell {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-xs);
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .pagination__info {
+        text-align: center;
+    }
+
+    .emptyState {
+        padding: var(--space-8) var(--space-4);
+    }
+}
+
+/* Breakpoint: 40rem (640px) */
+@media (max-width: 40rem) {
+    .container {
+        border-radius: var(--radius-md);
+    }
+
+    .header {
+        padding: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-base);
+    }
+
+    .controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search {
+        max-width: 100%;
+    }
+
+    .filterButton {
+        width: 100%;
+        height: 40px;
+    }
+
+    .table__headerCell,
+    .table__cell {
+        padding: var(--space-2);
+        font-size: 0.75rem;
+    }
+
+    .pagination__controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination__button {
+        min-width: 32px;
+        height: 32px;
+        font-size: var(--font-size-xs);
+    }
+
+    .emptyState__title {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .container {
+        background-color: var(--color-card);
+        border-color: var(--color-border);
+    }
+
+    .table__rowClickable:hover,
+    .table__rowClickable:focus-visible {
+        background-color: var(--color-secondary);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .container,
+    .table__headerCell,
+    .table__row,
+    .search__input,
+    .filterButton,
+    .pagination__button {
+        animation: none;
+        transition: none;
+    }
+
+    .table__rowClickable:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .table__headerCell {
+        border-bottom-width: 2px;
+    }
+
+    .table__cell {
+        border-bottom-width: 1px;
+    }
+
+    .pagination__button {
+        border-width: 2px;
+    }
+}
+
+/* Custom scrollbar for table wrapper */
+.tableWrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--color-accent-pink);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--color-muted);
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--color-vivid-pink);
+}

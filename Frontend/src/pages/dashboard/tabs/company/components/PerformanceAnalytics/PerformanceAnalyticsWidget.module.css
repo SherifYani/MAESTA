@@ -1,0 +1,213 @@
+/**
+ * @file PerformanceAnalyticsWidget.module.css
+ * @description Premium styles for Performance Analytics Widget
+ * @version 1.0.0
+ * @date 2026-01-28
+ */
+
+/* ==========================================================================
+   Performance Widget Container
+   ========================================================================== */
+
+.performanceWidget {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Metrics Grid
+   ========================================================================== */
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+}
+
+.metricItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-background),
+            var(--color-translucent-white-1));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.metricItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-radial-pink-1),
+            transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.metricItem:hover::before {
+    left: 100%;
+}
+
+.metricItem:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.metricIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+    transition: transform 0.3s ease;
+}
+
+.metricItem:hover .metricIcon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.metricIcon svg {
+    color: var(--color-primary-white);
+}
+
+.metricContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+    min-width: 0;
+}
+
+.metricLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metricValue {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.metricBadge {
+    font-size: var(--font-size-2xs);
+    align-self: flex-start;
+}
+
+/* ==========================================================================
+   Trend Indicator
+   ========================================================================== */
+
+.trendIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-radial-pink-1),
+            var(--color-radial-pink-2));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-semibold);
+}
+
+.trendIcon {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 75rem) {
+    .metricsGrid {
+        gap: var(--space-2);
+    }
+
+    .metricItem {
+        padding: var(--space-3);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .metricsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .metricValue {
+        font-size: var(--font-size-lg);
+    }
+}
+
+@media (max-width: 40rem) {
+    .metricItem {
+        padding: var(--space-2);
+        gap: var(--space-2);
+    }
+
+    .metricIcon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .metricIcon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .trendIndicator {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .metricItem,
+    .metricItem::before,
+    .metricIcon {
+        transition: none;
+    }
+
+    .metricItem:hover {
+        transform: none;
+    }
+
+    .metricItem:hover .metricIcon {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .metricItem {
+        border: 2px solid var(--color-foreground);
+    }
+}

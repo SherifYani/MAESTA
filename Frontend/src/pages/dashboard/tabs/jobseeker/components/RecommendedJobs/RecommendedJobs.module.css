@@ -1,0 +1,989 @@
+/**
+ * @file RecommendedJobs.module.css
+ * @description Enhanced modern CSS for RecommendedJobs using globals.css variables only
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2026-1-19
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-18
+ */
+
+/* ==========================================================================
+   Container - Modern Card with Gradient Border
+   ========================================================================== */
+
+.container {
+  background: var(--color-card);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink),
+      var(--color-accent-pink));
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ==========================================================================
+   Header - Glassmorphism Design
+   ========================================================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-6);
+  background: linear-gradient(135deg,
+      var(--color-radial-pink-1) 0%,
+      transparent 100%);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(135deg,
+      var(--color-foreground),
+      var(--color-accent-pink));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.subtitle::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-pink);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Filter Toggle - Modern Button */
+.filterToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.filterToggle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-radial-pink-1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.filterToggle:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.filterToggle:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.filterToggle.active {
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+.filterToggle>* {
+  position: relative;
+  z-index: 1;
+}
+
+.filterCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  background: var(--color-destructive);
+  color: var(--color-primary-white);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  padding: 0 6px;
+  animation: bounceIn 0.5s ease;
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Sort Dropdown - Enhanced */
+.sortDropdown {
+  position: relative;
+}
+
+.sortSelect {
+  appearance: none;
+  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  min-width: 180px;
+  transition: all 0.3s ease;
+}
+
+.sortSelect:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 3px var(--color-shadow-pink);
+}
+
+.sortIcon {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-muted-foreground);
+  transition: transform 0.3s ease;
+}
+
+.sortDropdown:hover .sortIcon {
+  color: var(--color-accent-pink);
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* ==========================================================================
+   Filters Panel - Animated Slide Down
+   ========================================================================== */
+
+.filtersPanel {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(135deg,
+      var(--color-sidebar),
+      var(--color-background));
+  animation: slideDownFade 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+}
+
+.filterGroup {
+  margin-bottom: var(--space-5);
+}
+
+.filterGroup:last-child {
+  margin-bottom: 0;
+}
+
+.filterLabel {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filterOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filterOption {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.filterOption::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--color-radial-pink-1), transparent);
+  transition: left 0.5s ease;
+}
+
+.filterOption:hover::before {
+  left: 100%;
+}
+
+.filterOption:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-shadow-pink);
+}
+
+.filterOption.active {
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  border-color: var(--color-accent-pink);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.filterCheckbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+}
+
+.filterCheckbox:hover {
+  background: var(--color-radial-pink-1);
+}
+
+.filterCheckbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent-pink);
+  cursor: pointer;
+}
+
+.filterActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-5);
+}
+
+.clearFilters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clearFilters:hover {
+  color: var(--color-destructive);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-destructive);
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Jobs List - Modern Cards with Hover Effects
+   ========================================================================== */
+
+.jobsList {
+  padding: var(--space-4);
+  max-height: 700px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+.jobsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jobsList::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: var(--radius-sm);
+}
+
+.jobsList::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-sm);
+}
+
+.jobsList::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vivid-pink);
+}
+
+.jobCard {
+  background: var(--color-background);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.jobCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-radial-pink-1),
+      transparent);
+  transition: left 0.6s ease;
+}
+
+.jobCard:hover::before {
+  left: 100%;
+}
+
+.jobCard:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 0 0 1px var(--color-accent-pink);
+  transform: translateY(-4px);
+}
+
+.jobCard.expanded {
+  border-color: var(--color-accent-pink);
+  background: var(--color-card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+  gap: var(--space-4);
+}
+
+.jobInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.jobTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.jobTitle {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  transition: color 0.3s ease;
+}
+
+.jobCard:hover .jobTitle {
+  color: var(--color-accent-pink);
+}
+
+.urgentBadge {
+  font-size: var(--font-size-xs);
+  padding: 4px 10px;
+  animation: urgentPulse 2s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--color-shadow-pink);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+.company {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.company::before {
+  content: '';
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-pink);
+}
+
+.jobActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.saveButton {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-full);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.saveButton:hover {
+  color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-accent-pink);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.saveButton:active {
+  transform: scale(0.95);
+}
+
+.matchBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+  background: var(--color-radial-pink-1);
+  color: var(--color-accent-pink);
+  border: 1px solid var(--color-accent-pink);
+}
+
+/* Job Details - Enhanced Layout */
+.jobDetails {
+  margin-bottom: var(--space-4);
+}
+
+.detailRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  transition: all 0.3s ease;
+}
+
+.detailItem:hover {
+  color: var(--color-accent-pink);
+  transform: translateX(2px);
+}
+
+.salary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-radial-pink-1);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-accent-pink);
+}
+
+.salaryLabel {
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.salaryValue {
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Skills Section - Modern Tags */
+.skillsSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.skillTag {
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+  color: var(--color-accent-pink);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--color-accent-pink);
+  transition: all 0.3s ease;
+}
+
+.skillTag:hover {
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-shadow-pink);
+}
+
+.moreSkills {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-translucent-white-1);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Expanded Content - Smooth Animation */
+.expandedContent {
+  padding-top: var(--space-5);
+  border-top: 2px solid var(--color-border);
+  animation: expandDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+}
+
+.jobDescription,
+.requirements {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--color-radial-pink-1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.jobDescription h4,
+.requirements h4 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.jobDescription h4::before,
+.requirements h4::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  border-radius: var(--radius-sm);
+}
+
+.jobDescription p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  line-height: var(--line-height-relaxed);
+}
+
+.requirements ul {
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+.requirements li {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  margin-bottom: var(--space-2);
+  line-height: var(--line-height-relaxed);
+  position: relative;
+}
+
+.requirements li::marker {
+  color: var(--color-accent-pink);
+}
+
+.expandedActions,
+.collapsedActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* Footer - Enhanced */
+.footer {
+  padding: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  background: linear-gradient(135deg,
+      var(--color-radial-pink-1) 0%,
+      transparent 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.showingText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.viewAllButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.viewAllButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--color-shadow-pink);
+}
+
+.viewAllButton:active {
+  transform: translateY(0);
+}
+
+/* Empty State - Modern Design */
+.emptyState {
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.emptyIcon {
+  margin-bottom: var(--space-4);
+  color: var(--color-accent-pink);
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.emptyState h3 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}
+
+.emptyState p {
+  margin: 0 0 var(--space-6) 0;
+  font-size: var(--font-size-base);
+  color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Responsive Design - Tablet (60.5rem / 968px)
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .detailRow {
+    gap: var(--space-3);
+  }
+
+  .skillsSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile (40rem / 640px)
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .jobCard {
+    padding: var(--space-4);
+  }
+
+  .jobTitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .detailRow {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .expandedActions,
+  .collapsedActions {
+    flex-direction: column;
+  }
+
+  .footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sortSelect {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Very Small Screens (320px)
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .jobHeader {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .jobActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* -- Pagination ---------------------------------------------------------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.paginationInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.paginationBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: var(--color-muted);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationBtnActive,
+.paginationBtnActive:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-weight: var(--font-weight-semibold);
+  cursor: default;
+}

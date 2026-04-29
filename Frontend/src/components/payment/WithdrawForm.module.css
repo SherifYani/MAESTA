@@ -1,0 +1,813 @@
+/**
+ * @file WithdrawForm.module.css
+ * @description Styles for WithdrawForm modal using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+/* ==========================================================================
+   Overlay & Modal Container
+   ========================================================================== */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-translucent-white-4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--space-4);
+    animation: overlayFadeIn 0.2s ease-out;
+}
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background-color: var(--color-card);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 40px var(--color-shadow-pink);
+    max-width: 28rem;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-1rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+    line-height: var(--line-height-tight);
+}
+
+.titleIcon {
+    color: var(--color-accent-pink);
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: var(--space-2);
+}
+
+.closeButton:hover:not(:disabled) {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+}
+
+.closeButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Success State
+   ========================================================================== */
+
+.successState {
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+}
+
+.successIcon {
+    width: 5rem;
+    height: 5rem;
+    background-color: var(--color-chart-2);
+    opacity: 0.1;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+}
+
+.successIconSvg {
+    color: var(--color-chart-2);
+}
+
+.successTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-3) 0;
+    line-height: var(--line-height-tight);
+}
+
+.successMessage {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-4) 0;
+    line-height: var(--line-height-normal);
+}
+
+.successDetails {
+    background-color: var(--color-muted);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    text-align: left;
+}
+
+.successDetail {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.successDetail:last-child {
+    margin-bottom: 0;
+}
+
+.successDetail strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-muted-foreground);
+    min-width: 6rem;
+    display: inline-block;
+}
+
+.successNote {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Balance Card
+   ========================================================================== */
+
+.balanceCard {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    padding: var(--space-6);
+    margin: 0 var(--space-6) var(--space-6);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+.balanceHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.balanceIcon {
+    opacity: 0.9;
+}
+
+.balanceLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    opacity: 0.9;
+}
+
+.balanceAmount {
+    font-size: 2.5rem;
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-none);
+    margin-bottom: var(--space-2);
+}
+
+.balanceNote {
+    font-size: var(--font-size-xs);
+    opacity: 0.8;
+}
+
+/* ==========================================================================
+   Form
+   ========================================================================== */
+
+.form {
+    padding: 0 var(--space-6) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+/* Amount Input Group */
+.amountInputGroup {
+    position: relative;
+}
+
+.currencySymbol {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.input {
+    width: 100%;
+    padding: var(--space-3);
+    padding-left: 2.5rem;
+    padding-right: 4rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    font-size: var(--font-size-base);
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-ring);
+    background-color: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.inputError {
+    border-color: var(--color-destructive);
+}
+
+.inputError:focus {
+    border-color: var(--color-destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-destructive), transparent 70%);
+}
+
+.maxButton {
+    position: absolute;
+    right: var(--space-2);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--font-size-sm);
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-semibold);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.maxButton:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+/* Error Messages */
+.errorMessage {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-destructive);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+    line-height: var(--line-height-none);
+}
+
+.errorIcon {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Withdrawal Methods
+   ========================================================================== */
+
+.methodsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.methodOption {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--color-card);
+}
+
+.methodOption:hover {
+    border-color: var(--color-accent-pink);
+    background-color: var(--color-accent);
+}
+
+.methodOptionSelected {
+    border-color: var(--color-accent-pink);
+    background-color: var(--color-radial-pink-1);
+}
+
+.methodRadio {
+    margin-top: 0.125rem;
+    accent-color: var(--color-accent-pink);
+}
+
+.methodIcon {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.methodContent {
+    flex: 1;
+}
+
+.methodHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-1);
+}
+
+.methodName {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    font-size: var(--font-size-base);
+}
+
+.methodFee {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-bold);
+    background-color: var(--color-radial-pink-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+}
+
+.methodDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.methodProcessing {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+}
+
+/* ==========================================================================
+   Fee Breakdown
+   ========================================================================== */
+
+.feeBreakdown {
+    background-color: var(--color-muted);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-top: var(--space-2);
+}
+
+.feeTitle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-3) 0;
+}
+
+.feeIcon {
+    color: var(--color-accent-pink);
+}
+
+.feeGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.feeRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feeLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.feeValue {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+.feeDivider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--space-2) 0;
+}
+
+.feeTotalLabel {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.feeTotalValue {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+}
+
+.feeReceiveValue {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-chart-2);
+}
+
+/* ==========================================================================
+   Security Note
+   ========================================================================== */
+
+.securityNote {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--color-accent-pink);
+}
+
+.securityIcon {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.securityNote p {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+/* ==========================================================================
+   Submit Error
+   ========================================================================== */
+
+.submitError {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--color-destructive);
+    opacity: 0.1;
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--color-destructive);
+}
+
+.submitErrorIcon {
+    color: var(--color-destructive);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.submitErrorTitle {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-destructive);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.submitErrorMessage {
+    font-size: var(--font-size-sm);
+    color: var(--color-destructive);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+/* ==========================================================================
+   Form Actions
+   ========================================================================== */
+
+.formActions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.cancelButton,
+.submitButton {
+    flex: 1;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.cancelButton {
+    background-color: transparent;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.cancelButton:hover:not(:disabled) {
+    background-color: var(--color-muted);
+    border-color: var(--color-border);
+}
+
+.submitButton {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+.submitButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.cancelButton:disabled,
+.submitButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.submitButton:disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid transparent;
+    border-top-color: var(--color-primary-white);
+    border-radius: var(--radius-full);
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .modal {
+        max-width: 26rem;
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .modal {
+        max-width: 24rem;
+    }
+
+    .header,
+    .form {
+        padding-left: var(--space-4);
+        padding-right: var(--space-4);
+    }
+
+    .balanceCard {
+        margin-left: var(--space-4);
+        margin-right: var(--space-4);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .balanceAmount {
+        font-size: 2rem;
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .overlay {
+        padding: var(--space-2);
+    }
+
+    .modal {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: var(--radius-lg);
+    }
+
+    .header {
+        padding: var(--space-4);
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
+
+    .headerContent {
+        text-align: center;
+    }
+
+    .closeButton {
+        position: absolute;
+        top: var(--space-4);
+        right: var(--space-4);
+        margin: 0;
+    }
+
+    .title {
+        justify-content: center;
+    }
+
+    .balanceCard {
+        margin: var(--space-4);
+        padding: var(--space-4);
+    }
+
+    .balanceAmount {
+        font-size: 1.75rem;
+    }
+
+    .form {
+        padding: 0 var(--space-4) var(--space-4);
+    }
+
+    .methodOption {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
+
+    .methodHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+
+    .cancelButton,
+    .submitButton {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .overlay {
+        background-color: var(--color-translucent-black-1);
+    }
+
+    .modal {
+        background-color: var(--color-card);
+        border-color: var(--color-border);
+    }
+
+    .methodOption {
+        background-color: var(--color-card);
+    }
+
+    .feeBreakdown,
+    .securityNote {
+        background-color: var(--color-muted);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .overlay,
+    .modal,
+    .closeButton,
+    .input,
+    .methodOption,
+    .cancelButton,
+    .submitButton {
+        transition: none;
+        animation: none;
+    }
+
+    .submitButton:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .modal {
+        border-width: 2px;
+    }
+
+    .balanceCard {
+        border: 2px solid var(--color-accent-pink);
+    }
+
+    .methodOptionSelected {
+        border-width: 3px;
+    }
+}
+
+/* ==========================================================================
+   Focus States
+   ========================================================================== */
+
+.closeButton:focus-visible,
+.input:focus-visible,
+.methodRadio:focus-visible,
+.maxButton:focus-visible,
+.cancelButton:focus-visible,
+.submitButton:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
