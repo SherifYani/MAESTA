@@ -12,7 +12,7 @@ import { useGig } from '../../context/GigContext';
 import GigCard from '../../components/gigs/GigCard';
 import GigFilters from '../../components/gigs/GigFilters';
 import { PageContainer } from '../../components/layout';
-import { Button, Input, LoadingSpinner } from '../../components/common';
+import { Button, Input, LoadingSpinner, Pagination } from '../../components/common';
 import { Filter, Search } from 'lucide-react';
 import styles from './GigListingPage.module.css';
 
@@ -77,7 +77,7 @@ const GigListingPage = () => {
         applyFilters();
     }, [applyFilters]);
 
-    if (isLoading && gigs.length === 0) {
+    if (isLoading && (gigs?.length ?? 0) === 0) {
         return (
             <div className={styles.loadingContainer}>
                 <LoadingSpinner size="large" />
@@ -126,7 +126,7 @@ const GigListingPage = () => {
                         onClick={() => setShowFilters(!showFilters)}
                     >
                         <Filter size={16} />
-                        Filters {Object.values(filters).some(f => f && f !== 'all' && f.length !== 0 && typeof f !== 'object') ? '•' : ''}
+                        Filters {Object.values(filters).some(f => f && f !== 'all' && (f?.length ?? 0) !== 0 && typeof f !== 'object') ? '•' : ''}
                     </button>
                 </div>
 
@@ -148,47 +148,42 @@ const GigListingPage = () => {
 
                     <div className={styles.resultsInfo}>
                         <p className={styles.resultsCount}>
-                            Showing {gigs.length} gigs
+                            Showing {gigs?.length ?? 0} gigs
                         </p>
                     </div>
 
                     <div className={styles.gigsGrid}>
-                        {gigs.length === 0 ? (
+                        {(gigs?.length ?? 0) === 0 ? (
                             <div className={styles.noResults}>
                                 <h3>No gigs found</h3>
                                 <p>Try adjusting your search filters</p>
                             </div>
                         ) : (
-                            gigs.map(gig => (
-                                <GigCard
-                                    key={gig.id}
-                                    gig={gig}
-                                    onClick={() => navigateToGigDetails(gig.id)}
-                                />
-                            ))
+                            gigs.map(gig => {
+                                const gigId = gig.id || gig.projectId;
+                                return (
+                                    <GigCard
+                                        key={gigId || Math.random()}
+                                        gig={gig}
+                                        onClick={() => navigateToGigDetails(gigId)}
+                                    />
+                                );
+                            })
                         )}
                     </div>
 
                     {pagination.total > pagination.limit && (
-                        <div className={styles.pagination}>
-                            <Button
-                                variant="secondary"
-                                disabled={pagination.page === 1}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                            >
-                                Previous
-                            </Button>
-                            <span className={styles.pageInfo}>
-                                Page {pagination.page} of {Math.ceil(pagination.total / pagination.limit)}
-                            </span>
-                            <Button
-                                variant="secondary"
-                                disabled={pagination.page * pagination.limit >= pagination.total}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                            >
-                                Next
-                            </Button>
-                        </div>
+                        <Pagination
+                            currentPage={pagination.page}
+                            totalPages={Math.ceil(pagination.total / pagination.limit)}
+                            onPageChange={(page) => setPagination(prev => ({ ...prev, page }))}
+                            pageSize={pagination.limit}
+                            onPageSizeChange={(newSize) => {
+                                setPagination(prev => ({ ...prev, limit: newSize, page: 1 }));
+                            }}
+                            showTotal={true}
+                            totalItems={pagination.total}
+                        />
                     )}
                 </main>
             </div>

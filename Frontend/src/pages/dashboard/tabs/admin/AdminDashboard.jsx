@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Users,
   FileText,
@@ -26,7 +27,13 @@ import { adminStats, activitiesData, pendingActions, healthData } from './config
  * @returns {JSX.Element} Rendered component
  */
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleExportReport = () => {
+    // Navigate to reports page or trigger export functionality
+    navigate('/dashboard/admin/reports');
+  };
 
   useEffect(() => {
     // Simulate initial data loading
@@ -80,7 +87,7 @@ const AdminDashboard = () => {
         </div>
         <div className={styles.headerActions}>
           {/* Add actions if needed */}
-          <button className={styles.actionBtn}>Export Report</button>
+          <button className={styles.actionBtn} onClick={handleExportReport}>Export Report</button>
         </div>
       </header>
 

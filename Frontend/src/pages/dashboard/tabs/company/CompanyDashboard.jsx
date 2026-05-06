@@ -2,11 +2,18 @@
  * @file CompanyDashboard.jsx
  * @description Company dashboard overview page with all components integrated
  * @author Sherif Talaat
- * @version 6.0.0
- * @date 2026-1-27
+ * @version 7.0.0
+ * @date 2026-01-27
+ *
+ * @last-modified-by Antigravity (AI)
+ * @last-modified-date 2026-05-01
+ * @changes
+ * - Phase 1: publishedJobs and newApplicants now fetched from real API
+ * - Profile, analytics, pendingActions retain mock fallback (no API yet)
  */
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import jobService from '../../../../services/jobService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -64,84 +71,114 @@ import {
 import styles from "./CompanyDashboard.module.css";
 
 const CompanyDashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
+  const navigate = useNavigate();
+
+  // ── State ──────────────────────────────────────────────────────────────────
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid"); // grid, list, compact
+  const [viewMode, setViewMode] = useState("grid");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  // Load company dashboard data
-  useEffect(() => {
-    const loadDashboardData = () => {
-      try {
-        const data = getCompanyDashboardData(ROLES.COMPANY);
-        setDashboardData(data);
-      } catch (error) {
-        console.error("Error loading dashboard data:", error);
-        // Fallback to static data
-        setDashboardData({
-          profile: COMPANY_PROFILE,
-          publishedJobs: COMPANY_PUBLISHED_JOBS,
-          newApplicants: COMPANY_NEW_APPLICANTS,
-          performanceAnalytics: COMPANY_PERFORMANCE_ANALYTICS,
-          recentActivity: COMPANY_RECENT_ACTIVITY,
-          pendingActions: COMPANY_PENDING_ACTIONS,
-        });
-      } finally {
-        setLoading(false);
+  // Live API data
+  const [publishedJobs,  setPublishedJobs]  = useState([]);
+  const [newApplicants,  setNewApplicants]  = useState([]);
+
+  // Mock-backed data (no API endpoints yet)
+  const mockSnapshot = getCompanyDashboardData(ROLES.COMPANY);
+  const [dashboardData] = useState(() => ({
+    profile:              COMPANY_PROFILE,
+    performanceAnalytics: COMPANY_PERFORMANCE_ANALYTICS,
+    recentActivity:       COMPANY_RECENT_ACTIVITY,
+    pendingActions:       COMPANY_PENDING_ACTIONS,
+  }));
+
+  // ── Data fetching ──────────────────────────────────────────────────────────
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [jobsResult, applicantsResult] = await Promise.allSettled([
+        jobService.getCompanyJobs(),
+        // Fetch applications for all company jobs by getting all applications
+        jobService.getCompanyJobs().then(async (jobs) => {
+          const raw = Array.isArray(jobs) ? jobs : (jobs?.items ?? jobs?.data ?? []);
+          // Get applications for the first 3 active jobs (overview only)
+          const activeJobs = raw.filter(j => j.status === 'active' || !j.status).slice(0, 3);
+          const appPromises = activeJobs.map(j => jobService.getJobApplications(j.id || j.jobId));
+          const results = await Promise.allSettled(appPromises);
+          return results
+            .filter(r => r.status === 'fulfilled')
+            .flatMap(r => Array.isArray(r.value) ? r.value : (r.value?.items ?? r.value?.data ?? []));
+        }),
+      ]);
+
+      if (jobsResult.status === 'fulfilled') {
+        const raw = jobsResult.value;
+        const items = Array.isArray(raw) ? raw : (raw?.items ?? raw?.data ?? []);
+        setPublishedJobs(items);
+      } else {
+        // Fall back to mock jobs
+        setPublishedJobs(COMPANY_PUBLISHED_JOBS);
       }
-    };
 
-    loadDashboardData();
-  }, [refreshKey]);
+      if (applicantsResult.status === 'fulfilled') {
+        setNewApplicants(applicantsResult.value);
+      } else {
+        setNewApplicants(COMPANY_NEW_APPLICANTS);
+      }
+    } catch (err) {
+      console.error('[CompanyDashboard] Unexpected fetch error:', err);
+      setPublishedJobs(COMPANY_PUBLISHED_JOBS);
+      setNewApplicants(COMPANY_NEW_APPLICANTS);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Filter jobs based on search and active filter
-  const filteredJobs =
-    dashboardData?.publishedJobs?.filter((job) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.department?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.location?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredJobs = publishedJobs.filter((job) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      (job.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.location || '').toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesFilter =
-        activeFilter === "all" || job.status === activeFilter;
-
-      return matchesSearch && matchesFilter;
-    }) || [];
+    const matchesFilter = activeFilter === "all" || job.status === activeFilter;
+    return matchesSearch && matchesFilter;
+  });
 
   // Filter applicants
-  const filteredApplicants =
-    dashboardData?.newApplicants?.filter((applicant) => {
-      return (
-        searchQuery === "" ||
-        applicant.applicantName
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        applicant.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }) || [];
+  const filteredApplicants = newApplicants.filter((applicant) => {
+    return (
+      searchQuery === "" ||
+      (applicant.applicantName || applicant.firstName || '')
+        .toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (applicant.jobTitle || applicant.job?.title || '')
+        .toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
-  // Calculate quick stats using company data
+  // Calculate quick stats — blend live data with mock analytics
   const calculateQuickInsights = () => {
-    if (!dashboardData) return [];
-
-    const stats = getCompanyStatistics();
+    const stats     = getCompanyStatistics();
     const analytics = dashboardData.performanceAnalytics;
+    const activeCount = publishedJobs.filter(j => j.status === 'active' || !j.status).length;
 
     return [
       {
         title: "Active Jobs",
-        value: stats.activeJobs,
-        change: `${dashboardData.publishedJobs?.length || 0} total posted`,
+        value: activeCount || stats.activeJobs,
+        change: `${publishedJobs.length || 0} total posted`,
         icon: Briefcase,
         trendType: "positive",
         description: "Currently hiring positions",
       },
       {
         title: "Total Applications",
-        value: stats.totalApplications,
+        value: newApplicants.length || stats.totalApplications,
         change: `${stats.newApplications} new this month`,
         icon: Users,
         trendType: "positive",
@@ -167,47 +204,13 @@ const CompanyDashboard = () => {
   };
 
   // Event handlers
-  const handleViewApplicant = (applicantId) => {
-    console.log(`View applicant: ${applicantId}`);
-    // Navigate to applicant detail page
-    // navigate(`/dashboard/applicants/${applicantId}`);
-  };
-
-  const handleScheduleInterview = (applicantId) => {
-    console.log(`Schedule interview for: ${applicantId}`);
-    // Open interview scheduling modal
-  };
-
-  const handleViewJobStats = (jobId) => {
-    console.log(`View stats for job: ${jobId}`);
-    // Navigate to job analytics page
-  };
-
-  const handleEditJob = (jobId) => {
-    console.log(`Edit job: ${jobId}`);
-    // Navigate to job edit page
-  };
-
-  const handleManageApplicants = (jobId) => {
-    console.log(`Manage applicants for job: ${jobId}`);
-    // Navigate to job applicants page
-  };
-
-  const handleViewJob = (jobId) => {
-    console.log(`View job details: ${jobId}`);
-    // Navigate to job detail page
-    // navigate(`/dashboard/jobs/${jobId}`);
-  };
-
-  const handleRefreshDashboard = () => {
-    setRefreshKey((prev) => prev + 1);
-    setLoading(true);
-  };
-
-  const handleExportData = (type) => {
-    console.log(`Exporting ${type} data...`);
-    // Implement export functionality
-  };
+  const handleViewApplicant  = (id)    => navigate(`/dashboard/applicants/${id}`);
+  const handleViewJob        = (id)    => navigate(`/jobs/${id}`);
+  const handleEditJob        = (id)    => navigate(`/dashboard/published-jobs/${id}/edit`);
+  const handleManageApplicants = (id)  => navigate(`/dashboard/applicants?jobId=${id}`);
+  const handleScheduleInterview = (id) => navigate(`/dashboard/interviews/schedule?applicantId=${id}`);
+  const handleRefreshDashboard  = ()   => fetchData();
+  const handleExportData        = (type) => navigate(`/dashboard/export?type=${type}`);
 
   // Loading state
   if (loading || !dashboardData) {
@@ -317,7 +320,7 @@ const CompanyDashboard = () => {
                 </Link>
               }>
               <PublishedJobsWidget
-                jobs={dashboardData.publishedJobs}
+                jobs={publishedJobs}
                 onViewJob={handleViewJob}
               />
             </Card>
@@ -330,20 +333,20 @@ const CompanyDashboard = () => {
               className={styles.activityCard}>
               <div className={styles.aboutCompanyContent}>
                 <p className={styles.companyDescription}>
-                  {dashboardData.profile.description}
+                  {dashboardData.profile?.description}
                 </p>
                 <div className={styles.companyDetails}>
                   <div className={styles.detailItem}>
                     <Building size={16} />
-                    <span>{dashboardData.profile.industry}</span>
+                    <span>{dashboardData.profile?.industry}</span>
                   </div>
                   <div className={styles.detailItem}>
                     <MapPin size={16} />
-                    <span>{dashboardData.profile.location}</span>
+                    <span>{dashboardData.profile?.location}</span>
                   </div>
                   <div className={styles.detailItem}>
                     <Users size={16} />
-                    <span>{dashboardData.profile.size}</span>
+                    <span>{dashboardData.profile?.size}</span>
                   </div>
                 </div>
               </div>
@@ -359,7 +362,7 @@ const CompanyDashboard = () => {
               subtitle="Primary contacts for recruitment"
               className={styles.activityCard}>
               <div className={styles.teamList}>
-                {dashboardData.profile.hiringTeam?.slice(0, 3).map((member) => (
+                {dashboardData.profile?.hiringTeam?.slice(0, 3).map((member) => (
                   <div key={member.id} className={styles.teamMember}>
                     <div className={styles.memberAvatar}>
                       {member.name.charAt(0)}
@@ -388,25 +391,25 @@ const CompanyDashboard = () => {
                 <div className={styles.statItem}>
                   <span className={styles.statKey}>Total Jobs Posted</span>
                   <span className={styles.statValue}>
-                    {dashboardData.profile.stats?.totalJobsPosted || 0}
+                    {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
                   </span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statKey}>Open Positions</span>
                   <span className={styles.statValue}>
-                    {dashboardData.profile.stats?.openPositions || 0}
+                    {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
                   </span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statKey}>Interview Rate</span>
                   <span className={styles.statValue}>
-                    {dashboardData.profile.stats?.interviewRate || 0}%
+                    {dashboardData.profile?.stats?.interviewRate || 0}%
                   </span>
                 </div>
                 <div className={styles.statItem}>
                   <span className={styles.statKey}>Total Hires</span>
                   <Badge variant="success">
-                    {dashboardData.profile.stats?.hireRate || 0}% success
+                    {dashboardData.profile?.stats?.hireRate || 0}% success
                   </Badge>
                 </div>
               </div>
@@ -419,15 +422,15 @@ const CompanyDashboard = () => {
       <div className={styles.pendingActionsSection}>
         <Card
           title="Pending Actions"
-          subtitle={`${dashboardData.pendingActions.length} HR and management tasks`}
+          subtitle={`${dashboardData.pendingActions?.length || 0} HR and management tasks`}
           className={styles.pendingActionsCard}
           action={
             <Badge variant="warning">
-              {dashboardData.pendingActions.length} pending
+              {dashboardData.pendingActions?.length || 0} pending
             </Badge>
           }>
           <PendingActions
-            actions={dashboardData.pendingActions}
+            actions={dashboardData.pendingActions || []}
             onActionComplete={(id, completed) => {
               console.log(`Action ${id} completed: ${completed}`);
             }}
@@ -441,32 +444,31 @@ const CompanyDashboard = () => {
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Total Jobs Posted</span>
             <span className={styles.footerStatValue}>
-              {dashboardData.profile.stats?.totalJobsPosted || 0}
+              {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Open Positions</span>
             <span className={styles.footerStatValue}>
-              {dashboardData.profile.stats?.openPositions || 0}
+              {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Total Applications</span>
             <span className={styles.footerStatValue}>
-              {dashboardData.profile.stats?.totalApplications?.toLocaleString() ||
-                0}
+              {newApplicants.length || dashboardData.profile?.stats?.totalApplications?.toLocaleString() || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Interview Rate</span>
             <span className={styles.footerStatValue}>
-              {dashboardData.profile.stats?.interviewRate || 0}%
+              {dashboardData.profile?.stats?.interviewRate || 0}%
             </span>
           </div>
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Success Rate</span>
             <span className={styles.footerStatValue}>
-              {dashboardData.profile.stats?.hireRate || 0}%
+              {dashboardData.profile?.stats?.hireRate || 0}%
             </span>
           </div>
         </div>

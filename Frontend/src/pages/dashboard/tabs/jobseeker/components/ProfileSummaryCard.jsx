@@ -59,7 +59,7 @@ const ProfileSummaryCard = ({ profile = {}, onEdit = () => {} }) => {
             gap: 'var(--space-1)',
           }}>
             <Briefcase size={13} />
-            Product Designer
+            {profile.title || profile.role || 'Job Seeker'}
           </div>
         </div>
       </div>
@@ -96,23 +96,24 @@ const ProfileSummaryCard = ({ profile = {}, onEdit = () => {} }) => {
         </div>
       </div>
 
-      {/* Verified Badge */}
-      <div style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 'var(--space-2)',
-        padding: 'var(--space-2) var(--space-3)',
-        background: 'rgba(34, 197, 94, 0.1)',
-        border: '1px solid rgba(34, 197, 94, 0.4)',
-        borderRadius: 'var(--radius-full)',
-        fontSize: 'var(--font-size-xs)',
-        fontWeight: 'var(--font-weight-semibold)',
-        color: 'var(--color-success)',
-        width: 'fit-content',
-      }}>
-        <ShieldCheck size={13} />
-        Verified Profile
-      </div>
+      {profile.isVerified && (
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--space-2)',
+          padding: 'var(--space-2) var(--space-3)',
+          background: 'rgba(34, 197, 94, 0.1)',
+          border: '1px solid rgba(34, 197, 94, 0.4)',
+          borderRadius: 'var(--radius-full)',
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-success)',
+          width: 'fit-content',
+        }}>
+          <ShieldCheck size={13} />
+          Verified Profile
+        </div>
+      )}
 
       {/* Edit Button */}
       <Button

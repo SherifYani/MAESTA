@@ -20,6 +20,7 @@ import {
   validateFile,
   validateMultipleFiles,
 } from "../../utils/form-validation";
+import authService from "../../services/authService";
 
 /**
  * FreelancerOnboarding Component
@@ -50,6 +51,7 @@ function FreelancerOnboarding() {
 
   const [profilePicture, setProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
   const [formErrors, setFormErrors] = useState({
     professionalTitle: "",
     experienceYears: "",
@@ -290,16 +292,25 @@ function FreelancerOnboarding() {
     };
 
     setIsLoading(true);
+    setApiError("");
 
     try {
-      console.log("Submitting freelancer data:", submissionData);
+      await authService.registerStep2({
+        userType: "Freelancer",
+        professionalTitle: formData.professionalTitle,
+        experienceYears: parseInt(formData.experienceYears) || 0,
+        bio: formData.bio,
+        hourlyRate: parseFloat(formData.hourlyRate) || 0,
+        currency: formData.currency,
+        portfolioUrl: formData.portfolioUrl || null,
+        documentVerificationUrl: formData.documentVerificationUrl || null,
+        // Backend handles file uploads or ignores extra Data
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Freelancer profile submitted successfully!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting freelancer data:", error);
-      alert("Error submitting profile. Please try again.");
+      setApiError(error?.response?.data?.message || "Error submitting profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -361,6 +372,13 @@ function FreelancerOnboarding() {
               : "Complete required sections to submit your profile"}
           </p>
         </div>
+
+        {apiError && (
+          <div className="onboarding-phase-2__api-error">
+            <i className="fa-solid fa-circle-exclamation"></i>
+            {apiError}
+          </div>
+        )}
 
         <div className="onboarding-phase-2__card">
           <form onSubmit={handleSubmit}>
@@ -631,11 +649,13 @@ function FreelancerOnboarding() {
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 10 * 1024 * 1024) {
-                          alert("File size must be less than 10MB");
+                          setApiError("File size must be less than 10MB");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         if (extraFields.portfolioImages.length >= 10) {
-                          alert("Maximum 10 portfolio images allowed");
+                          setApiError("Maximum 10 portfolio images allowed");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         handlePortfolioImagesUpload(file);
@@ -669,7 +689,8 @@ function FreelancerOnboarding() {
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 5 * 1024 * 1024) {
-                          alert("File size must be less than 5MB");
+                          setApiError("File size must be less than 5MB");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         setProfilePicture(file);

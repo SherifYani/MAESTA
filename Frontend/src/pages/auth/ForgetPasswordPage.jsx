@@ -18,7 +18,8 @@ import {
   isFormValid,
   debounceValidation,
 } from "../../utils/form-validation";
-import AuthHeader from "../../components/common/AuthHeader";
+import authService from "../../services/authService";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import "../../styles/auth-pages.css";
 import "../../styles/shared/_form-base.css";
@@ -106,8 +107,8 @@ function ForgetPasswordPage() {
       setIsLoading(true);
 
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        // Call actual API endpoint
+        await authService.forgotPassword(formData.email);
         console.log("Password reset request for:", formData.email);
 
         setIsSubmitted(true);
@@ -126,7 +127,7 @@ function ForgetPasswordPage() {
   if (isSubmitted) {
     return (
       <div>
-        <AuthHeader />
+        <Header />
         <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">
@@ -149,6 +150,20 @@ function ForgetPasswordPage() {
                 If an account exists with this email, you'll receive reset
                 instructions shortly.
               </p>
+            </div>
+
+            <div className="verification-info" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+              <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+                Received the code? Click below to set your new password.
+              </p>
+              <Link 
+                to="/resetpassword" 
+                className="form-submit-button"
+                style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+              >
+                <i className="fa-solid fa-key" style={{ marginRight: '0.5rem' }}></i>
+                Enter Reset Code
+              </Link>
             </div>
 
             <div className="form-footer">
@@ -177,7 +192,7 @@ function ForgetPasswordPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="page-container fade-in">
       <div className="form-card slide-up">
         <div className="form-header">

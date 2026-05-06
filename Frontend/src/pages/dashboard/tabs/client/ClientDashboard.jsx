@@ -2,11 +2,17 @@
  * @file ClientDashboard.jsx - Enhanced Version
  * @description Improved client dashboard with clean layout and compact data
  * @author Sherif Talaat
- * @version 5.0.0
+ * @version 6.0.0
  * @date 2026-01-29
+ *
+ * @last-modified-by Antigravity (AI)
+ * @last-modified-date 2026-05-01
+ * @changes
+ * - Phase 1: jobPosts (gigs) now fetched from real gigService API
  */
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import gigService from '../../../../services/gigService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -39,12 +45,41 @@ import styles from "./ClientDashboard.module.css";
  * Enhanced ClientDashboard - Clean, No Nested Cards
  */
 const ClientDashboard = ({ data }) => {
-  // Get all role-specific data from dashboard.config.js
-  const activities = data.activities;
-  const pendingActions = data.pendingActions;
-  const jobPosts = data.recentJobPosts;
-  const earningsData = data.earningsData;
+  // Live API data
+  const [jobPosts,  setJobPosts]  = useState([]);
+  const [apiLoading, setApiLoading] = useState(true);
+
+  // Static / mock-backed data (no API endpoints yet)
+  const activities        = data.activities;
+  const pendingActions    = data.pendingActions;
+  const earningsData      = data.earningsData;
   const performanceMetrics = data.performanceMetrics;
+
+  // ── Fetch client gigs on mount ───────────────────────────────────
+  const fetchGigs = useCallback(async () => {
+    try {
+      const raw = await gigService.getMyGigs();
+      const items = Array.isArray(raw) ? raw : (raw?.items ?? raw?.data ?? []);
+      // Normalise gig shape to what CompactJobCard expects
+      setJobPosts(items.map(g => ({
+        ...g,
+        id:       g.id        || g.gigId,
+        title:    g.title     || g.gigTitle || 'Untitled Gig',
+        company:  g.company   || g.clientName || 'My Gig',
+        location: g.location  || g.gigLocation || 'Remote',
+        status:   g.status    || 'active',
+        type:     g.type      || g.projectType || 'Freelance',
+      })));
+    } catch (err) {
+      console.error('[ClientDashboard] Failed to fetch gigs:', err);
+      // Fall back to static mock data
+      setJobPosts(data.recentJobPosts || []);
+    } finally {
+      setApiLoading(false);
+    }
+  }, [data.recentJobPosts]);
+
+  useEffect(() => { fetchGigs(); }, [fetchGigs]);
 
   // Calculate budget data
   const budgetSpent = earningsData?.totalSpent || "$42,580";

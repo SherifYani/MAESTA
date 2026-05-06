@@ -2,11 +2,17 @@
  * @file FreelancerDashboard.jsx - Enhanced Version
  * @description Freelancer-specific dashboard with metrics, activities, and job posts
  * @author Sherif Talaat
- * @version 4.0.0
+ * @version 5.0.0
  * @date 2026-01-29
+ *
+ * @last-modified-by Antigravity (AI)
+ * @last-modified-date 2026-05-01
+ * @changes
+ * - Phase 1: jobPosts (proposals) now fetched from real gigService API
  */
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import gigService from '../../../../services/gigService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -37,13 +43,41 @@ import styles from "./FreelancerDashboard.module.css";
  * Enhanced FreelancerDashboard
  */
 const FreelancerDashboard = ({ data }) => {
-  // Get all role-specific data from dashboard.config.js
-  const activities = data.activities;
-  const pendingActions = data.pendingActions;
-  const jobPosts = data.recentJobPosts;
-  const earningsData = data.earningsData;
+  // Live API data
+  const [jobPosts,    setJobPosts]    = useState([]);
+  const [apiLoading,  setApiLoading]  = useState(true);
+
+  // Static / mock-backed data (no API endpoints yet)
+  const activities        = data.activities;
+  const pendingActions    = data.pendingActions;
+  const earningsData      = data.earningsData;
   const performanceMetrics = data.performanceMetrics;
-  const skillAnalysis = data.skillAnalysis;
+  const skillAnalysis     = data.skillAnalysis;
+
+  // ── Fetch proposals on mount ──────────────────────────────────────
+  const fetchProposals = useCallback(async () => {
+    try {
+      const raw = await gigService.getMyProposals();
+      const items = Array.isArray(raw) ? raw : (raw?.items ?? raw?.data ?? []);
+      // Normalise proposal/gig shape to what CompactJobCard expects
+      setJobPosts(items.map(p => ({
+        ...p,
+        id:       p.id        || p.proposalId || p.gigId,
+        title:    p.gigTitle  || p.title      || 'Untitled Gig',
+        company:  p.clientName || p.company   || 'Client',
+        location: p.location  || 'Remote',
+        status:   p.status    || 'pending',
+        type:     p.type      || 'Freelance',
+      })));
+    } catch (err) {
+      console.error('[FreelancerDashboard] Failed to fetch proposals:', err);
+      setJobPosts(data.recentJobPosts || []);
+    } finally {
+      setApiLoading(false);
+    }
+  }, [data.recentJobPosts]);
+
+  useEffect(() => { fetchProposals(); }, [fetchProposals]);
 
   // Calculate earnings metrics
   const currentMonthEarnings =

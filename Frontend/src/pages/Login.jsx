@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
 import "../styles/login.css";
-import AuthHeader from "../components/common/AuthHeader";
+import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
 
 /**
@@ -183,7 +183,7 @@ export default function LoginForm() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
 
       <div className="auth-login">
         {/* Decorative Background Elements - Now memoized */}

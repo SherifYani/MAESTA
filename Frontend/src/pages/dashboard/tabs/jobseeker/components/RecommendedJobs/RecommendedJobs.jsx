@@ -28,6 +28,7 @@ import {
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
+import { Pagination } from "../../../../../../components/common";
 import styles from "./RecommendedJobs.module.css";
 
 /**
@@ -153,7 +154,7 @@ const RecommendedJobs = ({
    */
   const handleSaveJob = (job, e) => {
     e.stopPropagation();
-    onJobSave(job.id, !job.isSaved);
+    onJobSave(job.id || job.jobId, !job.isSaved);
   };
 
   /**
@@ -163,7 +164,7 @@ const RecommendedJobs = ({
    */
   const handleApplyJob = (job, e) => {
     e.stopPropagation();
-    onJobApply(job.id);
+    onJobApply(job.id || job.jobId);
   };
 
   /**
@@ -192,6 +193,7 @@ const RecommendedJobs = ({
    * @returns {JSX.Element} Styled badge component
    */
   const renderMatchBadge = (score) => {
+    if (!score) return null;
     let variant = "default";
     if (score >= 90) variant = "success";
     else if (score >= 70) variant = "primary";
@@ -376,18 +378,20 @@ const RecommendedJobs = ({
 
       {/* Jobs List */}
       <div className={styles.jobsList}>
-        {pagedJobs.map((job) => (
+        {pagedJobs.map((job) => {
+          const jobId = job.id || job.jobId;
+          return (
           <article
-            key={job.id}
-            className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ""
+            key={jobId}
+            className={`${styles.jobCard} ${expandedJobId === jobId ? styles.expanded : ""
               }`}
-            onClick={() => toggleJobDetails(job.id)}
+            onClick={() => toggleJobDetails(jobId)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                toggleJobDetails(job.id);
+                toggleJobDetails(jobId);
               }
             }}>
             <div className={styles.jobHeader}>
@@ -400,7 +404,7 @@ const RecommendedJobs = ({
                     </Badge>
                   )}
                 </div>
-                <p className={styles.company}>{job.company}</p>
+                <p className={styles.company}>{job.company || job.companyName || "Unknown Company"}</p>
               </div>
 
               <div className={styles.jobActions}>
@@ -460,7 +464,7 @@ const RecommendedJobs = ({
             </div>
 
             {/* Expandable Content */}
-            {expandedJobId === job.id && (
+            {expandedJobId === jobId && (
               <div className={styles.expandedContent}>
                 <div className={styles.jobDescription}>
                   <h4>Job Description</h4>
@@ -479,14 +483,14 @@ const RecommendedJobs = ({
                 <div className={styles.expandedActions}>
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={(e) => handleSaveJob(job, e)}>
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); handleSaveJob(job, e); }}>
                     {job.isSaved ? "Remove from Saved" : "Save Job"}
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
-                    onClick={(e) => handleApplyJob(job, e)}>
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); handleApplyJob(job, e); }}>
                     Apply Now <ArrowRight size={16} />
                   </Button>
                 </div>
@@ -494,62 +498,37 @@ const RecommendedJobs = ({
             )}
 
             {/* Collapsed Actions */}
-            {expandedJobId !== job.id && (
+            {expandedJobId !== jobId && (
               <div className={styles.collapsedActions}>
                 <Button
                   variant="outline"
                   size="medium"
-                  onClick={(e) => handleSaveJob(job, e)}>
+                  onClick={(e) => { e.stopPropagation(); handleSaveJob(job, e); }}>
                   {job.isSaved ? "Saved" : "Save"}
                 </Button>
                 <Button
                   variant="primary"
                   size="medium"
-                  onClick={(e) => handleApplyJob(job, e)}>
+                  onClick={(e) => { e.stopPropagation(); handleApplyJob(job, e); }}>
                   Apply
                 </Button>
               </div>
             )}
           </article>
-        ))}
+          );
+        })}
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <div className={styles.paginationInfo}>
-            Showing {startDisplay}–{endDisplay} of {filteredJobs.length} recommendations
-          </div>
-          <div className={styles.paginationControls}>
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            {pageNumbers.map(num => (
-              <button
-                key={num}
-                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
-                onClick={() => setCurrentPage(num)}
-                aria-label={`Page ${num}`}
-                aria-current={currentPage === num ? 'page' : undefined}
-              >
-                {num}
-              </button>
-            ))}
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+          pageSize={ITEMS_PER_PAGE}
+          showTotal={true}
+          totalItems={filteredJobs.length}
+        />
       )}
     </div>
   );

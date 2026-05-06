@@ -186,6 +186,18 @@
   --color-input-hover: oklch(0.91 0.008 76);
   --color-accent-hover: oklch(0.86 0.015 72);
 
+  /* Semantic Colors - Status Indicators */
+  --color-success: #22c55e;
+  --color-success-bg: rgba(34, 197, 94, 0.1);
+  --color-error: #ef4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-warning: #eab308;
+  --color-warning-bg: rgba(234, 179, 8, 0.1);
+  --color-info: #3b82f6;
+  --color-info-bg: rgba(59, 130, 246, 0.1);
+  --color-rating: #eab308;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+
   /* Misc */
   --color-transparent: transparent;
 }
@@ -264,6 +276,22 @@
   --color-radial-pink-1: rgb(157 134 111 / 0.14);
   --color-radial-pink-2: rgb(179 154 126 / 0.10);
   --color-radial-pink-3: rgb(179 154 126 / 0.06);
+
+  /* Interactive States */
+  --color-input-hover: oklch(0.25 0.009 285);
+  --color-accent-hover: oklch(0.30 0.012 285);
+
+  /* Semantic Colors - Status Indicators (Dark Mode) */
+  --color-success: #4ade80;
+  --color-success-bg: rgba(74, 222, 128, 0.15);
+  --color-error: #f87171;
+  --color-error-bg: rgba(248, 113, 113, 0.15);
+  --color-warning: #facc15;
+  --color-warning-bg: rgba(250, 204, 21, 0.15);
+  --color-info: #60a5fa;
+  --color-info-bg: rgba(96, 165, 250, 0.15);
+  --color-rating: #facc15;
+  --color-overlay: rgba(0, 0, 0, 0.75);
 
   /* Interactive States - Warmer hover states */
   --color-input-hover: oklch(0.24 0.009 285);

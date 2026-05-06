@@ -102,7 +102,7 @@ const JobseekerDashboard = () => {
           >
             <SkillsAnalysisCard
               skillsAnalysis={skillsAnalysis}
-              onEdit={() => navigate('/dashboard/profile/skills')}
+              onEdit={() => navigate('/dashboard/profile')}
               onAssess={() => navigate('/dashboard/assessments')}
             />
           </Card>
@@ -190,7 +190,7 @@ const JobseekerDashboard = () => {
             className={styles.activityCard}
             variant="glass"
             action={
-              <Button variant="ghost" size="small" onClick={() => navigate('/dashboard/activity')}>
+              <Button variant="ghost" size="small" onClick={() => navigate('/dashboard/applications')}>
                 View History <ArrowUpRight size={14} />
               </Button>
             }
@@ -198,6 +198,7 @@ const JobseekerDashboard = () => {
             <RecentActivity
               activities={recentActivity}
               limit={5}
+              onViewAll={() => navigate('/dashboard/applications')}
             />
           </Card>
         </div>

@@ -1,0 +1,190 @@
+/**
+ * @file AdminResolveAction.module.css
+ * @description Styles for AdminResolveAction page – glassmorphism cards, two-column layout.
+ */
+
+.container {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.detailsCard,
+.formCard {
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.cardTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+  color: var(--color-foreground);
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.detailsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-muted-foreground);
+  min-width: 100px;
+}
+
+.detailValue {
+  color: var(--color-foreground);
+  word-break: break-word;
+}
+
+.extraDetails {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-3);
+}
+
+.jsonPreview {
+  background: var(--color-muted);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-xs);
+  overflow-x: auto;
+  font-family: monospace;
+}
+
+/* Action selector buttons */
+.actionSelector {
+  margin-bottom: var(--space-5);
+}
+
+.formLabel {
+  display: block;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+  color: var(--color-foreground);
+}
+
+.actionOptions {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.actionOption {
+  flex: 1;
+  padding: var(--space-3);
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.actionOption.selectedApprove {
+  background: linear-gradient(135deg, var(--color-success), #16a34a);
+  border-color: transparent;
+  color: white;
+}
+
+.actionOption.selectedReject {
+  background: linear-gradient(135deg, var(--color-error), #dc2626);
+  border-color: transparent;
+  color: white;
+}
+
+.field {
+  margin-bottom: var(--space-5);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.warning {
+  color: var(--color-warning);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive */
+@media (max-width: 60.5rem) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .container {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 40rem) {
+  .actionOptions {
+    flex-direction: column;
+  }
+  .detailRow {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .detailLabel {
+    min-width: auto;
+  }
+}

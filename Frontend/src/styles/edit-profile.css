@@ -367,6 +367,38 @@
   box-shadow: 0 0.25rem 1rem var(--color-shadow-pink);
 }
 
+/* Banners: loading / error / success */
+.edit__loading-banner,
+.edit__error-banner,
+.edit__success-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.edit__loading-banner {
+  background: color-mix(in oklch, var(--color-accent-pink) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--color-accent-pink) 30%, transparent);
+  color: var(--color-accent-pink);
+}
+
+.edit__error-banner {
+  background: color-mix(in oklch, var(--color-chart-5) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--color-chart-5) 35%, transparent);
+  color: var(--color-chart-5);
+}
+
+.edit__success-banner {
+  background: color-mix(in oklch, var(--color-chart-2) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--color-chart-2) 35%, transparent);
+  color: var(--color-chart-2);
+}
+
 /* Responsive */
 @media (max-width: 48rem) {
   .edit__grid {

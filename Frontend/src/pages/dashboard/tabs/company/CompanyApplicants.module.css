@@ -1,0 +1,131 @@
+/* 
+ * @file CompanyApplicants.Module.Styles
+ * @description Styles for the company applicants management page
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ 
+ */
+.container {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.applicantName {
+  font-weight: var(--font-weight-medium);
+}
+
+.applicantEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.statusSelect {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profileHeader {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+}
+
+.detailRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-semibold);
+  min-width: 100px;
+  color: var(--color-muted-foreground);
+}
+
+.modalField {
+  margin-top: var(--space-4);
+}
+
+.formLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+}
+
+@media (max-width: 60.5rem) {
+  .container {
+    padding: var(--space-4);
+  }
+  .actionButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .statusSelect {
+    width: 100%;
+  }
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+}

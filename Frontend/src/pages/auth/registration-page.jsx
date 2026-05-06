@@ -14,7 +14,7 @@ import "../../styles/pages/registration-page.css";
 import "../../styles/globals.css";
 import RegisterForm from "../../components/forms/RegisterForm";
 import EnhancedBubble from "../../components/EnhancedBubble";
-import AuthHeader from "../../components/common/AuthHeader";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 
 /**
@@ -38,7 +38,7 @@ function RegistrationPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="registration-page">
         <button
           className="registration-page__back-button"

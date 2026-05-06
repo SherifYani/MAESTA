@@ -16,10 +16,10 @@ import { Loader2 } from 'lucide-react';
  *
  * @param {Object}  props
  * @param {React.ReactNode} props.children      – The protected content to render
- * @param {string}  [props.requiredRole]        – If set, user must have this exact role
+ * @param {string|string[]}  [props.allowedRoles]        – If set, user must have one of these roles
  * @returns {JSX.Element}
  */
-const ProtectedRoute = ({ children, requiredRole }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
     const { isAuthenticated, user, loading } = useAuth();
     const location = useLocation();
 
@@ -38,9 +38,12 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         return <Navigate to="/login" replace />;
     }
 
-    if (requiredRole && user?.role !== requiredRole) {
-        // Authenticated but wrong role — send to home, not login
-        return <Navigate to="/" replace />;
+    if (allowedRoles) {
+        const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+        if (!roles.includes(user?.role?.toLowerCase())) {
+            // Authenticated but wrong role — send to home, not login
+            return <Navigate to="/" replace />;
+        }
     }
 
     return children;

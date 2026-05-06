@@ -1,0 +1,98 @@
+/**
+ * @file AdminUsersManagement.module.css
+ * @description Styles for Admin Users Management page.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+
+.container {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.userName {
+  font-weight: var(--font-weight-medium);
+}
+
+.userEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.statusSelect,
+.roleSelect {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-semibold);
+  min-width: 150px;
+  color: var(--color-muted-foreground);
+}
+
+.modalField {
+  margin-top: var(--space-4);
+}
+
+.formLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
+
+.warning {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: #eab308;
+}
+
+@media (max-width: 60.5rem) {
+  .container {
+    padding: var(--space-4);
+  }
+  .actionButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .detailRow {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .detailLabel {
+    min-width: auto;
+  }
+}

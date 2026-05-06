@@ -9,8 +9,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGig } from '../../context/GigContext';
 import { useRole } from '../../hooks/useRole';
-import { Button, LoadingSpinner, Alert } from '../../components/common';
+import { Button, LoadingSpinner, Alert, Pagination } from '../../components/common';
 import GigCard from '../../components/gigs/GigCard';
+import ManageBidsModal from '../../components/gigs/ManageBidsModal';
 import { Plus } from 'lucide-react';
 import { PageContainer } from '../../components/layout';
 import styles from './GigManagementPage.module.css';
@@ -20,6 +21,7 @@ const GigManagementPage = () => {
     const { userGigs, isLoading, error, fetchUserGigs } = useGig();
     const { isClient, isFreelancer } = useRole();
     const [activeTab, setActiveTab] = useState('active');
+    const [manageBidsGigId, setManageBidsGigId] = useState(null);
 
     const isClientUser = isClient();
 
@@ -29,6 +31,17 @@ const GigManagementPage = () => {
     }, [fetchUserGigs, isClientUser, activeTab]);
 
     const filteredGigs = userGigs; // functionality depends on service implementation
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 20;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab]);
+
+    const totalPages = Math.ceil((filteredGigs?.length || 0) / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedGigs = filteredGigs?.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     const handleCreateGig = () => {
         navigate('/gigs/new');
@@ -75,27 +88,32 @@ const GigManagementPage = () => {
                 {error && <Alert type="error" message={error} />}
 
                 <div className={styles.grid}>
-                    {filteredGigs?.length > 0 ? (
-                        filteredGigs.map(gig => (
-                            <div key={gig.id} className={styles.cardWrapper}>
+                    {paginatedGigs?.length > 0 ? (
+                        paginatedGigs.map(gig => {
+                            const gigId = gig.id || gig.projectId;
+                            return (
+                            <div key={gigId || Math.random()} className={styles.cardWrapper}>
                                 <GigCard
                                     gig={gig}
-                                    onClick={() => navigate(`/gigs/${gig.id}`)}
+                                    onClick={() => navigate(`/gigs/${gigId}`)}
                                 />
                                 <div className={styles.cardActions}>
                                     <Button
                                         variant="secondary"
                                         size="small"
-                                        onClick={() => handleViewWorkspace(gig.id)}
+                                        onClick={() => handleViewWorkspace(gigId)}
                                     >
                                         Open Workspace
                                     </Button>
                                     {isClient() && gig.status === 'active' && (
-                                        <Button variant="outline" size="small">Manage Bids</Button>
+                                        <Button variant="outline" size="small" onClick={() => setManageBidsGigId(gigId)}>
+                                            Manage Bids
+                                        </Button>
                                     )}
                                 </div>
                             </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <div className={styles.emptyState}>
                             <p>No {activeTab} gigs found.</p>
@@ -105,7 +123,27 @@ const GigManagementPage = () => {
                         </div>
                     )}
                 </div>
+
+                {totalPages > 1 && (
+                    <div style={{ marginTop: '2rem' }}>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            pageSize={ITEMS_PER_PAGE}
+                            showTotal={true}
+                            totalItems={filteredGigs?.length || 0}
+                        />
+                    </div>
+                )}
             </PageContainer>
+            
+            {manageBidsGigId && (
+                <ManageBidsModal 
+                    gigId={manageBidsGigId} 
+                    onClose={() => setManageBidsGigId(null)} 
+                />
+            )}
         </div>
     );
 };

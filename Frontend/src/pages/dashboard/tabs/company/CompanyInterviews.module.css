@@ -1,0 +1,182 @@
+/**
+ * @file CompanyInterviews.module.css
+ * @description Styles for the company interviews page.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+
+.container {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.viewToggle {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Calendar Styles */
+.calendarContainer {
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.weekDay {
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-2);
+}
+
+.calendarDay {
+  aspect-ratio: 1;
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendarDay:hover {
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+}
+
+.calendarDay.hasInterviews {
+  border-color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
+}
+
+.dayNumber {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.dayIndicator {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-pink);
+  margin-top: auto;
+  text-align: center;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-semibold);
+  min-width: 120px;
+  color: var(--color-muted-foreground);
+}
+
+.modalField {
+  margin-top: var(--space-4);
+}
+
+.formLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
+
+.timeInput {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+}
+
+@media (max-width: 60.5rem) {
+  .container {
+    padding: var(--space-4);
+  }
+  .headerActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .viewToggle {
+    justify-content: center;
+  }
+  .actionButtons {
+    flex-direction: column;
+  }
+  .calendarGrid {
+    gap: var(--space-1);
+  }
+  .calendarDay {
+    padding: var(--space-1);
+  }
+  .dayNumber {
+    font-size: var(--font-size-xs);
+  }
+}

@@ -7,7 +7,8 @@
 @layer base {
   body {
     @apply font-arabic bg-gray-50 text-gray-900;
-    /*direction: rtl;*/ /* Support for Arabic RTL */
+    /*direction: rtl;*/
+    /* Support for Arabic RTL */
     background-color: var(--primary-black);
   }
 

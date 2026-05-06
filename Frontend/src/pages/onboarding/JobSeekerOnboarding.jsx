@@ -1,13 +1,14 @@
 /**
  * @file JobSeekerOnboarding.jsx
- * @description Job seeker onboarding page with profile completion
+ * @description Job seeker onboarding page — Step 2 of registration (profile completion)
  * @author Sherif Talaat
- * @version 1.4.0
+ * @version 2.0.0
  * @date 24-10-2025
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 03-12-2025
- * @fix Updated to match REGISTRATION_FORM_GUIDE.md specifications
+ * @last-modified-date 2026-04-29
+ * @fix Wired handleSubmit to real API: authService.registerStep2({ userType: 'JobSeeker', ... }).
+ *      Navigates to /dashboard on success. Shows API errors inline. Removed setTimeout simulation.
  */
 
 import { useState, useEffect } from "react";
@@ -17,9 +18,8 @@ import FormTextarea from "../../components/forms/FormTextarea";
 import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
 import "../../styles/pages/onboarding.css";
-import {
-  validateFile,
-} from "../../utils/form-validation";
+import { validateFile } from "../../utils/form-validation";
+import authService from "../../services/authService";
 
 /**
  * JobSeekerOnboarding Component
@@ -188,6 +188,22 @@ function JobSeekerOnboarding() {
   };
 
   /**
+   * Saves the current form data as a draft (local storage or API)
+   */
+  const handleSaveDraft = () => {
+    try {
+      const draftData = {
+        formData,
+      };
+      localStorage.setItem("jobSeekerDraft", JSON.stringify(draftData));
+      alert("Draft saved successfully!");
+    } catch (error) {
+      console.error("Failed to save draft", error);
+      alert("Failed to save draft. Please try again.");
+    }
+  };
+
+  /**
    * Handles extra fields changes (fields not in guide)
    * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} e - The change event
    */
@@ -196,72 +212,35 @@ function JobSeekerOnboarding() {
     setExtraFields((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [apiError, setApiError] = useState("");
+
   /**
-   * Handles form submission
-   * @param {React.FormEvent} e - The form event
+   * Handles form submission — calls real API register step 2.
+   * Payload matches RegisterStep2Request DTO with userType = "JobSeeker".
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setApiError("");
 
-    // Prepare final data object combining guide fields and extra fields
-    const submissionData = {
-      // Guide fields
+    // Build RegisterStep2Request payload
+    const step2Payload = {
+      userType:         "JobSeeker",
       professionalTitle: formData.professionalTitle,
-      experienceYears: parseInt(formData.experienceYears) || 0,
-      bio: formData.bio,
-      cvUrl: formData.cvUrl || null,
-      preferredJobType: formData.preferredJobType,
-
-      // Extra fields (not in guide)
-      extraData: {
-        location: extraFields.location,
-        skills: extraFields.skills,
-        experiences: extraFields.experiences,
-        education: extraFields.education,
-        resumeFile: resume,
-        profilePicture: profilePicture,
-      },
+      experienceYears:   parseInt(formData.experienceYears) || 0,
+      bio:               formData.bio,
+      cvUrl:             formData.cvUrl || undefined,
+      preferredJobType:  formData.preferredJobType,
     };
 
-    setIsLoading(true);
-
     try {
-      console.log("Submitting job seeker data:", submissionData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Job seeker profile submitted successfully!");
-      navigate("/");
-    } catch (error) {
-      console.error("Error submitting job seeker data:", error);
-      alert("Error submitting profile. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handles save as draft
-   */
-  const handleSaveDraft = async () => {
-    setIsLoading(true);
-    try {
-      const draftData = {
-        ...formData,
-        extraFields,
-        resume,
-        profilePicture,
-      };
-
-      console.log("Saving draft:", draftData);
-
-      // Simulate API call
-      setTimeout(() => {
-        alert("Draft saved successfully!");
-      }, 1000);
-    } catch (error) {
-      console.error("Error saving draft:", error);
-      alert("Error saving draft. Please try again.");
+      await authService.registerStep2(step2Payload);
+      // Clear role from localStorage now that onboarding is complete
+      localStorage.removeItem("userRole");
+      navigate("/dashboard");
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to complete profile. Please try again.";
+      setApiError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -278,6 +257,14 @@ function JobSeekerOnboarding() {
             Showcase your professional information to attract employers
           </p>
         </div>
+
+        {/* API error banner */}
+        {apiError && (
+          <div className="form-error-message" style={{ margin: '0 0 1rem' }}>
+            <i className="fa-solid fa-exclamation-triangle" />
+            <span>{apiError}</span>
+          </div>
+        )}
 
         {/* Progress Section */}
         <div className="onboarding-phase-2__progress-section">
@@ -567,7 +554,7 @@ function JobSeekerOnboarding() {
                 className={`onboarding-phase-2__submit-button ${
                   isLoading ? "onboarding-phase-2__submit-button--loading" : ""
                 }`}
-                disabled={overallProgress < 100 || isLoading}>
+                disabled={overallProgress < 80 || isLoading}>
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
@@ -576,9 +563,7 @@ function JobSeekerOnboarding() {
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
-                    {overallProgress === 100
-                      ? "Complete Profile"
-                      : `Complete Profile (${overallProgress}%)`}
+                    Complete Profile
                   </>
                 )}
               </button>

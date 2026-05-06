@@ -1,73 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import LandingHeader from "../components/common/LandingHeader";
+import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
 import "../styles/landing-page.css";
 
-/**
- * Job listing data type.
- */
-type Job = {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  type: string;
-  salary?: string;
-};
-
-/**
- * User testimonial data type.
- */
-type Testimonial = {
-  id: string;
-  name: string;
-  role: string;
-  company: string;
-  avatar?: string;
-  content: string;
-};
-
-/**
- * Platform feature data type.
- */
-type Feature = {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-};
-
-/**
- * Pricing plan data type.
- */
-type PricingPlan = {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  cta: string;
-  highlighted?: boolean;
-};
-
-/**
- * Button component props interface.
- */
-interface ButtonProps {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
-  className?: string;
-  onClick?: () => void;
-}
 
 /**
  * Reusable button component with multiple style variants.
  * @param {ButtonProps} props - Button component props.
  * @returns {JSX.Element} Styled button element.
  */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef(
   ({ children, variant = "primary", className = "", onClick }, ref) => (
     <button
       ref={ref}
@@ -84,7 +28,7 @@ Button.displayName = "Button";
  * Main landing page component with hero, features, pricing, and testimonials sections.
  * @returns {React.ReactElement} The rendered landing page.
  */
-export default function LandingPage(): React.ReactElement {
+export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -96,7 +40,7 @@ export default function LandingPage(): React.ReactElement {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const jobs: Job[] = [
+  const jobs = [
     {
       id: "senior-react-developer",
       title: "Senior React Developer",
@@ -131,7 +75,7 @@ export default function LandingPage(): React.ReactElement {
     },
   ];
 
-  const testimonials: Testimonial[] = [
+  const testimonials = [
     {
       id: "alex-chen",
       name: "Alex Chen",
@@ -152,7 +96,7 @@ export default function LandingPage(): React.ReactElement {
     },
   ];
 
-  const features: Feature[] = [
+  const features = [
     {
       id: "smart-matching",
       icon: "🎯",
@@ -175,7 +119,7 @@ export default function LandingPage(): React.ReactElement {
     },
   ];
 
-  const pricingPlans: PricingPlan[] = [
+  const pricingPlans = [
     {
       id: "free",
       name: "Job Seeker Free",
@@ -203,7 +147,7 @@ export default function LandingPage(): React.ReactElement {
    * Smoothly scrolls to an element by its ID.
    * @param {string} id - The target element ID.
    */
-  const scrollToId = (id: string) => {
+  const scrollToId = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
@@ -214,13 +158,14 @@ export default function LandingPage(): React.ReactElement {
         Skip to content
       </a>
 
+      {/* Unified Header — rendered first, always on top via z-index in CSS */}
+      <Header />
+
       <div
         className="landing__parallax"
         aria-hidden
         style={{
-          ...({
-            ["--scrollY" as string]: `${scrollY * 0.03}px`,
-          } as React.CSSProperties),
+          "--scrollY": `${scrollY * 0.03}px`,
         }}>
         <div className="landing__orb landing__orb--1" aria-hidden />
         <div className="landing__orb landing__orb--2" aria-hidden />
@@ -243,9 +188,6 @@ export default function LandingPage(): React.ReactElement {
           />
         </div>
       </div>
-
-      {/* Replace the entire nav section with LandingHeader */}
-      <LandingHeader />
 
       <main id="main-content">
         <section className="landing__hero" aria-labelledby="hero-heading">
@@ -377,9 +319,8 @@ export default function LandingPage(): React.ReactElement {
             {pricingPlans.map((plan) => (
               <div
                 key={plan.id}
-                className={`landing__pricing-card ${
-                  plan.highlighted ? "landing__pricing-card--highlighted" : ""
-                }`}>
+                className={`landing__pricing-card ${plan.highlighted ? "landing__pricing-card--highlighted" : ""
+                  }`}>
                 <h3>{plan.name}</h3>
                 <p className="landing__plan-desc">{plan.description}</p>
                 <div className="landing__plan-price">{plan.price}</div>

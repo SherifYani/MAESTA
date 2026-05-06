@@ -23,15 +23,15 @@ import styles from './ChatPage.module.css';
  * @returns {JSX.Element} Rendered chat page content
  */
 const ChatPageContent = () => {
-    const { conversationId } = useParams();
+    const { userId } = useParams();
     const { selectConversation } = useChat();
 
     // Select conversation from URL parameter if provided
     useEffect(() => {
-        if (conversationId) {
-            selectConversation(conversationId);
+        if (userId) {
+            selectConversation(userId);
         }
-    }, [conversationId, selectConversation]);
+    }, [userId, selectConversation]);
 
     return (
         <PageContainer className={styles.container} size="full">

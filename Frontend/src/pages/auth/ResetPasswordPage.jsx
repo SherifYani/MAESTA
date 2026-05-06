@@ -20,7 +20,8 @@ import {
   isFormValid,
   debounceValidation,
 } from "../../utils/form-validation";
-import AuthHeader from "../../components/common/AuthHeader";
+import authService from "../../services/authService";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import "../../styles/shared/_form-base.css";
 import "../../styles/auth-pages.css";
@@ -33,6 +34,7 @@ function ResetPasswordPage() {
 
   // Form state
   const [formData, setFormData] = useState({
+    token: token || "", // Initialise from URL or empty
     newPassword: "",
     confirmPassword: "",
   });
@@ -59,6 +61,11 @@ function ResetPasswordPage() {
       let error = "";
 
       switch (name) {
+        case "token":
+          if (!value) error = "Reset code is required";
+          else if (value.length < 4) error = "Invalid reset code";
+          break;
+
         case "newPassword":
           const validation = validatePassword(value);
           setPasswordValidation(validation);
@@ -151,9 +158,9 @@ function ResetPasswordPage() {
       setIsLoading(true);
 
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("Password reset for token:", token);
+        // Call actual API endpoint with formData.token instead of URL token
+        await authService.resetPassword(formData.token, formData.newPassword);
+        console.log("Password reset for token:", formData.token);
         console.log("New password set");
 
         // Show success and redirect
@@ -162,9 +169,10 @@ function ResetPasswordPage() {
           window.location.href = "/login";
         }, 1500);
       } catch (error) {
+        const msg = error?.response?.data?.message || "Failed to reset password. Please try again or request a new link.";
         setErrors((prev) => ({
           ...prev,
-          form: "Failed to reset password. Please try again.",
+          form: msg,
         }));
       } finally {
         setIsLoading(false);
@@ -182,7 +190,7 @@ function ResetPasswordPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">
@@ -202,6 +210,29 @@ function ResetPasswordPage() {
                 <span>{errors.form}</span>
               </div>
             )}
+
+            {/* Token / Reset Code */}
+            <div className="password-field-group">
+              <FormInput
+                icon="fa-solid fa-hashtag"
+                type="text"
+                name="token"
+                placeholder="Reset Code (from your email)"
+                value={formData.token}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                hasError={!!errors.token}
+                className={errors.token ? "form-input--error" : ""}
+              />
+
+              {errors.token && (
+                <div className="field-error-message">
+                  <i className="fa-solid fa-circle-exclamation"></i>
+                  <span>{errors.token}</span>
+                </div>
+              )}
+            </div>
 
             {/* New Password */}
             <div className="password-field-group">

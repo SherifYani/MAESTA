@@ -31,6 +31,7 @@ import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
 import Card from "../../../../components/ui/Card";
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
+import { Pagination } from "../../../../../../components/common";
 import styles from "./PublishedJobs.module.css";
 import { useState, useEffect } from "react";
 
@@ -93,9 +94,9 @@ const PublishedJobs = ({
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             result = result.filter(job =>
-                job.title.toLowerCase().includes(term) ||
-                job.department.toLowerCase().includes(term) ||
-                job.location.toLowerCase().includes(term)
+                (job.title || "").toLowerCase().includes(term) ||
+                (job.department || "").toLowerCase().includes(term) ||
+                (job.location || "").toLowerCase().includes(term)
             );
         }
 
@@ -130,8 +131,19 @@ const PublishedJobs = ({
         setFilteredJobs(result);
     }, [searchTerm, selectedStatus, selectedDepartment, sortBy, jobs]);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 20;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, selectedStatus, selectedDepartment, sortBy]);
+
+    const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedJobs = filteredJobs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
     // Get unique departments for filter
-    const departments = [...new Set((jobs || []).map(job => job.department))];
+    const departments = [...new Set((jobs || []).map(job => job.department || "General"))];
 
     // Get status badge variant
     const getStatusVariant = (status) => {
@@ -145,6 +157,7 @@ const PublishedJobs = ({
 
     // Get level badge variant
     const getLevelVariant = (level) => {
+        if (!level) return "default";
         switch (level.toLowerCase()) {
             case "senior": return "success";
             case "mid-level": return "warning";
@@ -165,6 +178,7 @@ const PublishedJobs = ({
 
     // Calculate days remaining
     const getDaysRemaining = (expiryDate) => {
+        if (!expiryDate) return 0;
         const expiry = new Date(expiryDate);
         const today = new Date();
         const diffTime = expiry - today;
@@ -414,7 +428,7 @@ const PublishedJobs = ({
                     </div>
                 ) : (
                     <div className={styles.jobsGrid}>
-                        {filteredJobs.map(job => {
+                        {paginatedJobs.map(job => {
                             const daysRemaining = getDaysRemaining(job.expiryDate);
                             const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
                             const isExpired = daysRemaining < 0;
@@ -540,6 +554,19 @@ const PublishedJobs = ({
                     </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div style={{ marginTop: '2rem', padding: '0 1rem' }}>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        pageSize={ITEMS_PER_PAGE}
+                        showTotal={true}
+                        totalItems={filteredJobs.length}
+                    />
+                </div>
+            )}
 
             {/* Summary Footer */}
             {filteredJobs.length > 0 && (

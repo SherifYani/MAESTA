@@ -26,6 +26,7 @@ import {
 } from "../config/dashboard.config";
 import styles from "./DashboardSidebar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 /**
  * Sidebar component for dashboard navigation with mobile drawer
@@ -37,8 +38,22 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
   const { currentRole, setCurrentRole } = useContext(DashboardContext);
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Calculate user initials
+  const getUserInitials = (name) => {
+    if (!name) return "US";
+    const parts = name.trim().split(" ");
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+  
+  const userName = user?.name || user?.fullName || "User";
+  const userInitials = getUserInitials(userName);
 
   // Get navigation for current role - memoize this if needed
   const roleNavigation = ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION.client;
@@ -143,10 +158,10 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <div className={styles.sidebarFooter}>
         <div className={styles.userProfile}>
           <div className={styles.userAvatar}>
-            <span className={styles.avatarText}>ST</span>
+            <span className={styles.avatarText}>{userInitials}</span>
           </div>
           <div className={styles.userInfo}>
-            <span className={styles.userName}>Sherif Talaat</span>
+            <span className={styles.userName}>{userName}</span>
             <span className={styles.userRole}>
               {ROLE_DISPLAY_NAMES[currentRole] || "Client"}
             </span>

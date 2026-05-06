@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Clock, User, CheckCircle, AlertTriangle, FileText, DollarSign } from 'lucide-react';
 import Card from '../../../../components/ui/Card';
@@ -45,12 +46,14 @@ ActivityIcon.propTypes = {
  * @returns {JSX.Element} The rendered recent activity widget.
  */
 const RecentActivity = ({ activities }) => {
+    const navigate = useNavigate();
+
     /**
      * Handles view all button click.
      */
     const handleViewAll = () => {
-        // In a real app, this would navigate to activities page
-        console.log('View all activities');
+        // Navigate to activities page
+        navigate('/dashboard/admin/activities');
     };
 
     return (

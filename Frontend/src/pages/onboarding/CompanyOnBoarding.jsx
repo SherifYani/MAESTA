@@ -1,13 +1,14 @@
 /**
- * @file CompanyOnboarding.jsx
- * @description Company admin onboarding page aligned with guide specifications
+ * @file CompanyOnBoarding.jsx
+ * @description Company/Employer onboarding page — Step 2 of registration (company profile completion)
  * @author Sherif Talaat
- * @version 1.4.0
+ * @version 2.0.0
  * @date 24-10-2025
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 03-12-2025
- * @fix Updated to match REGISTRATION_FORM_GUIDE.md specifications
+ * @last-modified-date 2026-04-29
+ * @fix Wired handleSubmit to real API: authService.registerStep2({ userType: 'Employer', ... })
+ *      with full company DTO fields mapped. Navigates to /dashboard on success.
  */
 
 import { useState, useEffect } from "react";
@@ -17,9 +18,8 @@ import FormTextarea from "../../components/forms/FormTextarea";
 import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
 import "../../styles/pages/onboarding.css";
-import {
-  validateFile,
-} from "../../utils/form-validation";
+import { validateFile } from "../../utils/form-validation";
+import authService from "../../services/authService";
 
 /**
  * CompanyOnboarding Component
@@ -195,89 +195,44 @@ function CompanyOnboarding() {
     setExtraFields((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [apiError, setApiError] = useState("");
+
   /**
-   * Handles form submission
+   * Handles form submission — calls real API register step 2.
+   * Payload matches RegisterStep2Request DTO with userType = "Employer".
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setApiError("");
 
-    // Prepare submission data
-    const submissionData = {
-      // Company Entity data
-      company: {
-        name: companyData.companyName,
-        description: companyData.description,
-        industry: companyData.industry,
-        size: companyData.companySize,
-        foundedYear: companyData.foundedYear
-          ? parseInt(companyData.foundedYear)
-          : null,
-        website: companyData.website || null,
-        country: companyData.country || null,
-        city: companyData.city || null,
-        commercialRegistrationNumber: companyData.commercialRegistrationNumber,
-        logoUrl: companyData.logoUrl || null,
-      },
-
-      // Employer Entity data
-      employer: {
-        businessEmail: employerData.businessEmail || null,
-        contactPerson: employerData.contactPerson || null,
-        contactPhone: employerData.contactPhone || null,
-        nationalId: employerData.nationalId || null,
-        taxNumber: employerData.taxNumber || null,
-      },
-
-      // Extra data (current implementation files)
-      files: {
-        logoFile: logoFile,
-        registrationDocumentFile: registrationDocumentFile,
-      },
-
-      // Extra fields
-      extra: {
-        location: extraFields.location,
-      },
+    // Build RegisterStep2Request payload for Employer
+    const step2Payload = {
+      userType:                     "Employer",
+      businessEmail:                 employerData.businessEmail   || undefined,
+      nationalId:                    employerData.nationalId       || undefined,
+      taxNumber:                     employerData.taxNumber        || undefined,
+      contactPerson:                 employerData.contactPerson    || undefined,
+      contactPhone:                  employerData.contactPhone     || undefined,
+      companyName:                   companyData.companyName,
+      companyDescription:            companyData.description       || undefined,
+      companyIndustry:               companyData.industry          || undefined,
+      companySize:                   companyData.companySize       || undefined,
+      foundedYear:                   companyData.foundedYear ? parseInt(companyData.foundedYear) : undefined,
+      companyCountry:                companyData.country           || undefined,
+      companyCity:                   companyData.city              || undefined,
+      companyWebsite:                companyData.website           || undefined,
+      commercialRegistrationNumber:  companyData.commercialRegistrationNumber || undefined,
+      companyLogoUrl:                companyData.logoUrl           || undefined,
     };
 
-    setIsLoading(true);
-
     try {
-      console.log("Submitting company data:", submissionData);
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Company profile submitted successfully!");
-      navigate("/");
-    } catch (error) {
-      console.error("Error submitting company data:", error);
-      alert("Error submitting profile. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handles save as draft
-   */
-  const handleSaveDraft = async () => {
-    setIsLoading(true);
-    try {
-      const draftData = {
-        companyData,
-        employerData,
-        extraFields,
-        logoFile,
-        registrationDocumentFile,
-      };
-
-      console.log("Saving draft:", draftData);
-
-      setTimeout(() => {
-        alert("Draft saved successfully!");
-      }, 1000);
-    } catch (error) {
-      console.error("Error saving draft:", error);
-      alert("Error saving draft. Please try again.");
+      await authService.registerStep2(step2Payload);
+      localStorage.removeItem("userRole");
+      navigate("/dashboard");
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to complete registration. Please try again.";
+      setApiError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -292,6 +247,14 @@ function CompanyOnboarding() {
             Complete your company profile as specified in the guide
           </p>
         </div>
+
+        {/* API error banner */}
+        {apiError && (
+          <div className="form-error-message" style={{ margin: '0 0 1rem' }}>
+            <i className="fa-solid fa-exclamation-triangle" />
+            <span>{apiError}</span>
+          </div>
+        )}
 
         {/* Progress Section */}
         <div className="onboarding-phase-2__progress-section">
@@ -665,7 +628,8 @@ function CompanyOnboarding() {
                       accept=".pdf,.doc,.docx,image/*"
                       onChange={(file) => {
                         if (file && file.size > 10 * 1024 * 1024) {
-                          alert("Document size must be less than 10MB");
+                          setApiError("Document size must be less than 10MB");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         setRegistrationDocumentFile(file);
@@ -695,7 +659,8 @@ function CompanyOnboarding() {
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 5 * 1024 * 1024) {
-                          alert("Logo size must be less than 5MB");
+                          setApiError("Logo size must be less than 5MB");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         setLogoFile(file);
@@ -739,19 +704,11 @@ function CompanyOnboarding() {
             {/* Submit Buttons */}
             <div className="onboarding-phase-2__submit-section">
               <button
-                type="button"
-                className="onboarding-phase-2__draft-button"
-                onClick={handleSaveDraft}
-                disabled={isLoading}>
-                <i className="fa-solid fa-save" />
-                Save as Draft
-              </button>
-              <button
                 type="submit"
                 className={`onboarding-phase-2__submit-button ${
                   isLoading ? "onboarding-phase-2__submit-button--loading" : ""
                 }`}
-                disabled={overallProgress < 100 || isLoading}>
+                disabled={overallProgress < 30 || isLoading}>
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
@@ -760,9 +717,7 @@ function CompanyOnboarding() {
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
-                    {overallProgress === 100
-                      ? "Complete Registration"
-                      : `Complete Registration (${overallProgress}%)`}
+                    Complete Registration
                   </>
                 )}
               </button>

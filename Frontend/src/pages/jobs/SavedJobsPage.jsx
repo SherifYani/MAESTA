@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import jobService from "../../services/jobService";
 import { PageContainer } from "../../components/layout";
+import { Pagination } from "../../components/common";
 import styles from "./SavedJobsPage.module.css";
 
 /**
@@ -25,6 +26,12 @@ const SavedJobsPage = () => {
     const [savedJobs, setSavedJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    
+    const ITEMS_PER_PAGE = 20;
+    const totalPages = Math.ceil(savedJobs.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedJobs = savedJobs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     /**
      * Fetches saved jobs from the API
@@ -127,8 +134,9 @@ const SavedJobsPage = () => {
                     </button>
                 </div>
             ) : (
+                <>
                 <ul className={styles.jobsList} aria-label="Saved jobs list">
-                    {savedJobs.map((job) => (
+                    {paginatedJobs.map((job) => (
                         <li
                             key={job._id || job.id}
                             className={styles.jobCard}
@@ -202,6 +210,17 @@ const SavedJobsPage = () => {
                         </li>
                     ))}
                 </ul>
+                {totalPages > 1 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        pageSize={ITEMS_PER_PAGE}
+                        showTotal={true}
+                        totalItems={savedJobs.length}
+                    />
+                )}
+                </>
             )}
         </PageContainer>
     );

@@ -2,12 +2,13 @@
  * @file RegisterForm.jsx
  * @description Registration form component with role selection, validation, and social login
  * @author Sherif Talaat
- * @version 2.1.0
+ * @version 3.0.0
  * @date 10-10-2025
  *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 02-12-2025
- * @fix Added DateInput integration and validation
+ * @last-modified-date 2026-04-29
+ * @fix Wired handleSubmit to real API Step 1: authService.register(RegisterStep1Request).
+ *      Navigates to /verify with email in router state. Shows API errors inline.
  */
 
 import { useState, useCallback } from "react";
@@ -19,6 +20,7 @@ import "../../styles/pages/register-form.css";
 import "../../styles/components/form-components.css";
 import { useNavigate, Link } from "react-router-dom";
 import { validatePhoneNumber, validateURL } from "../../utils/form-validation";
+import { useAuth } from "../../context/AuthContext";
 /**
  * RegisterForm Component
  * @description Renders the complete registration form with role selection and validation
@@ -26,6 +28,8 @@ import { validatePhoneNumber, validateURL } from "../../utils/form-validation";
  */
 function RegisterForm() {
   const navigate = useNavigate();
+  const { register } = useAuth();
+  const [apiError, setApiError] = useState("");
 
   const [selectedRole, setSelectedRole] = useState("");
   const [formData, setFormData] = useState({
@@ -290,91 +294,59 @@ function RegisterForm() {
   };
 
   /**
-   * Handles form submission
+   * Handles form submission — calls real API register step 1.
+   * Payload matches RegisterStep1Request DTO exactly.
+   * On success, navigates to /verify with email in state.
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Final validation check
-    if (!isFormValid()) {
-      alert("Please fill in all required fields correctly.");
-      return;
-    }
+    if (!isFormValid()) return;
 
     setIsLoading(true);
+    setApiError("");
 
-    // Prepare submission data based on guide specifications
-    const submissionData = {
-      // Common user data
-      user: {
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone || null,
-        profilePictureUrl: formData.profilePictureUrl || null,
-        linkedInUrl: formData.linkedInUrl || null,
-        gender: formData.gender || null,
-        dateOfBirth: formData.dateOfBirth || null,
-        country: formData.country || null,
-        city: formData.city || null,
-      },
-
-      // Role-specific data
-      role: getGuideRoleName(),
-
-      // Employer-specific data (if applicable)
-      ...(selectedRole === "employer" && {
-        company: {
-          name: employerData.companyName,
-          description: employerData.description || null,
-          industry: employerData.industry,
-          size: employerData.companySize,
-          foundedYear: employerData.foundedYear
-            ? parseInt(employerData.foundedYear)
-            : null,
-          website: employerData.website || null,
-          country: formData.country || null, // Reuse from user data
-          city: formData.city || null, // Reuse from user data
-          commercialRegistrationNumber:
-            employerData.commercialRegistrationNumber || null,
-          logoUrl: employerData.logoUrl || null,
-        },
-        employer: {
-          // Note: The guide has Employer Entity fields (BusinessEmail, ContactPerson, etc.)
-          // These are not collected in registration phase, will be in onboarding
-          businessEmail: null,
-          contactPerson: null,
-          contactPhone: null,
-          nationalId: null,
-          taxNumber: null,
-        },
-      }),
+    // Build RegisterStep1Request payload
+    const step1Payload = {
+      email:             formData.email,
+      password:          formData.password,
+      firstName:         formData.firstName,
+      lastName:          formData.lastName,
+      phone:             formData.phone             || undefined,
+      profilePictureUrl: formData.profilePictureUrl || undefined,
+      linkedInUrl:       formData.linkedInUrl       || undefined,
+      gender:            formData.gender             || undefined,
+      dateOfBirth:       formData.dateOfBirth        || undefined,
+      country:           formData.country            || undefined,
+      city:              formData.city               || undefined,
     };
 
-    // Store the selected role for onboarding
-    localStorage.setItem("userRole", selectedRole);
-    localStorage.setItem("registrationData", JSON.stringify(submissionData));
+    try {
+      // Step 1 registration — AuthContext.register() stores the temp token
+      await register(step1Payload);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Form submitted (Guide-aligned):", submissionData);
+      // Store role for onboarding (Step 2)
+      localStorage.setItem("userRole", selectedRole);
+
+      // Navigate to email verification — email passed in state for UI display
+      navigate("/verify", { state: { email: formData.email } });
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Registration failed. Please try again.";
+      setApiError(msg);
+    } finally {
       setIsLoading(false);
-      alert(
-        "Registration successful! Please check your email to verify your account."
-      );
-
-      // Navigate to onboarding after successful registration
-      navigate("/register/onboarding");
-    }, 2000);
+    }
   };
 
   /**
-   * Handles social login
+   * Handles social login via Google or LinkedIn.
+   * In production, get the OAuth token from the provider SDK first.
    */
-  const handleSocialLogin = (provider) => {
-    console.log(`${provider} login initiated`);
-    alert(`${provider} login will be implemented`);
+  const handleSocialLogin = async (provider) => {
+    // TODO: Integrate Google/LinkedIn SDK to obtain token, then:
+    // const token = await getGoogleToken(); // or getLinkedInToken()
+    // await loginWithGoogle(token);
+    // navigate('/dashboard');
+    console.log(`${provider} social login — SDK integration pending`);
   };
 
   // Check for password mismatch error
@@ -384,6 +356,13 @@ function RegisterForm() {
   return (
     <div className="register-form__container">
       <div className="register-form__card">
+        {/* API-level error banner */}
+        {apiError && (
+          <div className="form-error-message" style={{ margin: '0 0 1rem' }}>
+            <i className="fa-solid fa-exclamation-triangle" />
+            <span>{apiError}</span>
+          </div>
+        )}
         {/* Header */}
         <div className="register-form__header">
           <h2 className="register-form__title">Create Your Account</h2>

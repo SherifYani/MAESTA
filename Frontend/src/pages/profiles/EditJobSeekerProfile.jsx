@@ -6,17 +6,21 @@
  * @version 2.1.0
  * @date 2025-12-11
  *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-1-20
+ * @last-modified-by Antigravity
+ * @last-modified-date 2026-05-01
  * 
  * @update :-
  * - removed navigation section 
  * - edit the link to the profile page (because include {profile} and {edit profile} to dashboard)
+ * - wired profileService API endpoints
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
+import { useAuth } from "../../context/AuthContext";
+import profileService from "../../services/profileService";
+import authService from "../../services/authService";
 import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
@@ -30,28 +34,47 @@ import "../../styles/edit-profile.css";
  */
 export default function EditJobSeekerProfile() {
   const navigate = useNavigate();
-  const { jobSeekerData, updateJobSeekerData } = useProfile();
+  const { user } = useAuth();
+  const { jobSeekerData, updateJobSeekerData, profileLoading } = useProfile();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
-  // Form state management for personal information
-  const [formData, setFormData] = useState({
-    fullName: jobSeekerData.fullName,
-    email: jobSeekerData.email,
-    phoneNumber: jobSeekerData.phoneNumber,
-    profilePictureUrl: jobSeekerData.profilePictureUrl,
-    headline: jobSeekerData.profile.headline,
-    summary: jobSeekerData.profile.summary,
-    location: jobSeekerData.profile.location,
-    resumeUrl: jobSeekerData.profile.resumeUrl,
+  // Helper to build form state from jobSeekerData (with safe fallbacks)
+  const buildFormState = (data, authUser) => ({
+    fullName: data.fullName || authUser?.name || '',
+    email: data.email || authUser?.email || '',
+    phoneNumber: data.phoneNumber || '',
+    profilePictureUrl: data.profilePictureUrl || '',
+    headline: data.professionalTitle || data.profile?.headline || '',
+    summary: data.bio || data.profile?.summary || '',
+    location: data.profile?.location || '',
+    resumeUrl: data.cvUrl || data.profile?.resumeUrl || '',
+    // Added missing required fields
+    experienceYears: data.experienceYears !== undefined ? data.experienceYears : 0,
+    preferredJobType: data.preferredJobType || 'FullTime',
   });
 
+  // Form state management for personal information
+  const [formData, setFormData] = useState(() => buildFormState(jobSeekerData, user));
+
   // Skills state management
-  const [skills, setSkills] = useState(jobSeekerData.skills);
+  const [skills, setSkills] = useState(jobSeekerData.skills || []);
 
   // Work experience state management
-  const [experiences, setExperiences] = useState(jobSeekerData.experiences);
+  const [experiences, setExperiences] = useState(jobSeekerData.experiences || []);
 
   // Education state management
-  const [education, setEducation] = useState(jobSeekerData.education);
+  const [education, setEducation] = useState(jobSeekerData.education || []);
+
+  // Sync form whenever context profile data is refreshed from the API
+  useEffect(() => {
+    setFormData(buildFormState(jobSeekerData, user));
+    setSkills(jobSeekerData.skills || []);
+    setExperiences(jobSeekerData.experiences || []);
+    setEducation(jobSeekerData.education || []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobSeekerData]);
 
   /**
    * Handles changes to form input fields.
@@ -254,36 +277,74 @@ export default function EditJobSeekerProfile() {
 
   /**
    * Handles form submission and updates job seeker profile data.
+   * Handles "Upsert" logic: if the profile doesn't exist (no jobSeekerId), it creates it first.
    * @param {React.FormEvent<HTMLFormElement>} event - The form submit event.
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    // Prepare updated job seeker data
-    const updatedJobSeekerData = {
-      fullName: formData.fullName,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      profilePictureUrl: formData.profilePictureUrl,
-      profile: {
-        ...jobSeekerData.profile,
-        headline: formData.headline,
-        summary: formData.summary,
-        location: formData.location,
-        resumeUrl: formData.resumeUrl,
-      },
-      skills,
-      experiences,
-      education,
-    };
+    setLoading(true);
+    setError(null);
+    setSuccessMsg(null);
 
-    // Update context and navigate back
-    updateJobSeekerData(updatedJobSeekerData);
-    navigate("/profile");
+    try {
+      // 1. If profile doesn't exist (seeded state), create it first via RegisterStep2
+      if (!jobSeekerData.jobSeekerId) {
+        console.log("Profile record missing (404 seeded state). Creating profile first...");
+        await authService.registerStep2({
+          userType: "JobSeeker",
+          professionalTitle: formData.headline,
+          experienceYears: parseInt(formData.experienceYears) || 0,
+          bio: formData.summary,
+          cvUrl: formData.resumeUrl || undefined,
+          preferredJobType: formData.preferredJobType,
+        });
+        
+        // Refresh profile data from backend to get the real jobSeekerId and other fields
+        const freshProfile = await profileService.getJobseekerProfile();
+        updateJobSeekerData(freshProfile);
+      }
+
+      // 2. Prepare updated job seeker data for the standard Update call
+      const updatedJobSeekerData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        profilePictureUrl: formData.profilePictureUrl,
+        professionalTitle: formData.headline,
+        experienceYears: parseInt(formData.experienceYears) || 0,
+        bio: formData.summary,
+        preferredJobType: formData.preferredJobType,
+        cvUrl: formData.resumeUrl,
+        profile: {
+          ...jobSeekerData.profile,
+          headline: formData.headline,
+          summary: formData.summary,
+          location: formData.location,
+          resumeUrl: formData.resumeUrl,
+        },
+        skills,
+        experiences,
+        education,
+      };
+
+      // 3. Call the API via profileService
+      await profileService.updateJobseekerProfile(updatedJobSeekerData);
+      
+      // Update context so the rest of the UI reflects changes immediately
+      updateJobSeekerData(updatedJobSeekerData);
+      setSuccessMsg("Profile updated successfully!");
+      setTimeout(() => navigate("/dashboard/profile"), 1500);
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Failed to update profile. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   /**
@@ -330,6 +391,28 @@ export default function EditJobSeekerProfile() {
             Update your profile, skills, experience, and education
           </p>
         </header>
+
+        {/* Loading skeleton while context profile is being fetched */}
+        {profileLoading && (
+          <div className="edit__loading-banner">
+            <i className="fa-solid fa-spinner fa-spin" />
+            &nbsp; Loading your profile data...
+          </div>
+        )}
+
+        {error && (
+          <div className="edit__error-banner" role="alert">
+            <i className="fa-solid fa-circle-exclamation" />
+            &nbsp; {error}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="edit__success-banner" role="status">
+            <i className="fa-solid fa-circle-check" />
+            &nbsp; {successMsg}
+          </div>
+        )}
 
         {/* Edit Form */}
         <form
@@ -407,6 +490,42 @@ export default function EditJobSeekerProfile() {
                   className="edit__input"
                   aria-label="Location"
                   maxLength={100}
+                />
+              </div>
+
+              {/* Added missing JobSeeker fields */}
+              <div className="edit__field">
+                <label htmlFor="experienceYears" className="edit__label">
+                  Experience Years <span className="edit__required">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="experienceYears"
+                  name="experienceYears"
+                  value={formData.experienceYears}
+                  onChange={handleInputChange}
+                  min="0"
+                  max="50"
+                  className="edit__input"
+                  required
+                />
+              </div>
+
+              <div className="edit__field">
+                <label htmlFor="preferredJobType" className="edit__label">
+                  Job Type <span className="edit__required">*</span>
+                </label>
+                <GeneralSelect
+                  value={formData.preferredJobType}
+                  onChange={(val) => setFormData(prev => ({ ...prev, preferredJobType: val }))}
+                  options={[
+                    { value: "FullTime", label: "Full Time" },
+                    { value: "PartTime", label: "Part Time" },
+                    { value: "Contract", label: "Contract" },
+                    { value: "Internship", label: "Internship" },
+                    { value: "Remote", label: "Remote" }
+                  ]}
+                  className="edit__select"
                 />
               </div>
 
@@ -869,20 +988,29 @@ export default function EditJobSeekerProfile() {
             )}
           </section>
 
+          {/* Error Message */}
+          {error && (
+            <div className="edit__error-message" role="alert">
+              {error}
+            </div>
+          )}
+
           {/* Form Actions */}
           <div className="edit__actions">
             <button
               type="button"
               className="edit__cancel-btn"
               onClick={handleCancel}
+              disabled={loading}
               aria-label="Cancel editing and return to job seeker profile">
               Cancel
             </button>
             <button
               type="submit"
               className="edit__save-btn"
+              disabled={loading}
               aria-label="Save all job seeker profile changes">
-              Save Changes
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

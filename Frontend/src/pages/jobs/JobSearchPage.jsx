@@ -3,15 +3,17 @@
  * @description Job search page with filters, pagination, and job cards
  * @author Sherif Talaat
  * @date 2026-02-05
- * 
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-16
+ * @last-modified-date 2026-04-29
+ * @fix Aligned with real backend DTO: JobSearchRequest params (pageNumber, pageSize, minSalary,
+ *      maxSalary), PagedJobsResponse (totalCount), job card uses jobId, jobType, companyName.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Filter } from 'lucide-react';
-import { Input, Button } from '../../components/common';
+import { Input, Button, Pagination } from '../../components/common';
 import GeneralSelect from '../../components/common/GeneralSelect';
 import jobService from '../../services/jobService';
 import JobFilters from '../../components/jobs/JobFilters';
@@ -54,18 +56,28 @@ const JobSearchPage = () => {
     const fetchJobs = useCallback(async () => {
         try {
             setLoading(true);
+            // Build JobSearchRequest DTO
             const params = {
-                ...filters,
-                page: pagination.page,
-                limit: pagination.limit
+                keyword:         filters.keyword     || undefined,
+                location:        filters.location    || undefined,
+                jobType:         filters.jobType     || undefined,
+                skills:          filters.skills?.length ? filters.skills : undefined,
+                experienceLevel: filters.experienceLevel || undefined,
+                minSalary:       filters.salaryRange?.min || undefined,
+                maxSalary:       filters.salaryRange?.max || undefined,
+                sortBy:          filters.sortBy      || undefined,
+                pageNumber:      pagination.page,
+                pageSize:        pagination.limit,
             };
 
             const response = await jobService.searchJobs(params);
-            setJobs(response.data?.jobs || response.jobs || []);
+            // Real backend returns PagedJobsResponse: { jobs[], totalCount, pageNumber, pageSize }
+            const data = response.data || response;
+            setJobs(data.jobs || data.items || []);
             setPagination(prev => ({
                 ...prev,
-                total: response.data?.total || response.total || 0,
-                totalPages: response.data?.totalPages || response.totalPages || 0
+                total:      data.totalCount || data.total || 0,
+                totalPages: Math.ceil((data.totalCount || data.total || 0) / pagination.limit),
             }));
         } catch (error) {
             console.error('Error fetching jobs:', error);
@@ -127,9 +139,9 @@ const JobSearchPage = () => {
             } else {
                 await jobService.saveJob(jobId);
             }
-
+            // Real DTO uses jobId field
             setJobs(prev => prev.map(job =>
-                job._id === jobId ? { ...job, isSaved: !isSaved } : job
+                job.jobId === jobId ? { ...job, isSaved: !isSaved } : job
             ));
         } catch (error) {
             console.error('Error saving job:', error);
@@ -258,17 +270,17 @@ const JobSearchPage = () => {
                             <div className={styles.jobsGrid}>
                                 {jobs.map((job) => (
                                     <article
-                                        key={job._id || job.id}
+                                        key={job.jobId || job.id}
                                         className={styles.jobCard}
-                                        onClick={() => handleJobClick(job._id || job.id)}
+                                        onClick={() => handleJobClick(job.jobId || job.id)}
                                         tabIndex={0}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter' || e.key === ' ') {
                                                 e.preventDefault();
-                                                handleJobClick(job._id || job.id);
+                                                handleJobClick(job.jobId || job.id);
                                             }
                                         }}
-                                        aria-label={`View ${job.title} at ${job.company?.name || job.companyName}`}
+                                        aria-label={`View ${job.title} at ${job.companyName || job.company?.name}`}
                                     >
                                         <div className={styles.jobHeader}>
                                             <h3 className={styles.jobTitle}>{job.title}</h3>
@@ -276,7 +288,7 @@ const JobSearchPage = () => {
                                                 className={`${styles.saveButton} ${job.isSaved ? styles.saveButtonSaved : ''}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleSaveJob(job._id || job.id, job.isSaved);
+                                                    handleSaveJob(job.jobId || job.id, job.isSaved);
                                                 }}
                                                 aria-label={job.isSaved ? 'Remove from saved jobs' : 'Save this job'}
                                             >
@@ -284,15 +296,19 @@ const JobSearchPage = () => {
                                             </button>
                                         </div>
                                         <p className={styles.companyName}>
-                                            {job.company?.name || job.companyName}
+                                            {job.companyName || job.company?.name}
                                         </p>
                                         <p className={styles.jobLocation}>{job.location}</p>
                                         <div className={styles.jobMeta}>
                                             <span className={styles.jobType}>
-                                                {job.type || job.jobType}
+                                                {job.jobType || job.type}
                                             </span>
-                                            {job.salary && (
-                                                <span className={styles.salary}>{job.salary}</span>
+                                            {(job.minSalary || job.salary) && (
+                                                <span className={styles.salary}>
+                                                    {job.minSalary && job.maxSalary
+                                                        ? `${job.minSalary} – ${job.maxSalary}`
+                                                        : job.salary}
+                                                </span>
                                             )}
                                         </div>
                                     </article>
@@ -300,51 +316,17 @@ const JobSearchPage = () => {
                             </div>
 
                             {pagination.totalPages > 1 && (
-                                <nav className={styles.pagination} aria-label="Job search pagination">
-                                    <button
-                                        className={styles.paginationButton}
-                                        onClick={() => handlePageChange(pagination.page - 1)}
-                                        disabled={pagination.page === 1}
-                                        aria-label="Previous page"
-                                    >
-                                        Previous
-                                    </button>
-
-                                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                                        let pageNum;
-                                        if (pagination.totalPages <= 5) {
-                                            pageNum = i + 1;
-                                        } else if (pagination.page <= 3) {
-                                            pageNum = i + 1;
-                                        } else if (pagination.page >= pagination.totalPages - 2) {
-                                            pageNum = pagination.totalPages - 4 + i;
-                                        } else {
-                                            pageNum = pagination.page - 2 + i;
-                                        }
-
-                                        return (
-                                            <button
-                                                key={pageNum}
-                                                className={`${styles.paginationButton} ${pagination.page === pageNum ? styles.paginationButtonActive : ''
-                                                    }`}
-                                                onClick={() => handlePageChange(pageNum)}
-                                                aria-label={`Page ${pageNum}`}
-                                                aria-current={pagination.page === pageNum ? 'page' : undefined}
-                                            >
-                                                {pageNum}
-                                            </button>
-                                        );
-                                    })}
-
-                                    <button
-                                        className={styles.paginationButton}
-                                        onClick={() => handlePageChange(pagination.page + 1)}
-                                        disabled={pagination.page === pagination.totalPages}
-                                        aria-label="Next page"
-                                    >
-                                        Next
-                                    </button>
-                                </nav>
+                                <Pagination
+                                    currentPage={pagination.page}
+                                    totalPages={pagination.totalPages}
+                                    onPageChange={handlePageChange}
+                                    pageSize={pagination.limit}
+                                    onPageSizeChange={(newSize) => {
+                                        setPagination(prev => ({ ...prev, limit: newSize, page: 1 }));
+                                    }}
+                                    showTotal={true}
+                                    totalItems={pagination.total}
+                                />
                             )}
                         </>
                     )}

@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { ChevronRight } from 'lucide-react';
 import Card from '../../../../components/ui/Card';
@@ -39,6 +40,7 @@ PriorityBadge.propTypes = {
  * @returns {JSX.Element} The rendered pending actions widget.
  */
 const PendingActions = ({ actions }) => {
+    const navigate = useNavigate();
     const totalCount = actions.reduce((acc, curr) => acc + curr.count, 0);
 
     /**
@@ -46,8 +48,8 @@ const PendingActions = ({ actions }) => {
      * @param {Object} action - The action object.
      */
     const handleActionClick = (action) => {
-        // In a real app, this would navigate to the specific pending items
-        console.log(`Resolving action: ${action.title} (${action.id})`);
+        // Navigate to the specific pending items page
+        navigate(`/dashboard/admin/pending/${action.id}`);
     };
 
     /**
@@ -57,8 +59,8 @@ const PendingActions = ({ actions }) => {
      */
     const handleResolveClick = (action, event) => {
         event.stopPropagation();
-        // In a real app, this would mark the action as resolved
-        console.log(`Marking action ${action.id} as resolved`);
+        // Navigate to resolve action page
+        navigate(`/dashboard/admin/resolve/${action.id}`);
     };
 
     return (

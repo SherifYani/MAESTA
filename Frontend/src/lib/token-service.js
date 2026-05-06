@@ -1,19 +1,15 @@
 let tokenCache = null;
 
 export const tokenService = {
-  // Store token in sessionStorage first, fallback to localStorage
+  // Store token in localStorage
   setToken: (token) => {
     tokenCache = token;
     try {
       if (typeof window !== "undefined") {
-        sessionStorage.setItem("auth_token", token);
-      }
-    } catch (e) {
-      try {
         localStorage.setItem("auth_token", token);
-      } catch (err) {
-        console.error("Failed to store token:", err);
       }
+    } catch (err) {
+      console.error("Failed to store token:", err);
     }
   },
 
@@ -23,9 +19,7 @@ export const tokenService = {
 
     try {
       if (typeof window !== "undefined") {
-        const token =
-          sessionStorage.getItem("auth_token") ||
-          localStorage.getItem("auth_token");
+        const token = localStorage.getItem("auth_token");
         if (token) tokenCache = token;
         return token;
       }
@@ -40,7 +34,6 @@ export const tokenService = {
     tokenCache = null;
     try {
       if (typeof window !== "undefined") {
-        sessionStorage.removeItem("auth_token");
         localStorage.removeItem("auth_token");
       }
     } catch (e) {

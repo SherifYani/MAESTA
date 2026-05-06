@@ -8,22 +8,29 @@ const NotificationsCenterPage = lazy(() => import("../pages/notifications").then
 const NotificationSettingsPage = lazy(() => import("../pages/notifications").then(module => ({ default: module.NotificationSettingsPage })));
 const ChatPage = lazy(() => import("../pages/chat/ChatPage"));
 
-const CommonRoutes = () => (
+export const ChatRoutes = () => (
     <Routes>
         <Route element={<MainLayout />}>
-            {/* Mount-relative paths (App.js mounts at /chat/*, /notifications/*, /subscription/*) */}
-            
-            {/* Specific paths for each mount point */}
             <Route index element={<ChatPage />} />
-            <Route path=":conversationId" element={<ChatPage />} />
-            
+            <Route path=":userId" element={<ChatPage />} />
+        </Route>
+    </Routes>
+);
+
+export const NotificationRoutes = () => (
+    <Routes>
+        <Route element={<MainLayout />}>
             <Route index element={<NotificationsCenterPage />} />
             <Route path="settings" element={<NotificationSettingsPage />} />
-            
+        </Route>
+    </Routes>
+);
+
+export const SubscriptionRoutes = () => (
+    <Routes>
+        <Route element={<MainLayout />}>
             <Route path="plans" element={<SubscriptionPlansPage />} />
             <Route path="payment/:planId" element={<PaymentPage />} />
         </Route>
     </Routes>
 );
-
-export default CommonRoutes;

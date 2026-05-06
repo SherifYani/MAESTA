@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { tokenService } from '../../lib/token-service';
 import {
     Briefcase,
     Building2,
@@ -65,7 +66,7 @@ const ROLES = [
 // ΓöÇΓöÇΓöÇ Component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const MockLoginPage = () => {
-    const { login } = useAuth();
+    const { setUser } = useAuth();
     const navigate = useNavigate();
 
     const [selectedRole, setSelectedRole] = useState('jobseeker');
@@ -87,7 +88,24 @@ const MockLoginPage = () => {
         await new Promise((r) => setTimeout(r, 450));
 
         try {
-            await login(credentials);
+            // Completely fake the authentication session
+            const mockToken = "mock_jwt_token_for_demo_12345";
+            tokenService.setToken(mockToken);
+
+            const mockUser = {
+                id: `mock-${selectedRole}-123`,
+                email: getDemoEmail(selectedRole),
+                firstName: getDemoName(selectedRole).split(' ')[0],
+                lastName: getDemoName(selectedRole).split(' ')[1] || '',
+                name: getDemoName(selectedRole),
+                role: selectedRole,
+                userType: selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1),
+                registrationStatus: 'Completed',
+                isActive: true,
+                roles: [selectedRole]
+            };
+
+            setUser(mockUser);
 
             // Navigate to the page the user originally wanted, or /dashboard
             const redirectTo =
