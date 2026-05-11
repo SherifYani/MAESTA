@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}نتائج تحليل ATS — {{ job.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.results-container { direction: rtl; text-align: right; }
+.results-hero {
+    background: linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    color: white;
+}
+.results-hero h2 { margin: 0 0 6px; font-size: 1.5rem; font-weight: 700; }
+.results-hero p  { margin: 0; opacity: 0.8; font-size: 0.9rem; }
+
+.back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #818cf8; font-size: 0.88rem; text-decoration: none;
+    margin-bottom: 18px;
+}
+.back-link:hover { text-decoration: underline; }
+
+.summary-box {
+    background: #0f172a;
+    border: 1px solid #1e40af;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+    position: relative;
+    overflow: hidden;
+}
+.summary-box::before {
+    content: "🤖 رأي الذكاء الاصطناعي";
+    display: block;
+    font-weight: 700;
+    color: #818cf8;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(129,140,248,0.2);
+    padding-bottom: 8px;
+}
+
+.candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.candidate-card {
+    background: var(--bg-secondary, #1e1e2e);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+.candidate-card:hover { transform: translateY(-4px); }
+
+.card-header {
+    padding: 18px 20px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.rank-badge {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 800; flex-shrink: 0;
+}
+.rank-1 .rank-badge { background: #f59e0b; color:#111; }
+.rank-2 .rank-badge { background: #9ca3af; color:#111; }
+.rank-3 .rank-badge { background: #d97706; color:#fff; }
+.rank-other .rank-badge { background: #374151; color: #ccc; }
+
+.card-header-info { flex: 1; overflow: hidden; }
+.card-header-info .filename {
+    font-weight: 700; font-size: 1rem; color: #eee;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-header-info .score-text { font-size: 0.85rem; color: #888; margin-top: 4px; }
+
+.score-bar-wrap { padding: 12px 20px 6px; }
+.score-bar-bg { background: #2a2a3e; border-radius: 10px; height: 8px; }
+.score-bar-fill { height: 8px; border-radius: 10px; background: linear-gradient(90deg,#818cf8,#6366f1); }
+
+.card-body { padding: 16px 20px 20px; flex: 1; }
+
+.tag-title { font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 8px; text-transform: uppercase; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+.tag-green { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+.tag-red   { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+
+.why-selected-box {
+    background: rgba(129,140,248,0.05);
+    border-right: 3px solid #818cf8;
+    padding: 12px 16px;
+    border-radius: 4px 0 0 4px;
+    font-size: 0.9rem;
+    color: #c7d2fe;
+    line-height: 1.6;
+}
+.why-selected-box strong { display: block; margin-bottom: 4px; color: #818cf8; font-size: 0.8rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <a href="{{ url_for('ats.ats_main') }}" class="back-link">← العودة للوحة ATS</a>
+
+    <div class="results-hero">
+        <h2>🏆 نتائج التحليل: {{ job.title }}</h2>
+        <p>تم فحص {{ job.cv_count }} سيرة ذاتية — اختيار أفضل {{ job.top_n }} مرشحين بواسطة الذكاء الاصطناعي</p>
+    </div>
+
+    {% if ranking and ranking.selection_summary %}
+    <div class="summary-box">
+        {{ ranking.selection_summary }}
+    </div>
+    {% endif %}
+
+    {% if ranking and ranking.top_candidates %}
+    <div class="candidates-grid">
+        {% for c in ranking.top_candidates %}
+        <div class="candidate-card rank-{{ c.rank if c.rank <= 3 else 'other' }}">
+            <div class="card-header">
+                <div class="rank-badge">
+                    {% if c.rank == 1 %}🥇{% elif c.rank == 2 %}🥈{% elif c.rank == 3 %}🥉{% else %}#{{ c.rank }}{% endif %}
+                </div>
+                <div class="card-header-info">
+                    <div class="filename" title="{{ c.filename }}">
+                        <a href="{{ url_for('ats.view_cv', doc_id=c.id) }}" target="_blank" style="color: inherit; text-decoration: none;">
+                            {{ c.filename }} 📄
+                        </a>
+                    </div>
+                    <div class="score-text">نسبة المطابقة: <strong style="color:#818cf8;">{{ c.overall_score }}%</strong></div>
+                </div>
+            </div>
+
+            <div class="score-bar-wrap">
+                <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width: {{ c.overall_score }}%;"></div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                {% if c.strengths %}
+                <div class="tag-title">نقاط القوة الأساسية:</div>
+                <div class="tag-list">
+                    {% for s in c.strengths %}
+                    <span class="tag tag-green">✓ {{ s }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if c.why_selected %}
+                <div class="why-selected-box">
+                    <strong>لماذا تم اختياره؟</strong>
+                    {{ c.why_selected }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="summary-box" style="border-color: #ef4444; background: rgba(239,68,68,0.05);">
+        🤖 عذراً، لم نتمكن من الحصول على تحليل مفصل من الذكاء الاصطناعي هذه المرة. تم عرض النتائج بناءً على درجة التشابه التقنية فقط.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

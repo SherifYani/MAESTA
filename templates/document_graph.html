@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Knowledge Graph - {{ doc.original_filename }}{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Knowledge Graph: <span class="text-primary">{{ doc.original_filename }}</span></h2>
+    <div>
+        <a href="{{ url_for('admin.documents') }}" class="btn btn-outline-secondary me-2">Back to Documents</a>
+        <button id="download-btn" class="btn btn-primary btn-lg" onclick="downloadHighResGraph()" disabled>
+            <span id="btn-text">⏳ Generating High-Res Image...</span>
+        </button>
+    </div>
+</div>
+
+<div class="card bg-dark border-secondary">
+    <div class="card-body text-center p-5">
+        {% if mermaid_code and "graph" in mermaid_code %}
+            <div id="loading-spinner">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Rendering graph data...</p>
+            </div>
+            
+            <!-- Hidden Mermaid Source -->
+            <div id="mermaid-src" style="display: none;">
+{{ mermaid_code | safe }}
+            </div>
+            
+            <!-- Visible Preview -->
+            <div id="graph-preview-container" style="display: none; overflow: auto; max-height: 60vh; border: 1px solid var(--border-color); border-radius: 8px; background: #0a0a0f;">
+                <div id="rendered-graph" style="transform-origin: top center; transform: scale(0.8);"></div>
+            </div>
+        {% else %}
+            <div class="text-muted">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                <p>No relationships found for this document.</p>
+                <button class="btn btn-primary mt-3" onclick="generateGraph('{{ doc.id }}')">
+                    ⚡ Generate Graph Now
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        securityLevel: 'loose',
+        flowchart: { 
+            curve: 'basis',
+            useMaxWidth: false,
+            htmlLabels: true,
+            nodeSpacing: 80,
+            rankSpacing: 100
+        }
+    });
+
+    let graphSvgElement = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const srcElem = document.getElementById('mermaid-src');
+        if (!srcElem) return;
+
+        try {
+            const mermaidCode = srcElem.textContent.trim();
+            const renderResult = await mermaid.render('mermaid-svg-element', mermaidCode);
+            
+            const container = document.getElementById('rendered-graph');
+            container.innerHTML = renderResult.svg;
+            graphSvgElement = container.querySelector('svg');
+            
+            // Fix text rendering for preview and export
+            const styleDef = document.createElement('style');
+            styleDef.innerHTML = `
+                .nodeLabel { font-size: 20px !important; font-weight: bold !important; font-family: sans-serif; }
+                .edgeLabel { font-size: 16px !important; font-family: sans-serif; }
+                .subgraphLabel { font-size: 24px !important; font-weight: bold !important; font-family: sans-serif; fill: white !important; }
+            `;
+            graphSvgElement.prepend(styleDef);
+
+            // Show preview and update button
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('graph-preview-container').style.display = 'block';
+            
+            const btn = document.getElementById('download-btn');
+            btn.disabled = false;
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-primary');
+            document.getElementById('btn-text').innerHTML = '📸 Download 4K PNG';
+            
+        } catch (error) {
+            console.error('Mermaid render error:', error);
+            document.getElementById('loading-spinner').innerHTML = '<p class="text-danger">Error rendering graph. Please check console.</p>';
+        }
+    });
+
+    function downloadHighResGraph() {
+        if (!graphSvgElement) return;
+
+        const btn = document.getElementById('download-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Processing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            try {
+                const clonedSvg = graphSvgElement.cloneNode(true);
+                const bbox = graphSvgElement.getBBox();
+
+                const scaleExport = 5; // Ultra High Quality
+                const padding = 100;
+
+                const x = bbox.x - padding / 2;
+                const y = bbox.y - padding / 2;
+                const w = bbox.width + padding;
+                const h = bbox.height + padding;
+
+                clonedSvg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+                clonedSvg.setAttribute('width', w * scaleExport);
+                clonedSvg.setAttribute('height', h * scaleExport);
+                clonedSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                clonedSvg.removeAttribute('style');
+
+                const svgData = new XMLSerializer().serializeToString(clonedSvg);
+                const encodedSvg = btoa(unescape(encodeURIComponent(svgData)));
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                canvas.width = w * scaleExport;
+                canvas.height = h * scaleExport;
+
+                img.onload = function () {
+                    // Draw dark background
+                    ctx.fillStyle = "#0a0a0f";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Draw grid background for aesthetic
+                    ctx.strokeStyle = "rgba(99, 102, 241, 0.1)";
+                    ctx.lineWidth = 2;
+                    for(let i = 0; i < canvas.width; i += 100) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+                    for(let j = 0; j < canvas.height; j += 100) { ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke(); }
+
+                    // Draw the SVG
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const link = document.createElement("a");
+                    link.download = `MAESTA_Graph_${Date.now()}.png`;
+                    link.href = canvas.toDataURL("image/png", 1.0);
+                    link.click();
+                    
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                };
+
+                img.onerror = function (error) {
+                    console.error('PNG export error:', error);
+                    alert("Failed to export image.");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                };
+
+                img.src = "data:image/svg+xml;base64," + encodedSvg;
+            } catch (error) {
+                console.error("Export process failed:", error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }, 100);
+    }
+
+    async function generateGraph(docId) {
+        const response = await fetch(`/admin/documents/${docId}/generate_graph`, { method: 'POST' });
+        const result = await response.json();
+        if (result.success) location.reload();
+    }
+</script>
+{% endblock %}

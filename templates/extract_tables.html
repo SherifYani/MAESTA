@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Table Extractor - Admin{% endblock %}
+
+{% block header %}Table Extractor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Extract Tables from URL</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin.extract_tables') }}" method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="url" name="url" class="form-control" placeholder="Enter URL (e.g., https://example.com/data)" value="{{ target_url }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Extract Tables</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if tables %}
+<div class="alert alert-success">
+    Found <strong>{{ tables|length }}</strong> tables from <a href="{{ target_url }}" target="_blank">{{ target_url }}</a>
+</div>
+
+{% for table_html in tables %}
+<div class="card mb-4">
+    <div class="card-header">
+        Table #{{ loop.index }}
+    </div>
+    <div class="card-body overflow-auto">
+        {{ table_html | safe }}
+    </div>
+</div>
+{% endfor %}
+
+{% elif target_url %}
+<div class="alert alert-warning">
+    No tables found on this page.
+</div>
+{% endif %}
+
+{% endblock %}

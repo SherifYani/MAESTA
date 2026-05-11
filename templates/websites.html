@@ -1,0 +1,177 @@
+{% extends "base.html" %} {% block title %}Websites - Knowledge Base Chatbot{%
+endblock %} {% block content %}
+<div class="page-header">
+  <h2>🌐 Website Management</h2>
+  <p>Crawl websites and add their content to your knowledge base</p>
+</div>
+
+<!-- Crawl New Website Section -->
+<div class="card" style="margin-bottom: 24px">
+  <div class="card-header">
+    <h3 class="card-title">Crawl New Website</h3>
+  </div>
+
+  <form action="{{ url_for('admin.crawl_website') }}" method="POST">
+    <div
+      style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end"
+    >
+      <div style="flex: 2; min-width: 300px">
+        <label
+          for="url"
+          style="display: block; margin-bottom: 8px; font-weight: 500"
+          >Website URL</label
+        >
+        <input
+          type="text"
+          id="url"
+          name="url"
+          placeholder="https://example.com"
+          class="form-control"
+          style="width: 100%"
+          required
+        />
+      </div>
+      <div style="flex: 0.5; min-width: 100px">
+        <label
+          for="max_depth"
+          style="display: block; margin-bottom: 8px; font-weight: 500"
+          >Depth</label
+        >
+        <select
+          id="max_depth"
+          name="max_depth"
+          class="form-control"
+          style="width: 100%"
+        >
+          <option value="1">1 (Page only)</option>
+          <option value="2" selected>2 (+ Links)</option>
+          <option value="3">3 (Deep)</option>
+        </select>
+      </div>
+      <div style="flex: 0.5; min-width: 100px">
+        <label
+          for="max_pages"
+          style="display: block; margin-bottom: 8px; font-weight: 500"
+          >Max Pages</label
+        >
+        <select
+          id="max_pages"
+          name="max_pages"
+          class="form-control"
+          style="width: 100%"
+        >
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary">🕷️ Start Crawl</button>
+      </div>
+    </div>
+    <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted)">
+      The crawler will extract text from HTML pages and follow internal links up
+      to the specified depth.
+    </p>
+  </form>
+</div>
+
+<!-- Crawled Websites List -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Crawled Websites</h3>
+    <span class="badge badge-primary">{{ web_sources|length }} sites</span>
+  </div>
+
+  {% if web_sources %}
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Website</th>
+          <th>Pages</th>
+          <th>Chunks</th>
+          <th>Status</th>
+          <th>Last Crawled</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for source in web_sources %}
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="font-size: 24px">🌐</span>
+              <div>
+                <a
+                  href="{{ source.base_url }}"
+                  target="_blank"
+                  style="font-weight: 500; color: var(--primary-color)"
+                >
+                  {{ source.base_url[:50] }}{% if source.base_url|length > 50
+                  %}...{% endif %}
+                </a>
+              </div>
+            </div>
+          </td>
+          <td>{{ source.pages_crawled }}</td>
+          <td>{{ source.chunk_count }}</td>
+          <td>
+            {% if source.status == 'indexed' %}
+            <span class="badge badge-success">✓ Indexed</span>
+            {% elif source.status == 'crawling' %}
+            <span class="badge badge-warning">⏳ Crawling</span>
+            {% elif source.status == 'failed' %}
+            <span class="badge badge-danger">✗ Failed</span>
+            {% else %}
+            <span class="badge badge-info">{{ source.status }}</span>
+            {% endif %}
+          </td>
+          <td style="color: var(--text-muted); font-size: 13px">
+            {{ source.last_crawled_at or source.created_at }}
+          </td>
+          <td>
+            <div style="display: flex; gap: 8px">
+              <a href="{{ url_for('admin.inspect_source_chunks', source_id=source.id) }}" class="btn btn-secondary btn-sm">
+                  👁️ Inspect
+              </a>
+              <form
+                action="{{ url_for('admin.recrawl_website', source_id=source.id) }}"
+                method="POST"
+                style="display: inline"
+                onsubmit="return confirm('Re-crawl this website?');"
+              >
+                <button type="submit" class="btn btn-info btn-sm">
+                  🔄 Re-crawl
+                </button>
+              </form>
+              <form
+                action="{{ url_for('admin.delete_website', source_id=source.id) }}"
+                method="POST"
+                style="display: inline"
+                onsubmit="
+                  return confirm('Delete this website and all its data?');
+                "
+              >
+                <button type="submit" class="btn btn-danger btn-sm">
+                  🗑️ Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 60px 20px; color: var(--text-muted)">
+    <div style="font-size: 64px; margin-bottom: 16px">🕸️</div>
+    <p>No websites crawled yet</p>
+    <p style="font-size: 13px">Enter a URL above to start crawling a website</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

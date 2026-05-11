@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Inspect Chunks - {{ source.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <h2>🔍 Inspect Content</h2>
+            <p>Viewing extracted chunks for: <strong>{{ source.base_url }}</strong></p>
+        </div>
+        <a href="{{ url_for('admin.websites') }}" class="btn btn-secondary">← Back to Websites</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Extracted Chunks ({{ chunks|length }})</h3>
+        <input type="text" id="filterInput" placeholder="Filter by content..." 
+               class="form-control" style="width: 250px; display: inline-block; margin-left: auto;"
+               onkeyup="filterTable()">
+    </div>
+
+    {% if chunks %}
+    <div class="table-container">
+        <table id="chunksTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Index</th>
+                    <th>Content Preview</th>
+                    <th style="width: 200px;">Source Page</th>
+                    <th style="width: 100px;">Metadata</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chunk in chunks %}
+                <tr>
+                    <td>{{ chunk.chunk_index }}</td>
+                    <td>
+                        <div style="max-height: 150px; overflow-y: auto; font-family: monospace; font-size: 13px; background: var(--bg-color); padding: 8px; border-radius: 4px;">{{ chunk.content }}</div>
+                    </td>
+                    <td style="font-size: 12px; color: var(--text-muted);">
+                        {% if 'Source:' in chunk.metadata %}
+                            {{ chunk.metadata.split('Source:')[1].split(',')[0]|trim }}
+                        {% else %}
+                            {{ chunk.metadata }}
+                        {% endif %}
+                    </td>
+                    <td style="font-size: 12px;">Len: {{ chunk.content|length }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        <p>No content chunks extracted for this source.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function filterTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("filterInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("chunksTable");
+    tr = table.getElementsByTagName("tr");
+    
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1]; // Content column
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+{% endblock %}

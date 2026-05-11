@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Knowledge Base Chatbot{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% block body %}
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🤖</div>
+                <h1>KB Chatbot</h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </a>
+                
+                <a href="{{ url_for('admin.documents') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.documents' %}active{% endif %}">
+                    <span class="icon">📁</span>
+                    <span>المستندات</span>
+                </a>
+                
+                <a href="{{ url_for('admin.websites') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.websites' %}active{% endif %}">
+                    <span class="icon">🌐</span>
+                    <span>المواقع الإلكترونية</span>
+                </a>
+                
+                <a href="{{ url_for('admin.models') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.models' %}active{% endif %}">
+                    <span class="icon">🤖</span>
+                    <span>نماذج الذكاء الاصطناعي</span>
+                </a>
+                
+                <a href="{{ url_for('admin.api_keys') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.api_keys' %}active{% endif %}">
+                    <span class="icon">🔑</span>
+                    <span>مفاتيح API</span>
+                </a>
+                
+                <a href="{{ url_for('admin.chat') }}" 
+                   class="nav-link {% if request.endpoint == 'admin.chat' %}active{% endif %}">
+                    <span class="icon">💬</span>
+                    <span>تجربة الشات</span>
+                </a>
+
+                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <p style="font-size: 11px; color: var(--text-muted); padding: 0 16px; margin-bottom: 8px;">الأدوات</p>
+                    <a href="{{ url_for('admin.extract_tables') }}" 
+                       class="nav-link {% if request.endpoint == 'admin.extract_tables' %}active{% endif %}">
+                        <span class="icon">📊</span>
+                        <span>مستخرج الجداول</span>
+                    </a>
+                    <!-- Quiz path disabled per user request
+                    <a href="{{ url_for('admin.quizzes') }}" 
+                       class="nav-link {% if request.endpoint == 'admin.quizzes' %}active{% endif %}">
+                        <span class="icon">🎓</span>
+                        <span>الاختبارات (Quizzes)</span>
+                    </a>
+                    -->
+                    <a href="{{ url_for('ats.ats_main') }}" 
+                       class="nav-link {% if request.endpoint and request.endpoint.startswith('ats.') %}active{% endif %}">
+                        <span class="icon">🎯</span>
+                        <span>محلل السير الذاتية (ATS)</span>
+                    </a>
+                </div>
+
+                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <p style="font-size: 11px; color: var(--text-muted); padding: 0 16px; margin-bottom: 8px;">أدوات المطور</p>
+                    <a href="{{ url_for('admin.debug_search') }}" 
+                       class="nav-link {% if request.endpoint == 'admin.debug_search' %}active{% endif %}">
+                        <span class="icon">🧪</span>
+                        <span>فحص البحث</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                    <span class="icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% endblock %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

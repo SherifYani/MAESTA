@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Debug Search - Knowledge Base{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>🧪 Debug Search</h2>
+    <p>Test vector search similarity and verify embedding accuracy</p>
+</div>
+
+<!-- Search Box -->
+<div class="card" style="margin-bottom: 24px;">
+    <form action="{{ url_for('admin.debug_search') }}" method="GET">
+        <div style="display: flex; gap: 12px;">
+            <input type="text" name="q" value="{{ query }}" placeholder="Enter a test query..." 
+                   class="form-control" style="flex: 1;" autofocus>
+            <button type="submit" class="btn btn-primary">🔍 Test Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- Results -->
+{% if query %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Search Results for: "{{ query }}"</h3>
+        <span class="badge badge-info">{{ results|length }} results</span>
+    </div>
+
+    {% if results %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Score</th>
+                    <th style="width: 80px;">Distance</th>
+                    <th>Content</th>
+                    <th style="width: 200px;">Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>
+                        <!-- Score coloring -->
+                        {% set score = result.score %}
+                        <span class="badge 
+                            {% if score > 0.4 %}badge-success
+                            {% elif score > 0.25 %}badge-info
+                            {% else %}badge-warning{% endif %}">
+                            {{ "%.4f"|format(score) }}
+                        </span>
+                    </td>
+                    <td><small>{{ "%.4f"|format(result.distance) }}</small></td>
+                    <td>
+                        <div style="max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 13px;">{{ result.content }}</div>
+                    </td>
+                    <td style="font-size: 12px; color: var(--text-muted);">
+                        {{ result.metadata }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        <p>No matching documents found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

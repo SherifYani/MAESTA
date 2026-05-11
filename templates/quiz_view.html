@@ -1,0 +1,197 @@
+{% extends "base.html" %} {% block title %}Quiz: {{ quiz.topic }} - Admin{% endblock %} {% block extra_css %}
+<style>
+  /* Local overrides if needed */
+  .score-badge {
+    padding: 10px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="page-header">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <p class="mb-1">
+        {% if content.is_professional %}
+        <span class="badge badge-warning">🎓 Professional Exam</span>
+        {% else %}
+        <span class="badge badge-primary">Standard Quiz</span>
+        {% endif %}
+        <span class="badge badge-info">{{ quiz.difficulty }}</span>
+      </p>
+      <h2>{{ quiz.topic }}</h2>
+    </div>
+    <a href="{{ url_for('admin.quizzes') }}" class="btn btn-secondary btn-sm">
+      <span>← Back to List</span>
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <!-- Custom Tabs -->
+    <ul class="custom-tabs" id="quizTabs">
+      <li class="tab-item">
+        <button class="tab-btn active" data-tab="interactive">
+          <span>📝 Interactive Quiz</span>
+        </button>
+      </li>
+      <li class="tab-item">
+        <button class="tab-btn" data-tab="report">
+          <span>📄 Exam Sheet</span>
+        </button>
+      </li>
+      {% if content.is_professional and content.answer_key %}
+      <li class="tab-item">
+        <button class="tab-btn" data-tab="answerkey">
+          <span>🔑 Answer Key</span>
+        </button>
+      </li>
+      {% endif %}
+    </ul>
+
+    <div class="tab-container-content">
+      
+      <!-- ─── Interactive Quiz Pane ─── -->
+      <div class="tab-content-pane active" id="interactive-pane">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="card-title m-0">Practice Exam</h3>
+          <div id="score-display" class="score-badge">
+            Score: <span class="score-val">0</span> / {{ content.questions|length }}
+          </div>
+        </div>
+
+        {% if content.questions %}
+          {% for q in content.questions %}
+          {% set q_index = loop.index %}
+          <div class="question-card">
+            <div class="question-header">
+              <div>
+                <span class="badge badge-primary mb-2">Question {{ q_index }}</span>
+                {% if q.bloom_level %}
+                <span class="badge badge-info ms-2">{{ q.bloom_level }}</span>
+                {% endif %}
+                <h4 class="mt-2">{{ q.question }}</h4>
+              </div>
+              {% if q.difficulty %}
+              <span class="badge badge-secondary">{{ q.difficulty }}</span>
+              {% endif %}
+            </div>
+            
+            <div class="options-grid" data-answered="false" data-correct="{{ q.answer }}">
+              {% for key, val in q.options.items() %}
+              <button 
+                class="option-btn" 
+                data-key="{{ key }}" 
+                onclick="handleSelection(this, '{{ q_index }}')"
+              >
+                <strong>{{ key }}.</strong> {{ val }}
+              </button>
+              {% endfor %}
+            </div>
+
+            <div id="expl-{{ q_index }}" class="explanation-box">
+              <strong>💡 Explanation:</strong> {{ q.explanation }}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="alert alert-warning">
+          <span>No structured questions found for interactive mode. Please check the <strong>Exam Sheet</strong> tab.</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- ─── Exam Sheet Pane ─── -->
+      <div class="tab-content-pane" id="report-pane">
+        <div class="card p-5">
+          <div id="rendered-content" class="prose"></div>
+          <textarea id="raw-markdown" style="display:none">{{ content.full_presentation if content.full_presentation else '' }}</textarea>
+        </div>
+      </div>
+
+      <!-- ─── Answer Key Pane ─── -->
+      {% if content.is_professional and content.answer_key %}
+      <div class="tab-content-pane" id="answerkey-pane">
+        <div class="card p-5">
+          <div id="rendered-answerkey" class="prose"></div>
+          <textarea id="raw-answerkey" style="display:none">{{ content.answer_key }}</textarea>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<!-- Marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  let score = 0;
+  const total = parseInt('{{ content.questions|length }}') || 0;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1. Tab Switching Logic
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-content-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-tab');
+        
+        // Update buttons
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update panes
+        panes.forEach(p => p.classList.remove('active'));
+        document.getElementById(`${target}-pane`).classList.add('active');
+      });
+    });
+
+    // 2. Markdown Rendering
+    const markdownText = document.getElementById("raw-markdown").value;
+    if (markdownText) {
+      document.getElementById("rendered-content").innerHTML = marked.parse(markdownText);
+    }
+    
+    const keyEl = document.getElementById("raw-answerkey");
+    if (keyEl) {
+      document.getElementById("rendered-answerkey").innerHTML = marked.parse(keyEl.value);
+    }
+  });
+
+  // 3. Quiz Interaction Logic
+  function handleSelection(btn, qIdx) {
+    const grid = btn.parentElement;
+    if (grid.getAttribute('data-answered') === 'true') return;
+
+    grid.setAttribute('data-answered', 'true');
+    const selected = btn.getAttribute('data-key');
+    const correct = grid.getAttribute('data-correct');
+    
+    const buttons = grid.querySelectorAll('.option-btn');
+    buttons.forEach(b => {
+      b.disabled = true;
+      const key = b.getAttribute('data-key');
+      if (key === correct) {
+        b.classList.add('correct');
+      } else if (key === selected) {
+        b.classList.add('wrong');
+      }
+    });
+
+    if (selected === correct) {
+      score++;
+      document.querySelector('.score-val').innerText = score;
+    }
+
+    const expl = document.getElementById(`expl-${qIdx}`);
+    if (expl) {
+      expl.style.display = 'block';
+    }
+  }
+</script>
+{% endblock %}

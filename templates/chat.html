@@ -1,0 +1,748 @@
+{% extends "base.html" %}
+{% block title %}Chat - Knowledge Base Chatbot{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>💬 Test Chat</h2>
+  <p>Test your chatbot with your knowledge base</p>
+</div>
+
+<div class="chat-container">
+  <!-- Chat Messages -->
+  <div class="chat-messages" id="chat-messages">
+    <!-- Welcome Message -->
+    <div class="chat-message bot">
+      <div class="message-content">
+        <p>👋 مرحباً! أنا مساعدك الذكي. اسألني عن أي شيء!</p>
+        <p style="opacity: 0.7; font-size: 0.9em;">Hello! I'm your assistant. Ask me anything!</p>
+      </div>
+      <div class="source-tag">System</div>
+    </div>
+
+    {% for chat in history %}
+    <div class="chat-message user">
+      <div class="message-content">{{ chat.question }}</div>
+    </div>
+    <div class="chat-message bot">
+      <div class="message-content">{{ chat.answer }}</div>
+      <div class="source-tag">
+        {% if chat.source_type == 'documents' %} 📄 From Documents 
+        {% elif chat.source_type == 'nlp_general' %} 🧠 General AI + NLP 
+        {% else %} 🤖 AI Knowledge {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+    <!-- Image Upload (hidden) -->
+    <input type="file" id="image-input" accept="image/*" style="display:none" onchange="previewImage(this)">
+
+    <!-- Image Preview Area -->
+    <div id="image-preview-container" style="display:none; padding: 8px 16px; background: var(--bg-secondary, #1a1a2a); border-top: 1px solid var(--border-color, #3a3a4a);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img id="image-preview-thumb" src="" alt="Preview" style="height:60px; border-radius:8px; border:2px solid #667eea;">
+        <span id="image-preview-name" style="font-size:0.85rem; opacity:0.7;"></span>
+        <button onclick="clearImage()" style="background:rgba(255,100,100,0.2); border:1px solid rgba(255,100,100,0.4); color:#ff6b6b; border-radius:8px; padding:4px 10px; cursor:pointer;">✕ إزالة</button>
+      </div>
+    </div>
+
+    <div class="chat-input-container">
+      <!-- Memory Indicator -->
+      <div class="memory-indicator" id="memory-indicator" title="Conversation memory">
+        <span class="memory-icon">🧠</span>
+        <span class="memory-count" id="memory-count">0</span>
+        <button class="memory-clear-btn" onclick="clearMemory()" title="Clear memory">🗑️</button>
+      </div>
+
+      <!-- RAG Toggle -->
+      <div class="rag-toggle-wrapper">
+        <label class="rag-toggle" title="Toggle document search (RAG)">
+          <input type="checkbox" id="rag-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label" id="toggle-label">📄 Use Documents</span>
+      </div>
+
+      <!-- Image Attach Button -->
+      <button onclick="document.getElementById('image-input').click()" title="إرفاق صورة لـ Janus-Pro Vision"
+              style="background:rgba(102,126,234,0.15); border:1px solid rgba(102,126,234,0.4); color:#667eea; border-radius:10px; padding:10px 14px; cursor:pointer; font-size:1.1rem; transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(102,126,234,0.3)'" onmouseout="this.style.background='rgba(102,126,234,0.15)'">
+        📎
+      </button>
+
+      <input type="text" class="chat-input" id="chat-input"
+             placeholder="اكتب سؤالك هنا... / Type your question..."
+             onkeypress="if(event.key === 'Enter') sendMessage()" />
+      <button class="btn btn-primary" onclick="sendMessage()" id="send-btn">
+        📤 Send
+      </button>
+    </div>
+  </div>
+
+<style>
+  /* Enhanced Chat Styles */
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .chat-message {
+    max-width: 85%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-message.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-message.bot {
+    align-self: flex-start;
+    background: var(--bg-secondary, #2a2a3a);
+    border: 1px solid var(--border-color, #3a3a4a);
+    border-bottom-left-radius: 4px;
+  }
+
+  /* Message Content Formatting */
+  .message-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  .message-content p {
+    margin: 0 0 8px 0;
+  }
+
+  .message-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Arabic text detection - auto RTL */
+  .message-content {
+    direction: auto;
+  }
+
+  /* Code blocks in messages */
+  .message-content code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+  }
+
+  .message-content pre {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+
+  /* Lists in messages */
+  .message-content ul, .message-content ol {
+    margin: 8px 0;
+    padding-left: 20px;
+  }
+
+  .message-content li {
+    margin: 4px 0;
+  }
+
+  /* Source tag */
+  .source-tag {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Sources list */
+  .sources-list {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+  }
+
+  .sources-list .source-item {
+    padding: 4px 0;
+    opacity: 0.8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .sources-list .source-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+  }
+
+  .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  /* Input container */
+  .chat-input-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: var(--bg-secondary, #1a1a2a);
+    border-radius: 12px;
+    margin-top: 16px;
+  }
+
+  /* Memory Indicator */
+  .memory-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+
+  .memory-icon {
+    font-size: 1rem;
+  }
+
+  .memory-count {
+    font-weight: 600;
+    color: var(--accent-primary, #667eea);
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .memory-clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 0.9rem;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .memory-clear-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .memory-indicator.has-memory {
+    background: rgba(102, 126, 234, 0.25);
+    border-color: rgba(102, 126, 234, 0.5);
+  }
+
+
+  .rag-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  .rag-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .rag-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #555;
+    transition: 0.3s;
+    border-radius: 24px;
+  }
+
+  .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+  }
+
+  .rag-toggle input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .rag-toggle input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+  }
+
+  .toggle-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #aaa);
+    white-space: nowrap;
+    transition: color 0.3s;
+  }
+
+  .toggle-label.active {
+    color: var(--accent-primary, #667eea);
+  }
+
+  .chat-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #3a3a4a);
+    background: var(--bg-primary, #1e1e2e);
+    color: var(--text-primary, #fff);
+    font-size: 1rem;
+  }
+
+  .chat-input::placeholder {
+    opacity: 0.5;
+  }
+
+  /* NLP info badge */
+  .nlp-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    margin-left: 6px;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+
+  /* Language badge */
+  .lang-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    margin-left: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+
+  /* Thinking Block Styles */
+  .thinking-box {
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--accent-primary, #667eea);
+    overflow: hidden;
+  }
+
+  .thinking-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: var(--text-secondary, #aaa);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+
+  .thinking-header:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .thinking-content {
+    padding: 10px 12px;
+    font-size: 0.9em;
+    color: #ccc;
+    font-style: italic;
+    white-space: pre-wrap;
+    background: rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .thinking-toggle-icon {
+    font-size: 0.8em;
+    transition: transform 0.2s;
+  }
+
+  .thinking-box.collapsed .thinking-content {
+    display: none;
+  }
+
+  .thinking-box.collapsed .thinking-toggle-icon {
+    transform: rotate(-90deg);
+  }
+
+  /* Models used badges */
+  .models-list {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    font-size: 0.7rem;
+  }
+
+  .model-badge {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: var(--accent-primary, #667eea);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  const chatMessages = document.getElementById("chat-messages");
+  const chatInput = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("send-btn");
+  const ragToggle = document.getElementById("rag-toggle");
+  const toggleLabel = document.getElementById("toggle-label");
+  const memoryIndicator = document.getElementById("memory-indicator");
+  const memoryCount = document.getElementById("memory-count");
+
+  let messageCount = 0;
+
+  function updateToggleLabel() {
+    if (ragToggle.checked) {
+      toggleLabel.textContent = "📄 Use Documents";
+      toggleLabel.classList.add("active");
+    } else {
+      toggleLabel.textContent = "🧠 General AI";
+      toggleLabel.classList.remove("active");
+    }
+  }
+
+  function updateMemoryIndicator(count) {
+    messageCount = count;
+    memoryCount.textContent = count;
+    if (count > 0) {
+      memoryIndicator.classList.add("has-memory");
+    } else {
+      memoryIndicator.classList.remove("has-memory");
+    }
+  }
+
+  async function clearMemory() {
+    try {
+      const response = await fetch('{{ url_for("admin.clear_memory") }}', {
+        method: "POST"
+      });
+      const data = await response.json();
+      if (data.success) {
+        updateMemoryIndicator(0);
+        // Add system message
+        const sysMsg = document.createElement("div");
+        sysMsg.className = "chat-message bot";
+        sysMsg.innerHTML = `
+          <div class="message-content" style="opacity: 0.7; font-style: italic;">
+            🗑️ تم مسح ذاكرة المحادثة / Conversation memory cleared
+          </div>
+          <div class="source-tag">System</div>
+        `;
+        chatMessages.appendChild(sysMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    } catch (error) {
+      console.error("Failed to clear memory:", error);
+    }
+  }
+
+  ragToggle.addEventListener("change", updateToggleLabel);
+  updateToggleLabel();
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+
+  // Format text with basic markdown-like features
+  function formatMessage(text) {
+    // Escape HTML first
+    let formatted = escapeHtml(text);
+    
+    // Parse <think> blocks (handling escaped HTML)
+    // Matches &lt;think&gt;...&lt;/think&gt; OR &lt;think&gt;... (unclosed)
+    // Also handling potential newlines inside or around tags
+    
+    // First, try to match closed blocks
+    const thinkRegex = /&lt;think&gt;([\s\S]*?)&lt;\/think&gt;/gi;
+    let hasMatch = false;
+    
+    formatted = formatted.replace(thinkRegex, function(match, content) {
+      hasMatch = true;
+      return `
+        <div class="thinking-box collapsed">
+          <div class="thinking-header">
+            <span class="thinking-toggle-icon">▼</span>
+            <span>Thinking Process</span>
+          </div>
+          <div class="thinking-content" dir="ltr" style="text-align: left;">${content}</div>
+        </div>
+      `;
+    });
+    
+    // If no closed block found, check for unclosed start tag
+    if (!hasMatch) {
+      const openThinkRegex = /&lt;think&gt;([\s\S]*?)$/i;
+      formatted = formatted.replace(openThinkRegex, function(match, content) {
+        return `
+          <div class="thinking-box collapsed">
+            <div class="thinking-header">
+               <span class="thinking-toggle-icon">▼</span>
+               <span>Thinking Process (Incomplete)</span>
+            </div>
+            <div class="thinking-content" dir="ltr" style="text-align: left;">${content}</div>
+          </div>
+        `;
+      });
+    }
+
+    // Convert newlines to <br>
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    // Bold: **text** or __text__
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formatted = formatted.replace(/__(.*?)__/g, '<strong>$1</strong>');
+    
+    // Italic: *text* or _text_
+    formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    formatted = formatted.replace(/_([^_]+)_/g, '<em>$1</em>');
+    
+    // Code: `text`
+    formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    // Bullet points: - item or • item
+    formatted = formatted.replace(/^[-•]\s+(.+)/gm, '<li>$1</li>');
+    formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Numbered lists: 1. item
+    formatted = formatted.replace(/^\d+\.\s+(.+)/gm, '<li>$1</li>');
+    
+    return formatted;
+  }
+
+  // Toggle thinking box
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.thinking-header')) {
+      const box = e.target.closest('.thinking-box');
+      box.classList.toggle('collapsed');
+    }
+  });
+
+  // Format existing messages on load
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.message-content').forEach(el => {
+      // Get the original text content (unescaped)
+      const originalText = el.textContent;
+      if (originalText.trim()) {
+        el.innerHTML = formatMessage(originalText);
+      }
+    });
+    // Scroll to bottom after formatting
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+
+  async function sendMessage() {
+    const question = chatInput.value.trim();
+    const imageInput = document.getElementById('image-input');
+    const hasImage = imageInput.files && imageInput.files[0];
+    if (!question && !hasImage) return;
+    if (!question) { alert('اكتب سؤالاً مع الصورة'); return; }
+
+    const useRag = ragToggle.checked;
+
+    chatInput.disabled = true;
+    sendBtn.disabled = true;
+
+    // Build user message with optional image preview
+    const userMsg = document.createElement("div");
+    userMsg.className = "chat-message user";
+    let userHtml = `<div class="message-content">${escapeHtml(question)}</div>`;
+    if (hasImage) {
+      const previewSrc = document.getElementById('image-preview-thumb').src;
+      userHtml += `<img src="${previewSrc}" style="max-width:200px; border-radius:10px; margin-top:8px; display:block;">`;  
+    }
+    userMsg.innerHTML = userHtml;
+    chatMessages.appendChild(userMsg);
+    chatInput.value = "";
+
+    // Add typing indicator
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "chat-message bot";
+    typingDiv.id = "typing";
+    typingDiv.innerHTML = `
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+      const formData = new FormData();
+      formData.append("question", question);
+      formData.append("use_rag", useRag);
+      if (hasImage) formData.append("image", imageInput.files[0]);
+
+      const response = await fetch('{{ url_for("admin.send_chat") }}', {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      document.getElementById("typing").remove();
+
+      // Build bot message
+      const botMsg = document.createElement("div");
+      botMsg.className = "chat-message bot";
+
+      // Format the answer
+      let formattedAnswer = formatMessage(data.answer);
+
+      // Build source tag
+      let sourceTag = '';
+      if (data.source_type === "documents") {
+        sourceTag = "📄 From Documents";
+      } else if (data.source_type === "vision_ai") {
+        sourceTag = "🖼️ Janus-Pro Vision";
+      } else if (data.source_type === "nlp_general") {
+        sourceTag = "🧠 General AI + NLP";
+        if (data.nlp_info) {
+          sourceTag += ` <span class="nlp-badge">${data.nlp_info.intent}</span>`;
+          sourceTag += ` <span class="lang-badge">${data.nlp_info.language === 'arabic' ? 'عربي' : 'EN'}</span>`;
+        }
+      } else {
+        sourceTag = "🤖 AI Knowledge";
+      }
+
+      let html = `
+        <div class="message-content">${formattedAnswer}</div>
+        <div class="source-tag">${sourceTag}</div>
+      `;
+
+      // Add sources if available
+      if (data.sources && data.sources.length > 0) {
+        html += '<div class="sources-list">';
+        data.sources.forEach(s => {
+          html += `<div class="source-item">📎 ${s.metadata} <span style="opacity:0.6">(${(s.score * 100).toFixed(0)}%)</span></div>`;
+        });
+        html += '</div>';
+      }
+
+      botMsg.innerHTML = html;
+      chatMessages.appendChild(botMsg);
+
+      // Add models used if available
+      if (data.models_used && data.models_used.length > 0) {
+        const modelsDiv = document.createElement("div");
+        modelsDiv.className = "models-list";
+        modelsDiv.style.padding = "0 20px";
+        modelsDiv.style.marginBottom = "10px";
+        modelsDiv.style.marginTop = "-8px";
+        
+        let modelsHtml = '<span style="opacity:0.6; margin-right:4px;">🚀 الموديلات المستخدمة:</span>';
+        data.models_used.forEach(m => {
+          modelsHtml += `<span class="model-badge">${m}</span>`;
+        });
+        modelsDiv.innerHTML = modelsHtml;
+        chatMessages.appendChild(modelsDiv);
+      }
+
+      // Update memory indicator
+      if (data.memory_info) {
+        updateMemoryIndicator(data.memory_info.message_count);
+      }
+
+      // Auto-clear image after successful send
+      clearImage();
+
+    } catch (error) {
+      document.getElementById("typing")?.remove();
+      const errorMsg = document.createElement("div");
+      errorMsg.className = "chat-message bot";
+      errorMsg.innerHTML = `
+        <div class="message-content" style="color: #ff6b6b;">❌ Error: ${error.message}</div>
+        <div class="source-tag">Error</div>
+      `;
+      chatMessages.appendChild(errorMsg);
+    }
+
+    chatInput.disabled = false;
+    sendBtn.disabled = false;
+    chatInput.focus();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('image-preview-thumb').src = e.target.result;
+        document.getElementById('image-preview-name').textContent = input.files[0].name;
+        document.getElementById('image-preview-container').style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function clearImage() {
+    document.getElementById('image-input').value = '';
+    document.getElementById('image-preview-container').style.display = 'none';
+    document.getElementById('image-preview-thumb').src = '';
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+</script>
+{% endblock %}

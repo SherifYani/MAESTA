@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}ATS - CV Analyzer{% endblock %}
+
+{% block extra_css %}
+<style>
+.ats-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.ats-hero .hero-icon { font-size: 52px; }
+.ats-hero h2 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 700; }
+.ats-hero p  { margin: 0; opacity: 0.8; font-size: 0.95rem; }
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.stat-card {
+    background: var(--bg-secondary, #1e1e2e);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+.stat-card .stat-num { font-size: 2rem; font-weight: 700; color: #818cf8; }
+.stat-card .stat-lbl { font-size: 0.8rem; color: var(--text-muted, #888); margin-top: 4px; }
+
+.section-card {
+    background: var(--bg-secondary, #1e1e2e);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+.section-card h3 { margin: 0 0 18px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+
+.upload-zone {
+    border: 2px dashed #4c1d95;
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.upload-zone:hover { background: rgba(76,29,149,0.1); }
+.upload-zone input[type=file] { display: none; }
+.upload-zone label { cursor: pointer; display: block; }
+.upload-zone .up-icon { font-size: 36px; }
+.upload-zone p { margin: 8px 0 0; color: var(--text-muted, #888); font-size: 0.88rem; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted,#aaa); }
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    background: var(--bg-primary, #13131f);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary, #eee);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    resize: vertical;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    outline: none;
+    border-color: #818cf8;
+}
+
+.btn-primary-ats {
+    background: linear-gradient(135deg,#4c1d95,#818cf8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 26px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.btn-primary-ats:hover { opacity: 0.9; }
+
+.btn-danger-sm {
+    background: transparent;
+    color: #f87171;
+    border: 1px solid #f87171;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-danger-sm:hover { background: #f87171; color: white; }
+
+.jobs-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.jobs-table th { text-align: left; padding: 10px 12px; color: var(--text-muted,#888); font-size: 0.8rem; border-bottom: 1px solid var(--border-color,#2a2a3e); }
+.jobs-table td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.jobs-table tr:hover td { background: rgba(129,140,248,0.04); }
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+.badge-success { background:#065f46; color:#6ee7b7; }
+.badge-pending { background:#1e1b4b; color:#818cf8; }
+.file-count-display { font-size:0.82rem; color:#818cf8; margin-top:6px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ats-hero">
+    <div class="hero-icon">🎯</div>
+    <div>
+        <h2>ATS — CV Analyzer</h2>
+        <p>Upload CVs, enter a Job Description, and let AI rank your best candidates.</p>
+    </div>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-num">{{ stats.total_cvs }}</div>
+        <div class="stat-lbl">سيرة ذاتية مفهرسة</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ jobs|length }}</div>
+        <div class="stat-lbl">عمليات تحليل سابقة</div>
+    </div>
+    {% if stats.total_cvs > 0 %}
+    <div class="stat-card" style="border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05);">
+        <form method="POST" action="{{ url_for('ats.reset_index') }}" onsubmit="return confirm('هل أنت متأكد من مسح جميع السير الذاتية المفهرسة؟')">
+            <button type="submit" class="btn-danger-sm" style="padding: 10px 20px; font-weight: 700; border-width: 2px;">
+                🔄 إفرغ الفهرس وابدأ من جديد
+            </button>
+        </form>
+        <div class="stat-lbl" style="color: #ef4444;">مسح كامل البيانات</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Upload CVs -->
+<div class="section-card">
+    <h3 style="direction: rtl;">📂 رفع سير ذاتية جديدة</h3>
+    <form method="POST" action="{{ url_for('ats.upload_cvs') }}" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-zone" onclick="document.getElementById('cvInput').click()">
+            <label>
+                <div class="up-icon">📄</div>
+                <strong>اضغط هنا لاختيار ملفات PDF</strong>
+                <p>يمكنك اختيار ملفات متعددة دفعة واحدة</p>
+                <input type="file" id="cvInput" name="cv_files" accept=".pdf" multiple
+                       onchange="updateFileCount(this)">
+            </label>
+        </div>
+        <div class="file-count-display" id="fileCountDisplay"></div>
+        <br>
+        <button type="submit" class="btn-primary-ats">⬆️ إبدأ الفهرسة الآن</button>
+    </form>
+</div>
+
+<!-- Analyze -->
+<div class="section-card">
+    <h3>🔍 Analyze Candidates</h3>
+    <form method="POST" action="{{ url_for('ats.analyze') }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="job_title" placeholder="e.g. Senior Python Developer" required>
+            </div>
+            <div class="form-group">
+                <label>Top Candidates to Select</label>
+                <select name="top_n">
+                    <option value="3">Best 3</option>
+                    <option value="5">Best 5</option>
+                    <option value="10">Best 10</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Job Description</label>
+            <textarea name="job_description" rows="8"
+                      placeholder="Paste the full job description here...&#10;&#10;Example:&#10;We are looking for a Python developer with 3+ years experience in Flask, REST APIs, and SQL databases..."
+                      required></textarea>
+        </div>
+        <button type="submit" class="btn-primary-ats"
+                {% if stats.total_cvs == 0 %}disabled title="Upload CVs first"{% endif %}>
+            🚀 Analyze &amp; Rank Candidates
+        </button>
+        {% if stats.total_cvs == 0 %}
+        <span style="margin-left:12px; color:#f59e0b; font-size:0.85rem;">⚠️ Upload CVs first</span>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Past Jobs -->
+{% if jobs %}
+<div class="section-card">
+    <h3>📋 Past Analyses</h3>
+    <table class="jobs-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>CVs Scanned</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for job in jobs %}
+            <tr>
+                <td><strong>{{ job.title }}</strong></td>
+                <td>
+                    <span class="badge {{ 'badge-success' if job.status == 'completed' else 'badge-pending' }}">
+                        {{ job.status }}
+                    </span>
+                </td>
+                <td>{{ job.cv_count }}</td>
+                <td>{{ job.created_at[:16] }}</td>
+                <td style="display:flex; gap:8px;">
+                    {% if job.status == 'completed' %}
+                    <a href="{{ url_for('ats.ats_results', job_id=job.id) }}"
+                       style="color:#818cf8; font-size:0.82rem;">View Results</a>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('ats.delete_job', job_id=job.id) }}"
+                          style="margin:0;" onsubmit="return confirm('Delete this job?')">
+                        <button type="submit" class="btn-danger-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateFileCount(input) {
+    const el = document.getElementById('fileCountDisplay');
+    el.textContent = input.files.length > 0
+        ? `✅ ${input.files.length} file(s) selected`
+        : '';
+}
+</script>
+{% endblock %}
