@@ -1,0 +1,228 @@
+/**
+ * @file ProfileSummary.module.css
+ * @description Contains all styles for the ProfileSummary component
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-22
+ */
+
+.profileSummary {
+  --avatar-size: 80px;
+  --progress-bar-height: 6px;
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
+
+.avatarSection {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.avatar {
+  position: relative;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  color: var(--color-primary-white);
+}
+
+.verifiedBadge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--color-success);
+  color: var(--color-primary-white);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  border: 2px solid var(--color-card);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.userName {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.userTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.memberSince {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.editButton {
+  align-self: flex-start;
+}
+
+/* Progress Section */
+.progressSection {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.progressLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.progressPercentage {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+}
+
+.progressBar {
+  height: var(--progress-bar-height);
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.progressHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+/* Contact Section */
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.contactIcon {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+.contactText {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+}
+
+/* Skills Section */
+.skillsSection {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.skillsHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.skillsTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.skillBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+}
+
+.moreSkills {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .editButton {
+    align-self: stretch;
+  }
+
+  .avatarSection {
+    align-self: flex-start;
+  }
+}

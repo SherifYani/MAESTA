@@ -1,0 +1,39 @@
+/**
+ * @file RatingStars.module.css
+ * @description Rating stars for feedback and reviews.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+.container {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.star {
+  font-size: 1.25rem;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star.filled {
+  color: var(--color-rating);
+}
+
+.star.sm {
+  font-size: 0.875rem;
+}
+
+.star.md {
+  font-size: 1.25rem;
+}
+
+.star.lg {
+  font-size: 1.75rem;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}

@@ -1,0 +1,53 @@
+/**
+ * @file AdminStatsGrid.module.css
+ * @description Styles for AdminStatsGrid component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../../styles/_admin-design-tokens.css';
+
+/* ==================== Grid Container ==================== */
+.grid {
+    display: grid;
+    gap: var(--admin-space-md);
+    margin-bottom: var(--admin-space-lg);
+}
+
+/* ==================== Column Variants ==================== */
+.grid--col1 {
+    grid-template-columns: 1fr;
+}
+
+.grid--col2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid--col3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid--col4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* ==================== Responsive Breakpoints ==================== */
+
+/* Tablet and below - 2 columns for 3-4 column grids */
+@media (max-width: 968px) {
+
+    .grid--col3,
+    .grid--col4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile - single column for all grids */
+@media (max-width: 640px) {
+
+    .grid--col2,
+    .grid--col3,
+    .grid--col4 {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,65 @@
+/**
+ * @file FormSelect.css
+ * @description Styles for form select components including dropdown options and validation states
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+@import "../../shared/_form-base.css";
+@import "../../shared/_form-animations.css";
+
+/* ==========================================================================
+   Form Select Specific Enhancements
+   ========================================================================== */
+
+/* Select-specific styles - NOT in base */
+.form-select__field {
+  /* Remove default dropdown arrow and styling */
+  appearance: none;
+  cursor: pointer;
+
+  /* Remove default focus outline (we handle it in base) */
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+/* Arrow color states */
+.form-select__wrapper:hover::after {
+  color: var(--color-accent-pink);
+}
+
+.form-select__wrapper:focus-within::after {
+  color: var(--color-vivid-pink);
+}
+
+/* Option styling - browser limited but we can style what we can */
+.form-select__field option {
+  background: var(--color-primary-black);
+  color: var(--color-primary-white);
+  padding: var(--space-3) var(--space-4);
+}
+
+/* Invalid state styling */
+.form-select__field:invalid:not(:focus) {
+  color: var(--color-muted-foreground);
+}
+
+/* Custom scrollbar for dropdown */
+.form-select__field::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.form-select__field::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: var(--radius-sm);
+}
+
+.form-select__field::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-sm);
+}

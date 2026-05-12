@@ -1,0 +1,376 @@
+/**
+ * @file ChatList.module.css
+ * @description Styles for chat list component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--color-card);
+    border-left: 1px solid var(--color-border);
+    width: 320px;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-background);
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-foreground);
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+}
+
+.newChatButton {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent-pink);
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.newChatButton:hover,
+.newChatButton:focus {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    transform: scale(1.1);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* Search */
+.search {
+    padding: var(--space-4);
+    position: relative;
+    background-color: var(--color-background);
+}
+
+.searchIcon {
+    position: absolute;
+    right: var(--space-5);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--space-2) var(--space-10) var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-input);
+    transition: all 0.2s ease;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 2px var(--color-ring);
+    background-color: var(--color-input-hover);
+}
+
+.searchInput::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: var(--space-2);
+    padding: 0 var(--space-4) var(--space-4);
+    overflow-x: auto;
+    background-color: var(--color-background);
+    scrollbar-width: thin;
+}
+
+.filters::-webkit-scrollbar {
+    height: 4px;
+}
+
+.filterButton {
+    padding: var(--space-1) var(--space-3);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-weight: var(--font-weight-medium);
+}
+
+.filterButton.active {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+}
+
+.filterButton:hover,
+.filterButton:focus {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-color: var(--color-accent-hover);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 1px;
+}
+
+/* Conversations List */
+.list {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--color-background);
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-muted);
+    transition: background-color 0.2s ease;
+}
+
+.item:hover,
+.item:focus {
+    background-color: var(--color-accent);
+    outline: 2px solid var(--color-ring);
+    outline-offset: -2px;
+}
+
+.item.active {
+    background-color: var(--color-translucent-white-1);
+    border-right: 3px solid var(--color-accent-pink);
+}
+
+.avatarContainer {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 2px solid var(--color-primary-white);
+    box-shadow: 0 2px 4px var(--color-translucent-white-1);
+    background-color: var(--color-secondary);
+}
+
+.onlineIndicator {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    background-color: #10b981;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-primary-white);
+}
+
+.info {
+    flex: 1;
+    min-width: 0;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-1);
+}
+
+.name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.time {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    line-height: var(--line-height-normal);
+}
+
+.item.unread .name,
+.item.unread .preview {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+}
+
+.iconPreview {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-accent-pink);
+}
+
+.unreadBadge {
+    background-color: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    min-width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--space-2);
+    font-weight: var(--font-weight-bold);
+    flex-shrink: 0;
+}
+
+.emptyState {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .container {
+        width: 280px;
+    }
+
+    .header {
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .name {
+        max-width: 140px;
+    }
+
+    .preview {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .container {
+        width: 260px;
+    }
+
+    .header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .search {
+        padding: var(--space-3);
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .name {
+        max-width: 120px;
+        font-size: var(--font-size-xs);
+    }
+
+    .preview {
+        max-width: 130px;
+        font-size: var(--font-size-xs);
+    }
+
+    .unreadBadge {
+        min-width: 16px;
+        height: 16px;
+        font-size: var(--font-size-xs);
+    }
+}
+
+@media (max-width: 40rem) {
+    .container {
+        width: 100%;
+        border-left: none;
+        border-bottom: 1px solid var(--color-border);
+        min-height: auto;
+        max-height: 400px;
+    }
+
+    .list {
+        max-height: 300px;
+    }
+
+    .filters {
+        padding: 0 var(--space-3) var(--space-3);
+    }
+
+    .item {
+        padding: var(--space-3);
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .name {
+        max-width: 100px;
+    }
+
+    .preview {
+        max-width: 110px;
+    }
+}

@@ -1,0 +1,24 @@
+﻿/**
+ * @file form-components.css
+ * @description Optimized shared styles for form input components and role cards
+ * @author Sherif Talaat
+ * @version 3.0.0
+ * @date 24-10-2025
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 05-12-2025
+ */
+/* 
+    Lastest update 
+    split each component styles into a single file and make shared animation for all conponents and make shared styles for (FormInput, FormSelect and FormTextarea)
+*/
+@import "../globals.css";
+
+@import "./forms/DateInput.css";
+@import "./forms/FileUpload.css";
+@import "./forms/FormInput.css";
+@import "./forms/FormSelect.css";
+@import "./forms/FormTextarea.css";
+@import "./forms/RoleCard.css";
+
+@import "./ui/Progress.css";

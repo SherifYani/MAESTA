@@ -1,0 +1,198 @@
+/**
+ * @file PaymentPage.module.css
+ * @description Styles for the Payment Page component
+ */
+
+/* ==========================================================================
+   Page Layout
+   ========================================================================== */
+
+.page {
+    min-height: calc(100vh - 80px);
+    /* Adjust based on header height */
+    background: linear-gradient(135deg,
+            var(--color-background) 0%,
+            var(--color-input) 100%);
+    display: flex;
+    justify-content: center;
+}
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    /* Ensure gap before footer */
+    margin-bottom: var(--space-16);
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-4);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-muted-foreground);
+}
+
+.planName {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Checkout Wrapper
+   ========================================================================== */
+
+.checkoutWrapper {
+    background: var(--color-card);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 4px 6px -1px var(--color-shadow-pink), 0 2px 4px -1px var(--color-shadow-pink);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Error Alert
+   ========================================================================== */
+
+.errorAlert {
+    background-color: color-mix(in oklch, var(--color-destructive) 10%, transparent);
+    border-left: 4px solid var(--color-destructive);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.errorIcon {
+    color: var(--color-destructive);
+    flex-shrink: 0;
+}
+
+.errorTitle {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-destructive);
+    margin-bottom: var(--space-1);
+    font-size: var(--font-size-base);
+}
+
+.errorMessage {
+    color: var(--color-destructive-foreground);
+    font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Success State
+   ========================================================================== */
+
+.successPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-input) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+.successCard {
+    background: var(--color-card);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 20px 25px -5px var(--color-shadow-pink), 0 10px 10px -5px var(--color-shadow-pink);
+    padding: var(--space-12);
+    max-width: 28rem;
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.successIconWrapper {
+    margin-bottom: var(--space-6);
+}
+
+.successIconBg {
+    width: 5rem;
+    height: 5rem;
+    background-color: color-mix(in oklch, var(--color-accent-pink) 20%, transparent);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.successIcon {
+    color: var(--color-accent-pink);
+}
+
+.successTitle {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-4);
+}
+
+.successMessage {
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-lg);
+}
+
+.redirectText {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.spinnerWrapper {
+    margin-top: var(--space-6);
+}
+
+.spinner {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    border-bottom: 2px solid var(--color-accent-pink);
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+    .page {
+        padding: var(--space-4) 0;
+    }
+
+    .pageContainer {
+        margin-bottom: var(--space-8);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .successCard {
+        padding: var(--space-8);
+    }
+}

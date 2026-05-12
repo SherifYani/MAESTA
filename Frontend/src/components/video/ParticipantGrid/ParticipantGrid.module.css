@@ -1,0 +1,68 @@
+/**
+ * @file ParticipantGrid.module.css
+ * @description Layout styles for the participant grid with responsive breakpoints.
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--space-4);
+    width: 100%;
+    height: 100%;
+    padding: var(--space-4);
+    transition: all 0.3s ease;
+}
+
+.gridItem {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    /* Placeholder height */
+    max-height: 100%;
+    display: flex;
+}
+
+/* Breakpoint: 40rem (Mobile/Small Tablet) */
+@media (min-width: 40rem) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Breakpoint: 60.5rem (Tablet/Laptop) */
+@media (min-width: 60.5rem) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-5);
+    }
+
+    /* Layout adjustments for larger grids */
+    .grid[data-count="2"] {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Breakpoint: 75rem (Desktop/Large Screens) */
+@media (min-width: 75rem) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
+    }
+
+    /* Optimization for fewer participants on big screen */
+    .grid[data-count="1"] {
+        grid-template-columns: 1fr;
+    }
+
+    .grid[data-count="2"] {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid[data-count="3"] {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Active speaker styling could be handled here if moved to grid level */

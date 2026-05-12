@@ -1,0 +1,230 @@
+/**
+ * @file JobManagement.module.css
+ * @description Styles for JobManagement component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+/* Inherit base layout */
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Header Badge ==================== */
+.headerBadge {
+    composes: admin-badge admin-badge--success from global;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+}
+
+/* ==================== Toolbar Stats ==================== */
+.toolbarStats {
+    display: flex;
+    gap: var(--admin-space-md);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+}
+
+.toolbarStat strong {
+    color: var(--color-foreground);
+    font-weight: 600;
+}
+
+/* ==================== Filter Select ==================== */
+.filterSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: background-color var(--admin-transition-fast),
+        border-color var(--admin-transition-fast),
+        box-shadow var(--admin-transition-fast);
+    outline: none;
+    min-width: 150px;
+    appearance: auto;
+}
+
+.filterSelect:hover {
+    background-color: var(--color-input-hover);
+    border-color: var(--color-ring);
+}
+
+.filterSelect:focus {
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+    background-color: var(--color-input-hover);
+}
+
+/* ==================== Content Section ==================== */
+.content {
+    composes: admin-content from global;
+}
+
+/* ==================== Job Info Cell ==================== */
+.jobInfo {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+}
+
+.jobInfo__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.jobInfo__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-xs);
+    min-width: 0;
+}
+
+.jobInfo__title {
+    font-size: var(--admin-font-size-body);
+    font-weight: 600;
+    color: var(--color-foreground);
+    margin: 0;
+    composes: admin-truncate from global;
+}
+
+.jobInfo__meta {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    margin: 0;
+}
+
+/* ==================== Status Badges ==================== */
+.statusBadge {
+    display: inline-block;
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-sm);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.statusBadge--active {
+    background: rgba(34, 197, 94, 0.1);
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.statusBadge--pending {
+    background: rgba(251, 191, 36, 0.1);
+    color: rgb(161, 98, 7);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+/* under review — shows as amber-orange */
+.statusBadge--review {
+    background: rgba(249, 115, 22, 0.1);
+    color: rgb(194, 65, 12);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+
+.statusBadge--expired {
+    background: rgba(239, 68, 68, 0.1);
+    color: rgb(185, 28, 28);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+/* ==================== Report Count ==================== */
+.reportCount {
+    font-size: var(--admin-font-size-body);
+    color: var(--color-muted-foreground);
+    font-weight: 500;
+}
+
+.reportCountDanger {
+    font-size: var(--admin-font-size-body);
+    color: var(--color-danger);
+    font-weight: 700;
+}
+
+/* ==================== Actions ==================== */
+.actions {
+    display: flex;
+    gap: var(--admin-space-xs);
+    align-items: center;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--admin-radius-md);
+    cursor: pointer;
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    transition: all var(--admin-transition-fast);
+    color: var(--color-foreground);
+}
+
+.actionButton:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--admin-shadow-card);
+    background: var(--admin-glass-background-hover);
+}
+
+.actionButton:active {
+    transform: scale(0.95);
+}
+
+.actionButton__danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.actionButton__danger:hover {
+    background: var(--admin-color-danger-subtle);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .toolbarStats {
+        flex-direction: column;
+        gap: var(--admin-space-xs);
+    }
+
+    .jobInfo__title {
+        font-size: var(--admin-font-size-small);
+    }
+}
+
+@media (max-width: 640px) {
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actionButton {
+        width: 28px;
+        height: 28px;
+    }
+
+    .jobInfo__icon {
+        width: 32px;
+        height: 32px;
+    }
+}

@@ -1,0 +1,496 @@
+/**
+ * @file AIPostingPage.module.css
+ * @description Contains all styles for the AIPostingPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    position: relative;
+}
+
+.backButton {
+    position: absolute;
+    left: var(--space-8);
+    background: none;
+    border: none;
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.backButton:hover,
+.backButton:focus {
+    color: var(--color-vivid-pink);
+    outline: none;
+    text-decoration: underline;
+}
+
+.headerContent {
+    padding: 0 var(--space-12);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+    font-weight: var(--font-weight-bold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+.titleIcon {
+    color: var(--color-accent-pink);
+}
+
+.subtitle {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+}
+
+/* Progress Indicator */
+.progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+}
+
+.progressStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    min-width: var(--space-20);
+}
+
+.progressStepActive {
+    opacity: 1;
+}
+
+.stepNumber {
+    width: var(--space-9);
+    height: var(--space-9);
+    border-radius: var(--radius-full);
+    background: var(--color-muted);
+    display: flex;
+    width: 40px;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-semibold);
+    transition: all 0.3s ease;
+    color: var(--color-muted-foreground);
+}
+
+.progressStepActive .stepNumber {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+}
+
+.stepLabel {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.progressLine {
+    width: var(--space-20);
+    height: var(--space-half);
+    background: var(--color-muted);
+    flex-shrink: 0;
+}
+
+/* Main Content */
+.mainContent {
+    min-height: var(--space-100);
+}
+
+/* Card */
+.card {
+    background: var(--color-card);
+    padding: var(--space-8);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 var(--space-1) var(--space-7) var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+}
+
+.cardTitle {
+    font-size: var(--font-size-xl);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+}
+
+.cardSubtitle {
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-8);
+    font-size: var(--font-size-base);
+}
+
+/* Form */
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.formGroupFull {
+    grid-column: 1 / -1;
+}
+
+.formLabel {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    font-family: var(--font-sans);
+    background: var(--color-input);
+    color: var(--color-foreground);
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+    background: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.formInput:hover,
+.formSelect:hover,
+.formTextarea:hover {
+    border-color: var(--color-accent-hover);
+}
+
+.formTextarea {
+    min-height: var(--space-30);
+    resize: vertical;
+    line-height: var(--line-height-normal);
+}
+
+/* Generate Button */
+.generateButton {
+    width: 100%;
+    padding: var(--space-4);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    margin-top: var(--space-8);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.generateButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.generateButton:not(:disabled):hover,
+.generateButton:not(:disabled):focus {
+    transform: translateY(-2px);
+    box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+    outline: none;
+}
+
+/* Editable Sections */
+.editableSection {
+    margin-bottom: var(--space-6);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.sectionLabel {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.regenerateButton {
+    background: none;
+    border: none;
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.regenerateButton:hover,
+.regenerateButton:focus {
+    color: var(--color-vivid-pink);
+    outline: none;
+    text-decoration: underline;
+}
+
+.editableList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.editableListItem {
+    margin-bottom: var(--space-2);
+}
+
+.editableListItem:last-child {
+    margin-bottom: 0;
+}
+
+/* Benefits Tags */
+.benefitsTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.benefitTag {
+    background: var(--color-light-pink);
+    color: var(--color-accent-pink);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid var(--color-translucent-white-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+.backStepButton {
+    flex: 1;
+    padding: var(--space-4);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: all 0.2s ease;
+    font-size: var(--font-size-base);
+}
+
+.backStepButton:hover,
+.backStepButton:focus {
+    background: var(--color-accent);
+    border-color: var(--color-accent-hover);
+    outline: none;
+}
+
+.publishButton {
+    flex: 2;
+    padding: var(--space-4);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.publishButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.publishButton:not(:disabled):hover,
+.publishButton:not(:disabled):focus {
+    transform: translateY(-2px);
+    box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+    outline: none;
+}
+
+/* Spinner */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .card {
+        padding: var(--space-6);
+        border-radius: var(--radius-xl);
+    }
+
+    .headerContent {
+        padding: 0 var(--space-8);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .formGrid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .progress {
+        gap: var(--space-2);
+    }
+
+    .progressLine {
+        width: var(--space-10);
+    }
+
+    .stepLabel {
+        font-size: var(--font-size-xs);
+    }
+
+    .headerContent {
+        padding: 0;
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+}
+
+@media (max-width: 40rem) {
+    .card {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+    }
+
+    .progressStep {
+        min-width: var(--space-15);
+    }
+
+    .stepLabel {
+        display: none;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .backButton {
+        position: relative;
+        left: 0;
+        margin-bottom: var(--space-4);
+        align-self: flex-start;
+    }
+
+    .header {
+        text-align: left;
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+        justify-content: flex-start;
+    }
+
+    .cardTitle {
+        font-size: var(--font-size-lg);
+    }
+
+    .publishButton,
+    .generateButton {
+        font-size: var(--font-size-base);
+        padding: var(--space-3);
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+    }
+
+    .generateButton,
+    .publishButton,
+    .backStepButton {
+        transition: none;
+    }
+
+    .generateButton:not(:disabled):hover,
+    .publishButton:not(:disabled):hover,
+    .generateButton:not(:disabled):focus,
+    .publishButton:not(:disabled):focus {
+        transform: none;
+    }
+}
+
+/* Focus visible styles for keyboard navigation */
+.formInput:focus-visible,
+.formSelect:focus-visible,
+.formTextarea:focus-visible,
+.generateButton:focus-visible,
+.publishButton:focus-visible,
+.backStepButton:focus-visible,
+.regenerateButton:focus-visible,
+.backButton:focus-visible {
+    outline: 2px solid var(--color-accent-pink);
+    outline-offset: 2px;
+}

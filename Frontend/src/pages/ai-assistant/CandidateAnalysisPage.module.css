@@ -1,0 +1,506 @@
+/**
+ * @file CandidateAnalysisPage.module.css
+ * @description Contains all styles for the CandidateAnalysisPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Header */
+.header {
+    margin-bottom: var(--space-8);
+}
+
+.backButton {
+    background: none;
+    border: none;
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    padding: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.backButton:hover,
+.backButton:focus {
+    color: var(--color-vivid-pink);
+    outline: none;
+    text-decoration: underline;
+}
+
+.headerContent {
+    text-align: center;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+    font-weight: var(--font-weight-bold);
+}
+
+.subtitle {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+}
+
+/* Sections */
+.section {
+    background: var(--color-card);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 var(--space-1) var(--space-5) var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-4);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Job Description Input */
+.jobDescriptionInput {
+    width: 100%;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    resize: vertical;
+    font-family: var(--font-sans);
+    background: var(--color-input);
+    color: var(--color-foreground);
+    min-height: var(--space-30);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    line-height: var(--line-height-normal);
+}
+
+.jobDescriptionInput:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+    background: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.jobDescriptionInput:hover {
+    border-color: var(--color-accent-hover);
+}
+
+/* Upload Area */
+.uploadArea {
+    position: relative;
+    margin-bottom: var(--space-4);
+}
+
+.fileInput {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.uploadLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-muted);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    text-align: center;
+}
+
+.uploadArea:hover .uploadLabel {
+    border-color: var(--color-accent-pink);
+    background: var(--color-radial-pink-1);
+    color: var(--color-foreground);
+}
+
+.uploadIcon {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-2);
+    color: var(--color-accent-pink);
+}
+
+.uploadHint {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-top: var(--space-1);
+}
+
+/* Candidates List */
+.candidatesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.candidateCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--color-secondary);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    max-width: var(--space-60);
+}
+
+.candidateInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.candidateIcon {
+    font-size: var(--font-size-base);
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.candidateName {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.removeButton {
+    background: none;
+    border: none;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.removeButton:hover,
+.removeButton:focus {
+    color: var(--color-destructive);
+    outline: none;
+}
+
+/* Analyze Button */
+.analyzeButton {
+    width: 100%;
+    padding: var(--space-4);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.analyzeButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.analyzeButton:not(:disabled):hover,
+.analyzeButton:not(:disabled):focus {
+    transform: translateY(-2px);
+    box-shadow: 0 var(--space-1) var(--space-5) var(--color-shadow-pink);
+    outline: none;
+}
+
+/* Results */
+.resultsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.resultCard {
+    background: var(--color-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.resultHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-card);
+}
+
+.rank {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-pink);
+    min-width: var(--space-9);
+}
+
+.resultTitle {
+    flex: 1;
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.scoreCircle {
+    width: var(--space-12);
+    height: var(--space-12);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+    color: var(--color-primary-white);
+}
+
+.scoreHigh {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+}
+
+.scoreMedium {
+    background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-5));
+}
+
+.scoreLow {
+    background: linear-gradient(135deg, var(--color-destructive), var(--color-chart-5));
+}
+
+.resultDetails {
+    padding: var(--space-4);
+}
+
+.skillsSection {
+    margin-bottom: var(--space-4);
+}
+
+.skillsTitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.skillTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+}
+
+.matchingSkill {
+    background: var(--color-light-pink);
+    color: var(--color-accent-pink);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid var(--color-translucent-white-1);
+}
+
+.missingSkill {
+    background: var(--color-destructive-foreground);
+    color: var(--color-destructive);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid var(--color-destructive);
+}
+
+.recommendation {
+    background: var(--color-accent);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-4);
+    color: var(--color-accent-foreground);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.resultActions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.viewProfileButton,
+.shortlistButton {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: var(--font-weight-medium);
+    text-align: center;
+}
+
+.viewProfileButton {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+}
+
+.viewProfileButton:hover,
+.viewProfileButton:focus {
+    background: var(--color-accent);
+    border-color: var(--color-accent-hover);
+    outline: none;
+}
+
+.shortlistButton {
+    background: var(--color-accent-pink);
+    border: none;
+    color: var(--color-primary-white);
+}
+
+.shortlistButton:hover,
+.shortlistButton:focus {
+    background: var(--color-vivid-pink);
+    outline: none;
+}
+
+/* Spinner */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .section {
+        padding: var(--space-5);
+    }
+
+    .uploadLabel {
+        padding: var(--space-6);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .resultHeader {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .rank {
+        order: 1;
+    }
+
+    .resultTitle {
+        order: 2;
+        flex-basis: 100%;
+    }
+
+    .scoreCircle {
+        order: 3;
+        margin-left: auto;
+    }
+
+    .candidateName {
+        max-width: var(--space-30);
+    }
+}
+
+@media (max-width: 40rem) {
+    .section {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .resultActions {
+        flex-direction: column;
+    }
+
+    .uploadLabel {
+        padding: var(--space-4);
+    }
+
+    .candidateCard {
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .skillTags {
+        justify-content: center;
+    }
+
+    .analyzeButton {
+        font-size: var(--font-size-base);
+        padding: var(--space-3);
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+    }
+
+    .analyzeButton,
+    .viewProfileButton,
+    .shortlistButton {
+        transition: none;
+    }
+
+    .analyzeButton:not(:disabled):hover,
+    .analyzeButton:not(:disabled):focus,
+    .viewProfileButton:hover,
+    .viewProfileButton:focus,
+    .shortlistButton:hover,
+    .shortlistButton:focus {
+        transform: none;
+    }
+}
+
+/* Focus visible styles for keyboard navigation */
+.fileInput:focus-visible+.uploadLabel,
+.analyzeButton:focus-visible,
+.viewProfileButton:focus-visible,
+.shortlistButton:focus-visible,
+.backButton:focus-visible,
+.removeButton:focus-visible,
+.jobDescriptionInput:focus-visible {
+    outline: 2px solid var(--color-accent-pink);
+    outline-offset: 2px;
+}

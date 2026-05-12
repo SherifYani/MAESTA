@@ -1,0 +1,270 @@
+/**
+ * @file NewApplicantsWidget.module.css
+ * @description Premium styles for New Applicants Widget
+ * @version 1.0.0
+ * @date 2026-01-28
+ */
+
+/* ==========================================================================
+   Applicants Widget Container
+   ========================================================================== */
+
+.applicantsWidget {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* ==========================================================================
+   Applicant Item
+   ========================================================================== */
+
+.applicantItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-background),
+            var(--color-translucent-white-1));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.applicantItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-radial-pink-1),
+            transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.applicantItem:hover::before {
+    left: 100%;
+}
+
+.applicantItem:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Applicant Header
+   ========================================================================== */
+
+.applicantHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.applicantAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-base);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.applicantInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.applicantName {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+    line-height: var(--line-height-tight);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.applicantJob {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   Applicant Meta
+   ========================================================================== */
+
+.applicantMeta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.metaItem svg {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Applicant Footer
+   ========================================================================== */
+
+.applicantFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+}
+
+.newIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-semibold);
+}
+
+.newDot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-pink);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--color-border);
+    color: var(--color-muted-foreground);
+    text-align: center;
+}
+
+.emptyState svg {
+    opacity: 0.5;
+    margin-bottom: var(--space-2);
+}
+
+.emptyState p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 75rem) {
+    .applicantHeader {
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .applicantHeader {
+        flex-wrap: wrap;
+    }
+
+    .applicantMeta {
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 40rem) {
+    .applicantItem {
+        padding: var(--space-3);
+    }
+
+    .applicantAvatar {
+        width: 36px;
+        height: 36px;
+        font-size: var(--font-size-sm);
+    }
+
+    .applicantName {
+        font-size: var(--font-size-sm);
+    }
+
+    .emptyState {
+        padding: var(--space-6);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .applicantItem,
+    .applicantItem::before,
+    .newDot {
+        transition: none;
+        animation: none;
+    }
+
+    .applicantItem:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .applicantItem {
+        border: 2px solid var(--color-foreground);
+    }
+}

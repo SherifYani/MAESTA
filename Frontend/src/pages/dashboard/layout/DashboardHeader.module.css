@@ -1,0 +1,878 @@
+/**
+ * @file DashboardHeader.module.css
+ * @description Modern header styles with glassmorphism and interactive elements
+ * @author Sherif Talaat
+ * @version 3.1.0
+ * @date 2025-12-19
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
+
+/* ==========================================================================
+   Header Base - Glassmorphism Design
+   ========================================================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-8);
+  background: var(--color-card);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 72px;
+  gap: var(--space-4);
+
+  /* Subtle shadow for depth */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   Left Section
+   ========================================================================== */
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.menuButton {
+  display: none;
+  background: var(--color-translucent-white-1);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.menuButton:hover {
+  background: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
+  transform: scale(1.05);
+}
+
+.menuButton:active {
+  transform: scale(0.95);
+}
+
+.menuIcon {
+  display: block;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+  white-space: nowrap;
+  background: linear-gradient(135deg,
+      var(--color-foreground) 0%,
+      var(--color-muted-foreground) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.roleBadge {
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  color: var(--color-primary-white);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+  }
+
+  50% {
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+  }
+}
+
+/* ==========================================================================
+   Right Section
+   ========================================================================== */
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Modern Search Bar with Focus Effect
+   ========================================================================== */
+
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.searchContainer.focused {
+  transform: scale(1.02);
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.searchContainer.focused .searchIcon {
+  color: var(--color-accent-pink);
+}
+
+.searchInput {
+  width: 320px;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-translucent-white-1);
+  backdrop-filter: blur(10px);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  background: var(--color-card);
+  box-shadow: 0 0 0 3px var(--color-shadow-pink), 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 360px;
+}
+
+.searchInput::placeholder {
+  color: var(--color-muted-foreground);
+  transition: opacity 0.3s ease;
+}
+
+.searchInput:focus::placeholder {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   Icon Buttons
+   ========================================================================== */
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.iconButton:hover {
+  background: var(--color-muted);
+  color: var(--color-accent-pink);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.iconButton:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.iconButton.active {
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border-color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Notifications
+   ========================================================================== */
+
+.notificationContainer {
+  position: relative;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  border: 2px solid var(--color-card);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Notification Dropdown */
+.notificationDropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  width: 320px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dropdownTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.closeDropdown {
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.closeDropdown:hover {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+.notificationList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notificationItem {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.notificationItem:hover {
+  background: var(--color-translucent-white-1);
+}
+
+.notificationItem:last-child {
+  border-bottom: none;
+}
+
+.notificationDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}
+
+.notificationText {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.notificationTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.dropdownFooter {
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.viewAllButton {
+  width: 100%;
+  padding: var(--space-2);
+  background: var(--color-translucent-white-1);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-accent-pink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewAllButton:hover {
+  background: var(--color-muted);
+}
+
+/* ==========================================================================
+   User Profile
+   ========================================================================== */
+
+.userProfileContainer {
+  position: relative;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-translucent-white-1);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.userProfile:hover {
+  background: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.userProfile.active {
+  background: var(--color-muted);
+  border-color: var(--color-accent-pink);
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-white);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.avatarText {
+  line-height: 1;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.userName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.userRole {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.chevronIcon {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.chevronIcon.rotated {
+  transform: rotate(180deg);
+}
+
+/* User Dropdown Menu */
+.userDropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  width: 260px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+}
+
+.userDropdownHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.userAvatarLarge {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-white);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.userDropdownName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.userDropdownEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.userDropdownMenu {
+  padding: var(--space-2);
+}
+
+.menuItem {
+  display: block;
+  padding: var(--space-3);
+  color: var(--color-foreground);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--color-translucent-white-1);
+  color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.menuItem.logout {
+  color: #ef4444;
+}
+
+.menuItem.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.menuDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-2) 0;
+}
+
+/* Notification item states */
+.notificationItem {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notificationItem:last-child {
+  border-bottom: none;
+}
+
+.notificationItem:hover {
+  background-color: var(--color-muted);
+}
+
+.notificationItem.read {
+  opacity: 0.6;
+}
+
+/* Notification dot colors */
+.notificationDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--space-3);
+  flex-shrink: 0;
+}
+
+.dot-info {
+  background-color: var(--color-chart-1);
+}
+
+.dot-success {
+  background-color: var(--color-chart-2);
+}
+
+.dot-warning {
+  background-color: var(--color-chart-3);
+}
+
+.dot-error {
+  background-color: var(--color-chart-5);
+}
+
+/* Notification content */
+.notificationContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationTitle {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+  color: var(--color-foreground);
+}
+
+.notificationText {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-1);
+}
+
+.notificationTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+/* Empty state */
+.emptyNotifications {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-muted-foreground);
+}
+
+.emptyNotifications svg {
+  margin-bottom: var(--space-3);
+  color: var(--color-border);
+}
+
+/* Dropdown actions */
+.dropdownActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.markAllButton {
+  background: none;
+  border: none;
+  color: var(--color-accent-pink);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.markAllButton:hover {
+  background-color: var(--color-muted);
+}
+
+/* User avatar image */
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarImageLarge {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* User dropdown info */
+.userDropdownInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userDropdownRole {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-muted);
+  color: var(--color-muted-foreground);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+/* Menu item with icon */
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 40rem) {
+  .userInfo {
+    display: none;
+  }
+
+  .notificationDropdown {
+    position: fixed;
+    top: var(--space-16);
+    right: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+  }
+
+  .userDropdown {
+    position: fixed;
+    top: var(--space-16);
+    right: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Tablet (60.5rem / 968px)
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+  .header {
+    padding: var(--space-4) var(--space-6);
+  }
+
+  .searchInput {
+    width: 240px;
+  }
+
+  .searchInput:focus {
+    width: 280px;
+  }
+
+  .userName {
+    max-width: 120px;
+  }
+
+  .notificationDropdown,
+  .userDropdown {
+    width: 280px;
+  }
+}
+
+/* ==========================================================================
+   Responsive Design - Mobile (40rem / 640px)
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+  .header {
+    padding: var(--space-3) var(--space-4);
+    min-height: 64px;
+  }
+
+  /* Show mobile menu button */
+  .menuButton {
+    display: flex;
+  }
+
+  .leftSection {
+    gap: var(--space-2);
+  }
+
+  .breadcrumb {
+    gap: var(--space-2);
+  }
+
+  .pageTitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .roleBadge {
+    padding: var(--space-1) var(--space-2);
+    font-size: 10px;
+  }
+
+  .rightSection {
+    gap: var(--space-2);
+  }
+
+  /* Simplify search on mobile */
+  .searchInput {
+    width: 160px;
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8);
+  }
+
+  .searchInput:focus {
+    width: 180px;
+  }
+
+  .searchIcon {
+    left: var(--space-2);
+    width: 16px;
+    height: 16px;
+  }
+
+  .searchInput::placeholder {
+    font-size: var(--font-size-xs);
+  }
+
+  .iconButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Hide user info on mobile, show only avatar */
+  .userInfo {
+    display: none;
+  }
+
+  .chevronIcon {
+    display: none;
+  }
+
+  .userProfile {
+    padding: var(--space-1);
+    gap: 0;
+  }
+
+  .userAvatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Adjust dropdowns for mobile */
+  .notificationDropdown,
+  .userDropdown {
+    width: calc(100vw - var(--space-8));
+    right: calc(var(--space-4) * -1);
+  }
+}
+
+/* ==========================================================================
+   Very Small Screens (320px)
+   ========================================================================== */
+
+@media (max-width: 20rem) {
+  .header {
+    padding: var(--space-3);
+  }
+
+  .pageTitle {
+    font-size: var(--font-size-base);
+  }
+
+  /* Hide search on very small screens */
+  .searchContainer {
+    display: none;
+  }
+
+  .rightSection {
+    gap: var(--space-2);
+  }
+
+  .iconButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .userAvatar {
+    width: 32px;
+    height: 32px;
+  }
+}

@@ -1,0 +1,114 @@
+/**
+ * @file AdminActivities.module.css
+ * @description Styles for Admin Activities page.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+
+.container {
+    padding: var(--space-6);
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.formatSelect {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-input);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+}
+
+.userName {
+    font-weight: var(--font-weight-medium);
+}
+
+.userId {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.detailRow {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.detailLabel {
+    font-weight: var(--font-weight-semibold);
+    min-width: 100px;
+    color: var(--color-muted-foreground);
+}
+
+.userAgent {
+    font-size: var(--font-size-xs);
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.detailsSection {
+    margin-top: var(--space-2);
+}
+
+.jsonPreview {
+    background: var(--color-muted);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-xs);
+    overflow-x: auto;
+    margin-top: var(--space-2);
+}
+
+.exportNote {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin-top: var(--space-2);
+}
+
+/* Responsive */
+@media (max-width: 60.5rem) {
+    .container {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 40rem) {
+    .headerActions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .formatSelect {
+        width: 100%;
+    }
+
+    .detailRow {
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .detailLabel {
+        min-width: auto;
+    }
+}

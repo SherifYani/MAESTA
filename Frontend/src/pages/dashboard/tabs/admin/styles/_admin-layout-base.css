@@ -1,0 +1,256 @@
+/**
+ * @file _admin-layout-base.css
+ * @description Base layout styles for Admin Dashboard pages
+ * Provides consistent structure and spacing patterns
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import './_admin-design-tokens.css';
+
+/* ==================== Page Container Base ==================== */
+.admin-page-container {
+    width: 100%;
+    max-width: var(--admin-container-max-width);
+    margin: 0 auto;
+    padding: var(--admin-space-xl) var(--admin-space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-xl);
+    min-height: 100vh;
+}
+
+/* ==================== Page Header ==================== */
+.admin-page-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-md);
+    margin-bottom: var(--admin-space-lg);
+}
+
+.admin-page-header__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--admin-space-md);
+    flex-wrap: wrap;
+}
+
+.admin-page-header__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-space-xs);
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-page-header__actions {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* ==================== Page Title ==================== */
+.admin-page-title {
+    font-size: var(--admin-font-size-page-title);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.admin-page-description {
+    font-size: var(--admin-font-size-body);
+    color: var(--color-muted-foreground);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ==================== Stats Section ==================== */
+.admin-stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--admin-space-md);
+    margin-bottom: var(--admin-space-lg);
+}
+
+/* ==================== Toolbar Section ==================== */
+.admin-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--admin-space-md);
+    padding: var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-xl);
+    backdrop-filter: var(--admin-glass-backdrop);
+    box-shadow: var(--admin-shadow-toolbar);
+    margin-bottom: var(--admin-space-lg);
+    flex-wrap: wrap;
+}
+
+.admin-toolbar__left {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.admin-toolbar__right {
+    display: flex;
+    gap: var(--admin-space-sm);
+    align-items: center;
+}
+
+/* ==================== Content Section ==================== */
+.admin-content {
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-2xl);
+    backdrop-filter: var(--admin-glass-backdrop);
+    box-shadow: var(--admin-shadow-card);
+    padding: var(--admin-space-xl);
+    transition: box-shadow var(--admin-transition-normal);
+}
+
+.admin-content:hover {
+    box-shadow: var(--admin-shadow-hover);
+}
+
+/* ==================== Section Title ==================== */
+.admin-section-title {
+    font-size: var(--admin-font-size-section-title);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-foreground);
+    margin: 0 0 var(--admin-space-md) 0;
+}
+
+/* ==================== Card Base ==================== */
+.admin-card {
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-xl);
+    backdrop-filter: var(--admin-glass-backdrop);
+    box-shadow: var(--admin-shadow-card);
+    padding: var(--admin-space-lg);
+    transition: all var(--admin-transition-normal);
+}
+
+.admin-card:hover {
+    box-shadow: var(--admin-shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* ==================== Grid Layouts ==================== */
+.admin-grid {
+    display: grid;
+    gap: var(--admin-space-lg);
+}
+
+.admin-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.admin-grid--3col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.admin-grid--4col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* ==================== Responsive Breakpoints ==================== */
+
+/* Tablet and below */
+@media (max-width: 60.5rem) {
+    .admin-page-container {
+        padding: var(--admin-space-lg) var(--admin-space-md);
+        gap: var(--admin-space-lg);
+    }
+
+    .admin-page-header__row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-page-header__actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-toolbar__left,
+    .admin-toolbar__right {
+        width: 100%;
+    }
+
+    .admin-grid--2col,
+    .admin-grid--3col,
+    .admin-grid--4col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 40rem) {
+    .admin-page-container {
+        padding: var(--admin-space-md);
+        gap: var(--admin-space-md);
+    }
+
+    .admin-page-title {
+        font-size: 1.5rem;
+    }
+
+    .admin-content {
+        padding: var(--admin-space-md);
+        border-radius: var(--admin-radius-xl);
+    }
+
+    .admin-grid--2col,
+    .admin-grid--3col,
+    .admin-grid--4col {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-stats-section {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-toolbar {
+        padding: var(--admin-space-sm);
+    }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+    .admin-page-container {
+        padding: 0;
+    }
+
+    .admin-toolbar,
+    .admin-page-header__actions {
+        display: none;
+    }
+
+    .admin-content {
+        box-shadow: none;
+        border: 1px solid var(--color-border);
+    }
+
+    .admin-card {
+        break-inside: avoid;
+    }
+}

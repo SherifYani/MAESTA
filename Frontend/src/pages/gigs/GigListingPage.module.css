@@ -1,0 +1,265 @@
+/**
+ * @file GigListingPage.module.css
+ * @description Styles for the GigListingPage component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    padding: var(--space-8) 0;
+    background: radial-gradient(ellipse at top,
+            var(--color-radial-pink-1) 0%,
+            transparent 70%);
+    border-radius: var(--radius-lg);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-4);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-6);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.postButton {
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.controlsBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-card);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+}
+
+.searchSection {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+}
+
+.searchIcon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.searchInput {
+    padding-left: var(--space-8);
+}
+
+.searchInput:global(.input) {
+    width: 100%;
+    padding-left: var(--space-6);
+    border-radius: var(--radius-full);
+}
+
+.searchButton {
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.filterToggleButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filterToggleButton:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.filterToggleButton.active {
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+.mainContent {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+}
+
+.errorAlert {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.resultsInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.resultsCount {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.gigsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.noResults {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    color: var(--color-muted-foreground);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+.pageInfo {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .pageGrid {
+        grid-template-columns: 240px 1fr;
+        gap: var(--space-6);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .pageGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 48rem) {
+    .controlsBar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: var(--space-3);
+    }
+
+    .searchSection {
+        max-width: 100%;
+    }
+
+    .filterToggleButton {
+        justify-content: center;
+    }
+
+    .gigsGrid {
+        grid-template-columns: 1fr;
+        margin-bottom: var(--space-6);
+    }
+}
+
+@media (max-width: 40rem) {
+    .gigsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* Dark Theme Support */
+.dark .mainContent {
+    background-color: var(--color-card);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark .errorAlert {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+}
+
+/* Hover Effects */
+.postButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--color-shadow-pink);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gigsGrid>*:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px var(--color-shadow-pink);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
