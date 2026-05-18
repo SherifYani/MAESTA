@@ -8,6 +8,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { format, parse, isValid, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import styles from './DatePicker.module.css';
 
 export const DatePicker = ({
@@ -18,6 +19,8 @@ export const DatePicker = ({
   maxDate,
   className = '',
 }) => {
+  const { t } = useTranslation(['common']);
+  const displayPlaceholder = placeholder === 'Select date' ? t('common:actions.selectDate', 'Select date') : placeholder;
   const getSafeDate = (d) => (d && !isNaN(new Date(d).getTime()) ? new Date(d) : null);
   const safeSelectedDate = getSafeDate(selectedDate);
 
@@ -74,7 +77,7 @@ export const DatePicker = ({
         type="text"
         value={inputValue}
         onChange={handleInputChange}
-        placeholder={placeholder}
+        placeholder={displayPlaceholder}
         className={styles.input}
         onFocus={() => setIsOpen(true)}
       />

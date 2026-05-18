@@ -12,6 +12,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import jobService from '../../services/jobService';
 import { PageContainer } from '../../components/layout';
 import styles from './JobApplicationPage.module.css';
@@ -22,6 +23,7 @@ import styles from './JobApplicationPage.module.css';
  * @returns {JSX.Element} The rendered job application page
  */
 const JobApplicationPage = () => {
+    const { t } = useTranslation(['jobs', 'common', 'validation']);
     const { jobId } = useParams();
     const navigate = useNavigate();
     const [job, setJob] = useState(null);
@@ -54,7 +56,7 @@ const JobApplicationPage = () => {
             const jobData = await jobService.getJobById(jobId);
             setJob(jobData);
         } catch (err) {
-            setError('Failed to load job details');
+            setError(t('jobs:apply.errorLoad', 'Failed to load job details'));
         } finally {
             setLoading(false);
         }
@@ -77,7 +79,7 @@ const JobApplicationPage = () => {
         const file = e.target.files[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
-                setError('File size must be less than 5MB');
+                setError(t('validation:fileSize5MB', 'File size must be less than 5MB'));
                 return;
             }
             setFormData(prev => ({ ...prev, resume: file }));
@@ -93,7 +95,7 @@ const JobApplicationPage = () => {
         e.preventDefault();
 
         if (!formData.coverLetter.trim()) {
-            setError('Please write a cover letter');
+            setError(t('validation:coverLetterRequired', 'Please write a cover letter'));
             return;
         }
 
@@ -118,7 +120,7 @@ const JobApplicationPage = () => {
                 navigate('/dashboard');
             }, 3000);
         } catch (err) {
-            setError(err.message || 'Failed to submit application');
+            setError(err.message || t('jobs:apply.errorSubmit', 'Failed to submit application'));
         } finally {
             setSubmitting(false);
         }
@@ -128,7 +130,7 @@ const JobApplicationPage = () => {
         return (
             <div className={styles.loadingContainer}>
                 <div className={styles.spinner}></div>
-                <p>Loading...</p>
+                <p>{t('common:actions.loading', 'Loading...')}</p>
             </div>
         );
     }
@@ -137,9 +139,9 @@ const JobApplicationPage = () => {
         return (
             <div className={styles.successContainer}>
                 <div className={styles.successIcon}>✓</div>
-                <h2>Application Submitted!</h2>
-                <p>Your application has been sent successfully.</p>
-                <p className={styles.redirectText}>Redirecting to dashboard...</p>
+                <h2>{t('jobs:apply.successTitle', 'Application Submitted!')}</h2>
+                <p>{t('jobs:apply.successMsg', 'Your application has been sent successfully.')}</p>
+                <p className={styles.redirectText}>{t('jobs:apply.redirecting', 'Redirecting to dashboard...')}</p>
             </div>
         );
     }
@@ -150,11 +152,11 @@ const JobApplicationPage = () => {
                 <button
                     className={styles.backButton}
                     onClick={() => navigate(-1)}
-                    aria-label="Go back to previous page"
+                    aria-label={t('common:actions.goBack', 'Go back to previous page')}
                 >
-                    ← Back
+                    ← {t('common:actions.back', 'Back')}
                 </button>
-                <h1 className={styles.pageTitle}>Apply for Position</h1>
+                <h1 className={styles.pageTitle}>{t('jobs:apply.title', 'Apply for Position')}</h1>
             </div>
 
             {job && (
@@ -176,26 +178,26 @@ const JobApplicationPage = () => {
             <form onSubmit={handleSubmit} className={styles.applicationForm} noValidate>
                 <div className={styles.formGroup}>
                     <label htmlFor="coverLetter">
-                        Cover Letter <span className={styles.required}>*</span>
+                        {t('jobs:apply.coverLetter', 'Cover Letter')} <span className={styles.required}>*</span>
                     </label>
                     <textarea
                         id="coverLetter"
                         name="coverLetter"
                         value={formData.coverLetter}
                         onChange={handleInputChange}
-                        placeholder="Tell us why you're a great fit for this position..."
+                        placeholder={t('jobs:apply.coverLetterPlaceholder', "Tell us why you're a great fit for this position...")}
                         rows={8}
                         required
                         aria-required="true"
                         maxLength={2000}
                     />
                     <span className={styles.charCount}>
-                        {formData.coverLetter.length} / 2000 characters
+                        {t('jobs:apply.charCount', '{{count}} / {{max}} characters', { count: formData.coverLetter.length, max: 2000 })}
                     </span>
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="resume">Resume / CV</label>
+                    <label htmlFor="resume">{t('jobs:apply.resume', 'Resume / CV')}</label>
                     <div className={styles.fileUpload}>
                         <input
                             type="file"
@@ -211,9 +213,9 @@ const JobApplicationPage = () => {
                             ) : (
                                 <>
                                     <span className={styles.uploadIcon} aria-hidden="true">📄</span>
-                                    <span>Click to upload or drag and drop</span>
+                                    <span>{t('jobs:apply.uploadOrDrag', 'Click to upload or drag and drop')}</span>
                                     <span className={styles.fileTypes} id="fileTypes">
-                                        PDF, DOC, DOCX (max 5MB)
+                                        {t('jobs:apply.fileTypes', 'PDF, DOC, DOCX (max 5MB)')}
                                     </span>
                                 </>
                             )}
@@ -222,7 +224,7 @@ const JobApplicationPage = () => {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="portfolioUrl">Portfolio / LinkedIn URL</label>
+                    <label htmlFor="portfolioUrl">{t('jobs:apply.portfolioUrl', 'Portfolio / LinkedIn URL')}</label>
                     <input
                         type="url"
                         id="portfolioUrl"
@@ -235,19 +237,19 @@ const JobApplicationPage = () => {
 
                 <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                        <label htmlFor="expectedSalary">Expected Salary</label>
+                        <label htmlFor="expectedSalary">{t('jobs:apply.expectedSalary', 'Expected Salary')}</label>
                         <input
                             type="text"
                             id="expectedSalary"
                             name="expectedSalary"
                             value={formData.expectedSalary}
                             onChange={handleInputChange}
-                            placeholder="e.g., $50,000 - $60,000"
+                            placeholder={t('jobs:apply.expectedSalaryPlaceholder', 'e.g., $50,000 - $60,000')}
                         />
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label htmlFor="availableStartDate">Available Start Date</label>
+                        <label htmlFor="availableStartDate">{t('jobs:apply.availableStartDate', 'Available Start Date')}</label>
                         <input
                             type="date"
                             id="availableStartDate"
@@ -259,13 +261,13 @@ const JobApplicationPage = () => {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="additionalInfo">Additional Information</label>
+                    <label htmlFor="additionalInfo">{t('jobs:apply.additionalInfo', 'Additional Information')}</label>
                     <textarea
                         id="additionalInfo"
                         name="additionalInfo"
                         value={formData.additionalInfo}
                         onChange={handleInputChange}
-                        placeholder="Any other information you'd like to share..."
+                        placeholder={t('jobs:apply.additionalInfoPlaceholder', "Any other information you'd like to share...")}
                         rows={4}
                     />
                 </div>
@@ -276,14 +278,14 @@ const JobApplicationPage = () => {
                         className={styles.cancelButton}
                         onClick={() => navigate(-1)}
                     >
-                        Cancel
+                        {t('common:actions.cancel', 'Cancel')}
                     </button>
                     <button
                         type="submit"
                         className={styles.submitButton}
                         disabled={submitting}
                     >
-                        {submitting ? 'Submitting...' : 'Submit Application'}
+                        {submitting ? t('jobs:apply.submitting', 'Submitting...') : t('jobs:apply.submitApplication', 'Submit Application')}
                     </button>
                 </div>
             </form>

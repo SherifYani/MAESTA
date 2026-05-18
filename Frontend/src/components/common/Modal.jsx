@@ -8,6 +8,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import styles from './Modal.module.css';
 
 /**
@@ -30,6 +31,7 @@ export const Modal = ({
   size = 'md',
   closeOnOverlayClick = true,
 }) => {
+  const { t } = useTranslation(['common']);
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export const Modal = ({
             <button
               className={styles.closeButton}
               onClick={onClose}
-              aria-label="Close modal"
+              aria-label={t('common:actions.closeModal', "Close modal")}
             >
               ×
             </button>

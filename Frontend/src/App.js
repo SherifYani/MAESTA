@@ -10,6 +10,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { FloatingAssistantIcon, ChatWindow } from "./components/ai-assistant";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import LanguageAnnouncer from "./components/common/LanguageAnnouncer";
 import TableSkeleton from "./components/common/Skeleton/TableSkeleton";
 import "./styles/globals.css";
 import "./styles/App.css";
@@ -114,6 +115,8 @@ function App() {
         <Route path="/404" element={<ErrorPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
+
+      <LanguageAnnouncer />
 
       {/* Global AI Assistant */}
       <FloatingAssistantIcon

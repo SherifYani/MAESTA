@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import FormTextarea from "../../components/forms/FormTextarea";
 import FormSelect from "../../components/forms/FormSelect";
@@ -27,6 +28,7 @@ import authService from "../../services/authService";
  * @returns {JSX.Element} The rendered company onboarding component
  */
 function CompanyOnboarding() {
+  const { t } = useTranslation(['auth', 'validation']);
   const navigate = useNavigate();
 
   // Updated form state to match guide fields
@@ -231,7 +233,7 @@ function CompanyOnboarding() {
       localStorage.removeItem("userRole");
       navigate("/dashboard");
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to complete registration. Please try again.";
+      const msg = err?.response?.data?.message || err?.message || t('auth:onboarding.company.registrationFailed', "Failed to complete registration. Please try again.");
       setApiError(msg);
     } finally {
       setIsLoading(false);
@@ -242,9 +244,9 @@ function CompanyOnboarding() {
     <div className="onboarding-phase-2">
       <div className="onboarding-phase-2__container">
         <div className="onboarding-phase-2__header">
-          <h1 className="onboarding-phase-2__title">Company Registration</h1>
+          <h1 className="onboarding-phase-2__title">{t('auth:onboarding.company.title', "Company Registration")}</h1>
           <p className="onboarding-phase-2__subtitle">
-            Complete your company profile as specified in the guide
+            {t('auth:onboarding.company.subtitle', "Complete your company profile as specified in the guide")}
           </p>
         </div>
 
@@ -259,7 +261,7 @@ function CompanyOnboarding() {
         {/* Progress Section */}
         <div className="onboarding-phase-2__progress-section">
           <div className="onboarding-phase-2__progress-header">
-            <h3>Registration Progress</h3>
+            <h3>{t('auth:onboarding.company.registrationProgress', "Registration Progress")}</h3>
             <span className="onboarding-phase-2__progress-percentage">
               {overallProgress}%
             </span>
@@ -271,8 +273,8 @@ function CompanyOnboarding() {
           </div>
           <p className="onboarding-phase-2__progress-hint">
             {overallProgress === 100
-              ? "Company profile ready for submission!"
-              : "Complete required sections to verify your company"}
+              ? t('auth:onboarding.company.readyForSubmission', "Company profile ready for submission!")
+              : t('auth:onboarding.company.completeRequired', "Complete required sections to verify your company")}
           </p>
         </div>
 
@@ -283,17 +285,17 @@ function CompanyOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Company Basic Information
+                    {t('auth:onboarding.company.companyBasicInfo', "Company Basic Information")}
                   </h2>
                   {completionStatus.companyInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Required company details as specified in the guide
+                  {t('auth:onboarding.company.basicInfoDesc', "Required company details as specified in the guide")}
                 </p>
               </div>
 
@@ -304,7 +306,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-building"
                     type="text"
                     name="companyName"
-                    placeholder="Company Name"
+                    placeholder={t('auth:onboarding.company.companyNamePlaceholder', "Company Name")}
                     value={companyData.companyName}
                     onChange={handleCompanyDataChange}
                     hasError={!!formErrors.companyName}
@@ -312,7 +314,7 @@ function CompanyOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Your company's legal name
+                    {t('auth:onboarding.company.companyNameHint', "Your company's legal name")}
                   </p>
                 </div>
 
@@ -324,17 +326,17 @@ function CompanyOnboarding() {
                     value={companyData.industry}
                     onChange={handleCompanyDataChange}
                     options={[
-                      { value: "", label: "Select Industry" },
-                      { value: "technology", label: "Technology" },
-                      { value: "healthcare", label: "Healthcare" },
-                      { value: "finance", label: "Finance" },
-                      { value: "education", label: "Education" },
-                      { value: "retail", label: "Retail" },
-                      { value: "manufacturing", label: "Manufacturing" },
-                      { value: "construction", label: "Construction" },
-                      { value: "transportation", label: "Transportation" },
-                      { value: "hospitality", label: "Hospitality" },
-                      { value: "other", label: "Other" },
+                      { value: "", label: t('auth:onboarding.company.selectIndustry', "Select Industry") },
+                      { value: "technology", label: t('auth:onboarding.company.industryTech', "Technology") },
+                      { value: "healthcare", label: t('auth:onboarding.company.industryHealth', "Healthcare") },
+                      { value: "finance", label: t('auth:onboarding.company.industryFinance', "Finance") },
+                      { value: "education", label: t('auth:onboarding.company.industryEdu', "Education") },
+                      { value: "retail", label: t('auth:onboarding.company.industryRetail', "Retail") },
+                      { value: "manufacturing", label: t('auth:onboarding.company.industryMfg', "Manufacturing") },
+                      { value: "construction", label: t('auth:onboarding.company.industryConstruction', "Construction") },
+                      { value: "transportation", label: t('auth:onboarding.company.industryTransport', "Transportation") },
+                      { value: "hospitality", label: t('auth:onboarding.company.industryHospitality', "Hospitality") },
+                      { value: "other", label: t('auth:onboarding.company.industryOther', "Other") },
                     ]}
                     hasError={!!formErrors.industry}
                     errorMessage={formErrors.industry}
@@ -350,13 +352,13 @@ function CompanyOnboarding() {
                     value={companyData.companySize}
                     onChange={handleCompanyDataChange}
                     options={[
-                      { value: "", label: "Select Company Size" },
-                      { value: "1-10", label: "1-10 employees" },
-                      { value: "11-50", label: "11-50 employees" },
-                      { value: "51-200", label: "51-200 employees" },
-                      { value: "201-500", label: "201-500 employees" },
-                      { value: "501-1000", label: "501-1000 employees" },
-                      { value: "1000+", label: "1000+ employees" },
+                      { value: "", label: t('auth:onboarding.company.selectSize', "Select Company Size") },
+                      { value: "1-10", label: t('auth:onboarding.company.size1_10', "1-10 employees") },
+                      { value: "11-50", label: t('auth:onboarding.company.size11_50', "11-50 employees") },
+                      { value: "51-200", label: t('auth:onboarding.company.size51_200', "51-200 employees") },
+                      { value: "201-500", label: t('auth:onboarding.company.size201_500', "201-500 employees") },
+                      { value: "501-1000", label: t('auth:onboarding.company.size501_1000', "501-1000 employees") },
+                      { value: "1000+", label: t('auth:onboarding.company.size1000_plus', "1000+ employees") },
                     ]}
                     hasError={!!formErrors.companySize}
                     errorMessage={formErrors.companySize}
@@ -371,17 +373,17 @@ function CompanyOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Company Details
+                    {t('auth:onboarding.company.companyDetails', "Company Details")}
                   </h2>
                   {completionStatus.companyDetails && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Additional company information (optional)
+                  {t('auth:onboarding.company.companyDetailsDesc', "Additional company information (optional)")}
                 </p>
               </div>
 
@@ -392,7 +394,7 @@ function CompanyOnboarding() {
                     <FormTextarea
                       icon="fa-solid fa-align-left"
                       name="description"
-                      placeholder="Company description (up to 2000 characters)"
+                      placeholder={t('auth:onboarding.company.descPlaceholder', "Company description (up to 2000 characters)")}
                       value={companyData.description}
                       onChange={handleCompanyDataChange}
                       rows={6}
@@ -407,7 +409,7 @@ function CompanyOnboarding() {
                             ? "onboarding-phase-2__character-counter--warning"
                             : ""
                         }>
-                        {companyData.description.length} / 2000 characters
+                        {companyData.description.length} / 2000 {t('auth:onboarding.jobseeker.characters', "characters")}
                       </span>
                     </div>
                   </div>
@@ -419,7 +421,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-coins"
                     type="number"
                     name="foundedYear"
-                    placeholder="Founded Year (Optional)"
+                    placeholder={t('auth:onboarding.company.foundedYearPlaceholder', "Founded Year (Optional)")}
                     value={companyData.foundedYear}
                     onChange={handleCompanyDataChange}
                     min="1800"
@@ -435,7 +437,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-globe"
                     type="url"
                     name="website"
-                    placeholder="Company Website (Optional)"
+                    placeholder={t('auth:onboarding.company.websitePlaceholder', "Company Website (Optional)")}
                     value={companyData.website}
                     onChange={handleCompanyDataChange}
                     hasError={!!formErrors.website}
@@ -449,7 +451,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-flag"
                     type="text"
                     name="country"
-                    placeholder="Country (Optional)"
+                    placeholder={t('auth:onboarding.company.countryPlaceholder', "Country (Optional)")}
                     value={companyData.country}
                     onChange={handleCompanyDataChange}
                   />
@@ -460,7 +462,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-city"
                     type="text"
                     name="city"
-                    placeholder="City (Optional)"
+                    placeholder={t('auth:onboarding.company.cityPlaceholder', "City (Optional)")}
                     value={companyData.city}
                     onChange={handleCompanyDataChange}
                   />
@@ -472,14 +474,14 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-image"
                     type="url"
                     name="logoUrl"
-                    placeholder="Logo URL (Optional)"
+                    placeholder={t('auth:onboarding.company.logoUrlPlaceholder', "Logo URL (Optional)")}
                     value={companyData.logoUrl}
                     onChange={handleCompanyDataChange}
                     hasError={!!formErrors.logoUrl}
                     errorMessage={formErrors.logoUrl}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    URL to your company logo
+                    {t('auth:onboarding.company.logoUrlHint', "URL to your company logo")}
                   </p>
                 </div>
               </div>
@@ -490,17 +492,17 @@ function CompanyOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Employer Contact Information
+                    {t('auth:onboarding.company.employerContactInfo', "Employer Contact Information")}
                   </h2>
                   {completionStatus.contactInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Your contact details as the employer (all optional)
+                  {t('auth:onboarding.company.contactInfoDesc', "Your contact details as the employer (all optional)")}
                 </p>
               </div>
 
@@ -511,7 +513,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-envelope"
                     type="email"
                     name="businessEmail"
-                    placeholder="Business Email (Optional)"
+                    placeholder={t('auth:onboarding.company.businessEmailPlaceholder', "Business Email (Optional)")}
                     value={employerData.businessEmail}
                     onChange={handleEmployerDataChange}
                     hasError={!!formErrors.businessEmail}
@@ -525,7 +527,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-user-tie"
                     type="text"
                     name="contactPerson"
-                    placeholder="Contact Person (Optional)"
+                    placeholder={t('auth:onboarding.company.contactPersonPlaceholder', "Contact Person (Optional)")}
                     value={employerData.contactPerson}
                     onChange={handleEmployerDataChange}
                   />
@@ -537,7 +539,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-phone"
                     type="tel"
                     name="contactPhone"
-                    placeholder="Contact Phone (Optional)"
+                    placeholder={t('auth:onboarding.company.contactPhonePlaceholder', "Contact Phone (Optional)")}
                     value={employerData.contactPhone}
                     onChange={handleEmployerDataChange}
                   />
@@ -549,12 +551,12 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-id-card"
                     type="text"
                     name="nationalId"
-                    placeholder="National ID (Optional)"
+                    placeholder={t('auth:onboarding.company.nationalIdPlaceholder', "National ID (Optional)")}
                     value={employerData.nationalId}
                     onChange={handleEmployerDataChange}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    For individual employers
+                    {t('auth:onboarding.company.nationalIdHint', "For individual employers")}
                   </p>
                 </div>
 
@@ -564,7 +566,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-receipt"
                     type="text"
                     name="taxNumber"
-                    placeholder="Tax Number (Optional)"
+                    placeholder={t('auth:onboarding.company.taxNumberPlaceholder', "Tax Number (Optional)")}
                     value={employerData.taxNumber}
                     onChange={handleEmployerDataChange}
                   />
@@ -577,17 +579,17 @@ function CompanyOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Legal Verification
+                    {t('auth:onboarding.company.legalVerification', "Legal Verification")}
                   </h2>
                   {completionStatus.legalInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Required legal information for company verification
+                  {t('auth:onboarding.company.legalInfoDesc', "Required legal information for company verification")}
                 </p>
               </div>
 
@@ -598,7 +600,7 @@ function CompanyOnboarding() {
                     icon="fa-solid fa-id-card"
                     type="text"
                     name="commercialRegistrationNumber"
-                    placeholder="Commercial Registration Number"
+                    placeholder={t('auth:onboarding.company.crnPlaceholder', "Commercial Registration Number")}
                     value={companyData.commercialRegistrationNumber}
                     onChange={handleCompanyDataChange}
                     hasError={!!formErrors.commercialRegistrationNumber}
@@ -606,7 +608,7 @@ function CompanyOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Your company's official registration number
+                    {t('auth:onboarding.company.crnHint', "Your company's official registration number")}
                   </p>
                 </div>
 
@@ -615,20 +617,19 @@ function CompanyOnboarding() {
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
                       <i className="fa-solid fa-file-contract" />
-                      Commercial Registration Document (Optional)
+                      {t('auth:onboarding.company.crnDocTitle', "Commercial Registration Document (Optional)")}
                     </h3>
                     <p
                       className="onboarding-phase-2__field-hint"
                       style={{ marginBottom: "10px" }}>
-                      Note: This file upload is not in the registration guide.
-                      The guide expects URLs only.
+                      {t('auth:onboarding.company.notInGuideUrlsOnly', "Note: This file upload is not in the registration guide. The guide expects URLs only.")}
                     </p>
                     <FileUpload
-                      label="Click to upload or drag and drop"
+                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
                       accept=".pdf,.doc,.docx,image/*"
                       onChange={(file) => {
                         if (file && file.size > 10 * 1024 * 1024) {
-                          setApiError("Document size must be less than 10MB");
+                          setApiError(t('auth:onboarding.company.docSizeError', "Document size must be less than 10MB"));
                           window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
@@ -646,20 +647,19 @@ function CompanyOnboarding() {
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
                       <i className="fa-solid fa-image" />
-                      Company Logo Upload (Optional)
+                      {t('auth:onboarding.company.logoUploadTitle', "Company Logo Upload (Optional)")}
                     </h3>
                     <p
                       className="onboarding-phase-2__field-hint"
                       style={{ marginBottom: "10px" }}>
-                      Note: This file upload is not in the registration guide.
-                      The guide expects LogoUrl (URL).
+                      {t('auth:onboarding.company.notInGuideLogoUrl', "Note: This file upload is not in the registration guide. The guide expects LogoUrl (URL).")}
                     </p>
                     <FileUpload
-                      label="Click to upload or drag and drop"
+                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 5 * 1024 * 1024) {
-                          setApiError("Logo size must be less than 5MB");
+                          setApiError(t('auth:onboarding.company.logoSizeError', "Logo size must be less than 5MB"));
                           window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
@@ -679,21 +679,19 @@ function CompanyOnboarding() {
                       className="onboarding-phase-2__section-title"
                       style={{ fontSize: "1.1rem" }}>
                       <i className="fa-solid fa-map-marker-alt" />
-                      Current Form Location Field
+                      {t('auth:onboarding.company.locationTitle', "Current Form Location Field")}
                     </h3>
                     <p
                       className="onboarding-phase-2__section-description"
                       style={{ fontSize: "0.9rem" }}>
-                      This field exists in the current implementation but is not
-                      in the guide. The guide uses separate Country and City
-                      fields.
+                      {t('auth:onboarding.company.locationDesc', "This field exists in the current implementation but is not in the guide. The guide uses separate Country and City fields.")}
                     </p>
                   </div>
                   <FormInput
                     icon="fa-solid fa-location-dot"
                     type="text"
                     name="location"
-                    placeholder="City, Country (Current Implementation)"
+                    placeholder={t('auth:onboarding.company.locationPlaceholder', "City, Country (Current Implementation)")}
                     value={extraFields.location}
                     onChange={handleExtraFieldChange}
                   />
@@ -712,12 +710,12 @@ function CompanyOnboarding() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
-                    Submitting...
+                    {t('auth:onboarding.company.submitting', "Submitting...")}
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
-                    Complete Registration
+                    {t('auth:onboarding.company.completeRegistration', "Complete Registration")}
                   </>
                 )}
               </button>
@@ -729,10 +727,9 @@ function CompanyOnboarding() {
                 <i className="fa-solid fa-shield-check" />
               </div>
               <div className="onboarding-phase-2__verification-text">
-                <h4>Verification Process</h4>
+                <h4>{t('auth:onboarding.company.verificationProcess', "Verification Process")}</h4>
                 <p>
-                  Your company will be verified within 24-48 hours. You'll
-                  receive an email once verification is complete.
+                  {t('auth:onboarding.company.verificationDesc', "Your company will be verified within 24-48 hours. You'll receive an email once verification is complete.")}
                 </p>
               </div>
             </div>
@@ -740,14 +737,13 @@ function CompanyOnboarding() {
             {/* Terms Notice */}
             <div className="onboarding-phase-2__terms-notice">
               <p>
-                By completing registration, you certify that all information is
-                accurate and agree to our{" "}
+                {t('auth:onboarding.company.termsNotice', "By completing registration, you certify that all information is accurate and agree to our")}{" "}
                 <a href="/terms" className="onboarding-phase-2__terms-link">
-                  Terms of Service
+                  {t('auth:terms', "Terms of Service")}
                 </a>{" "}
-                and{" "}
+                {t('auth:and', "and")}{" "}
                 <a href="/privacy" className="onboarding-phase-2__terms-link">
-                  Privacy Policy
+                  {t('auth:privacy', "Privacy Policy")}
                 </a>
                 .
               </p>

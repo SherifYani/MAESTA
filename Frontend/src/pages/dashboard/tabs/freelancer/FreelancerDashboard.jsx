@@ -12,6 +12,8 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import gigService from '../../../../services/gigService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
@@ -43,6 +45,7 @@ import styles from "./FreelancerDashboard.module.css";
  * Enhanced FreelancerDashboard
  */
 const FreelancerDashboard = ({ data }) => {
+  const { t } = useTranslation(['dashboards', 'common']);
   // Live API data
   const [jobPosts,    setJobPosts]    = useState([]);
   const [apiLoading,  setApiLoading]  = useState(true);
@@ -98,36 +101,36 @@ const FreelancerDashboard = ({ data }) => {
   // Quick Insights Metrics for StatsGrid
   const quickInsightsMetrics = [
     {
-      title: "Monthly Earnings",
+      title: t('dashboards:freelancer.stats.monthlyEarnings', 'Monthly Earnings'),
       value: `$${currentMonthEarnings.toLocaleString()}`,
-      change: "vs. last month",
+      change: t('dashboards:freelancer.stats.vsLastMonth', 'vs. last month'),
       icon: DollarSign,
       trendType: "positive",
-      description: "Current month earnings",
+      description: t('dashboards:freelancer.stats.currentMonthEarnings', 'Current month earnings'),
     },
     {
-      title: "Client Satisfaction",
+      title: t('dashboards:freelancer.stats.clientSatisfaction', 'Client Satisfaction'),
       value: `${clientSatisfaction}/5`,
-      change: "from client reviews",
+      change: t('dashboards:freelancer.stats.fromClientReviews', 'from client reviews'),
       icon: Award,
       trendType: "positive",
-      description: "Average client rating",
+      description: t('dashboards:freelancer.stats.avgClientRating', 'Average client rating'),
     },
     {
-      title: "On-Time Delivery",
+      title: t('dashboards:freelancer.stats.onTimeDelivery', 'On-Time Delivery'),
       value: `${performanceMetrics?.onTimeDelivery || 96}%`,
-      change: "project completion rate",
+      change: t('dashboards:freelancer.stats.completionRate', 'project completion rate'),
       icon: Clock,
       trendType: "positive",
-      description: "Projects delivered on time",
+      description: t('dashboards:freelancer.stats.deliveredOnTime', 'Projects delivered on time'),
     },
     {
-      title: "Repeat Clients",
+      title: t('dashboards:freelancer.stats.repeatClients', 'Repeat Clients'),
       value: `${performanceMetrics?.repeatClients || 8}`,
-      change: "loyal client count",
+      change: t('dashboards:freelancer.stats.loyalClientCount', 'loyal client count'),
       icon: Users,
       trendType: "positive",
-      description: "Returning clients",
+      description: t('dashboards:freelancer.stats.returningClients', 'Returning clients'),
     },
   ];
 
@@ -151,9 +154,9 @@ const FreelancerDashboard = ({ data }) => {
       {/* Header Section */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>Freelancer Dashboard</h1>
+          <h1 className={styles.title}>{t('dashboards:freelancer.title', 'Freelancer Dashboard')}</h1>
           <p className={styles.subtitle}>
-            Track your projects, earnings, and find new opportunities
+            {t('dashboards:freelancer.subtitle', 'Track your projects, earnings, and find new opportunities')}
           </p>
         </div>
 
@@ -162,13 +165,13 @@ const FreelancerDashboard = ({ data }) => {
             variant="primary"
             icon={Plus}
             onClick={() => handleQuickAction("create-proposal")}>
-            New Proposal
+            {t('dashboards:freelancer.newProposal', 'New Proposal')}
           </Button>
           <Button
             variant="outline"
             icon={Zap}
             onClick={() => handleQuickAction("quick-apply")}>
-            Quick Apply
+            {t('dashboards:freelancer.quickApply', 'Quick Apply')}
           </Button>
         </div>
       </header>
@@ -184,13 +187,13 @@ const FreelancerDashboard = ({ data }) => {
         <div className={styles.leftColumn}>
           {/* Recent Activity with Card Wrapper */}
           <Card
-            title="Recent Activity"
-            subtitle="Your latest updates and notifications"
+            title={t('dashboards:common.recentActivity.title', 'Recent Activity')}
+            subtitle={t('dashboards:freelancer.recentActivity.subtitle', 'Your latest updates and notifications')}
             className={styles.activityCard}
             variant="glass"
             action={
               <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
+                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
               </Button>
             }>
             <RecentActivity activities={activities} limit={5} />
@@ -198,12 +201,12 @@ const FreelancerDashboard = ({ data }) => {
 
           {/* Pending Actions with Card Wrapper */}
           <Card
-            title="Pending Actions"
-            subtitle={`${pendingActions.length} tasks requiring your attention`}
+            title={t('dashboards:common.pendingActions.title', 'Pending Actions')}
+            subtitle={t('dashboards:common.pendingActions.subtitle', '{{count}} tasks to complete', { count: pendingActions.length })}
             className={styles.actionsCard}
             variant="glass"
             action={
-              <Badge variant="warning">{pendingActions.length} pending</Badge>
+              <Badge variant="warning">{t('dashboards:common.pendingActions.badge', '{{count}} pending', { count: pendingActions.length })}</Badge>
             }>
             <PendingActions
               actions={pendingActions}
@@ -213,8 +216,8 @@ const FreelancerDashboard = ({ data }) => {
 
           {/* Profile Completeness - Compact View */}
           <Card
-            title="Profile Completeness"
-            subtitle="Improve your profile visibility"
+            title={t('dashboards:freelancer.profileCompleteness.title', 'Profile Completeness')}
+            subtitle={t('dashboards:freelancer.profileCompleteness.subtitle', 'Improve your profile visibility')}
             className={styles.profileCard}
             variant="glass">
             <div className={styles.profileContent}>
@@ -242,7 +245,7 @@ const FreelancerDashboard = ({ data }) => {
                           </div>
                           <div className={styles.kpiContent}>
                             <span className={styles.kpiLabel}>
-                              Tip {index + 1}
+                               {t('dashboards:freelancer.profileCompleteness.tipLabel', 'Tip {{n}}', { n: index + 1 })}
                             </span>
                             <span className={styles.kpiValueSmall}>{tip}</span>
                           </div>
@@ -255,9 +258,9 @@ const FreelancerDashboard = ({ data }) => {
                           <CheckCircle size={20} />
                         </div>
                         <div className={styles.kpiContent}>
-                          <span className={styles.kpiLabel}>Tip 1</span>
+                          <span className={styles.kpiLabel}>{t('dashboards:freelancer.profileCompleteness.tipLabel', 'Tip {{n}}', { n: 1 })}</span>
                           <span className={styles.kpiValueSmall}>
-                            Add portfolio projects
+                            {t('dashboards:freelancer.profileCompleteness.tip1', 'Add portfolio projects')}
                           </span>
                         </div>
                       </div>
@@ -266,9 +269,9 @@ const FreelancerDashboard = ({ data }) => {
                           <CheckCircle size={20} />
                         </div>
                         <div className={styles.kpiContent}>
-                          <span className={styles.kpiLabel}>Tip 2</span>
+                          <span className={styles.kpiLabel}>{t('dashboards:freelancer.profileCompleteness.tipLabel', 'Tip {{n}}', { n: 2 })}</span>
                           <span className={styles.kpiValueSmall}>
-                            Complete skill assessments
+                            {t('dashboards:freelancer.profileCompleteness.tip2', 'Complete skill assessments')}
                           </span>
                         </div>
                       </div>
@@ -277,9 +280,9 @@ const FreelancerDashboard = ({ data }) => {
                           <CheckCircle size={20} />
                         </div>
                         <div className={styles.kpiContent}>
-                          <span className={styles.kpiLabel}>Tip 3</span>
+                          <span className={styles.kpiLabel}>{t('dashboards:freelancer.profileCompleteness.tipLabel', 'Tip {{n}}', { n: 3 })}</span>
                           <span className={styles.kpiValueSmall}>
-                            Request client reviews
+                            {t('dashboards:freelancer.profileCompleteness.tip3', 'Request client reviews')}
                           </span>
                         </div>
                       </div>
@@ -295,13 +298,13 @@ const FreelancerDashboard = ({ data }) => {
         <div className={styles.rightColumn}>
           {/* Compact Job Posts */}
           <Card
-            title="Recommended Jobs"
-            subtitle={`${jobPosts.length} matches based on your profile`}
+            title={t('dashboards:freelancer.recommendedJobs.title', 'Recommended Jobs')}
+            subtitle={t('dashboards:freelancer.recommendedJobs.subtitle', '{{count}} matches based on your profile', { count: jobPosts.length })}
             className={styles.jobsCard}
             variant="glass"
             action={
               <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
+                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
               </Button>
             }>
             <div className={styles.compactJobsList}>
@@ -317,8 +320,8 @@ const FreelancerDashboard = ({ data }) => {
 
           {/* Earnings Overview - Compact View */}
           <Card
-            title="Earnings Overview"
-            subtitle={`Monthly target: $${monthlyTarget.toLocaleString()}`}
+            title={t('dashboards:freelancer.earningsOverview.title', 'Earnings Overview')}
+            subtitle={t('dashboards:freelancer.earningsOverview.subtitle', 'Monthly target: ${{target}}', { target: monthlyTarget.toLocaleString() })}
             className={styles.earningsCard}
             variant="glass">
             <EarningsOverviewWidget
@@ -332,8 +335,8 @@ const FreelancerDashboard = ({ data }) => {
 
           {/* Performance Metrics - Compact View */}
           <Card
-            title="Performance Metrics"
-            subtitle="Your freelancer success indicators"
+            title={t('dashboards:freelancer.performanceMetrics.title', 'Performance Metrics')}
+            subtitle={t('dashboards:freelancer.performanceMetrics.subtitle', 'Your freelancer success indicators')}
             className={styles.metricsCard}
             variant="glass">
             <div className={styles.kpiGrid}>
@@ -341,27 +344,27 @@ const FreelancerDashboard = ({ data }) => {
                 Object.entries(performanceMetrics).map(([key, value]) => {
                   const metricConfig = {
                     projectCompletionRate: {
-                      label: "Completion",
+                      label: t('dashboards:freelancer.metrics.completion', 'Completion'),
                       icon: CheckCircle,
                       color: "success",
                     },
                     clientSatisfaction: {
-                      label: "Satisfaction",
+                      label: t('dashboards:freelancer.metrics.satisfaction', 'Satisfaction'),
                       icon: Award,
                       color: "success",
                     },
                     onTimeDelivery: {
-                      label: "On-Time",
+                      label: t('dashboards:freelancer.metrics.onTime', 'On-Time'),
                       icon: Clock,
                       color: "success",
                     },
                     repeatClients: {
-                      label: "Repeat",
+                      label: t('dashboards:freelancer.metrics.repeat', 'Repeat'),
                       icon: Users,
                       color: "warning",
                     },
                     proposalAcceptance: {
-                      label: "Proposals",
+                      label: t('dashboards:freelancer.metrics.proposals', 'Proposals'),
                       icon: Target,
                       color: "success",
                     },
@@ -394,8 +397,8 @@ const FreelancerDashboard = ({ data }) => {
 
           {/* Quick Actions Panel */}
           <Card
-            title="Quick Actions"
-            subtitle="Common freelancer tasks"
+            title={t('dashboards:freelancer.quickActions.title', 'Quick Actions')}
+            subtitle={t('dashboards:freelancer.quickActions.subtitle', 'Common freelancer tasks')}
             className={styles.quickActionsCard}
             variant="glass">
             <div className={styles.quickActionsList}>
@@ -404,9 +407,9 @@ const FreelancerDashboard = ({ data }) => {
                 onClick={() => handleQuickAction("post-proposal")}>
                 <Briefcase size={20} />
                 <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>New Proposal</span>
+                  <span className={styles.quickActionTitle}>{t('dashboards:freelancer.quickActions.newProposal', 'New Proposal')}</span>
                   <span className={styles.quickActionDesc}>
-                    Submit a proposal
+                    {t('dashboards:freelancer.quickActions.newProposalDesc', 'Submit a proposal')}
                   </span>
                 </div>
               </button>
@@ -417,10 +420,10 @@ const FreelancerDashboard = ({ data }) => {
                 <Users size={20} />
                 <div className={styles.quickActionContent}>
                   <span className={styles.quickActionTitle}>
-                    Update Profile
+                    {t('dashboards:freelancer.quickActions.updateProfile', 'Update Profile')}
                   </span>
                   <span className={styles.quickActionDesc}>
-                    Enhance your profile
+                    {t('dashboards:freelancer.quickActions.updateProfileDesc', 'Enhance your profile')}
                   </span>
                 </div>
               </button>
@@ -430,9 +433,9 @@ const FreelancerDashboard = ({ data }) => {
                 onClick={() => handleQuickAction("view-insights")}>
                 <BarChart3 size={20} />
                 <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>View Insights</span>
+                  <span className={styles.quickActionTitle}>{t('dashboards:freelancer.quickActions.viewInsights', 'View Insights')}</span>
                   <span className={styles.quickActionDesc}>
-                    Analytics & trends
+                    {t('dashboards:freelancer.quickActions.viewInsightsDesc', 'Analytics & trends')}
                   </span>
                 </div>
               </button>

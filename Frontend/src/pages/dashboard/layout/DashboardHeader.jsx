@@ -26,6 +26,7 @@ import { DashboardContext } from "./DashboardLayout";
 import { useAuth } from "../../../context/AuthContext";
 import ThemeToggle from "../../../components/common/ThemeToggle";
 import { NotificationBell } from "../../../components/notifications";
+import { useTranslation } from "react-i18next";
 import styles from "./DashboardHeader.module.css";
 
 /**
@@ -50,6 +51,7 @@ const DashboardHeader = ({
   const { currentRole, toggleSidebar, isMobile } = useContext(DashboardContext);
   const { user: authUser, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation(['dashboard', 'sidebar']);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +59,7 @@ const DashboardHeader = ({
   // Build the display user from AuthContext, falling back to props or defaults
   const defaultUser = useMemo(() => ({
     id: "1",
-    name: authUser?.name || "Demo User",
+    name: authUser?.name || t('dashboard:demoUser', "Demo User"),
     email: authUser?.email || "",
     avatarInitials: authUser?.avatarInitials ||
       (authUser?.name ? authUser.name.split(" ").map(n => n[0]).join("").toUpperCase() : "DU"),
@@ -79,7 +81,7 @@ const DashboardHeader = ({
       jobseeker: "Job Seeker",
       admin: "Administrator",
     };
-    return roleMap[role] || "Client";
+    return t(`dashboard:roles.${role}`, roleMap[role] || "Client");
   };
 
   /**
@@ -107,22 +109,22 @@ const DashboardHeader = ({
   const defaultUserMenuItems = useMemo(() => [
     {
       id: "profile",
-      label: "Profile Settings",
+      label: t('dashboard:userMenu.profile', "Profile Settings"),
       icon: "User",
       href: "/profile",
     },
-    { id: "account", label: "Account", icon: "Settings", href: "/account" },
-    { id: "billing", label: "Billing", icon: "CreditCard", href: "/billing" },
+    { id: "account", label: t('dashboard:userMenu.account', "Account"), icon: "Settings", href: "/account" },
+    { id: "billing", label: t('dashboard:userMenu.billing', "Billing"), icon: "CreditCard", href: "/billing" },
     { id: "divider", type: "divider" },
-    { id: "help", label: "Help & Support", icon: "HelpCircle", href: "/help" },
+    { id: "help", label: t('dashboard:userMenu.help', "Help & Support"), icon: "HelpCircle", href: "/help" },
     {
       id: "logout",
-      label: "Logout",
+      label: t('dashboard:userMenu.logout', "Logout"),
       icon: "LogOut",
       href: "#",
       isLogout: true,
     },
-  ], []);
+  ], [t]);
 
   /**
    * Get icon component by name
@@ -177,13 +179,13 @@ const DashboardHeader = ({
           <button
             className={styles.menuButton}
             onClick={toggleSidebar}
-            aria-label="Toggle menu">
+            aria-label={t('sidebar:toggleMenu', "Toggle menu")}>
             <Menu className={styles.menuIcon} size={24} />
           </button>
         )}
 
         <div className={styles.breadcrumb}>
-          <Link to="/dashboard" className={styles.pageTitle}>Dashboard</Link>
+          <Link to="/dashboard" className={styles.pageTitle}>{t('dashboard:title', 'Dashboard')}</Link>
           <span className={styles.roleBadge}>
             {getFormattedRole(currentUser.role || currentRole)}
           </span>
@@ -201,7 +203,7 @@ const DashboardHeader = ({
             <Search className={styles.searchIcon} size={20} />
             <input
               type="text"
-              placeholder="Search jobs, proposals, users..."
+              placeholder={t('dashboard:searchPlaceholder', "Search jobs, proposals, users...")}
               className={styles.searchInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

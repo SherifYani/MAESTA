@@ -13,6 +13,7 @@
 
 import { useState, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import { isFormValid } from "../../utils/form-validation";
 import { useResendTimer } from "../../hooks/useResendTimer";
@@ -25,6 +26,7 @@ import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
 function VerificationEmailPage() {
+  const { t } = useTranslation(['auth', 'validation']);
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "your email";
@@ -47,11 +49,11 @@ function VerificationEmailPage() {
 
   // Validation handlers
   const validateCode = useCallback((value) => {
-    if (!value) return "Verification code is required";
-    if (value.length !== 6) return "Code must be 6 digits";
-    if (!/^\d+$/.test(value)) return "Code must contain only numbers";
+    if (!value) return t('validation:verificationCodeRequired', "Verification code is required");
+    if (value.length !== 6) return t('validation:verificationCodeLength', "Code must be 6 digits");
+    if (!/^\d+$/.test(value)) return t('validation:verificationCodeNumber', "Code must contain only numbers");
     return "";
-  }, []);
+  }, [t]);
 
   const validateField = useCallback(
     (name, value) => {
@@ -118,12 +120,12 @@ function VerificationEmailPage() {
       await authService.resendVerification(email);
       resetTimer();
       setFormData({ code: "" });
-      setErrors({ success: "Verification code resent successfully!" });
+      setErrors({ success: t('auth:verificationResent', "Verification code resent successfully!") });
       setTimeout(() => {
         setErrors((prev) => { const { success, ...rest } = prev; return rest; });
       }, 3000);
     } catch (error) {
-      const msg = error?.response?.data?.message || "Failed to resend code. Please try again.";
+      const msg = error?.response?.data?.message || t('auth:resendFailed', "Failed to resend code. Please try again.");
       setErrors((prev) => ({ ...prev, form: msg }));
     } finally {
       setIsLoading(false);
@@ -142,14 +144,14 @@ function VerificationEmailPage() {
       // Backend: POST api/auth/verify-email { email, code }
       await authService.verifyEmail(email, formData.code);
       
-      setSuccess("Email verified successfully! Redirecting to onboarding...");
+      setSuccess(t('auth:verifySuccess', "Email verified successfully! Redirecting to onboarding..."));
       
       // After successful verification, wait a bit for the user to see the success message
       setTimeout(() => {
         navigate("/register/onboarding", { state: { email } });
       }, 1500);
     } catch (error) {
-      const msg = error?.response?.data?.message || "Invalid verification code. Please try again.";
+      const msg = error?.response?.data?.message || t('auth:verifyFailed', "Invalid verification code. Please try again.");
       setErrors((prev) => ({ ...prev, form: msg }));
     } finally {
       setIsLoading(false);
@@ -204,9 +206,9 @@ function VerificationEmailPage() {
             <div className="form-icon">
               <i className="fa-solid fa-shield"></i>
             </div>
-            <h1 className="form-title">Verify Your Email</h1>
+            <h1 className="form-title">{t('auth:verifyEmail.title', "Verify Your Email")}</h1>
             <p className="form-subtitle">
-              Enter the 6-digit code sent to <strong>{maskedEmail}</strong>
+              {t('auth:verifyEmail.subtitle', { defaultValue: "Enter the 6-digit code sent to {{email}}", email: maskedEmail })}
             </p>
           </div>
 
@@ -231,7 +233,7 @@ function VerificationEmailPage() {
                 icon="fa-solid fa-hashtag"
                 type="text"
                 name="code"
-                placeholder="Enter 6-digit code"
+                placeholder={t('auth:verifyCodePlaceholder', "Enter 6-digit code")}
                 value={formData.code}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -259,11 +261,11 @@ function VerificationEmailPage() {
                 {isActive ? (
                   <>
                     <i className="fa-solid fa-clock"></i>
-                    Code expires in:{" "}
+                    {t('auth:codeExpiresIn', "Code expires in: ")}
                     <span className="timer-countdown">{formattedTime}</span>
                   </>
                 ) : (
-                  <span className="timer-expired">Code expired</span>
+                  <span className="timer-expired">{t('auth:codeExpired', "Code expired")}</span>
                 )}
               </p>
 
@@ -276,14 +278,14 @@ function VerificationEmailPage() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin"></i>
-                    Resending...
+                    {t('auth:resending', "Resending...")}
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-redo"></i>
                     {canResend
-                      ? "Resend Code"
-                      : `Resend available in ${formattedTime}`}
+                      ? t('auth:resendCode', "Resend Code")
+                      : t('auth:resendAvailableIn', { defaultValue: "Resend available in {{time}}", time: formattedTime })}
                   </>
                 )}
               </button>
@@ -299,12 +301,12 @@ function VerificationEmailPage() {
               {isLoading ? (
                 <>
                   <i className="fa-solid fa-spinner fa-spin"></i>
-                  Verifying...
+                  {t('auth:verifying', "Verifying...")}
                 </>
               ) : (
                 <>
                   <i className="fa-solid fa-check-circle"></i>
-                  Verify Code
+                  {t('auth:verifyCode', "Verify Code")}
                 </>
               )}
             </button>
@@ -312,17 +314,17 @@ function VerificationEmailPage() {
             <div className="form-footer">
               <Link to="/login" className="form-link">
                 <i className="fa-solid fa-arrow-left"></i>
-                Back to Login
+                {t('auth:backToLogin', "Back to Login")}
               </Link>
 
               <p className="form-help">
-                Didn't receive the code?{" "}
+                {t('auth:didntReceiveCode', "Didn't receive the code?")}{" "}
                 <button
                   type="button"
                   className="form-link inline"
                   onClick={handleResend}
                   disabled={!canResend}>
-                  Send again
+                  {t('auth:sendAgain', "Send again")}
                 </button>
               </p>
             </div>
