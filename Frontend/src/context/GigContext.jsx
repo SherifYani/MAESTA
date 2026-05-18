@@ -157,7 +157,10 @@ export const GigProvider = ({ children }) => {
             setLoading(true);
             setError(null);
             const response = await gigService.getGigs(filters, page, limit);
-            dispatch({ type: ACTIONS.SET_GIGS, payload: response.data });
+            // Normalise: the API may return { data: [...] }, { items: [...] }, or a bare array.
+            const raw = response?.data ?? response;
+            const payload = Array.isArray(raw) ? raw : (raw?.items ?? raw?.gigs ?? []);
+            dispatch({ type: ACTIONS.SET_GIGS, payload });
         } catch (error) {
             setError(error.message || 'Failed to fetch gigs');
         }

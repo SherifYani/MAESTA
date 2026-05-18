@@ -1,10 +1,21 @@
 /**
  * @file AuthContext.jsx
- * @description Authentication context - manages user authentication state globally.
- *              Supports simulated API auth for prototyping, prepared for real API.
+ * @description Authentication context — manages user authentication state globally.
+ *              Response shapes verified against AuthResponse.cs and CurrentUserResponse.cs.
  * @author Sherif Talaat
- * @version 3.0.0
- * @date 05-03-2026
+ * @version 4.0.0
+ * @date 2026-04-29
+ *
+ * @last-modified-by Antigravity (AI) — verified against real DTO shapes
+ * @last-modified-date 2026-04-29
+ *
+ * BACKEND AuthResponse shape:
+ *   { userId, email, userType, registrationStatus, accessToken,
+ *     accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt, requiresTwoFactor }
+ *
+ * BACKEND CurrentUserResponse shape (GET api/auth/me):
+ *   { userId, email, firstName, lastName, userType, registrationStatus,
+ *     isActive, roles[], jobSeekerProfile?, employerProfile? }
  **/
 
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
@@ -24,10 +35,12 @@ export const AuthProvider = ({ children }) => {
 
     /**
      * Checks if there's a valid session token, and restores the user.
-     * Called automatically on mount, and can be called manually.
+     * Called automatically on mount.
+     * Backend GET api/auth/me returns CurrentUserResponse:
+     *   { userId, email, firstName, lastName, userType, registrationStatus, isActive, roles[], ... }
      */
     const checkAuth = useCallback(async () => {
-        const token = tokenService.getToken() || localStorage.getItem('token');
+        const token = tokenService.getToken();
         if (!token) {
             setUser(null);
             setLoading(false);
@@ -37,22 +50,49 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             const data = await authService.getCurrentUser();
-            if (data && data.user) {
-                // Ensure role has a default
-                if (!data.user.role) {
-                    data.user.role = 'jobseeker';
-                }
-                setUser(data.user);
+            // Backend returns CurrentUserResponse directly (not wrapped in { user })
+            if (data && data.userId) {
+                setUser(normalizeUser(data));
+            } else {
+                tokenService.clearToken();
+                setUser(null);
             }
         } catch (err) {
             console.error('Failed to restore session from token:', err);
             tokenService.clearToken();
-            localStorage.removeItem('token');
             setUser(null);
         } finally {
             setLoading(false);
         }
     }, []);
+
+    /**
+     * Normalize the backend user object into a consistent frontend shape.
+     * Handles both AuthResponse (from login) and CurrentUserResponse (from /me).
+     */
+    const normalizeUser = (data) => {
+        let normalizedRole = (data.userType || 'jobseeker').toLowerCase();
+        if (normalizedRole === 'employer') {
+            normalizedRole = 'company';
+        }
+
+        return {
+            id:                 data.userId,
+            email:              data.email,
+            firstName:          data.firstName  || '',
+            lastName:           data.lastName   || '',
+            name:               data.firstName  ? `${data.firstName} ${data.lastName}`.trim() : data.email,
+            role:               normalizedRole,
+            userType:           data.userType,
+            registrationStatus: data.registrationStatus,
+            isActive:           data.isActive,
+            roles:              data.roles      || [],
+            profilePicture:     data.profilePictureUrl || null,
+            // Role-specific nested profiles (present in CurrentUserResponse)
+            jobSeekerProfile:   data.jobSeekerProfile  || null,
+            employerProfile:    data.employerProfile   || null,
+        };
+    };
 
     // Initialisation on app load
     useEffect(() => {
@@ -64,21 +104,29 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             setLoading(true);
 
-            // Real/Simulated API login
+            // Backend AuthResponse: { userId, email, userType, accessToken, refreshToken, requiresTwoFactor }
             const data = await authService.login(credentials);
-            
-            if (data.token) {
-                tokenService.setToken(data.token);
-                localStorage.setItem('token', data.token);
+
+            // Handle 2FA requirement
+            if (data.requiresTwoFactor) {
+                return { requiresTwoFactor: true, email: data.email };
             }
-            if (data.user) {
-                const userObj = { ...data.user, role: data.user.role || 'jobseeker' };
-                setUser(userObj);
+
+            // Store both tokens
+            if (data.accessToken) {
+                tokenService.setToken(data.accessToken);
             }
-            
+            if (data.refreshToken) {
+                localStorage.setItem('refreshToken', data.refreshToken);
+            }
+
+            // Build normalized user from AuthResponse fields by calling checkAuth to get full profile
+            await checkAuth();
+
             return data;
         } catch (err) {
-            setError(err.message || 'Login failed');
+            const message = err.response?.data?.message || err.message || 'Login failed';
+            setError(message);
             throw err;
         } finally {
             setLoading(false);
@@ -87,13 +135,15 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await authService.logout();
+            // Pass refreshToken so backend can revoke it
+            const refreshToken = localStorage.getItem('refreshToken') || '';
+            await authService.logout(refreshToken);
         } catch {
             // Swallow network errors on logout
         } finally {
-            localStorage.removeItem('token');
+            tokenService.clearToken();
+            localStorage.removeItem('refreshToken');
             localStorage.removeItem('redirectAfterLogin');
-            tokenService.clearToken(); // Handles sessionStorage/localStorage inside
             setUser(null);
             setError(null);
         }
@@ -103,10 +153,22 @@ export const AuthProvider = ({ children }) => {
         try {
             setError(null);
             setLoading(true);
+            // Step 1 — returns AuthResponse with a temp accessToken
             const data = await authService.register(userData);
+            // Store the temp token so Step 2 request is authorized
+            if (data.accessToken) {
+                tokenService.setToken(data.accessToken);
+            }
+            if (data.refreshToken) {
+                localStorage.setItem('refreshToken', data.refreshToken);
+            }
+            
+            await checkAuth();
+            
             return data;
         } catch (err) {
-            setError(err.message || 'Registration failed');
+            const message = err.response?.data?.message || err.message || 'Registration failed';
+            setError(message);
             throw err;
         } finally {
             setLoading(false);
@@ -135,12 +197,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const verifyEmail = async (token) => {
+    const verifyEmail = async (email, code) => {
         try {
             setError(null);
-            return await authService.verifyEmail(token);
+            // Backend: POST api/auth/verify-email { email, code }
+            return await authService.verifyEmail(email, code);
         } catch (err) {
-            setError(err.message || 'Email verification failed');
+            setError(err.response?.data?.message || err.message || 'Email verification failed');
             throw err;
         }
     };
@@ -149,10 +212,12 @@ export const AuthProvider = ({ children }) => {
         try {
             setError(null);
             const data = await authService.loginWithGoogle(token);
-            setUser(data.user);
+            if (data.accessToken) tokenService.setToken(data.accessToken);
+            if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+            setUser(normalizeUser(data));
             return data;
         } catch (err) {
-            setError(err.message || 'Google login failed');
+            setError(err.response?.data?.message || err.message || 'Google login failed');
             throw err;
         }
     };
@@ -161,10 +226,12 @@ export const AuthProvider = ({ children }) => {
         try {
             setError(null);
             const data = await authService.loginWithLinkedIn(token);
-            setUser(data.user);
+            if (data.accessToken) tokenService.setToken(data.accessToken);
+            if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+            setUser(normalizeUser(data));
             return data;
         } catch (err) {
-            setError(err.message || 'LinkedIn login failed');
+            setError(err.response?.data?.message || err.message || 'LinkedIn login failed');
             throw err;
         }
     };

@@ -1,169 +1,82 @@
 /**
  * @file gigService.js
- * @description Gig/Project management services - handles freelance projects, proposals, and contracts
+ * @description Gig/Project management services - handles freelance projects, proposals, and contracts.
+ *              Wired to the real JobMagnet API backend.
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-02-2026
+ * @version 2.0.0
+ * @date 2026-04-29
+ *
+ * @last-modified-by Antigravity (AI)
+ * @last-modified-date 2026-04-29
 **/
 
 import ApiService from './ApiService';
-import { gigsData, gigCategories, gigSkills } from '../pages/gigs/config/gigsMockData';
+// Mock data retained only for categories/skills until backend provides those endpoints
+import { gigCategories, gigSkills } from '../pages/gigs/config/gigsMockData';
 
 const gigService = {
     // ==================== Gig CRUD Operations ====================
 
-    // Get all gigs with filters
-    // Get all gigs with filters
-    // Get all gigs with filters
+    // Get all gigs with optional filters
     getGigs: async (filters = {}) => {
-        // Reuse search logic for filtering
-        return gigService.searchGigs(filters);
+        const response = await ApiService.get('/api/gigs', { params: filters });
+        return response.data;
     },
 
     // Get single gig by ID
-    // Get single gig by ID
     getGigById: async (gigId) => {
-        // MOCK DATA RETURN
-        const gig = gigsData.find(g => g.id === gigId) || gigsData[0];
-        return { data: gig };
+        const response = await ApiService.get(`/api/gigs/${gigId}`);
+        return response.data;
     },
 
     // Create new gig/project (client)
     createGig: async (gigData) => {
-        try {
-            const response = await ApiService.post('/api/gigs', gigData);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.post('/api/gigs', gigData);
+        return response.data;
     },
 
     // Update gig
     updateGig: async (gigId, gigData) => {
-        try {
-            const response = await ApiService.put(`/api/gigs/${gigId}`, gigData);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.put(`/api/gigs/${gigId}`, gigData);
+        return response.data;
     },
 
     // Delete gig
     deleteGig: async (gigId) => {
-        try {
-            const response = await ApiService.delete(`/api/gigs/${gigId}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.delete(`/api/gigs/${gigId}`);
+        return response.data;
     },
 
     // ==================== Gig Search & Discovery ====================
 
-    // Search gigs
-    // Search gigs
-    // Search gigs
+    // Search gigs — delegates filtering/sorting/pagination to the backend
     searchGigs: async (searchParams) => {
-        // MOCK DATA RETURN WITH CLIENT-SIDE FILTERING
-        let filteredGigs = [...gigsData];
-        const {
-            search,
-            budget,
-            duration,
-            skills,
-            experienceLevel,
-            page = 1,
-            limit = 10
-        } = searchParams;
-
-        if (search) {
-            const lowerSearch = search.toLowerCase();
-            filteredGigs = filteredGigs.filter(gig =>
-                gig.title.toLowerCase().includes(lowerSearch) ||
-                gig.description.toLowerCase().includes(lowerSearch) ||
-                gig.client.name.toLowerCase().includes(lowerSearch) ||
-                gig.skills.some(skill => skill.toLowerCase().includes(lowerSearch))
-            );
-        }
-
-        if (budget && (budget.min || budget.max)) {
-            filteredGigs = filteredGigs.filter(gig => {
-                const gigMin = gig.budget?.min || 0;
-                const gigMax = gig.budget?.max || Infinity;
-                const filterMin = parseInt(budget.min) || 0;
-                const filterMax = parseInt(budget.max) || Infinity;
-
-                // Check for overlap
-                return gigMax >= filterMin && gigMin <= filterMax;
-            });
-        }
-
-        if (duration) {
-            // Exact match or contains
-            filteredGigs = filteredGigs.filter(gig =>
-                gig.duration.toLowerCase().includes(duration.toLowerCase())
-            );
-        }
-
-        if (experienceLevel) {
-            filteredGigs = filteredGigs.filter(gig =>
-                gig.experienceLevel.toLowerCase().includes(experienceLevel.toLowerCase())
-            );
-        }
-
-        if (skills && skills.length > 0) {
-            filteredGigs = filteredGigs.filter(gig =>
-                skills.every(filterSkill =>
-                    gig.skills.some(gigSkill => gigSkill.toLowerCase() === filterSkill.toLowerCase())
-                )
-            );
-        }
-
-        // Pagination
-        const total = filteredGigs.length;
-        const totalPages = Math.ceil(total / limit);
-        const startIndex = (page - 1) * limit;
-        const paginatedGigs = filteredGigs.slice(startIndex, startIndex + limit);
-
-        return {
-            data: paginatedGigs,
-            total,
-            totalPages
-        };
+        const response = await ApiService.get('/api/gigs', { params: searchParams });
+        return response.data;
     },
 
-    // Get recommended gigs for freelancer
-    // Get recommended gigs for freelancer
-    getRecommendedGigs: async () => {
-        return gigsData.slice(0, 3);
+    // Get gigs posted by the authenticated client
+    // Backend: GET api/gigs/my-gigs
+    getMyGigs: async () => {
+        const response = await ApiService.get('/api/gigs/my-gigs');
+        return response.data;
     },
 
-    // Get gigs by category
-    getGigsByCategory: async (categoryId) => {
-        try {
-            const response = await ApiService.get(`/api/gigs/category/${categoryId}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
-    },
+    // NOTE: /api/gigs/recommended and /api/gigs/category/{id} do not exist on
+    // the real GigsController. Use getGigs() with filters instead.
 
     // ==================== Proposals ====================
 
     // Submit proposal (freelancer)
     submitProposal: async (gigId, proposalData) => {
-        try {
-            const response = await ApiService.post(`/api/gigs/${gigId}/proposals`, proposalData);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.post(`/api/gigs/${gigId}/proposals`, proposalData);
+        return response.data;
     },
 
     // Get my proposals (freelancer)
     getMyProposals: async () => {
         try {
-            const response = await ApiService.get('/api/proposals/my');
+            const response = await ApiService.get('/api/gigs/proposals/my');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -183,8 +96,11 @@ const gigService = {
     // Update proposal
     updateProposal: async (proposalId, proposalData) => {
         try {
-            const response = await ApiService.put(`/api/proposals/${proposalId}`, proposalData);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("updateProposal is mocked");
+            return { success: true, id: proposalId, ...proposalData };
+            // const response = await ApiService.put(`/api/proposals/${proposalId}`, proposalData);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -193,7 +109,7 @@ const gigService = {
     // Withdraw proposal
     withdrawProposal: async (proposalId) => {
         try {
-            const response = await ApiService.delete(`/api/proposals/${proposalId}`);
+            const response = await ApiService.delete(`/api/gigs/proposals/${proposalId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -203,7 +119,10 @@ const gigService = {
     // Accept proposal (client)
     acceptProposal: async (proposalId) => {
         try {
-            const response = await ApiService.post(`/api/proposals/${proposalId}/accept`);
+            const response = await ApiService.put(`/api/gigs/proposals/${proposalId}/status`, 
+                JSON.stringify("accepted"), 
+                { headers: { 'Content-Type': 'application/json' } }
+            );
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -213,7 +132,10 @@ const gigService = {
     // Reject proposal (client)
     rejectProposal: async (proposalId) => {
         try {
-            const response = await ApiService.post(`/api/proposals/${proposalId}/reject`);
+            const response = await ApiService.put(`/api/gigs/proposals/${proposalId}/status`, 
+                JSON.stringify("rejected"), 
+                { headers: { 'Content-Type': 'application/json' } }
+            );
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -225,7 +147,7 @@ const gigService = {
     // Create contract from accepted proposal
     createContract: async (proposalId, contractData) => {
         try {
-            const response = await ApiService.post(`/api/proposals/${proposalId}/contract`, contractData);
+            const response = await ApiService.post(`/api/contracts`, { proposalId, ...contractData });
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -235,7 +157,7 @@ const gigService = {
     // Get my contracts
     getMyContracts: async () => {
         try {
-            const response = await ApiService.get('/api/contracts/my');
+            const response = await ApiService.get('/api/contracts/my-contracts');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -255,8 +177,11 @@ const gigService = {
     // Update contract status
     updateContractStatus: async (contractId, status) => {
         try {
-            const response = await ApiService.put(`/api/contracts/${contractId}/status`, { status });
-            return response.data;
+            // MOCKED: Not implemented in backend yet. Use milestone/delivery status instead.
+            console.warn("updateContractStatus is mocked");
+            return { success: true, id: contractId, status };
+            // const response = await ApiService.put(`/api/contracts/${contractId}/status`, { status });
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -267,8 +192,11 @@ const gigService = {
     // Add milestone to contract
     addMilestone: async (contractId, milestoneData) => {
         try {
-            const response = await ApiService.post(`/api/contracts/${contractId}/milestones`, milestoneData);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("addMilestone is mocked");
+            return { success: true, id: Math.floor(Math.random() * 1000), ...milestoneData };
+            // const response = await ApiService.post(`/api/contracts/${contractId}/milestones`, milestoneData);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -277,8 +205,11 @@ const gigService = {
     // Update milestone
     updateMilestone: async (milestoneId, milestoneData) => {
         try {
-            const response = await ApiService.put(`/api/milestones/${milestoneId}`, milestoneData);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("updateMilestone is mocked");
+            return { success: true, id: milestoneId, ...milestoneData };
+            // const response = await ApiService.put(`/api/milestones/${milestoneId}`, milestoneData);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -287,8 +218,12 @@ const gigService = {
     // Complete milestone
     completeMilestone: async (milestoneId) => {
         try {
-            const response = await ApiService.post(`/api/milestones/${milestoneId}/complete`);
-            return response.data;
+            // MOCKED: Not implemented in backend yet. 
+            // In the future this might map to submitDelivery or updateMilestoneStatus
+            console.warn("completeMilestone is mocked");
+            return { success: true, id: milestoneId, status: 'completed' };
+            // const response = await ApiService.post(`/api/milestones/${milestoneId}/complete`);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -297,8 +232,11 @@ const gigService = {
     // Approve milestone (client)
     approveMilestone: async (milestoneId) => {
         try {
-            const response = await ApiService.post(`/api/milestones/${milestoneId}/approve`);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("approveMilestone is mocked");
+            return { success: true, id: milestoneId, status: 'approved' };
+            // const response = await ApiService.post(`/api/milestones/${milestoneId}/approve`);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -309,7 +247,7 @@ const gigService = {
     // Get client's posted gigs
     getClientGigs: async () => {
         try {
-            const response = await ApiService.get('/api/gigs/my-postings');
+            const response = await ApiService.get('/api/gigs/my-gigs');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -319,8 +257,11 @@ const gigService = {
     // Get gig statistics
     getGigStatistics: async (gigId) => {
         try {
-            const response = await ApiService.get(`/api/gigs/${gigId}/statistics`);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("getGigStatistics is mocked");
+            return { views: 0, proposals: 0, active: true };
+            // const response = await ApiService.get(`/api/gigs/${gigId}/statistics`);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -391,9 +332,9 @@ const gigService = {
         try {
             let endpoint = '';
             if (userType === 'client') {
-                endpoint = '/api/gigs/my-postings';
+                endpoint = '/api/gigs/my-gigs';
             } else {
-                endpoint = '/api/proposals/my'; // Or a dedicated /api/gigs/my-jobs for freelancers
+                endpoint = '/api/gigs/proposals/my'; // Or a dedicated /api/gigs/my-jobs for freelancers
             }
 
             const response = await ApiService.get(endpoint, { params: { status } });

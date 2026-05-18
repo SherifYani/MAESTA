@@ -10,6 +10,7 @@
  */
 
 import { useContext, useCallback, memo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Briefcase,
   Users,
@@ -26,6 +27,7 @@ import {
 } from "../config/dashboard.config";
 import styles from "./DashboardSidebar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 /**
  * Sidebar component for dashboard navigation with mobile drawer
@@ -36,9 +38,24 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
  * @returns {JSX.Element} The rendered sidebar
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
+  const { t } = useTranslation(['dashboard', 'sidebar']);
   const { currentRole, setCurrentRole } = useContext(DashboardContext);
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Calculate user initials
+  const getUserInitials = (name) => {
+    if (!name) return "US";
+    const parts = name.trim().split(" ");
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+  
+  const userName = user?.name || user?.fullName || "User";
+  const userInitials = getUserInitials(userName);
 
   // Get navigation for current role - memoize this if needed
   const roleNavigation = ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION.client;
@@ -97,14 +114,14 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <div className={styles.sidebarHeader}>
         <Link to="/" className={styles.brand} onClick={handleNavClick}>
           <h1 className={styles.brandTitle}>MAESTA</h1>
-          <span className={styles.brandSubtitle}>Dashboard</span>
+          <span className={styles.brandSubtitle}>{t('dashboard:title', 'Dashboard')}</span>
         </Link>
 
         {/* Mobile: X button to close, Desktop: Chevron to collapse */}
         <button
           className={styles.toggleButton}
           onClick={handleToggleClick}
-          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+          aria-label={isOpen ? t('sidebar:closeSidebar', 'Close sidebar') : t('sidebar:openSidebar', 'Open sidebar')}
           type="button">
           {isMobile ?
             <X className={styles.toggleIcon} size={20} />
@@ -117,7 +134,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <nav className={styles.navigation}>
         {/* Main Navigation */}
         <div className={styles.navSection}>
-          <h3 className={styles.navSectionTitle}>Main</h3>
+          <h3 className={styles.navSectionTitle}>{t('sidebar:main', 'Main')}</h3>
           <ul className={styles.navList}>
             {roleNavigation.map((item) => {
               const IconComponent = item.icon;
@@ -130,7 +147,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
                       }`}
                     onClick={handleNavClick}>
                     <IconComponent className={styles.navIcon} size={20} />
-                    <span className={styles.navLabel}>{item.label}</span>
+                    <span className={styles.navLabel}>{t(`sidebar:${item.id}`, item.label)}</span>
                   </Link>
                 </li>
               );
@@ -143,12 +160,12 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <div className={styles.sidebarFooter}>
         <div className={styles.userProfile}>
           <div className={styles.userAvatar}>
-            <span className={styles.avatarText}>ST</span>
+            <span className={styles.avatarText}>{userInitials}</span>
           </div>
           <div className={styles.userInfo}>
-            <span className={styles.userName}>Sherif Talaat</span>
+            <span className={styles.userName}>{userName}</span>
             <span className={styles.userRole}>
-              {ROLE_DISPLAY_NAMES[currentRole] || "Client"}
+              {t(`dashboard:roles.${currentRole}`, ROLE_DISPLAY_NAMES[currentRole] || "Client")}
             </span>
           </div>
         </div>

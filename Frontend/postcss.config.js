@@ -1,8 +1,6 @@
 module.exports = {
-    plugins: [
-        require('tailwindcss'),
-        require('autoprefixer')({
-            overrideBrowserslist: ['last 2 versions', '>1%'],
-        }),
-    ],
+    plugins: {
+        tailwindcss: { config: './tailwind.config.js' },
+        autoprefixer: {},
+    }
 }

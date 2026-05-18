@@ -1,31 +1,34 @@
-
 /**
- * VerificationEmailPage Component
- * @description Handles 6-digit email verification code entry
+ * @file VerificationEmailPage.jsx
+ * @description Handles 6-digit email verification OTP entry after registration (Step 1)
  * @author Sherif Talaat
- * @version 1.1.0
+ * @version 1.2.0
  * @date 05-12-2025
- * 
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-16
+ * @last-modified-date 2026-04-29
+ * @fix Wired to real API: authService.verifyEmail(email, code) via POST api/auth/verify-email.
+ *      Resend calls authService.resendVerification(email). Navigates to /register/onboarding on success.
  */
 
 import { useState, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
-import {
-  isFormValid,
-} from "../../utils/form-validation";
+import { isFormValid } from "../../utils/form-validation";
 import { useResendTimer } from "../../hooks/useResendTimer";
-import AuthHeader from "../../components/common/AuthHeader";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
+import authService from "../../services/authService";
 import "../../styles/shared/_form-base.css";
 import "../../styles/auth-pages.css";
 import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
 function VerificationEmailPage() {
+  const { t } = useTranslation(['auth', 'validation']);
   const location = useLocation();
+  const navigate = useNavigate();
   const email = location.state?.email || "your email";
   const maskedEmail = email.includes("@")
     ? `${email.substring(0, 1)}***@${email.split("@")[1]}`
@@ -37,6 +40,7 @@ function VerificationEmailPage() {
   });
 
   const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Timer hook
@@ -45,11 +49,11 @@ function VerificationEmailPage() {
 
   // Validation handlers
   const validateCode = useCallback((value) => {
-    if (!value) return "Verification code is required";
-    if (value.length !== 6) return "Code must be 6 digits";
-    if (!/^\d+$/.test(value)) return "Code must contain only numbers";
+    if (!value) return t('validation:verificationCodeRequired', "Verification code is required");
+    if (value.length !== 6) return t('validation:verificationCodeLength', "Code must be 6 digits");
+    if (!/^\d+$/.test(value)) return t('validation:verificationCodeNumber', "Code must contain only numbers");
     return "";
-  }, []);
+  }, [t]);
 
   const validateField = useCallback(
     (name, value) => {
@@ -107,68 +111,48 @@ function VerificationEmailPage() {
     }
   }, []);
 
-  // Handle resend code
+  // Handle resend code — calls real API
   const handleResend = useCallback(async () => {
     if (!canResend) return;
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Resending code to:", email);
-
+      await authService.resendVerification(email);
       resetTimer();
       setFormData({ code: "" });
-      setErrors({});
-
-      // Show success message
-      setErrors((prev) => ({
-        ...prev,
-        success: "Verification code resent successfully!",
-      }));
-
-      // Clear success message after 3 seconds
+      setErrors({ success: t('auth:verificationResent', "Verification code resent successfully!") });
       setTimeout(() => {
-        setErrors((prev) => {
-          const { success, ...rest } = prev;
-          return rest;
-        });
+        setErrors((prev) => { const { success, ...rest } = prev; return rest; });
       }, 3000);
     } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        form: "Failed to resend code. Please try again.",
-      }));
+      const msg = error?.response?.data?.message || t('auth:resendFailed', "Failed to resend code. Please try again.");
+      setErrors((prev) => ({ ...prev, form: msg }));
     } finally {
       setIsLoading(false);
     }
   }, [canResend, email, resetTimer]);
 
-  // Handle form submission
+  // Handle form submission — calls real API: POST api/auth/verify-email
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const error = validateField("code", formData.code);
-    if (error) {
-      setErrors({ code: error });
-      return;
-    }
+    if (error) { setErrors({ code: error }); return; }
 
     setIsLoading(true);
-
     try {
-      // Simulate API verification
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Verifying code:", formData.code);
-
-      // Navigate to reset password page
-      // In a real app, you would use react-router-dom's navigate
-      window.location.href = "/reset-password?token=verified";
+      // Backend: POST api/auth/verify-email { email, code }
+      await authService.verifyEmail(email, formData.code);
+      
+      setSuccess(t('auth:verifySuccess', "Email verified successfully! Redirecting to onboarding..."));
+      
+      // After successful verification, wait a bit for the user to see the success message
+      setTimeout(() => {
+        navigate("/register/onboarding", { state: { email } });
+      }, 1500);
     } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        form: "Invalid verification code. Please try again.",
-      }));
+      const msg = error?.response?.data?.message || t('auth:verifyFailed', "Invalid verification code. Please try again.");
+      setErrors((prev) => ({ ...prev, form: msg }));
     } finally {
       setIsLoading(false);
     }
@@ -215,24 +199,24 @@ function VerificationEmailPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">
             <div className="form-icon">
               <i className="fa-solid fa-shield"></i>
             </div>
-            <h1 className="form-title">Verify Your Email</h1>
+            <h1 className="form-title">{t('auth:verifyEmail.title', "Verify Your Email")}</h1>
             <p className="form-subtitle">
-              Enter the 6-digit code sent to <strong>{maskedEmail}</strong>
+              {t('auth:verifyEmail.subtitle', { defaultValue: "Enter the 6-digit code sent to {{email}}", email: maskedEmail })}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="form-body" noValidate>
-            {errors.success && (
+            {success && (
               <div className="form-success-message">
                 <i className="fa-solid fa-circle-check"></i>
-                <span>{errors.success}</span>
+                <span>{success}</span>
               </div>
             )}
 
@@ -249,7 +233,7 @@ function VerificationEmailPage() {
                 icon="fa-solid fa-hashtag"
                 type="text"
                 name="code"
-                placeholder="Enter 6-digit code"
+                placeholder={t('auth:verifyCodePlaceholder', "Enter 6-digit code")}
                 value={formData.code}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -277,11 +261,11 @@ function VerificationEmailPage() {
                 {isActive ? (
                   <>
                     <i className="fa-solid fa-clock"></i>
-                    Code expires in:{" "}
+                    {t('auth:codeExpiresIn', "Code expires in: ")}
                     <span className="timer-countdown">{formattedTime}</span>
                   </>
                 ) : (
-                  <span className="timer-expired">Code expired</span>
+                  <span className="timer-expired">{t('auth:codeExpired', "Code expired")}</span>
                 )}
               </p>
 
@@ -294,14 +278,14 @@ function VerificationEmailPage() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin"></i>
-                    Resending...
+                    {t('auth:resending', "Resending...")}
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-redo"></i>
                     {canResend
-                      ? "Resend Code"
-                      : `Resend available in ${formattedTime}`}
+                      ? t('auth:resendCode', "Resend Code")
+                      : t('auth:resendAvailableIn', { defaultValue: "Resend available in {{time}}", time: formattedTime })}
                   </>
                 )}
               </button>
@@ -317,12 +301,12 @@ function VerificationEmailPage() {
               {isLoading ? (
                 <>
                   <i className="fa-solid fa-spinner fa-spin"></i>
-                  Verifying...
+                  {t('auth:verifying', "Verifying...")}
                 </>
               ) : (
                 <>
                   <i className="fa-solid fa-check-circle"></i>
-                  Verify Code
+                  {t('auth:verifyCode', "Verify Code")}
                 </>
               )}
             </button>
@@ -330,17 +314,17 @@ function VerificationEmailPage() {
             <div className="form-footer">
               <Link to="/login" className="form-link">
                 <i className="fa-solid fa-arrow-left"></i>
-                Back to Login
+                {t('auth:backToLogin', "Back to Login")}
               </Link>
 
               <p className="form-help">
-                Didn't receive the code?{" "}
+                {t('auth:didntReceiveCode', "Didn't receive the code?")}{" "}
                 <button
                   type="button"
                   className="form-link inline"
                   onClick={handleResend}
                   disabled={!canResend}>
-                  Send again
+                  {t('auth:sendAgain', "Send again")}
                 </button>
               </p>
             </div>

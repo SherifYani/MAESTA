@@ -13,6 +13,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import styles from './Footer.module.css';
 
 /**
@@ -21,6 +22,7 @@ import styles from './Footer.module.css';
  * @returns {JSX.Element} Rendered footer component
  */
 const Footer = () => {
+    const { t } = useTranslation(['common']);
     const currentYear = new Date().getFullYear();
 
     /**
@@ -28,43 +30,43 @@ const Footer = () => {
      */
     const footerSections = [
         {
-            title: 'For Job Seekers',
+            title: t('common:footer.sections.jobSeekers', 'For Job Seekers'),
             links: [
-                { label: 'Browse Jobs', href: '/jobs' },
-                { label: 'Pricing', href: '/pricing' },
-                { label: 'Career Guide', href: '/career-guide' },
-                { label: 'Resume Builder', href: '/resume-builder' },
-                { label: 'Interview Prep', href: '/interview-prep' },
+                { label: t('common:footer.links.browseJobs', 'Browse Jobs'), href: '/jobs' },
+                { label: t('common:footer.links.pricing', 'Pricing'), href: '/pricing' },
+                { label: t('common:footer.links.careerGuide', 'Career Guide'), href: '/career-guide' },
+                { label: t('common:footer.links.resumeBuilder', 'Resume Builder'), href: '/resume-builder' },
+                { label: t('common:footer.links.interviewPrep', 'Interview Prep'), href: '/interview-prep' },
             ],
         },
         {
-            title: 'For Companies',
+            title: t('common:footer.sections.companies', 'For Companies'),
             links: [
-                { label: 'Start Hiring', href: '/hiring' },
-                { label: 'Pricing', href: '/pricing/employers' },
-                { label: 'Features', href: '/features' },
-                { label: 'Post a Job', href: '/post-job' },
-                { label: 'Contact Sales', href: '/contact-sales' },
+                { label: t('common:footer.links.startHiring', 'Start Hiring'), href: '/hiring' },
+                { label: t('common:footer.links.employersPricing', 'Pricing'), href: '/pricing/employers' },
+                { label: t('common:footer.links.features', 'Features'), href: '/features' },
+                { label: t('common:footer.links.postJob', 'Post a Job'), href: '/post-job' },
+                { label: t('common:footer.links.contactSales', 'Contact Sales'), href: '/contact-sales' },
             ],
         },
         {
-            title: 'Company',
+            title: t('common:footer.sections.company', 'Company'),
             links: [
-                { label: 'About Us', href: '/about' },
-                { label: 'Blog', href: '/blog' },
-                { label: 'Careers', href: '/careers' },
-                { label: 'Press Kit', href: '/press' },
-                { label: 'Brand Guidelines', href: '/brand' },
+                { label: t('common:footer.links.aboutUs', 'About Us'), href: '/about' },
+                { label: t('common:footer.links.blog', 'Blog'), href: '/blog' },
+                { label: t('common:footer.links.careers', 'Careers'), href: '/careers' },
+                { label: t('common:footer.links.pressKit', 'Press Kit'), href: '/press' },
+                { label: t('common:footer.links.brandGuidelines', 'Brand Guidelines'), href: '/brand' },
             ],
         },
         {
-            title: 'Legal & Support',
+            title: t('common:footer.sections.legalSupport', 'Legal & Support'),
             links: [
-                { label: 'Privacy Policy', href: '/privacy' },
-                { label: 'Terms of Service', href: '/terms' },
-                { label: 'Security', href: '/security' },
-                { label: 'Cookie Policy', href: '/cookies' },
-                { label: 'Contact Support', href: '/contact' },
+                { label: t('common:footer.links.privacyPolicy', 'Privacy Policy'), href: '/privacy' },
+                { label: t('common:footer.links.termsOfService', 'Terms of Service'), href: '/terms' },
+                { label: t('common:footer.links.security', 'Security'), href: '/security' },
+                { label: t('common:footer.links.cookiePolicy', 'Cookie Policy'), href: '/cookies' },
+                { label: t('common:footer.links.contactSupport', 'Contact Support'), href: '/contact' },
             ],
         },
     ];
@@ -87,8 +89,8 @@ const Footer = () => {
         },
         {
             icon: MapPin,
-            label: 'Address',
-            value: '123 Career St, San Francisco, CA 94107',
+            label: t('common:footer.contact.address', 'Address'),
+            value: t('common:footer.contact.addressValue', '123 Career St, San Francisco, CA 94107'),
             href: 'https://maps.google.com',
         },
     ];
@@ -125,8 +127,7 @@ const Footer = () => {
                             <span className={styles.logoDot} aria-hidden="true">•</span>
                         </div>
                         <p className={styles.brandDescription}>
-                            Connecting talented professionals with exceptional opportunities.
-                            Find your dream job or the perfect candidate today.
+                            {t('common:footer.brandDescription', 'Connecting talented professionals with exceptional opportunities. Find your dream job or the perfect candidate today.')}
                         </p>
 
                         {/* Contact Information */}
@@ -150,8 +151,8 @@ const Footer = () => {
 
                         {/* Social Media Links */}
                         <div className={styles.socialSection}>
-                            <h4 className={styles.socialTitle}>Follow Us</h4>
-                            <div className={styles.socialLinks} aria-label="Social media links">
+                            <h4 className={styles.socialTitle}>{t('common:footer.followUs', 'Follow Us')}</h4>
+                            <div className={styles.socialLinks} aria-label={t('common:footer.socialMediaLinks', 'Social media links')}>
                                 {socialLinks.map((social, index) => {
                                     const Icon = social.icon;
                                     return (
@@ -208,47 +209,47 @@ const Footer = () => {
                     {/* Copyright */}
                     <div className={styles.copyrightSection}>
                         <p className={styles.copyrightText}>
-                            &copy; {currentYear} maesta. All rights reserved.
+                            &copy; {currentYear} {t('common:footer.copyright', 'maesta. All rights reserved.')}
                         </p>
                         <p className={styles.copyrightSubtext}>
-                            Made with <Heart size={12} className={styles.heartIcon} aria-hidden="true" />{' '}
-                            to help you find your dream job.
+                            {t('common:footer.madeWith', 'Made with')} <Heart size={12} className={styles.heartIcon} aria-hidden="true" />{' '}
+                            {t('common:footer.toHelpYou', 'to help you find your dream job.')}
                         </p>
                     </div>
 
                     {/* Legal Links */}
                     <div className={styles.legalSection}>
-                        <nav className={styles.legalLinks} aria-label="Legal links">
+                        <nav className={styles.legalLinks} aria-label={t('common:footer.legalLinksAria', 'Legal links')}>
                             <a
                                 href="/privacy"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Privacy Policy', '/privacy')}
+                                onClick={() => handleLinkClick(t('common:footer.links.privacyPolicy', 'Privacy Policy'), '/privacy')}
                             >
-                                Privacy Policy
+                                {t('common:footer.links.privacyPolicy', 'Privacy Policy')}
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
                                 href="/terms"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Terms of Service', '/terms')}
+                                onClick={() => handleLinkClick(t('common:footer.links.termsOfService', 'Terms of Service'), '/terms')}
                             >
-                                Terms of Service
+                                {t('common:footer.links.termsOfService', 'Terms of Service')}
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
                                 href="/cookies"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Cookie Policy', '/cookies')}
+                                onClick={() => handleLinkClick(t('common:footer.links.cookiePolicy', 'Cookie Policy'), '/cookies')}
                             >
-                                Cookie Policy
+                                {t('common:footer.links.cookiePolicy', 'Cookie Policy')}
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
                                 href="/accessibility"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Accessibility', '/accessibility')}
+                                onClick={() => handleLinkClick(t('common:footer.links.accessibility', 'Accessibility'), '/accessibility')}
                             >
-                                Accessibility
+                                {t('common:footer.links.accessibility', 'Accessibility')}
                             </a>
                         </nav>
                     </div>
@@ -259,9 +260,9 @@ const Footer = () => {
                             type="button"
                             className={styles.backToTopButton}
                             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                            aria-label="Scroll back to top of page"
+                            aria-label={t('common:footer.backToTopAria', 'Scroll back to top of page')}
                         >
-                            Back to Top
+                            {t('common:footer.backToTop', 'Back to Top')}
                         </button>
                     </div>
                 </div>

@@ -12,6 +12,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import jobService from '../../services/jobService';
 import { PageContainer } from '../../components/layout';
 import GeneralSelect from '../../components/common/GeneralSelect';
@@ -23,6 +24,7 @@ import styles from './JobPostingPage.module.css';
  * @returns {JSX.Element} The job posting page component
  */
 const JobPostingPage = () => {
+    const { t } = useTranslation(['jobs', 'common', 'validation']);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -133,7 +135,7 @@ const JobPostingPage = () => {
         if (validateStep(currentStep)) {
             setCurrentStep(prev => prev + 1);
         } else {
-            setError('Please fill in all required fields');
+            setError(t('validation:fillRequiredFields', 'Please fill in all required fields'));
         }
     };
 
@@ -167,12 +169,12 @@ const JobPostingPage = () => {
             await jobService.createJob(jobData);
             navigate('/dashboard', {
                 state: {
-                    message: 'Job posted successfully!',
+                    message: t('jobs:posting.success', 'Job posted successfully!'),
                     type: 'success'
                 }
             });
         } catch (err) {
-            setError(err.message || 'Failed to post job');
+            setError(err.message || t('jobs:posting.errorSubmit', 'Failed to post job'));
         } finally {
             setLoading(false);
         }
@@ -187,61 +189,61 @@ const JobPostingPage = () => {
             case 1:
                 return (
                     <div className={styles.stepContent}>
-                        <h2 className={styles.stepTitle}>Job Details</h2>
+                        <h2 className={styles.stepTitle}>{t('jobs:posting.step1Title', 'Job Details')}</h2>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="title">Job Title *</label>
+                            <label htmlFor="title">{t('jobs:posting.jobTitle', 'Job Title *')}</label>
                             <input
                                 type="text"
                                 id="title"
                                 name="title"
                                 value={formData.title}
                                 onChange={handleInputChange}
-                                placeholder="e.g., Senior Frontend Developer"
+                                placeholder={t('jobs:posting.jobTitlePlaceholder', 'e.g., Senior Frontend Developer')}
                                 required
                                 aria-required="true"
-                                aria-label="Job title"
+                                aria-label={t('jobs:posting.jobTitleAria', 'Job title')}
                             />
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="description">Job Description *</label>
+                            <label htmlFor="description">{t('jobs:posting.jobDescription', 'Job Description *')}</label>
                             <textarea
                                 id="description"
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
-                                placeholder="Describe the role, responsibilities, and what makes this opportunity unique..."
+                                placeholder={t('jobs:posting.jobDescPlaceholder', 'Describe the role, responsibilities, and what makes this opportunity unique...')}
                                 rows={8}
                                 required
                                 aria-required="true"
-                                aria-label="Job description"
+                                aria-label={t('jobs:posting.jobDescAria', 'Job description')}
                             />
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="requirements">Requirements</label>
+                            <label htmlFor="requirements">{t('jobs:details.requirements', 'Requirements')}</label>
                             <textarea
                                 id="requirements"
                                 name="requirements"
                                 value={formData.requirements}
                                 onChange={handleInputChange}
-                                placeholder="List the qualifications and experience required..."
+                                placeholder={t('jobs:posting.reqPlaceholder', 'List the qualifications and experience required...')}
                                 rows={5}
-                                aria-label="Job requirements"
+                                aria-label={t('jobs:posting.reqAria', 'Job requirements')}
                             />
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="responsibilities">Responsibilities</label>
+                            <label htmlFor="responsibilities">{t('jobs:details.responsibilities', 'Responsibilities')}</label>
                             <textarea
                                 id="responsibilities"
                                 name="responsibilities"
                                 value={formData.responsibilities}
                                 onChange={handleInputChange}
-                                placeholder="List the main responsibilities..."
+                                placeholder={t('jobs:posting.respPlaceholder', 'List the main responsibilities...')}
                                 rows={5}
-                                aria-label="Job responsibilities"
+                                aria-label={t('jobs:posting.respAria', 'Job responsibilities')}
                             />
                         </div>
                     </div>
@@ -250,65 +252,65 @@ const JobPostingPage = () => {
             case 2:
                 return (
                     <div className={styles.stepContent}>
-                        <h2 className={styles.stepTitle}>Job Configuration</h2>
+                        <h2 className={styles.stepTitle}>{t('jobs:posting.step2Title', 'Job Configuration')}</h2>
 
                         <div className={styles.formRow}>
                             <div className={styles.formGroup}>
-                                <label htmlFor="location">Location *</label>
+                                <label htmlFor="location">{t('jobs:posting.location', 'Location *')}</label>
                                 <input
                                     type="text"
                                     id="location"
                                     name="location"
                                     value={formData.location}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., New York, NY"
+                                    placeholder={t('jobs:posting.locationPlaceholder', 'e.g., New York, NY')}
                                     required
                                     aria-required="true"
-                                    aria-label="Job location"
+                                    aria-label={t('jobs:posting.locationAria', 'Job location')}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label htmlFor="jobType">Job Type *</label>
+                                <label htmlFor="jobType">{t('jobs:posting.jobType', 'Job Type *')}</label>
                                 <GeneralSelect
                                     value={formData.jobType || "full-time"}
                                     onChange={(selectedValue) => handleInputChange({ target: { name: "jobType", value: selectedValue } })}
                                     options={[
-                                        { value: "full-time", label: "Full Time" },
-                                        { value: "part-time", label: "Part Time" },
-                                        { value: "contract", label: "Contract" },
-                                        { value: "internship", label: "Internship" }
+                                        { value: "full-time", label: t('jobs:types.FullTime', 'Full Time') },
+                                        { value: "part-time", label: t('jobs:types.PartTime', 'Part Time') },
+                                        { value: "contract", label: t('jobs:types.Contract', 'Contract') },
+                                        { value: "internship", label: t('jobs:types.Internship', 'Internship') }
                                     ]}
-                                    aria-label="Job type"
+                                    aria-label={t('jobs:posting.jobTypeAria', 'Job type')}
                                 />
                             </div>
                         </div>
 
                         <div className={styles.formRow}>
                             <div className={styles.formGroup}>
-                                <label htmlFor="experienceLevel">Experience Level</label>
+                                <label htmlFor="experienceLevel">{t('jobs:filters.experienceLevel', 'Experience Level')}</label>
                                 <GeneralSelect
                                     value={formData.experienceLevel || "entry"}
                                     onChange={(selectedValue) => handleInputChange({ target: { name: "experienceLevel", value: selectedValue } })}
                                     options={[
-                                        { value: "entry", label: "Entry Level" },
-                                        { value: "mid", label: "Mid Level" },
-                                        { value: "senior", label: "Senior Level" },
-                                        { value: "executive", label: "Executive" }
+                                        { value: "entry", label: t('jobs:experience.EntryLevel', 'Entry Level') },
+                                        { value: "mid", label: t('jobs:experience.MidLevel', 'Mid Level') },
+                                        { value: "senior", label: t('jobs:experience.SeniorLevel', 'Senior Level') },
+                                        { value: "executive", label: t('jobs:experience.Executive', 'Executive') }
                                     ]}
-                                    aria-label="Experience level"
+                                    aria-label={t('jobs:posting.expLevelAria', 'Experience level')}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label htmlFor="deadline">Application Deadline</label>
+                                <label htmlFor="deadline">{t('jobs:posting.deadline', 'Application Deadline')}</label>
                                 <input
                                     type="date"
                                     id="deadline"
                                     name="deadline"
                                     value={formData.deadline}
                                     onChange={handleInputChange}
-                                    aria-label="Application deadline"
+                                    aria-label={t('jobs:posting.deadlineAria', 'Application deadline')}
                                 />
                             </div>
                         </div>
@@ -320,14 +322,14 @@ const JobPostingPage = () => {
                                     name="isRemote"
                                     checked={formData.isRemote}
                                     onChange={handleInputChange}
-                                    aria-label="Remote position"
+                                    aria-label={t('jobs:posting.remoteAria', 'Remote position')}
                                 />
-                                This is a remote position
+                                {t('jobs:posting.remoteCheckbox', 'This is a remote position')}
                             </label>
                         </div>
 
                         <div className={styles.salarySection}>
-                            <label htmlFor="salaryCurrency">Salary Range</label>
+                            <label htmlFor="salaryCurrency">{t('jobs:filters.salaryRange', 'Salary Range')}</label>
                             <div className={styles.salaryInputs}>
                                 <GeneralSelect
                                     value={formData.salaryCurrency || "USD"}
@@ -338,7 +340,7 @@ const JobPostingPage = () => {
                                         { value: "GBP", label: "GBP" },
                                         { value: "EGP", label: "EGP" }
                                     ]}
-                                    aria-label="Salary currency"
+                                    aria-label={t('jobs:posting.salaryCurrency', 'Salary currency')}
                                 />
                                 <input
                                     type="number"
@@ -346,18 +348,18 @@ const JobPostingPage = () => {
                                     name="salaryMin"
                                     value={formData.salaryMin}
                                     onChange={handleInputChange}
-                                    placeholder="Min"
-                                    aria-label="Minimum salary"
+                                    placeholder={t('jobs:filters.salaryMin', 'Min')}
+                                    aria-label={t('jobs:filters.salaryMinAria', 'Minimum salary')}
                                 />
-                                <span className={styles.salarySeparator} aria-hidden="true">to</span>
+                                <span className={styles.salarySeparator} aria-hidden="true">{t('jobs:posting.to', 'to')}</span>
                                 <input
                                     type="number"
                                     id="salaryMax"
                                     name="salaryMax"
                                     value={formData.salaryMax}
                                     onChange={handleInputChange}
-                                    placeholder="Max"
-                                    aria-label="Maximum salary"
+                                    placeholder={t('jobs:filters.salaryMax', 'Max')}
+                                    aria-label={t('jobs:filters.salaryMaxAria', 'Maximum salary')}
                                 />
                             </div>
                         </div>
@@ -367,10 +369,10 @@ const JobPostingPage = () => {
             case 3:
                 return (
                     <div className={styles.stepContent}>
-                        <h2 className={styles.stepTitle}>Skills & Benefits</h2>
+                        <h2 className={styles.stepTitle}>{t('jobs:posting.step3Title', 'Skills & Benefits')}</h2>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="skillInput">Required Skills</label>
+                            <label htmlFor="skillInput">{t('jobs:details.requiredSkills', 'Required Skills')}</label>
                             <div className={styles.tagInput}>
                                 <input
                                     type="text"
@@ -378,25 +380,25 @@ const JobPostingPage = () => {
                                     value={skillInput}
                                     onChange={(e) => setSkillInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                                    placeholder="Type a skill and press Enter"
-                                    aria-label="Add new skill"
+                                    placeholder={t('jobs:posting.skillPlaceholder', 'Type a skill and press Enter')}
+                                    aria-label={t('jobs:posting.addSkillAria', 'Add new skill')}
                                 />
                                 <button
                                     type="button"
                                     onClick={addSkill}
-                                    aria-label="Add skill"
+                                    aria-label={t('jobs:posting.addSkill', 'Add skill')}
                                 >
-                                    Add
+                                    {t('common:actions.add', 'Add')}
                                 </button>
                             </div>
-                            <div className={styles.tags} role="list" aria-label="Required skills">
+                            <div className={styles.tags} role="list" aria-label={t('jobs:details.requiredSkills', 'Required skills')}>
                                 {formData.skills.map((skill, index) => (
                                     <span key={index} className={styles.tag} role="listitem">
                                         {skill}
                                         <button
                                             type="button"
                                             onClick={() => removeSkill(skill)}
-                                            aria-label={`Remove ${skill} skill`}
+                                            aria-label={t('jobs:posting.removeSkillAria', 'Remove {{skill}} skill', { skill })}
                                         >
                                             ×
                                         </button>
@@ -406,7 +408,7 @@ const JobPostingPage = () => {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label htmlFor="benefitInput">Benefits</label>
+                            <label htmlFor="benefitInput">{t('jobs:details.benefits', 'Benefits')}</label>
                             <div className={styles.tagInput}>
                                 <input
                                     type="text"
@@ -414,25 +416,25 @@ const JobPostingPage = () => {
                                     value={benefitInput}
                                     onChange={(e) => setBenefitInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addBenefit())}
-                                    placeholder="e.g., Health insurance, Remote work..."
-                                    aria-label="Add new benefit"
+                                    placeholder={t('jobs:posting.benefitPlaceholder', 'e.g., Health insurance, Remote work...')}
+                                    aria-label={t('jobs:posting.addBenefitAria', 'Add new benefit')}
                                 />
                                 <button
                                     type="button"
                                     onClick={addBenefit}
-                                    aria-label="Add benefit"
+                                    aria-label={t('jobs:posting.addBenefit', 'Add benefit')}
                                 >
-                                    Add
+                                    {t('common:actions.add', 'Add')}
                                 </button>
                             </div>
-                            <div className={styles.tags} role="list" aria-label="Job benefits">
+                            <div className={styles.tags} role="list" aria-label={t('jobs:details.benefits', 'Job benefits')}>
                                 {formData.benefits.map((benefit, index) => (
                                     <span key={index} className={styles.tag} role="listitem">
                                         {benefit}
                                         <button
                                             type="button"
                                             onClick={() => removeBenefit(benefit)}
-                                            aria-label={`Remove ${benefit} benefit`}
+                                            aria-label={t('jobs:posting.removeBenefitAria', 'Remove {{benefit}} benefit', { benefit })}
                                         >
                                             ×
                                         </button>
@@ -451,11 +453,11 @@ const JobPostingPage = () => {
     return (
         <PageContainer>
             <header className={styles.header}>
-                <h1 className={styles.title}>Post a New Job</h1>
-                <p className={styles.subtitle}>Fill in the details to create a new job listing</p>
+                <h1 className={styles.title}>{t('jobs:posting.title', 'Post a New Job')}</h1>
+                <p className={styles.subtitle}>{t('jobs:posting.subtitle', 'Fill in the details to create a new job listing')}</p>
             </header>
 
-            <nav className={styles.progressBar} aria-label="Job posting progress">
+            <nav className={styles.progressBar} aria-label={t('jobs:posting.progressAria', 'Job posting progress')}>
                 {[1, 2, 3].map((step) => (
                     <div
                         key={step}
@@ -469,12 +471,12 @@ const JobPostingPage = () => {
                         }}
                         role="button"
                         tabIndex={step < currentStep ? 0 : -1}
-                        aria-label={`Step ${step}: ${step === 1 ? 'Details' : step === 2 ? 'Configuration' : 'Skills'}`}
+                        aria-label={t('jobs:posting.stepAria', 'Step {{step}}: {{name}}', { step, name: step === 1 ? t('jobs:posting.stepDetails', 'Details') : step === 2 ? t('jobs:posting.stepConfig', 'Configuration') : t('jobs:posting.stepSkills', 'Skills') })}
                         aria-current={currentStep === step ? 'step' : undefined}
                     >
                         <div className={styles.stepNumber} aria-hidden="true">{step}</div>
                         <span className={styles.stepLabel}>
-                            {step === 1 ? 'Details' : step === 2 ? 'Configuration' : 'Skills'}
+                            {step === 1 ? t('jobs:posting.stepDetails', 'Details') : step === 2 ? t('jobs:posting.stepConfig', 'Configuration') : t('jobs:posting.stepSkills', 'Skills')}
                         </span>
                     </div>
                 ))}
@@ -495,9 +497,9 @@ const JobPostingPage = () => {
                             type="button"
                             className={styles.backButton}
                             onClick={handleBack}
-                            aria-label="Go back to previous step"
+                            aria-label={t('jobs:posting.goBackAria', 'Go back to previous step')}
                         >
-                            Back
+                            {t('common:actions.back', 'Back')}
                         </button>
                     )}
 
@@ -506,18 +508,18 @@ const JobPostingPage = () => {
                             type="button"
                             className={styles.nextButton}
                             onClick={handleNext}
-                            aria-label="Go to next step"
+                            aria-label={t('jobs:posting.goNextAria', 'Go to next step')}
                         >
-                            Next
+                            {t('common:actions.next', 'Next')}
                         </button>
                     ) : (
                         <button
                             type="submit"
                             className={styles.submitButton}
                             disabled={loading}
-                            aria-label={loading ? 'Posting job...' : 'Post job'}
+                            aria-label={loading ? t('jobs:posting.postingJobAria', 'Posting job...') : t('jobs:posting.postJobAria', 'Post job')}
                         >
-                            {loading ? 'Posting...' : 'Post Job'}
+                            {loading ? t('jobs:posting.posting', 'Posting...') : t('jobs:posting.postJob', 'Post Job')}
                         </button>
                     )}
                 </div>

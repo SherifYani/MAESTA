@@ -66,7 +66,7 @@ export const Button = ({
 
 Button.propTypes = {
     children: PropTypes.node.isRequired,
-    variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'danger']),
+    variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'danger', 'success']),
     size: PropTypes.oneOf(['small', 'medium', 'large']),
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
     onClick: PropTypes.func,

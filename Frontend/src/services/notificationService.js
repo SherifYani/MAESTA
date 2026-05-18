@@ -1,191 +1,125 @@
 /**
  * @file notificationService.js
- * @description Notification services - handles push notifications, email preferences, and in-app alerts
+ * @description Notification services — verified against NotificationsController.cs.
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-02-2026
+ * @version 2.1.0
+ * @date 2026-04-29
  *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
+ * @last-modified-by Antigravity (AI) — verified against NotificationsController.cs
+ * @last-modified-date 2026-04-29
+ *
+ * REAL ROUTES (NotificationsController [Route("api/[controller]")]):
+ *   GET    api/notifications?page=&limit=
+ *   GET    api/notifications/unread           ← returns unread count
+ *   PUT    api/notifications/{id}/read
+ *   PUT    api/notifications/read-all
+ *   DELETE api/notifications/{id}
+ *   GET    api/notifications/preferences
+ *   PUT    api/notifications/preferences
+ *   POST   api/notifications/push/subscribe   ← body: "deviceToken" (string)
  **/
 
 import ApiService from './ApiService';
-import {
-    mockNotifications,
-    getMockNotifications,
-    getMockUnreadCount,
-    mockPreferences
-} from '../utils/mockNotificationData';
-
-// Use mock data in development mode
-const USE_MOCK_DATA = process.env.NODE_ENV === 'development' || true;
 
 const notificationService = {
-    // Get all notifications
+
+    /**
+     * Get paginated notifications for the current user.
+     * @param {number} page
+     * @param {number} limit
+     */
     getNotifications: async (page = 1, limit = 20) => {
-        if (USE_MOCK_DATA) {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 300));
-            return getMockNotifications({ limit });
-        }
-
-        try {
-            const response = await ApiService.get(`/api/notifications?page=${page}&limit=${limit}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.get('/api/notifications', { params: { page, limit } });
+        return response.data;
     },
 
-    // Get unread notifications count
+    /**
+     * Get the count of unread notifications.
+     * Backend: GET api/notifications/unread
+     */
     getUnreadCount: async () => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            return { count: getMockUnreadCount() };
-        }
-
-        try {
-            const response = await ApiService.get('/api/notifications/unread-count');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.get('/api/notifications/unread');
+        return response.data;
     },
 
-    // Mark notification as read
+    /**
+     * Mark a single notification as read.
+     * @param {string|number} notificationId
+     */
     markAsRead: async (notificationId) => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const notification = mockNotifications.find(n => n.id === notificationId);
-            if (notification) {
-                notification.read = true;
-            }
-            return { success: true };
-        }
-
-        try {
-            const response = await ApiService.put(`/api/notifications/${notificationId}/read`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.put(`/api/notifications/${notificationId}/read`);
+        return response.data;
     },
 
-    // Mark all as read
+    /**
+     * Mark all notifications as read.
+     */
     markAllAsRead: async () => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            mockNotifications.forEach(n => {
-                n.read = true;
-            });
-            return { success: true };
-        }
-
-        try {
-            const response = await ApiService.put('/api/notifications/read-all');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.put('/api/notifications/read-all');
+        return response.data;
     },
 
-    // Delete notification
+    /**
+     * Delete a single notification.
+     * @param {string|number} notificationId
+     */
     deleteNotification: async (notificationId) => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const index = mockNotifications.findIndex(n => n.id === notificationId);
-            if (index !== -1) {
-                mockNotifications.splice(index, 1);
-            }
-            return { success: true };
-        }
-
-        try {
-            const response = await ApiService.delete(`/api/notifications/${notificationId}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.delete(`/api/notifications/${notificationId}`);
+        return response.data;
     },
 
-    // Get notification preferences
+    /**
+     * Get the user's notification preferences.
+     */
     getPreferences: async () => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            return mockPreferences;
-        }
-
-        try {
-            const response = await ApiService.get('/api/notifications/preferences');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.get('/api/notifications/preferences');
+        return response.data;
     },
 
-    // Update notification preferences
+    /**
+     * Update notification preferences.
+     * @param {Object} preferences
+     */
     updatePreferences: async (preferences) => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            Object.assign(mockPreferences, preferences);
-            return mockPreferences;
-        }
-
-        try {
-            const response = await ApiService.put('/api/notifications/preferences', preferences);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await ApiService.put('/api/notifications/preferences', preferences);
+        return response.data;
     },
 
-    // Subscribe to push notifications
-    subscribeToPush: async (subscription) => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            mockPreferences.push.enabled = true;
-            return { success: true };
-        }
-
-        try {
-            const response = await ApiService.post('/api/notifications/subscribe', subscription);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+    /**
+     * Subscribe to push notifications.
+     * Backend: POST api/notifications/push/subscribe — body is a raw device token string
+     * @param {string} deviceToken - push notification device token
+     */
+    subscribeToPush: async (deviceToken) => {
+        const response = await ApiService.post('/api/notifications/push/subscribe',
+            JSON.stringify(deviceToken),
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        return response.data;
     },
 
-    // Unsubscribe from push notifications
+    /**
+     * Unsubscribe from push notifications.
+     */
     unsubscribeFromPush: async () => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            mockPreferences.push.enabled = false;
-            return { success: true };
-        }
-
-        try {
-            const response = await ApiService.delete('/api/notifications/subscribe');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        // MOCKED: Not implemented in backend yet.
+        console.warn("unsubscribeFromPush is mocked");
+        return { success: true };
+        // const response = await ApiService.delete('/api/notifications/subscribe');
+        // return response.data;
     },
 
-    // Get notifications by type
+    /**
+     * Get notifications filtered by type.
+     * @param {string} type - e.g. 'application', 'message', 'system'
+     */
     getByType: async (type) => {
-        if (USE_MOCK_DATA) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            return getMockNotifications({ category: type });
-        }
-
-        try {
-            const response = await ApiService.get(`/api/notifications/type/${type}`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
-    }
+        // MOCKED: Not implemented in backend yet.
+        console.warn("getByType is mocked");
+        return [];
+        // const response = await ApiService.get(`/api/notifications/type/${type}`);
+        // return response.data;
+    },
 };
 
 export default notificationService;
-

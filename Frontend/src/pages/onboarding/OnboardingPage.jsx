@@ -1,18 +1,20 @@
 /**
- * @file CompanyMemberOnboarding.jsx
- * @description Company member onboarding page with company search and database alignment
+ * @file OnboardingPage.jsx
+ * @description Role-based onboarding router — renders JobSeekerOnboarding or CompanyOnBoarding
+ *              based on the userRole stored in localStorage during registration Step 1.
  * @author Sherif Talaat
- * @version 1.4.0
+ * @version 1.5.0
  * @date 24-10-2025
- * 
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-16
+ * @last-modified-date 2026-04-29
+ * @fix Re-enabled role-based renderForm() switch (was hardcoded to JobSeekerOnboarding).
  */
 import JobSeekerOnboarding from "./JobSeekerOnboarding";
 // import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
 import { ArrowLeft } from "lucide-react";
-import AuthHeader from "../../components/common/AuthHeader";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 // import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 
@@ -48,7 +50,7 @@ export default function OnboardingPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="min-h-screen">
         <button
           className="registration-page__back-button"
@@ -56,11 +58,7 @@ export default function OnboardingPage() {
           onClick={handleBackNavigation}>
           <ArrowLeft size={20} />
         </button>
-        {/* {renderForm()} */}
-        {/* <CompanyOnboarding /> */}
-        <JobSeekerOnboarding />
-        {/* <FreelancerOnboarding /> */}
-        {/* <CompanyOnboarding /> */}
+        {renderForm()}
       </div>
       <Footer />
     </div>

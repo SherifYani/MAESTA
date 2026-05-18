@@ -1,6 +1,6 @@
 /**
  * @file AssistantSettings.jsx
- * @description AI Assistant settings panel component
+ * @description Sherif Talaat settings panel component
  * @author Sherif Talaat
  * @verison 1.1.0
  * @date 2026-02-06
@@ -17,7 +17,7 @@ import GeneralSelect from "../common/GeneralSelect";
 import styles from "./AssistantSettings.module.css";
 
 /**
- * AI Assistant settings panel component
+ * Sherif Talaat settings panel component
  * @param {Object} props - Component props
  * @param {Function} props.onClose - Function to close the settings panel
  * @returns {JSX.Element} Rendered settings panel

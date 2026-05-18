@@ -1,0 +1,62 @@
+/* 
+  * @file FilterPanel.module.css
+  * @description Styles for the FilterPanel component
+  * @author Sherif Talaat
+  * @version 1.0.1
+  * @date 2026-05-04
+*/
+
+.filterPanel {
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  backdrop-filter: blur(10px);
+}
+
+.filtersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.select {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+  font-size: var(--font-size-sm);
+}
+
+.dateRange {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dateRange>*:first-child,
+.dateRange>*:last-child {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}

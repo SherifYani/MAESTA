@@ -3,21 +3,26 @@
  * @description Main chat interface integrating conversation list, message history, and input (FR-601.1)
  * @author Sherif Talaat
  * @date 2026-02-07
- * 
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-07
- * 
+ * @last-modified-date 2026-04-29
+ * @fix Aligned with user-centric ChatContext: selectConversation(userId), real DTO field names
+ *      (userName, userProfilePicture, chatId). Wired sendTypingIndicator on keystroke.
+ *      MessageBubble.isOwn now uses user.id from AuthContext instead of hardcoded string.
+ *
  * @requires ./ChatList
  * @requires ./MessageBubble
  * @requires ./TypingIndicator
  * @requires ./ReadReceipt
  * @requires ./FileUploader
  * @requires ../../context/ChatContext
+ * @requires ../../context/AuthContext
  */
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, X, ArrowLeft } from 'lucide-react';
 import { useChat } from '../../context/ChatContext';
+import { useAuth } from '../../context/AuthContext';
 import ChatList from './ChatList';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
@@ -34,9 +39,12 @@ const ChatInterface = () => {
         activeConversation,
         messages = [],
         loading,
+        isUserTyping,
         selectConversation,
         sendMessage,
+        sendTypingIndicator,
     } = useChat();
+    const { user } = useAuth();
 
     const [messageInput, setMessageInput] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
@@ -57,11 +65,11 @@ const ChatInterface = () => {
     }, [messages]);
 
     /**
-     * Handle conversation selection
-     * @param {string} conversationId - ID of selected conversation
+     * Handle conversation selection — pass the other user's ID (user-centric API)
+     * @param {string} otherUserId - userId of the other participant
      */
-    const handleSelectConversation = (conversationId) => {
-        selectConversation(conversationId);
+    const handleSelectConversation = (otherUserId) => {
+        selectConversation(otherUserId);
         setShowMobileList(false);
     };
 
@@ -69,13 +77,12 @@ const ChatInterface = () => {
      * Handle message send
      */
     const handleSendMessage = async () => {
-        if (!messageInput.trim() && !selectedFile) return;
+        if (!messageInput.trim()) return;
         if (!activeConversation) return;
 
         try {
-            await sendMessage(messageInput.trim(), selectedFile);
+            await sendMessage(messageInput.trim());
             setMessageInput('');
-            setSelectedFile(null);
         } catch (error) {
             console.error('Failed to send message:', error);
         }
@@ -117,13 +124,16 @@ const ChatInterface = () => {
         setShowMobileList(true);
     };
 
+    // Show typing indicator for the person we are chatting with
+    const remoteIsTyping = activeConversation ? isUserTyping?.(activeConversation.userId) : false;
+
     return (
         <div className={styles.container}>
             {/* Conversations List */}
             <div className={`${styles.listPanel} ${showMobileList ? styles.showMobile : styles.hideMobile}`}>
                 <ChatList
                     conversations={conversations}
-                    activeConversationId={activeConversation?.id}
+                    activeConversationUserId={activeConversation?.userId}
                     onSelectConversation={handleSelectConversation}
                 />
             </div>
@@ -144,17 +154,14 @@ const ChatInterface = () => {
 
                             <div className={styles.chatInfo}>
                                 <img
-                                    src={activeConversation.avatar || '/default-avatar.png'}
-                                    alt={`${activeConversation.name} avatar`}
+                                    src={activeConversation.userProfilePicture || '/default-avatar.png'}
+                                    alt={`${activeConversation.userName} avatar`}
                                     className={styles.avatar}
                                     width="40"
                                     height="40"
                                 />
                                 <div className={styles.details}>
-                                    <h2 className={styles.name}>{activeConversation.name}</h2>
-                                    {activeConversation.isOnline && (
-                                        <span className={styles.status}>Online</span>
-                                    )}
+                                    <h2 className={styles.name}>{activeConversation.userName}</h2>
                                 </div>
                             </div>
 
@@ -177,14 +184,14 @@ const ChatInterface = () => {
                                 ) : (
                                     messages.map((message) => (
                                         <MessageBubble
-                                            key={message.id}
+                                            key={message.chatId || message.id}
                                             message={message}
-                                            isOwn={message.senderId === 'current-user'} // Replace with actual user ID comparison
+                                            isOwn={message.senderId === user?.id}
                                         />
                                     ))
                                 )}
 
-                                {isTyping && (
+                                {remoteIsTyping && (
                                     <div className={styles.typingContainer}>
                                         <TypingIndicator />
                                     </div>
@@ -230,7 +237,11 @@ const ChatInterface = () => {
                                 <textarea
                                     className={styles.messageInput}
                                     value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
+                                    onChange={(e) => {
+                                        setMessageInput(e.target.value);
+                                        // Notify remote user we are typing
+                                        sendTypingIndicator?.(e.target.value.length > 0);
+                                    }}
                                     onKeyPress={handleKeyPress}
                                     placeholder="Type a message..."
                                     rows={1}

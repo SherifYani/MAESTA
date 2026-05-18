@@ -1,12 +1,26 @@
 /**
  * @file ChatContext.jsx
- * @description Chat context - manages messaging and conversation state globally
+ * @description Chat context — manages messaging, conversations, and SignalR real-time state.
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-02-2026
-**/
+ * @version 2.0.0
+ * @date 2026-04-29
+ *
+ * @last-modified-by Antigravity (AI) — aligned with user-centric ChatController + ChatHub
+ * @last-modified-date 2026-04-29
+ *
+ * Backend API shape (user-centric, not conversation-centric):
+ *   GET  api/chat/conversations          → ChatConversationDto[]
+ *     { userId, userName, userProfilePicture, lastMessage, unreadCount }
+ *   GET  api/chat/messages/{otherUserId} → ChatMessageDto[]
+ *     { chatId, senderId, senderName, receiverId, content, isRead, createdAt }
+ *   POST api/chat/messages               → { receiverId, content }
+ *   PUT  api/chat/messages/{senderId}/read
+ *
+ * SignalR Hub: /hubs/chat
+ *   Server→Client events: "ReceiveMessage", "UserTyping"
+ **/
 
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import chatService from '../services/chatService';
 import { useAuth } from './AuthContext';
 
@@ -17,30 +31,72 @@ export const useChat = () => useContext(ChatContext);
 export const ChatProvider = ({ children }) => {
     const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
+    // activeConversation = a ChatConversationDto { userId, userName, userProfilePicture, ... }
     const [activeConversation, setActiveConversation] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const [typingUsers, setTypingUsers] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const hubRef = useRef(null);
 
-    // Load conversations when user is authenticated
+    // ── SignalR Hub Management ────────────────────────────────────────────────
+
+    const connectHub = useCallback(async () => {
+        if (hubRef.current) return; // already connected
+        try {
+            const connection = await chatService.connectHub(
+                // ReceiveMessage: append incoming message to state
+                (senderId, message) => {
+                    setMessages(prev => [...prev, message]);
+                    // bump unread count in conversation list
+                    setConversations(prev => prev.map(conv =>
+                        conv.userId === senderId
+                            ? { ...conv, unreadCount: (conv.unreadCount || 0) + 1, lastMessage: message }
+                            : conv
+                    ));
+                },
+                // UserTyping indicator
+                (senderId, isTyping) => {
+                    setTypingUsers(prev => ({ ...prev, [senderId]: isTyping }));
+                }
+            );
+            hubRef.current = connection;
+        } catch (err) {
+            console.error('[ChatContext] SignalR connect failed:', err);
+        }
+    }, []);
+
+    const disconnectHub = useCallback(async () => {
+        if (!hubRef.current) return;
+        try {
+            await chatService.disconnectHub();
+        } catch {}
+        hubRef.current = null;
+    }, []);
+
+    // Connect hub when user logs in, disconnect on logout
     useEffect(() => {
         if (user) {
             loadConversations();
-            loadUnreadCount();
+            connectHub();
         } else {
+            disconnectHub();
             setConversations([]);
             setActiveConversation(null);
             setMessages([]);
-            setUnreadCount(0);
+            setTypingUsers({});
         }
-    }, [user]);
+        return () => { disconnectHub(); };
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // ── REST API Methods ──────────────────────────────────────────────────────
 
     const loadConversations = async () => {
         try {
             setLoading(true);
             const data = await chatService.getConversations();
-            setConversations(data);
+            // data is ChatConversationDto[]
+            setConversations(Array.isArray(data) ? data : []);
         } catch (err) {
             setError(err.message || 'Failed to load conversations');
         } finally {
@@ -48,73 +104,72 @@ export const ChatProvider = ({ children }) => {
         }
     };
 
-    const loadUnreadCount = async () => {
-        try {
-            const data = await chatService.getUnreadCount();
-            setUnreadCount(data.count || 0);
-        } catch (err) {
-            console.error('Failed to load unread count:', err);
-        }
-    };
-
-    const selectConversation = useCallback(async (conversationId) => {
+    /**
+     * Select a conversation by otherUserId (user-centric API).
+     * Fetches messages from GET api/chat/messages/{otherUserId}
+     * and marks them as read via PUT api/chat/messages/{otherUserId}/read.
+     */
+    const selectConversation = useCallback(async (otherUserId) => {
         try {
             setLoading(true);
-            const conversation = await chatService.getConversationById(conversationId);
-            setActiveConversation(conversation);
+            // Find the conversation DTO from local state
+            const conv = conversations.find(c => c.userId === otherUserId);
+            setActiveConversation(conv || { userId: otherUserId });
 
-            const messagesData = await chatService.getMessages(conversationId);
-            setMessages(messagesData);
+            // Fetch messages with this user
+            const data = await chatService.getMessages(otherUserId);
+            setMessages(Array.isArray(data) ? data : []);
 
             // Mark as read
-            await chatService.markAsRead(conversationId);
-            loadUnreadCount();
+            await chatService.markAsRead(otherUserId);
+
+            // Reset unread count in conversation list
+            setConversations(prev => prev.map(c =>
+                c.userId === otherUserId ? { ...c, unreadCount: 0 } : c
+            ));
         } catch (err) {
-            setError(err.message || 'Failed to load conversation');
+            setError(err.message || 'Failed to load messages');
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [conversations]);
 
-    const startConversation = async (recipientId, initialMessage = null) => {
-        try {
-            setError(null);
-            const conversation = await chatService.startConversation(recipientId, initialMessage);
-            setConversations(prev => [conversation, ...prev]);
-            setActiveConversation(conversation);
-            return conversation;
-        } catch (err) {
-            setError(err.message || 'Failed to start conversation');
-            throw err;
-        }
-    };
-
-    const sendMessage = async (content, attachment = null) => {
+    /**
+     * Send a message to the active conversation's user.
+     * Uses SignalR hub if connected, falls back to REST.
+     */
+    const sendMessage = async (content) => {
         if (!activeConversation) return;
+        const receiverId = activeConversation.userId;
 
         try {
             setError(null);
             let newMessage;
 
-            if (attachment) {
-                newMessage = await chatService.sendMessageWithAttachment(
-                    activeConversation.id,
+            if (hubRef.current) {
+                // Real-time via SignalR
+                await chatService.sendHubMessage(receiverId, content);
+                // Optimistically add message (server will echo it back via ReceiveMessage)
+                newMessage = {
+                    chatId: Date.now(),
+                    senderId: user?.id,
+                    senderName: user?.name,
+                    receiverId,
                     content,
-                    attachment
-                );
+                    isRead: false,
+                    createdAt: new Date().toISOString(),
+                };
             } else {
-                newMessage = await chatService.sendMessage(activeConversation.id, { content });
+                // Fallback to REST: POST api/chat/messages
+                newMessage = await chatService.sendMessage(receiverId, content);
             }
 
             setMessages(prev => [...prev, newMessage]);
-
-            // Update conversation in list
             setConversations(prev => prev.map(conv =>
-                conv.id === activeConversation.id
-                    ? { ...conv, lastMessage: newMessage, updatedAt: new Date() }
+                conv.userId === receiverId
+                    ? { ...conv, lastMessage: newMessage }
                     : conv
             ));
-
             return newMessage;
         } catch (err) {
             setError(err.message || 'Failed to send message');
@@ -122,21 +177,29 @@ export const ChatProvider = ({ children }) => {
         }
     };
 
+    /** Send typing indicator via hub */
+    const sendTypingIndicator = async (isTyping) => {
+        if (!activeConversation || !hubRef.current) return;
+        try {
+            await chatService.sendHubTyping(activeConversation.userId, isTyping);
+        } catch {}
+    };
+
     const deleteMessage = async (messageId) => {
         try {
             await chatService.deleteMessage(messageId);
-            setMessages(prev => prev.filter(msg => msg.id !== messageId));
+            setMessages(prev => prev.filter(msg => (msg.chatId || msg.id) !== messageId));
         } catch (err) {
             setError(err.message || 'Failed to delete message');
             throw err;
         }
     };
 
-    const archiveConversation = async (conversationId) => {
+    const archiveConversation = async (otherUserId) => {
         try {
-            await chatService.archiveConversation(conversationId);
-            setConversations(prev => prev.filter(conv => conv.id !== conversationId));
-            if (activeConversation?.id === conversationId) {
+            await chatService.archiveConversation(otherUserId);
+            setConversations(prev => prev.filter(conv => conv.userId !== otherUserId));
+            if (activeConversation?.userId === otherUserId) {
                 setActiveConversation(null);
                 setMessages([]);
             }
@@ -155,32 +218,40 @@ export const ChatProvider = ({ children }) => {
         }
     };
 
-    const blockUser = async (userId) => {
+    const blockUser = async (userId, reason) => {
         try {
-            await chatService.blockUser(userId);
+            await chatService.blockUser(userId, reason);
         } catch (err) {
             setError(err.message || 'Failed to block user');
             throw err;
         }
     };
 
+    /** Computed: is a specific user typing? */
+    const isUserTyping = (userId) => !!typingUsers[userId];
+
+    /** Total unread across all conversations */
+    const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+
     const value = {
         conversations,
         activeConversation,
         messages,
-        unreadCount,
+        typingUsers,
+        isUserTyping,
+        totalUnread,
         loading,
         error,
         loadConversations,
         selectConversation,
-        startConversation,
         sendMessage,
+        sendTypingIndicator,
         deleteMessage,
         archiveConversation,
         searchMessages,
         blockUser,
         setActiveConversation,
-        setError
+        setError,
     };
 
     return (

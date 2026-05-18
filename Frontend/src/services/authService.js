@@ -1,192 +1,208 @@
 /**
  * @file authService.js
- * @description Authentication services - handles user registration, login, password reset, and 2FA.
- *              Currently implemented as a simulated frontend mock using realistic API patterns.
+ * @description Authentication services — all routes verified against the real
+ *              JobMagnet.API AuthController (api/auth/*).
  * @author Sherif Talaat
- * @version 2.0.0
- * @date 05-02-2026
- **/
+ * @version 3.1.0
+ * @date 2026-04-29
+ *
+ * @last-modified-by Antigravity (AI) — verified against AuthController.cs
+ * @last-modified-date 2026-04-29
+ *
+ * REAL ROUTES (AuthController [Route("api/[controller]")]):
+ *   POST   api/auth/register/step1      ← [AllowAnonymous]
+ *   POST   api/auth/register/step2      ← [Authorize] (temp token from step1)
+ *   POST   api/auth/verify-email        ← body: { email, code }
+ *   POST   api/auth/resend-verification
+ *   POST   api/auth/forgot-password
+ *   POST   api/auth/reset-password
+ *   POST   api/auth/enable-2fa          ← [Authorize]
+ *   POST   api/auth/disable-2fa         ← [Authorize]
+ *   POST   api/auth/verify-2fa
+ *   POST   api/auth/login
+ *   POST   api/auth/refresh-token       ← body: { refreshToken }
+ *   POST   api/auth/logout              ← body: { refreshToken }
+ *   POST   api/auth/logout-all          ← [Authorize]
+ *   GET    api/auth/me                  ← [Authorize]
+ *   POST   api/auth/login-google        ← body: "token" (string)
+ *   POST   api/auth/login-linkedin      ← body: "token" (string)
+ *   GET    api/auth/activate?email=&code=
+ */
 
-// import ApiService from './ApiService'; // Not used in mock version
-
-// --- Simulated Backend Data ---
-const MOCK_USERS = [
-    {
-        id: 1,
-        email: "admin@maesta.com",
-        password: "123456",
-        role: "admin",
-        name: "Admin User",
-        avatarInitials: "AU",
-        isVerified: true
-    },
-    {
-        id: 2,
-        email: "jobseeker@maesta.com",
-        password: "123456",
-        role: "jobseeker",
-        name: "John Doe",
-        avatarInitials: "JD",
-        isVerified: true
-    },
-    {
-        id: 3,
-        email: "company@maesta.com",
-        password: "123456",
-        role: "company",
-        name: "Acme Inc",
-        avatarInitials: "AI",
-        isVerified: true
-    }
-];
-
-// Helper to simulate network delay (300ms - 800ms)
-const delay = () => new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 300));
+import ApiService from './ApiService';
 
 const authService = {
-    // Register new user
+
+    /**
+     * Register Step 1 — basic info (email, password, name…).
+     * Returns a temporary access token + refresh token for Step 2.
+     * @param {Object} userData - { name, email, password, ... }
+     */
     register: async (userData) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/register', userData); return response.data;
-        await delay();
-        const newUser = {
-            id: Date.now(),
-            ...userData,
-            role: userData.role || 'jobseeker',
-            avatarInitials: userData.name ? userData.name.substring(0, 2).toUpperCase() : 'U',
-            isVerified: true
-        };
-        MOCK_USERS.push(newUser);
-        return { message: "Registration successful" };
+        const response = await ApiService.post('/api/auth/register/step1', userData);
+        return response.data;
     },
 
-    // User login
+    /**
+     * Register Step 2 — select user type + role-specific data.
+     * Requires the temporary token from Step 1 to be set in headers.
+     * @param {Object} roleData - { userType, ... role-specific fields }
+     */
+    registerStep2: async (roleData) => {
+        const response = await ApiService.post('/api/auth/register/step2', roleData);
+        return response.data;
+    },
+
+    /**
+     * Login with email and password.
+     * Returns { accessToken, refreshToken, user }
+     * @param {Object} credentials - { email, password }
+     */
     login: async (credentials) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/login', credentials); return response.data;
-        await delay();
-        const { email, password } = credentials;
-        
-        const user = MOCK_USERS.find(u => u.email === email);
-        if (!user) {
-            throw new Error("User not found");
-        }
-        
-        if (user.password !== password) {
-            throw new Error("Wrong password");
-        }
-        
-        const token = `fake-jwt-token-${user.id}-${Date.now()}`;
-        
-        // Return without password
-        const { password: _, ...userWithoutPassword } = user;
-        
-        return {
-            token,
-            user: userWithoutPassword
-        };
+        const response = await ApiService.post('/api/auth/login', credentials);
+        return response.data;
     },
 
-    // Forgot password
+    /**
+     * Send a password-reset code to the given email.
+     * @param {string} email
+     */
     forgotPassword: async (email) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/forgot-password', { email }); return response.data;
-        await delay();
-        if (!MOCK_USERS.find(u => u.email === email)) {
-            throw new Error("User not found");
-        }
-        return { message: "Password reset link sent" };
+        const response = await ApiService.post('/api/auth/forgot-password', { email });
+        return response.data;
     },
 
-    // Reset password
+    /**
+     * Reset password using the reset code received by email.
+     * Backend expects a ResetPasswordRequest DTO.
+     * @param {string} token   - the reset code
+     * @param {string} newPassword
+     */
     resetPassword: async (token, newPassword) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/reset-password', { token, newPassword }); return response.data;
-        await delay();
-        return { message: "Password reset successful" };
+        const response = await ApiService.post('/api/auth/reset-password', { token, newPassword });
+        return response.data;
     },
 
-    // Verify email
-    verifyEmail: async (token) => {
-        // FUTURE: const response = await ApiService.get(`/api/auth/verify-email/${token}`); return response.data;
-        await delay();
-        return { message: "Email verified" };
+    /**
+     * Verify email using the OTP code.
+     * Backend expects: POST api/auth/verify-email with body { email, code }
+     * @param {string} email
+     * @param {string} code  - OTP code from the verification email
+     */
+    verifyEmail: async (email, code) => {
+        const response = await ApiService.post('/api/auth/verify-email', { email, code });
+        return response.data;
     },
 
-    // Resend verification email
+    /**
+     * Resend the verification code email.
+     */
     resendVerification: async (email) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/resend-verification', { email }); return response.data;
-        await delay();
-        return { message: "Verification email sent" };
+        const response = await ApiService.post('/api/auth/resend-verification', { email });
+        return response.data;
     },
 
-    // Google login
+    /**
+     * Login with Google OAuth token.
+     * Backend sends the token as a raw string body.
+     * @param {string} token - Google ID token
+     */
     loginWithGoogle: async (token) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/google-login', { token }); return response.data;
-        await delay();
-        throw new Error("Social login not implemented in mock");
+        const response = await ApiService.post('/api/auth/login-google', JSON.stringify(token), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
     },
 
-    // LinkedIn login
+    /**
+     * Login with LinkedIn OAuth token.
+     * @param {string} token - LinkedIn access token
+     */
     loginWithLinkedIn: async (token) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/linkedin-login', { token }); return response.data;
-        await delay();
-        throw new Error("Social login not implemented in mock");
+        const response = await ApiService.post('/api/auth/login-linkedin', JSON.stringify(token), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return response.data;
     },
 
-    // Logout
-    logout: async () => {
-        // FUTURE: await ApiService.post('/api/auth/logout');
-        await delay();
-        return Promise.resolve();
-    },
-
-    // Get current user
-    getCurrentUser: async () => {
-        // FUTURE: const response = await ApiService.get('/api/auth/me'); return response.data;
-        await delay();
-        const token = localStorage.getItem('token') || sessionStorage.getItem('auth_token');
-        if (!token) throw new Error("No token provided");
-        
-        // Extract id mock: fake-jwt-token-{id}-{timestamp}
-        const parts = token.split('-');
-        if (parts.length < 4 || parts[0] !== 'fake' || parts[1] !== 'jwt' || parts[2] !== 'token') {
-            throw new Error("Invalid token format");
+    /**
+     * Logout from the current device.
+     * Backend requires body: { refreshToken }
+     * @param {string} refreshToken
+     */
+    logout: async (refreshToken = '') => {
+        try {
+            await ApiService.post('/api/auth/logout', { refreshToken });
+        } catch {
+            // Swallow network errors — client-side token cleanup still happens in AuthContext
         }
-
-        const id = parseInt(parts[3], 10);
-        const user = MOCK_USERS.find(u => u.id === id);
-        if (!user) throw new Error("Invalid token");
-        
-        const { password: _, ...userWithoutPassword } = user;
-        return { user: userWithoutPassword };
     },
 
-    // Validate token
-    validateToken: async () => {
-        // FUTURE: const response = await ApiService.get('/api/auth/validate-token'); return response.data;
-        await delay();
-        const token = localStorage.getItem('token') || sessionStorage.getItem('auth_token');
-        if (!token) throw new Error("Invalid token");
-        return { valid: true };
+    /**
+     * Logout from ALL devices — revokes all refresh tokens.
+     */
+    logoutAll: async () => {
+        const response = await ApiService.post('/api/auth/logout-all');
+        return response.data;
     },
 
-    // Change password
+    /**
+     * Get the currently authenticated user's profile.
+     * Called on page load to restore the session from a stored token.
+     * @returns {{ id, name, email, role, ... }}
+     */
+    getCurrentUser: async () => {
+        const response = await ApiService.get('/api/auth/me');
+        return response.data;
+    },
+
+    /**
+     * Refresh the access token using a refresh token.
+     * Backend expects body: { refreshToken }
+     * @param {string} refreshToken
+     */
+    refreshToken: async (refreshToken) => {
+        const response = await ApiService.post('/api/auth/refresh-token', { refreshToken });
+        return response.data;
+    },
+
+    /**
+     * Change the authenticated user's password.
+     * NOTE: This is actually on ProfileController: PUT api/profile/change-password
+     * @param {string} currentPassword
+     * @param {string} newPassword
+     */
     changePassword: async (currentPassword, newPassword) => {
-        // FUTURE: const response = await ApiService.put('/api/auth/change-password', { currentPassword, newPassword }); return response.data;
-        await delay();
-        return { message: "Password changed successfully" };
+        const response = await ApiService.put('/api/profile/change-password', { currentPassword, newPassword });
+        return response.data;
     },
 
-    // Enable/Disable 2FA
-    toggle2FA: async (enable) => {
-        // FUTURE: const endpoint = enable ? '/api/auth/enable-2fa' : '/api/auth/disable-2fa'; const response = await ApiService.post(endpoint); return response.data;
-        await delay();
-        return { message: `2FA ${enable ? 'enabled' : 'disabled'}` };
+    /**
+     * Enable Two-Factor Authentication.
+     */
+    enable2FA: async () => {
+        const response = await ApiService.post('/api/auth/enable-2fa');
+        return response.data;
     },
 
-    // Verify 2FA code
-    verify2FA: async (code) => {
-        // FUTURE: const response = await ApiService.post('/api/auth/verify-2fa', { code }); return response.data;
-        await delay();
-        return { message: "2FA verified" };
-    }
+    /**
+     * Disable Two-Factor Authentication.
+     */
+    disable2FA: async () => {
+        const response = await ApiService.post('/api/auth/disable-2fa');
+        return response.data;
+    },
+
+    /**
+     * Verify a 2FA code during login.
+     * Backend expects a Verify2faRequest DTO.
+     * @param {string} email
+     * @param {string} code
+     */
+    verify2FA: async (email, code) => {
+        const response = await ApiService.post('/api/auth/verify-2fa', { email, code });
+        return response.data;
+    },
 };
 
 export default authService;

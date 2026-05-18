@@ -10,8 +10,10 @@
  * @last-modified-date 2025-12-16
  */
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { useAuth } from "./AuthContext";
+import profileService from "../services/profileService";
 
 /**
  * Initial client profile data structure.
@@ -321,11 +323,97 @@ const ProfileContext = createContext(null);
  * @param {React.ReactNode} props.children - Child components to be wrapped by the provider.
  * @returns {JSX.Element} Context provider wrapping children with profile data.
  */
+/**
+ * Build an empty jobseeker shell seeded from the AuthContext user.
+ * Used as a safe fallback when no backend profile record exists yet.
+ */
+const emptyJobSeekerFromUser = (user) => ({
+  id: user?.id || null,
+  fullName: user?.name || '',
+  email: user?.email || '',
+  phoneNumber: localStorage.getItem(`phone_${user?.id}`) || '',
+  profilePictureUrl: user?.profilePicture || '',
+  isEmailVerified: false,
+  isPhoneVerified: false,
+  createdAt: '',
+  profile: {
+    headline: '',
+    summary: '',
+    resumeUrl: '',
+    location: '',
+    identityVerificationStatus: null,
+  },
+  skills: [],
+  experiences: [],
+  education: [],
+  applications: [],
+});
+
 export function ProfileProvider({ children }) {
+  const { user } = useAuth();
   const [clientData, setClientData] = useState(initialClientData);
   const [freelancerData, setFreelancerData] = useState(initialFreelancerData);
   const [jobSeekerData, setJobSeekerData] = useState(initialJobSeekerData);
   const [companyData, setCompanyData] = useState(initialCompanyData);
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  useEffect(() => {
+    // Reset to empty user-seeded state when user changes (or clears on logout)
+    if (!user) {
+      setJobSeekerData(initialJobSeekerData);
+      setFreelancerData(initialFreelancerData);
+      setClientData(initialClientData);
+      setCompanyData(initialCompanyData);
+      return;
+    }
+
+    const loadData = async () => {
+      setProfileLoading(true);
+      try {
+        if (user.role === 'jobseeker') {
+          // Seed from AuthContext while waiting for API
+          setJobSeekerData(emptyJobSeekerFromUser(user));
+          const data = await profileService.getJobseekerProfile();
+          // Merge API data; fall back to user seed if profile fields are missing
+          setJobSeekerData(prev => ({
+            ...prev,
+            ...data,
+            fullName: data.fullName || user.name || prev.fullName,
+            email: data.email || user.email || prev.email,
+            profilePictureUrl: data.profilePictureUrl || user.profilePicture || prev.profilePictureUrl,
+            profile: { ...prev.profile, ...(data.profile || {}) },
+            phoneNumber: data.phoneNumber || localStorage.getItem(`phone_${user.id}`) || prev.phoneNumber,
+            skills: data.skills ?? prev.skills,
+            experiences: data.experiences ?? prev.experiences,
+            education: data.education ?? prev.education,
+          }));
+        } else if (user.role === 'freelancer') {
+          const data = await profileService.getFreelancerProfile();
+          setFreelancerData(prev => ({ ...prev, ...data }));
+        } else if (user.role === 'company' || user.role === 'employer') {
+          const data = await profileService.getCompanyProfile();
+          setCompanyData(prev => ({ ...prev, ...data }));
+        } else if (user.role === 'client') {
+          const data = await profileService.getClientProfile();
+          setClientData(prev => ({ ...prev, ...data }));
+        }
+      } catch (err) {
+        // 404 means no profile record yet — keep the user-seeded shell
+        if (err?.status === 404 || err?.response?.status === 404 || (typeof err === 'string' && err.includes('404'))) {
+          console.warn("No backend profile record found — using auth user data as fallback.");
+          if (user.role === 'jobseeker') {
+            setJobSeekerData(emptyJobSeekerFromUser(user));
+          }
+        } else {
+          console.error("Failed to load live profile data in context:", err);
+        }
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    loadData();
+  }, [user]);
 
   /**
    * Updates client profile data with new values using shallow merge.
@@ -348,6 +436,9 @@ export function ProfileProvider({ children }) {
    * @param {Object} newData - Partial job seeker data to merge with existing data.
    */
   const updateJobSeekerData = (newData) => {
+    if (newData.phoneNumber !== undefined && user?.id) {
+      localStorage.setItem(`phone_${user.id}`, newData.phoneNumber);
+    }
     setJobSeekerData((prev) => ({ ...prev, ...newData }));
   };
 
@@ -364,6 +455,7 @@ export function ProfileProvider({ children }) {
     freelancerData,
     jobSeekerData,
     companyData,
+    profileLoading,
     updateClientData,
     updateFreelancerData,
     updateJobSeekerData,

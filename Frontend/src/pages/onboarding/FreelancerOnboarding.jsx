@@ -11,6 +11,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import FormTextarea from "../../components/forms/FormTextarea";
 import FormSelect from "../../components/forms/FormSelect";
@@ -20,6 +21,7 @@ import {
   validateFile,
   validateMultipleFiles,
 } from "../../utils/form-validation";
+import authService from "../../services/authService";
 
 /**
  * FreelancerOnboarding Component
@@ -27,6 +29,7 @@ import {
  * @returns {JSX.Element} The rendered freelancer onboarding component
  */
 function FreelancerOnboarding() {
+  const { t } = useTranslation(['auth', 'validation']);
   const navigate = useNavigate();
 
   // Updated form state to match guide fields
@@ -50,6 +53,7 @@ function FreelancerOnboarding() {
 
   const [profilePicture, setProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
   const [formErrors, setFormErrors] = useState({
     professionalTitle: "",
     experienceYears: "",
@@ -80,38 +84,37 @@ function FreelancerOnboarding() {
       !formData.professionalTitle ||
       formData.professionalTitle.trim() === ""
     ) {
-      errors.professionalTitle = "Professional title is required";
+      errors.professionalTitle = t('validation:profTitleRequired', "Professional title is required");
     } else if (formData.professionalTitle.length > 100) {
-      errors.professionalTitle =
-        "Professional title must be less than 100 characters";
+      errors.professionalTitle = t('validation:profTitleLength', "Professional title must be less than 100 characters");
     }
 
     // ExperienceYears validation (0-50)
     if (!formData.experienceYears && formData.experienceYears !== 0) {
-      errors.experienceYears = "Years of experience is required";
+      errors.experienceYears = t('validation:expRequired', "Years of experience is required");
     } else {
       const years = parseInt(formData.experienceYears);
       if (isNaN(years) || years < 0 || years > 50) {
-        errors.experienceYears = "Experience must be between 0 and 50 years";
+        errors.experienceYears = t('validation:expRange', "Experience must be between 0 and 50 years");
       }
     }
 
     // Bio validation (10-2000 characters)
     if (!formData.bio || formData.bio.trim() === "") {
-      errors.bio = "Bio is required";
+      errors.bio = t('validation:bioRequired', "Bio is required");
     } else if (formData.bio.length < 10) {
-      errors.bio = "Bio must be at least 10 characters";
+      errors.bio = t('validation:bioMinLength', "Bio must be at least 10 characters");
     } else if (formData.bio.length > 2000) {
-      errors.bio = "Bio must be less than 2000 characters";
+      errors.bio = t('validation:bioMaxLength', "Bio must be less than 2000 characters");
     }
 
     // HourlyRate validation
     if (!formData.hourlyRate || formData.hourlyRate.trim() === "") {
-      errors.hourlyRate = "Hourly rate is required";
+      errors.hourlyRate = t('validation:hourlyRateRequired', "Hourly rate is required");
     } else {
       const rate = parseFloat(formData.hourlyRate);
       if (isNaN(rate) || rate < 0) {
-        errors.hourlyRate = "Hourly rate must be a valid number";
+        errors.hourlyRate = t('validation:hourlyRateInvalid', "Hourly rate must be a valid number");
       }
     }
 
@@ -120,7 +123,7 @@ function FreelancerOnboarding() {
       !formData.currency ||
       !["USD", "EGP", "SAR"].includes(formData.currency)
     ) {
-      errors.currency = "Currency must be USD, EGP, or SAR";
+      errors.currency = t('validation:currencyInvalid', "Currency must be USD, EGP, or SAR");
     }
 
     // PortfolioUrl validation (URL format, optional)
@@ -128,7 +131,7 @@ function FreelancerOnboarding() {
       try {
         new URL(formData.portfolioUrl);
       } catch {
-        errors.portfolioUrl = "Please enter a valid URL for your portfolio";
+        errors.portfolioUrl = t('validation:invalidPortfolioUrl', "Please enter a valid URL for your portfolio");
       }
     }
 
@@ -140,8 +143,7 @@ function FreelancerOnboarding() {
       try {
         new URL(formData.documentVerificationUrl);
       } catch {
-        errors.documentVerificationUrl =
-          "Please enter a valid URL for your verification document";
+        errors.documentVerificationUrl = t('validation:invalidDocUrl', "Please enter a valid URL for your verification document");
       }
     }
 
@@ -290,16 +292,25 @@ function FreelancerOnboarding() {
     };
 
     setIsLoading(true);
+    setApiError("");
 
     try {
-      console.log("Submitting freelancer data:", submissionData);
+      await authService.registerStep2({
+        userType: "Freelancer",
+        professionalTitle: formData.professionalTitle,
+        experienceYears: parseInt(formData.experienceYears) || 0,
+        bio: formData.bio,
+        hourlyRate: parseFloat(formData.hourlyRate) || 0,
+        currency: formData.currency,
+        portfolioUrl: formData.portfolioUrl || null,
+        documentVerificationUrl: formData.documentVerificationUrl || null,
+        // Backend handles file uploads or ignores extra Data
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Freelancer profile submitted successfully!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting freelancer data:", error);
-      alert("Error submitting profile. Please try again.");
+      setApiError(error?.response?.data?.message || t('auth:completeProfileFailed', "Error submitting profile. Please try again."));
     } finally {
       setIsLoading(false);
     }
@@ -320,11 +331,11 @@ function FreelancerOnboarding() {
       console.log("Saving draft:", draftData);
 
       setTimeout(() => {
-        alert("Draft saved successfully!");
+        alert(t('auth:draftSaved', "Draft saved successfully!"));
       }, 1000);
     } catch (error) {
       console.error("Error saving draft:", error);
-      alert("Error saving draft. Please try again.");
+      alert(t('auth:draftFailed', "Error saving draft. Please try again."));
     } finally {
       setIsLoading(false);
     }
@@ -335,17 +346,17 @@ function FreelancerOnboarding() {
       <div className="onboarding-phase-2__container">
         <div className="onboarding-phase-2__header">
           <h1 className="onboarding-phase-2__title">
-            Complete Your Freelancer Profile
+            {t('auth:onboarding.freelancer.title', "Complete Your Freelancer Profile")}
           </h1>
           <p className="onboarding-phase-2__subtitle">
-            Provide your professional information as specified in the guide
+            {t('auth:onboarding.freelancer.subtitle', "Provide your professional information as specified in the guide")}
           </p>
         </div>
 
         {/* Progress Section */}
         <div className="register-form__progress-section">
           <div className="register-form__progress-header">
-            <h3>Profile Completion</h3>
+            <h3>{t('auth:onboarding.freelancer.profileCompletion', "Profile Completion")}</h3>
             <span className="register-form__progress-percentage">
               {overallProgress}%
             </span>
@@ -357,10 +368,17 @@ function FreelancerOnboarding() {
           </div>
           <p className="register-form__progress-hint">
             {overallProgress === 100
-              ? "🎉 Your freelancer profile is complete!"
-              : "Complete required sections to submit your profile"}
+              ? t('auth:onboarding.freelancer.readyToSubmit', "🎉 Your freelancer profile is complete!")
+              : t('auth:onboarding.freelancer.completeRequired', "Complete required sections to submit your profile")}
           </p>
         </div>
+
+        {apiError && (
+          <div className="onboarding-phase-2__api-error">
+            <i className="fa-solid fa-circle-exclamation"></i>
+            {apiError}
+          </div>
+        )}
 
         <div className="onboarding-phase-2__card">
           <form onSubmit={handleSubmit}>
@@ -369,17 +387,17 @@ function FreelancerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Professional Information
+                    {t('auth:onboarding.freelancer.professionalInfo', "Professional Information")}
                   </h2>
                   {completionStatus.professionalInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Your professional identity as specified in the guide
+                  {t('auth:onboarding.freelancer.profInfoDesc', "Your professional identity as specified in the guide")}
                 </p>
               </div>
 
@@ -390,7 +408,7 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-heading"
                     type="text"
                     name="professionalTitle"
-                    placeholder="Professional Title (e.g., Senior Web Developer)"
+                    placeholder={t('auth:onboarding.freelancer.profTitlePlaceholder', "Professional Title (e.g., Senior Web Developer)")}
                     value={formData.professionalTitle}
                     onChange={handleInputChange}
                     hasError={!!formErrors.professionalTitle}
@@ -398,7 +416,7 @@ function FreelancerOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Your main professional title
+                    {t('auth:onboarding.freelancer.profTitleHint', "Your main professional title")}
                   </p>
                 </div>
 
@@ -408,7 +426,7 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-calendar-alt"
                     type="number"
                     name="experienceYears"
-                    placeholder="Years of Experience (0-50)"
+                    placeholder={t('auth:onboarding.freelancer.expYearsPlaceholder', "Years of Experience (0-50)")}
                     value={formData.experienceYears}
                     onChange={handleInputChange}
                     min="0"
@@ -418,7 +436,7 @@ function FreelancerOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Total years of professional experience
+                    {t('auth:onboarding.freelancer.expYearsHint', "Total years of professional experience")}
                   </p>
                 </div>
 
@@ -428,7 +446,7 @@ function FreelancerOnboarding() {
                     <FormTextarea
                       icon="fa-solid fa-align-left"
                       name="bio"
-                      placeholder="Professional bio (10-2000 characters). Describe your expertise and experience."
+                      placeholder={t('auth:onboarding.freelancer.bioPlaceholder', "Professional bio (10-2000 characters). Describe your expertise and experience.")}
                       value={formData.bio}
                       onChange={handleInputChange}
                       rows={6}
@@ -444,12 +462,12 @@ function FreelancerOnboarding() {
                             ? "register-form__character-counter--warning"
                             : ""
                         }>
-                        {formData.bio.length} / 2000 characters
+                        {formData.bio.length} / 2000 {t('auth:onboarding.jobseeker.characters', "characters")}
                       </span>
                       {formData.bio.length > 0 && formData.bio.length < 10 && (
                         <span className="register-form__character-error">
                           <i className="fa-solid fa-exclamation-triangle" />
-                          Need {10 - formData.bio.length} more characters
+                          {t('auth:onboarding.jobseeker.needMoreChars', { count: 10 - formData.bio.length, defaultValue: `Need ${10 - formData.bio.length} more characters` })}
                         </span>
                       )}
                     </div>
@@ -463,17 +481,17 @@ function FreelancerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Financial Information
+                    {t('auth:onboarding.freelancer.financialInfo', "Financial Information")}
                   </h2>
                   {completionStatus.financialInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      Completed
+                      {t('auth:onboarding.company.completed', "Completed")}
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Your rates and currency as specified in the guide
+                  {t('auth:onboarding.freelancer.financialInfoDesc', "Your rates and currency as specified in the guide")}
                 </p>
               </div>
 
@@ -484,7 +502,7 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-dollar-sign"
                     type="text"
                     name="hourlyRate"
-                    placeholder="Hourly Rate (e.g., 50.00)"
+                    placeholder={t('auth:onboarding.freelancer.hourlyRatePlaceholder', "Hourly Rate (e.g., 50.00)")}
                     value={formData.hourlyRate}
                     onChange={handleInputChange}
                     hasError={!!formErrors.hourlyRate}
@@ -492,7 +510,7 @@ function FreelancerOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Your standard hourly rate
+                    {t('auth:onboarding.freelancer.hourlyRateHint', "Your standard hourly rate")}
                   </p>
                 </div>
 
@@ -504,16 +522,16 @@ function FreelancerOnboarding() {
                     value={formData.currency}
                     onChange={handleInputChange}
                     options={[
-                      { value: "USD", label: "USD - US Dollar" },
-                      { value: "EGP", label: "EGP - Egyptian Pound" },
-                      { value: "SAR", label: "SAR - Saudi Riyal" },
+                      { value: "USD", label: t('auth:onboarding.freelancer.currencyUsd', "USD - US Dollar") },
+                      { value: "EGP", label: t('auth:onboarding.freelancer.currencyEgp', "EGP - Egyptian Pound") },
+                      { value: "SAR", label: t('auth:onboarding.freelancer.currencySar', "SAR - Saudi Riyal") },
                     ]}
                     hasError={!!formErrors.currency}
                     errorMessage={formErrors.currency}
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Currency for your rates (USD, EGP, or SAR)
+                    {t('auth:onboarding.freelancer.currencyHint', "Currency for your rates (USD, EGP, or SAR)")}
                   </p>
                 </div>
               </div>
@@ -524,18 +542,18 @@ function FreelancerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Portfolio & Verification
+                    {t('auth:onboarding.freelancer.portfolioAndVerification', "Portfolio & Verification")}
                   </h2>
                   {completionStatus.portfolio &&
                     completionStatus.verification && (
                       <span className="onboarding-phase-2__section-badge completed">
                         <i className="fa-solid fa-check-circle" />
-                        Completed
+                        {t('auth:onboarding.company.completed', "Completed")}
                       </span>
                     )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Optional links to your portfolio and verification documents
+                  {t('auth:onboarding.freelancer.portfolioDesc', "Optional links to your portfolio and verification documents")}
                 </p>
               </div>
 
@@ -546,14 +564,14 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-link"
                     type="url"
                     name="portfolioUrl"
-                    placeholder="Portfolio URL (Optional)"
+                    placeholder={t('auth:onboarding.freelancer.portfolioUrlPlaceholder', "Portfolio URL (Optional)")}
                     value={formData.portfolioUrl}
                     onChange={handleInputChange}
                     hasError={!!formErrors.portfolioUrl}
                     errorMessage={formErrors.portfolioUrl}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Link to your online portfolio or work samples
+                    {t('auth:onboarding.freelancer.portfolioUrlHint', "Link to your online portfolio or work samples")}
                   </p>
                 </div>
 
@@ -563,14 +581,14 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-id-card"
                     type="url"
                     name="documentVerificationUrl"
-                    placeholder="Document Verification URL (Optional)"
+                    placeholder={t('auth:onboarding.freelancer.docVerificationUrlPlaceholder', "Document Verification URL (Optional)")}
                     value={formData.documentVerificationUrl}
                     onChange={handleInputChange}
                     hasError={!!formErrors.documentVerificationUrl}
                     errorMessage={formErrors.documentVerificationUrl}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    Link to your identity or passport verification document
+                    {t('auth:onboarding.freelancer.docVerificationUrlHint', "Link to your identity or passport verification document")}
                   </p>
                 </div>
               </div>
@@ -581,14 +599,14 @@ function FreelancerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    Additional Information
+                    {t('auth:onboarding.freelancer.additionalInfo', "Additional Information")}
                   </h2>
                   <span className="onboarding-phase-2__section-badge optional">
-                    Optional
+                    {t('auth:onboarding.jobseeker.optional', "Optional")}
                   </span>
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  Additional profile details (not in registration guide)
+                  {t('auth:onboarding.freelancer.additionalInfoDesc', "Additional profile details (not in registration guide)")}
                 </p>
               </div>
 
@@ -599,7 +617,7 @@ function FreelancerOnboarding() {
                     icon="fa-solid fa-location-dot"
                     type="text"
                     name="location"
-                    placeholder="Location (Optional)"
+                    placeholder={t('auth:onboarding.freelancer.locationPlaceholder', "Location (Optional)")}
                     value={extraFields.location}
                     onChange={handleExtraFieldChange}
                   />
@@ -611,7 +629,7 @@ function FreelancerOnboarding() {
                     <FormTextarea
                       icon="fa-solid fa-code"
                       name="skills"
-                      placeholder="Skills and Technologies (Optional)"
+                      placeholder={t('auth:onboarding.freelancer.skillsPlaceholder', "Skills and Technologies (Optional)")}
                       value={extraFields.skills}
                       onChange={handleExtraFieldChange}
                       rows={3}
@@ -624,18 +642,20 @@ function FreelancerOnboarding() {
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
                       <i className="fa-solid fa-images" />
-                      Portfolio Images (Optional)
+                      {t('auth:onboarding.freelancer.portfolioImagesTitle', "Portfolio Images (Optional)")}
                     </h3>
                     <FileUpload
-                      label="Click to upload or drag and drop"
+                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 10 * 1024 * 1024) {
-                          alert("File size must be less than 10MB");
+                          setApiError(t('auth:onboarding.freelancer.fileSize10MB', "File size must be less than 10MB"));
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         if (extraFields.portfolioImages.length >= 10) {
-                          alert("Maximum 10 portfolio images allowed");
+                          setApiError(t('auth:onboarding.freelancer.max10Images', "Maximum 10 portfolio images allowed"));
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         handlePortfolioImagesUpload(file);
@@ -650,7 +670,7 @@ function FreelancerOnboarding() {
                       <div className="register-form__uploaded-files">
                         <p className="register-form__uploaded-count">
                           <i className="fa-solid fa-check-circle" />
-                          {extraFields.portfolioImages.length} image(s) uploaded
+                          {t('auth:onboarding.freelancer.imagesUploaded', { count: extraFields.portfolioImages.length, defaultValue: `${extraFields.portfolioImages.length} image(s) uploaded` })}
                         </p>
                       </div>
                     )}
@@ -662,14 +682,15 @@ function FreelancerOnboarding() {
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
                       <i className="fa-solid fa-camera" />
-                      Profile Picture (Optional)
+                      {t('auth:onboarding.freelancer.profilePicTitle', "Profile Picture (Optional)")}
                     </h3>
                     <FileUpload
-                      label="Click to upload or drag and drop"
+                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 5 * 1024 * 1024) {
-                          alert("File size must be less than 5MB");
+                          setApiError(t('auth:onboarding.freelancer.fileSize5MB', "File size must be less than 5MB"));
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         setProfilePicture(file);
@@ -691,7 +712,7 @@ function FreelancerOnboarding() {
                 onClick={handleSaveDraft}
                 disabled={isLoading}>
                 <i className="fa-solid fa-save" />
-                Save as Draft
+                {t('auth:onboarding.jobseeker.saveDraft', "Save as Draft")}
               </button>
               <button
                 type="submit"
@@ -702,14 +723,14 @@ function FreelancerOnboarding() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
-                    Submitting...
+                    {t('auth:onboarding.jobseeker.submitting', "Submitting...")}
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
                     {overallProgress === 100
-                      ? "Complete Profile"
-                      : `Complete Profile (${overallProgress}%)`}
+                      ? t('auth:onboarding.jobseeker.completeProfile', "Complete Profile")
+                      : t('auth:onboarding.freelancer.completeProfileProgress', { progress: overallProgress, defaultValue: `Complete Profile (${overallProgress}%)` })}
                   </>
                 )}
               </button>
@@ -718,13 +739,13 @@ function FreelancerOnboarding() {
             {/* Terms Notice */}
             <div className="register-form__terms-notice">
               <p>
-                By completing this profile, you agree to our{" "}
+                {t('auth:onboarding.jobseeker.termsNotice', "By completing this profile, you agree to our")}{" "}
                 <a href="/terms" className="register-form__terms-link">
-                  Terms of Service
+                  {t('auth:terms', "Terms of Service")}
                 </a>{" "}
-                and{" "}
+                {t('auth:and', "and")}{" "}
                 <a href="/privacy" className="register-form__terms-link">
-                  Privacy Policy
+                  {t('auth:privacy', "Privacy Policy")}
                 </a>
                 .
               </p>

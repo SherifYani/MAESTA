@@ -11,7 +11,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import LandingHeader from '../common/LandingHeader';
+import Header from '../common/Header';
 import Footer from '../common/Footer';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import SkipToContent from '../common/SkipToContent';
@@ -77,7 +77,7 @@ const MainLayout = ({
                 {/* Site Header */}
                 {showHeader && (
                     <header className={styles.header} role="banner">
-                        <LandingHeader />
+                        <Header />
                     </header>
                 )}
 

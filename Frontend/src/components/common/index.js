@@ -1,5 +1,20 @@
+export { default as ModernSelect } from './GeneralSelect';
+export * from './Alert';
 export * from './Button';
+export * from './Footer';
+export * from './Header';
 export * from './Input';
 export * from './LoadingSpinner';
-export * from './Alert';
-export { default as ModernSelect } from './GeneralSelect';
+export * from './ProtectedRoute';
+export * from './Skeleton/TableSkeleton';
+export * from './SkipToContent';
+export * from './ThemeToggle';
+// New exports
+export * from './Modal';
+export { DataTable } from './DataTable';
+export * from './Pagination';
+export * from './DatePicker';
+export * from './FilterPanel';
+export * from './Badge';
+export * from './RatingStars';
+export * from './Message';

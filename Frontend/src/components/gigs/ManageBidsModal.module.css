@@ -1,0 +1,177 @@
+.manage-bids__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-translucent-black-1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.manage-bids__content {
+    background-color: var(--color-card);
+    color: var(--color-card-foreground);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px var(--color-translucent-black-1);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.manage-bids__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.manage-bids__title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-semibold);
+}
+
+.manage-bids__close-button {
+    background: var(--color-transparent);
+    border: none;
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.manage-bids__close-button:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.manage-bids__body {
+    padding: var(--space-6);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.manage-bids__loading-container,
+.manage-bids__error-container,
+.manage-bids__empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12) var(--space-4);
+    text-align: center;
+    color: var(--color-muted-foreground);
+}
+
+.manage-bids__proposal-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+    background-color: var(--color-background);
+}
+
+.manage-bids__proposal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+}
+
+.manage-bids__freelancer-name {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-size-lg);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-medium);
+}
+
+.manage-bids__rate {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.manage-bids__status {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: capitalize;
+    border: 1px solid var(--color-border);
+}
+
+.manage-bids__status--pending {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+}
+
+.manage-bids__status--accepted {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+}
+
+.manage-bids__status--rejected {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+}
+
+.manage-bids__cover-letter {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-5);
+}
+
+.manage-bids__actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: flex-end;
+}
+
+.manage-bids__button {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--color-transparent);
+    font-size: var(--font-size-sm);
+}
+
+.manage-bids__button--accept {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+}
+
+.manage-bids__button--accept:hover {
+    opacity: 0.9;
+}
+
+.manage-bids__button--reject {
+    background-color: var(--color-transparent);
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
+}
+
+.manage-bids__button--reject:hover {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+}
+
+.manage-bids__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

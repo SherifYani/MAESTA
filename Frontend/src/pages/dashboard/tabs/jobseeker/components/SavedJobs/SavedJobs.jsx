@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Bookmark,
   BookmarkCheck,
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
+import { Pagination } from "../../../../../../components/common";
 import styles from "./SavedJobs.module.css";
 
 /**
@@ -54,6 +56,7 @@ const SavedJobs = ({
   const [showFilters, setShowFilters] = useState(false);
   const [expandedJobId, setExpandedJobId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   /**
    * Apply filters to jobs list
@@ -175,6 +178,7 @@ const SavedJobs = ({
    * @returns {JSX.Element} Match score display
    */
   const renderMatchScore = (score) => {
+    if (!score) return null;
     let colorClass = styles.matchLow;
     if (score >= 80) colorClass = styles.matchHigh;
     else if (score >= 60) colorClass = styles.matchMedium;
@@ -213,7 +217,7 @@ const SavedJobs = ({
         </div>
         <h3>No Saved Jobs</h3>
         <p>Save jobs you're interested in to track them here</p>
-        <Button variant="primary">
+        <Button variant="primary" onClick={() => navigate('/jobs')}>
           <Briefcase size={16} /> Browse Jobs
         </Button>
       </div>
@@ -327,17 +331,19 @@ const SavedJobs = ({
 
       {/* Jobs List */}
       <div className={styles.jobsList}>
-        {pagedJobs.map(job => (
+        {pagedJobs.map(job => {
+          const jobId = job.id || job.jobId;
+          return (
           <article
-            key={job.id}
-            className={`${styles.jobCard} ${expandedJobId === job.id ? styles.expanded : ''}`}
-            onClick={() => toggleJobDetails(job.id)}
+            key={jobId}
+            className={`${styles.jobCard} ${expandedJobId === jobId ? styles.expanded : ''}`}
+            onClick={() => toggleJobDetails(jobId)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                toggleJobDetails(job.id);
+                toggleJobDetails(jobId);
               }
             }}
           >
@@ -351,7 +357,7 @@ const SavedJobs = ({
                     </Badge>
                   )}
                 </div>
-                <p className={styles.company}>{job.company}</p>
+                <p className={styles.company}>{job.company || job.companyName || "Unknown Company"}</p>
               </div>
 
               <div className={styles.jobActions}>
@@ -383,7 +389,7 @@ const SavedJobs = ({
             </div>
 
             {/* Expandable Content */}
-            {expandedJobId === job.id && (
+            {expandedJobId === jobId && (
               <div className={styles.expandedContent}>
                 <div className={styles.jobMeta}>
                   <div className={styles.metaItem}>
@@ -405,8 +411,8 @@ const SavedJobs = ({
                 <div className={styles.expandedActions}>
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={(e) => onViewJob(job.id, e)}
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); onViewJob(jobId, e); }}
                   >
                     <Eye size={16} /> View Details
                   </Button>
@@ -414,17 +420,17 @@ const SavedJobs = ({
                   {!job.hasApplied && (
                     <Button
                       variant="primary"
-                      size="sm"
-                      onClick={(e) => handleApply(job, e)}
+                      size="small"
+                      onClick={(e) => { e.stopPropagation(); handleApply(job, e); }}
                     >
                       <Send size={16} /> Apply Now
                     </Button>
                   )}
 
                   <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={(e) => handleRemove(job.id, e)}
+                    variant="destructive"
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); handleRemove(jobId, e); }}
                   >
                     <Trash2 size={16} /> Remove
                   </Button>
@@ -433,12 +439,12 @@ const SavedJobs = ({
             )}
 
             {/* Collapsed Actions */}
-            {expandedJobId !== job.id && (
+            {expandedJobId !== jobId && (
               <div className={styles.collapsedActions}>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  onClick={(e) => onViewJob(job.id, e)}
+                  size="small"
+                  onClick={(e) => { e.stopPropagation(); onViewJob(jobId, e); }}
                 >
                   <Eye size={14} />
                 </Button>
@@ -446,8 +452,8 @@ const SavedJobs = ({
                 {!job.hasApplied && (
                   <Button
                     variant="primary"
-                    size="sm"
-                    onClick={(e) => handleApply(job, e)}
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); handleApply(job, e); }}
                   >
                     <Send size={14} />
                   </Button>
@@ -455,53 +461,28 @@ const SavedJobs = ({
 
                 <Button
                   variant="ghost"
-                  size="sm"
-                  onClick={(e) => handleRemove(job.id, e)}
+                  size="small"
+                  onClick={(e) => { e.stopPropagation(); handleRemove(jobId, e); }}
                 >
                   <Trash2 size={14} />
                 </Button>
               </div>
             )}
           </article>
-        ))}
+          );
+        })}
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <div className={styles.paginationInfo}>
-            Showing {startDisplay}–{endDisplay} of {filteredJobs.length} saved jobs
-          </div>
-          <div className={styles.paginationControls}>
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            {pageNumbers.map(num => (
-              <button
-                key={num}
-                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
-                onClick={() => setCurrentPage(num)}
-                aria-label={`Page ${num}`}
-                aria-current={currentPage === num ? 'page' : undefined}
-              >
-                {num}
-              </button>
-            ))}
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+          pageSize={ITEMS_PER_PAGE}
+          showTotal={true}
+          totalItems={filteredJobs.length}
+        />
       )}
     </div>
   );

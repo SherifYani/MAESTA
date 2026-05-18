@@ -56,7 +56,7 @@ const formatTime = (timestamp) => {
 /**
  * RecentActivity component - renders list only, no card wrapper
  */
-const RecentActivity = ({ activities = [], limit = 6 }) => {
+const RecentActivity = ({ activities = [], limit = 6, onViewAll }) => {
   const displayedActivities = activities.slice(0, limit);
 
   if (activities.length === 0) {
@@ -96,8 +96,8 @@ const RecentActivity = ({ activities = [], limit = 6 }) => {
         </div>
       ))}
 
-      {activities.length > limit && (
-        <button className={styles.viewAllButton}>View all activities</button>
+      {activities.length > limit && onViewAll && (
+        <button className={styles.viewAllButton} onClick={onViewAll}>View all activities</button>
       )}
     </div>
   );

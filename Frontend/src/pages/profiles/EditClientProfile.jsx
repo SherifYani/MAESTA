@@ -6,17 +6,19 @@
  * @version 2.1.0
  * @date 2025-12-11
  *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-1-20
+ * @last-modified-by Antigravity
+ * @last-modified-date 2026-05-01
  * 
  * @update :-
  * - removed navigation section 
  * - edit the link to the edit profile page (because include {profile} and {edit profile} to dashboard)
+ * - wired profileService API endpoints
  */
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
+import profileService from "../../services/profileService";
 import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
@@ -30,6 +32,8 @@ import "../../styles/edit-profile.css";
 export default function EditClientProfile() {
   const navigate = useNavigate();
   const { clientData, updateClientData } = useProfile();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Form state management
   const [formData, setFormData] = useState({
@@ -174,7 +178,7 @@ export default function EditClientProfile() {
    * Handles form submission and updates profile data.
    * @param {React.FormEvent<HTMLFormElement>} event - The form submit event.
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!validateForm()) {
@@ -190,9 +194,20 @@ export default function EditClientProfile() {
       })),
     };
 
-    // Update context and navigate back
-    updateClientData(updatedClientData);
-    navigate("/profile");
+    try {
+      setLoading(true);
+      setError(null);
+      // Call the API via profileService
+      await profileService.updateClientProfile(updatedClientData);
+
+      // Update context and navigate back
+      updateClientData(updatedClientData);
+      navigate("/dashboard/profile");
+    } catch (err) {
+      setError(err.message || "Failed to update profile. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /**
@@ -494,20 +509,29 @@ export default function EditClientProfile() {
             )}
           </section>
 
+          {/* Error Message */}
+          {error && (
+            <div className="edit__error-message" role="alert">
+              {error}
+            </div>
+          )}
+
           {/* Form Actions */}
           <div className="edit__actions">
             <button
               type="button"
               className="edit__cancel-btn"
               onClick={handleCancel}
+              disabled={loading}
               aria-label="Cancel editing and return to profile">
               Cancel
             </button>
             <button
               type="submit"
               className="edit__save-btn"
+              disabled={loading}
               aria-label="Save all changes">
-              Save Changes
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

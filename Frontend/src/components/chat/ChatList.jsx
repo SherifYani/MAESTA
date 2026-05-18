@@ -3,8 +3,11 @@
  * @description List of active conversations with search and filtering (FR-601.2)
  * @author Sherif Talaat
  * @date 2026-02-06
+ *
  * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-02-06
+ * @last-modified-date 2026-04-29
+ * @fix Aligned with real ChatConversationDto fields: userId, userName, userProfilePicture,
+ *      lastMessage.content, lastMessage.createdAt. Prop renamed to activeConversationUserId.
  */
 
 
@@ -17,13 +20,13 @@ import styles from "./ChatList.module.css";
 /**
  * Chat list component displaying active conversations with search and filtering
  * @param {Object} props - Component props
- * @param {Array} props.conversations - Array of conversation objects
- * @param {string} props.activeConversationId - Currently active conversation ID
- * @param {Function} props.onSelectConversation - Callback when a conversation is selected
+ * @param {Array} props.conversations - Array of ChatConversationDto objects
+ * @param {string} props.activeConversationUserId - Currently active conversation's user ID
+ * @param {Function} props.onSelectConversation - Callback receiving otherUserId when selected
  * @param {Function} props.onSearch - Callback for search functionality
  * @returns {JSX.Element} Rendered chat list component
  */
-const ChatList = ({ conversations, activeConversationId, onSelectConversation, onSearch }) => {
+const ChatList = ({ conversations, activeConversationUserId, onSelectConversation, onSearch }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState("all"); // 'all', 'unread', 'archived'
 
@@ -45,8 +48,12 @@ const ChatList = ({ conversations, activeConversationId, onSelectConversation, o
      */
     const getFilteredConversations = useCallback(() => {
         return conversations.filter((conv) => {
-            const matchesSearch = conv.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                conv.lastMessage?.text?.toLowerCase().includes(searchTerm.toLowerCase());
+            // Use real DTO fields: userName, lastMessage.content
+            const name = conv.userName || conv.name || '';
+            const lastText = conv.lastMessage?.content || conv.lastMessage?.text || '';
+            const matchesSearch =
+                name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                lastText.toLowerCase().includes(searchTerm.toLowerCase());
 
             if (filter === "unread") return matchesSearch && conv.unreadCount > 0;
             if (filter === "archived") return matchesSearch && conv.isArchived;
@@ -74,23 +81,8 @@ const ChatList = ({ conversations, activeConversationId, onSelectConversation, o
      */
     const renderMessagePreview = useCallback((message) => {
         if (!message) return "No messages";
-
-        switch (message.type) {
-            case "image":
-                return (
-                    <span className={styles.iconPreview}>
-                        <Image size={14} aria-hidden="true" /> Image
-                    </span>
-                );
-            case "file":
-                return (
-                    <span className={styles.iconPreview}>
-                        <Paperclip size={14} aria-hidden="true" /> Attachment
-                    </span>
-                );
-            default:
-                return message.text || "No messages";
-        }
+        // Real DTO has 'content' field, not 'text'
+        return message.content || message.text || "No messages";
     }, []);
 
     const filteredConversations = getFilteredConversations();
@@ -163,35 +155,32 @@ const ChatList = ({ conversations, activeConversationId, onSelectConversation, o
                 {filteredConversations.length > 0 ? (
                     filteredConversations.map((conv) => (
                         <div
-                            key={conv.id}
-                            className={`${styles.item} ${activeConversationId === conv.id ? styles.active : ""} ${conv.unreadCount > 0 ? styles.unread : ""
+                            key={conv.userId || conv.id}
+                            className={`${styles.item} ${activeConversationUserId === conv.userId ? styles.active : ""} ${conv.unreadCount > 0 ? styles.unread : ""
                                 }`}
-                            onClick={() => onSelectConversation(conv.id)}
+                            onClick={() => onSelectConversation(conv.userId || conv.id)}
                             role="button"
                             tabIndex={0}
-                            onKeyPress={(e) => e.key === "Enter" && onSelectConversation(conv.id)}
-                            aria-label={`Conversation with ${conv.name}, ${conv.unreadCount} unread messages, last message ${conv.lastMessage?.text || "none"}`}
-                            aria-current={activeConversationId === conv.id ? "true" : "false"}
+                            onKeyPress={(e) => e.key === "Enter" && onSelectConversation(conv.userId || conv.id)}
+                            aria-label={`Conversation with ${conv.userName || conv.name}, ${conv.unreadCount || 0} unread messages`}
+                            aria-current={activeConversationUserId === conv.userId ? "true" : "false"}
                         >
                             <div className={styles.avatarContainer}>
                                 <img
-                                    src={conv.avatar || "/default-avatar.png"}
-                                    alt={`${conv.name} avatar`}
+                                    src={conv.userProfilePicture || conv.avatar || "/default-avatar.png"}
+                                    alt={`${conv.userName || conv.name} avatar`}
                                     className={styles.avatar}
                                     width="48"
                                     height="48"
                                     loading="lazy"
                                 />
-                                {conv.isOnline && (
-                                    <span className={styles.onlineIndicator} aria-label="Online"></span>
-                                )}
                             </div>
 
                             <div className={styles.info}>
                                 <div className={styles.topRow}>
-                                    <span className={styles.name}>{conv.name}</span>
-                                    <time className={styles.time} dateTime={new Date(conv.lastMessage?.timestamp || Date.now()).toISOString()}>
-                                        {conv.lastMessage ? formatTime(conv.lastMessage.timestamp) : ""}
+                                    <span className={styles.name}>{conv.userName || conv.name}</span>
+                                    <time className={styles.time} dateTime={new Date(conv.lastMessage?.createdAt || Date.now()).toISOString()}>
+                                        {conv.lastMessage ? formatTime(conv.lastMessage.createdAt || conv.lastMessage.timestamp) : ""}
                                     </time>
                                 </div>
 
@@ -221,26 +210,23 @@ const ChatList = ({ conversations, activeConversationId, onSelectConversation, o
 ChatList.propTypes = {
     conversations: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            avatar: PropTypes.string,
-            isOnline: PropTypes.bool,
-            isArchived: PropTypes.bool,
+            userId: PropTypes.string.isRequired,      // ChatConversationDto.userId
+            userName: PropTypes.string.isRequired,     // ChatConversationDto.userName
+            userProfilePicture: PropTypes.string,      // ChatConversationDto.userProfilePicture
             unreadCount: PropTypes.number,
             lastMessage: PropTypes.shape({
-                text: PropTypes.string,
-                type: PropTypes.oneOf(["text", "image", "file"]),
-                timestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+                content: PropTypes.string,             // ChatMessageDto.content
+                createdAt: PropTypes.string,           // ChatMessageDto.createdAt
             }),
         })
     ).isRequired,
-    activeConversationId: PropTypes.string,
+    activeConversationUserId: PropTypes.string,
     onSelectConversation: PropTypes.func.isRequired,
     onSearch: PropTypes.func,
 };
 
 ChatList.defaultProps = {
-    activeConversationId: null,
+    activeConversationUserId: null,
     onSearch: null,
 };
 

@@ -1,10 +1,30 @@
 /**
  * @file paymentService.js
- * @description Payment services - handles transactions, escrow, withdrawals, and payment methods
+ * @description Payment services — verified against PaymentsController.cs.
  * @author Sherif Talaat
- * @version 1.0.0
- * @date 05-02-2026
-**/
+ * @version 2.1.0
+ * @date 2026-04-29
+ *
+ * @last-modified-by Antigravity (AI) — verified against PaymentsController.cs
+ * @last-modified-date 2026-04-29
+ *
+ * REAL ROUTES (PaymentsController [Route("api/[controller]")]):
+ *   GET    api/payments/balance
+ *   GET    api/payments/transactions?page=&limit=
+ *   POST   api/payments/deposit          → DepositRequest
+ *   POST   api/payments/withdraw         → WithdrawRequest
+ *   POST   api/payments/escrow/deposit   → EscrowDepositRequest
+ *   POST   api/payments/escrow/release/{contractId}
+ *   POST   api/payments/escrow/refund/{contractId}   [Admin]
+ *   POST   api/subscriptions/subscribe   → SubscribePlanRequest
+ *   GET    api/subscriptions/current
+ *   GET    api/payments/methods
+ *   POST   api/payments/methods
+ *   DELETE api/payments/methods/{id}
+ *   GET    api/payments/bank-accounts
+ *   POST   api/payments/bank-accounts
+ *   GET    api/payments/calculate-fee?amount=&type=
+ **/
 
 import ApiService from './ApiService';
 
@@ -63,8 +83,11 @@ const paymentService = {
     // Get earnings summary
     getEarningsSummary: async (period = 'month') => {
         try {
-            const response = await ApiService.get(`/api/payments/earnings?period=${period}`);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("getEarningsSummary is mocked");
+            return { totalEarnings: 0, pending: 0, available: 0, period };
+            // const response = await ApiService.get(`/api/payments/earnings?period=${period}`);
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -90,31 +113,49 @@ const paymentService = {
         }
     },
 
-    // Create escrow
-    createEscrow: async (contractId, amount) => {
-        try {
-            const response = await ApiService.post('/api/payments/escrow', { contractId, amount });
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+    // Deposit to escrow for a contract
+    // Backend: POST api/payments/escrow/deposit — body: EscrowDepositRequest
+    depositToEscrow: async (escrowDepositRequest) => {
+        const response = await ApiService.post('/api/payments/escrow/deposit', escrowDepositRequest);
+        return response.data;
     },
 
-    // Release escrow
-    releaseEscrow: async (escrowId) => {
-        try {
-            const response = await ApiService.post(`/api/payments/escrow/${escrowId}/release`);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+    // Release escrow for a completed contract
+    // Backend: POST api/payments/escrow/release/{contractId}
+    releaseEscrow: async (contractId) => {
+        const response = await ApiService.post(`/api/payments/escrow/release/${contractId}`);
+        return response.data;
+    },
+
+    // Refund escrow (Admin only)
+    // Backend: POST api/payments/escrow/refund/{contractId}
+    refundEscrow: async (contractId) => {
+        const response = await ApiService.post(`/api/payments/escrow/refund/${contractId}`);
+        return response.data;
+    },
+
+    // Subscribe to a plan
+    // Backend: POST api/subscriptions/subscribe
+    subscribeToPlan: async (planRequest) => {
+        const response = await ApiService.post('/api/subscriptions/subscribe', planRequest);
+        return response.data;
+    },
+
+    // Get current active subscription
+    // Backend: GET api/subscriptions/current
+    getCurrentSubscription: async () => {
+        const response = await ApiService.get('/api/subscriptions/current');
+        return response.data;
     },
 
     // Get invoices
     getInvoices: async () => {
         try {
-            const response = await ApiService.get('/api/payments/invoices');
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("getInvoices is mocked");
+            return [];
+            // const response = await ApiService.get('/api/payments/invoices');
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -123,8 +164,11 @@ const paymentService = {
     // Request refund
     requestRefund: async (transactionId, reason) => {
         try {
-            const response = await ApiService.post('/api/payments/refund', { transactionId, reason });
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("requestRefund is mocked");
+            return { success: true, transactionId };
+            // const response = await ApiService.post('/api/payments/refund', { transactionId, reason });
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }

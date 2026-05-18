@@ -122,6 +122,7 @@ const GigCard = ({
 }) => {
     const {
         id,
+        projectId,
         title,
         description,
         budget,
@@ -136,6 +137,8 @@ const GigCard = ({
         isFeatured = false,
         isUrgent = false
     } = gig;
+
+    const displayId = id || projectId;
 
     /**
      * Handles card click events.
@@ -183,7 +186,7 @@ const GigCard = ({
             role="button"
             tabIndex={0}
             aria-label={`View gig details: ${title}. Budget: ${formatBudget(budget)}. ${description}`}
-            data-gig-id={id}
+            data-gig-id={displayId}
             data-featured={isFeatured}
             data-urgent={isUrgent}
         >
@@ -293,7 +296,7 @@ const GigCard = ({
                     <div className={styles.skills} aria-label="Required skills">
                         {requiredSkills.slice(0, 4).map((skill, index) => (
                             <span
-                                key={`${id}-skill-${index}`}
+                                key={`${displayId}-skill-${index}`}
                                 className={styles.skillTag}
                                 aria-label={skill}
                             >

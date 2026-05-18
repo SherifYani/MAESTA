@@ -14,8 +14,9 @@ import "../../styles/pages/registration-page.css";
 import "../../styles/globals.css";
 import RegisterForm from "../../components/forms/RegisterForm";
 import EnhancedBubble from "../../components/EnhancedBubble";
-import AuthHeader from "../../components/common/AuthHeader";
+import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
+import { useTranslation } from "react-i18next";
 
 /**
  * RegistrationPage Component
@@ -23,10 +24,12 @@ import Footer from "../../components/common/Footer";
  * @returns {JSX.Element} The rendered registration page
  */
 function RegistrationPage() {
+  const { t } = useTranslation(['auth']);
+
   const features = [
-    { icon: Sparkles, text: "AI-Powered Matching" },
-    { icon: TrendingUp, text: "Career Growth Tools" },
-    { icon: Users, text: "Global Network" },
+    { icon: Sparkles, text: t('auth:aiMatching', "AI-Powered Matching") },
+    { icon: TrendingUp, text: t('auth:careerGrowth', "Career Growth Tools") },
+    { icon: Users, text: t('auth:globalNetwork', "Global Network") },
   ];
 
   /**
@@ -38,7 +41,7 @@ function RegistrationPage() {
 
   return (
     <div>
-      <AuthHeader />
+      <Header />
       <div className="registration-page">
         <button
           className="registration-page__back-button"
@@ -55,20 +58,19 @@ function RegistrationPage() {
           <div className="registration-page__welcome-content">
             <div className="registration-page__badge">
               <Sparkles size={14} className="registration-page__badge-icon" />
-              <span>Trusted by 100K+ professionals</span>
+              <span>{t('auth:trustedBadge', 'Trusted by 100K+ professionals')}</span>
             </div>
 
             <h1 className="registration-page__welcome-title">
-              Transform Your
+              {t('auth:transformYour', 'Transform Your')}
               <br />
               <span className="registration-page__gradient-text">
-                Career Journey
+                {t('auth:careerJourney', 'Career Journey')}
               </span>
             </h1>
 
             <p className="registration-page__welcome-description">
-              Join the next generation of professionals. Connect with
-              opportunities, grow your network, and unlock your full potential.
+              {t('auth:registerDescription', 'Join the next generation of professionals. Connect with opportunities, grow your network, and unlock your full potential.')}
             </p>
 
             <div className="registration-page__features-list">

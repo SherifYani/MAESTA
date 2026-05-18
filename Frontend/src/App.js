@@ -10,6 +10,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { FloatingAssistantIcon, ChatWindow } from "./components/ai-assistant";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import LanguageAnnouncer from "./components/common/LanguageAnnouncer";
 import TableSkeleton from "./components/common/Skeleton/TableSkeleton";
 import "./styles/globals.css";
 import "./styles/App.css";
@@ -27,10 +28,12 @@ const DashboardRoutes = lazy(() => import("./routes/DashboardRoutes"));
 const JobRoutes = lazy(() => import("./routes/JobRoutes"));
 const AiRoutes = lazy(() => import("./routes/AiRoutes"));
 const GigRoutes = lazy(() => import("./routes/GigRoutes"));
-const CommonRoutes = lazy(() => import("./routes/CommonRoutes"));
+const ChatRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.ChatRoutes })));
+const NotificationRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.NotificationRoutes })));
+const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.SubscriptionRoutes })));
 
 // Static Pages
-const LandingPage = lazy(() => import("./pages/landing-page.tsx"));
+const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
 
 // Loading Fallback
@@ -62,8 +65,10 @@ function App() {
         <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
-        <Route path="/register/onboarding" element={<OnboardingPage />} />
-        <Route path="/mock-login" element={<MockLoginPage />} />
+        <Route path="/register/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+        {process.env.NODE_ENV === 'development' && (
+          <Route path="/mock-login" element={<MockLoginPage />} />
+        )}
 
         {/* Job Module - Handles /jobs */}
         <Route path="/jobs/*" element={
@@ -94,20 +99,24 @@ function App() {
 
         {/* Dashboard Module - Handles /dashboard */}
         <Route path="/dashboard/*" element={
-          <Suspense fallback={<TableSkeleton rows={12} columns={6} />}>
-            <DashboardRoutes />
-          </Suspense>
+          <ProtectedRoute>
+            <Suspense fallback={<TableSkeleton rows={12} columns={6} />}>
+              <DashboardRoutes />
+            </Suspense>
+          </ProtectedRoute>
         } />
 
         {/* Common Modules - Handles /chat, /notifications, /subscription */}
-        <Route path="/chat/*" element={<ProtectedRoute><CommonRoutes /></ProtectedRoute>} />
-        <Route path="/notifications/*" element={<ProtectedRoute><CommonRoutes /></ProtectedRoute>} />
-        <Route path="/subscription/*" element={<ProtectedRoute><CommonRoutes /></ProtectedRoute>} />
+        <Route path="/chat/*" element={<ProtectedRoute><ChatRoutes /></ProtectedRoute>} />
+        <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
+        <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
 
         {/* 404 & Redirects */}
         <Route path="/404" element={<ErrorPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
+
+      <LanguageAnnouncer />
 
       {/* Global AI Assistant */}
       <FloatingAssistantIcon

@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Calendar,
@@ -31,6 +32,7 @@ import {
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
+import { Pagination } from "../../../../../../components/common";
 import styles from "./DetailedApplications.module.css";
 
 /**
@@ -60,6 +62,7 @@ const DetailedApplications = ({
   const [expandedAppId, setExpandedAppId] = useState(null);
   const [sortBy, setSortBy] = useState("date");
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   /**
    * Apply filters and sorting to applications
@@ -311,7 +314,7 @@ const DetailedApplications = ({
         </div>
         <h3>No Applications Yet</h3>
         <p>Start applying to jobs to track your progress here</p>
-        <Button variant="primary">
+        <Button variant="primary" onClick={() => navigate('/jobs')}>
           Browse Jobs
         </Button>
       </div>
@@ -561,7 +564,7 @@ const DetailedApplications = ({
                   <div className={styles.expandedActions}>
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="small"
                       onClick={(e) => {
                         e.stopPropagation();
                         onViewApplication(application.id);
@@ -572,9 +575,9 @@ const DetailedApplications = ({
                     
                     {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
                       <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={(e) => handleWithdraw(application.id, e)}
+                        variant="destructive"
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
                       >
                         <Trash2 size={16} /> Withdraw
                       </Button>
@@ -582,7 +585,7 @@ const DetailedApplications = ({
                     
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="small"
                       onClick={(e) => e.stopPropagation()}
                     >
                       Update Status
@@ -596,7 +599,7 @@ const DetailedApplications = ({
                 <div className={styles.collapsedActions}>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="small"
                     onClick={(e) => {
                       e.stopPropagation();
                       onViewApplication(application.id);
@@ -608,8 +611,8 @@ const DetailedApplications = ({
                   {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
                     <Button
                       variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleWithdraw(application.id, e)}
+                      size="small"
+                      onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
                     >
                       <Trash2 size={14} />
                     </Button>
@@ -623,40 +626,14 @@ const DetailedApplications = ({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <div className={styles.paginationInfo}>
-            Showing {startDisplay}–{endDisplay} of {filteredApplications.length} applications
-          </div>
-          <div className={styles.paginationControls}>
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            {pageNumbers.map(num => (
-              <button
-                key={num}
-                className={`${styles.paginationBtn} ${currentPage === num ? styles.paginationBtnActive : ''}`}
-                onClick={() => setCurrentPage(num)}
-                aria-label={`Page ${num}`}
-                aria-current={currentPage === num ? 'page' : undefined}
-              >
-                {num}
-              </button>
-            ))}
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+          pageSize={ITEMS_PER_PAGE}
+          showTotal={true}
+          totalItems={filteredApplications.length}
+        />
       )}
     </div>
   );

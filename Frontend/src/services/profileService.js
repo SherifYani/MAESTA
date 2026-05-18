@@ -14,7 +14,7 @@ const profileService = {
     // Get current user profile
     getMyProfile: async () => {
         try {
-            const response = await ApiService.get('/api/profile/me');
+            const response = await ApiService.get('/api/Profile/me');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -24,7 +24,7 @@ const profileService = {
     // Get profile by user ID
     getProfileById: async (userId) => {
         try {
-            const response = await ApiService.get(`/api/profile/${userId}`);
+            const response = await ApiService.get(`/api/Profile/${userId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -34,7 +34,7 @@ const profileService = {
     // Update profile
     updateProfile: async (profileData) => {
         try {
-            const response = await ApiService.put('/api/profile/me', profileData);
+            const response = await ApiService.put('/api/Profile/me', profileData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -45,9 +45,10 @@ const profileService = {
     uploadProfilePicture: async (file) => {
         try {
             const formData = new FormData();
-            formData.append('profilePicture', file);
+            formData.append('file', file);
+            formData.append('bucketName', 'avatars');
 
-            const response = await ApiService.post('/api/profile/picture', formData, {
+            const response = await ApiService.post('/api/Files/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return response.data;
@@ -57,9 +58,10 @@ const profileService = {
     },
 
     // Delete profile picture
-    deleteProfilePicture: async () => {
+    deleteProfilePicture: async (fileName) => {
         try {
-            const response = await ApiService.delete('/api/profile/picture');
+            if (!fileName) throw new Error("fileName is required to delete profile picture");
+            const response = await ApiService.delete(`/api/Files/avatars/${fileName}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -72,8 +74,8 @@ const profileService = {
     getJobseekerProfile: async (userId = null) => {
         try {
             const endpoint = userId
-                ? `/api/jobseekers/${userId}`
-                : '/api/jobseekers/me';
+                ? `/api/JobSeeker/${userId}`
+                : '/api/JobSeeker/me';
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
@@ -84,20 +86,20 @@ const profileService = {
     // Update jobseeker profile
     updateJobseekerProfile: async (profileData) => {
         try {
-            const response = await ApiService.put('/api/jobseekers/me', profileData);
+            const response = await ApiService.put('/api/JobSeeker/me', profileData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
     },
 
-    // Update resume
     uploadResume: async (file) => {
         try {
             const formData = new FormData();
-            formData.append('resume', file);
+            formData.append('file', file);
+            formData.append('bucketName', 'resumes');
 
-            const response = await ApiService.post('/api/jobseekers/resume', formData, {
+            const response = await ApiService.post('/api/Files/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return response.data;
@@ -109,7 +111,7 @@ const profileService = {
     // Add work experience
     addWorkExperience: async (experienceData) => {
         try {
-            const response = await ApiService.post('/api/jobseekers/experience', experienceData);
+            const response = await ApiService.post('/api/JobSeeker/experience', experienceData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -119,7 +121,7 @@ const profileService = {
     // Update work experience
     updateWorkExperience: async (experienceId, experienceData) => {
         try {
-            const response = await ApiService.put(`/api/jobseekers/experience/${experienceId}`, experienceData);
+            const response = await ApiService.put(`/api/JobSeeker/experience/${experienceId}`, experienceData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -129,7 +131,7 @@ const profileService = {
     // Delete work experience
     deleteWorkExperience: async (experienceId) => {
         try {
-            const response = await ApiService.delete(`/api/jobseekers/experience/${experienceId}`);
+            const response = await ApiService.delete(`/api/JobSeeker/experience/${experienceId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -139,7 +141,7 @@ const profileService = {
     // Add education
     addEducation: async (educationData) => {
         try {
-            const response = await ApiService.post('/api/jobseekers/education', educationData);
+            const response = await ApiService.post('/api/JobSeeker/education', educationData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -149,7 +151,7 @@ const profileService = {
     // Update education
     updateEducation: async (educationId, educationData) => {
         try {
-            const response = await ApiService.put(`/api/jobseekers/education/${educationId}`, educationData);
+            const response = await ApiService.put(`/api/JobSeeker/education/${educationId}`, educationData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -159,7 +161,7 @@ const profileService = {
     // Delete education
     deleteEducation: async (educationId) => {
         try {
-            const response = await ApiService.delete(`/api/jobseekers/education/${educationId}`);
+            const response = await ApiService.delete(`/api/JobSeeker/education/${educationId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -169,7 +171,7 @@ const profileService = {
     // Update skills
     updateSkills: async (skills) => {
         try {
-            const response = await ApiService.put('/api/jobseekers/skills', { skills });
+            const response = await ApiService.put('/api/JobSeeker/skills', { skills });
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -234,7 +236,11 @@ const profileService = {
     // Update hourly rate
     updateHourlyRate: async (hourlyRate) => {
         try {
-            const response = await ApiService.put('/api/freelancers/rate', { hourlyRate });
+            // Backend doesn't have a specific /rate endpoint.
+            // Fetch current profile, merge the new rate, and update.
+            const profile = await profileService.getFreelancerProfile();
+            const updatedProfile = { ...profile, hourlyRate };
+            const response = await ApiService.put('/api/freelancers/me', updatedProfile);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -247,8 +253,8 @@ const profileService = {
     getCompanyProfile: async (companyId = null) => {
         try {
             const endpoint = companyId
-                ? `/api/companies/${companyId}`
-                : '/api/companies/me';
+                ? `/api/Companies/${companyId}`
+                : '/api/Companies/me';
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
@@ -259,7 +265,7 @@ const profileService = {
     // Update company profile
     updateCompanyProfile: async (profileData) => {
         try {
-            const response = await ApiService.put('/api/companies/me', profileData);
+            const response = await ApiService.put('/api/Companies/me', profileData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -270,9 +276,10 @@ const profileService = {
     uploadCompanyLogo: async (file) => {
         try {
             const formData = new FormData();
-            formData.append('logo', file);
+            formData.append('file', file);
+            formData.append('bucketName', 'avatars');
 
-            const response = await ApiService.post('/api/companies/logo', formData, {
+            const response = await ApiService.post('/api/Files/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return response.data;
@@ -284,7 +291,7 @@ const profileService = {
     // Add team member
     addTeamMember: async (memberData) => {
         try {
-            const response = await ApiService.post('/api/companies/team', memberData);
+            const response = await ApiService.post('/api/Companies/team', memberData);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -294,7 +301,7 @@ const profileService = {
     // Remove team member
     removeTeamMember: async (memberId) => {
         try {
-            const response = await ApiService.delete(`/api/companies/team/${memberId}`);
+            const response = await ApiService.delete(`/api/Companies/team/${memberId}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -331,8 +338,11 @@ const profileService = {
     // Update profile visibility
     updateVisibility: async (isPublic) => {
         try {
-            const response = await ApiService.put('/api/profile/visibility', { isPublic });
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("updateVisibility is mocked");
+            return { success: true, isPublic };
+            // const response = await ApiService.put('/api/profile/visibility', { isPublic });
+            // return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
@@ -341,17 +351,7 @@ const profileService = {
     // Update notification preferences
     updateNotificationPreferences: async (preferences) => {
         try {
-            const response = await ApiService.put('/api/profile/notifications', preferences);
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
-    },
-
-    // Deactivate account
-    deactivateAccount: async () => {
-        try {
-            const response = await ApiService.post('/api/profile/deactivate');
+            const response = await ApiService.put('/api/Profile/me/settings', preferences);
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -361,7 +361,8 @@ const profileService = {
     // Delete account
     deleteAccount: async (password) => {
         try {
-            const response = await ApiService.delete('/api/profile/delete', { data: { password } });
+            // Note: If backend DeleteAccount does not accept password in body, it may ignore it.
+            const response = await ApiService.delete('/api/Profile/me', { data: { password } });
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;

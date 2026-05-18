@@ -9,6 +9,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Logic Hook
 import useJobseekerLogic from '../../hooks/useJobseekerLogic';
@@ -33,6 +34,7 @@ import RecentActivity from '../../components/RecentActivity';
 import styles from './JobseekerDashboard.module.css';
 
 const JobseekerDashboard = () => {
+  const { t } = useTranslation(['dashboards', 'common']);
   const {
     dashboardData,
     loading,
@@ -55,7 +57,7 @@ const JobseekerDashboard = () => {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingSpinner}></div>
-        <p>Loading your dashboard...</p>
+        <p>{t('dashboards:common.loading', 'Loading your dashboard...')}</p>
       </div>
     );
   }
@@ -83,8 +85,8 @@ const JobseekerDashboard = () => {
         {/* Row 1: Profile Summary + Skills Analysis (side by side) */}
         <div className={styles.twoColRow}>
           <Card 
-            title="Profile Summary" 
-            subtitle="Your account overview" 
+            title={t('dashboards:jobseeker.profileSummary.title', 'Profile Summary')} 
+            subtitle={t('dashboards:jobseeker.profileSummary.subtitle', 'Your account overview')} 
             variant="glass"
             className={styles.profileCard}
           >
@@ -95,14 +97,14 @@ const JobseekerDashboard = () => {
           </Card>
           
           <Card 
-            title="Skills Match Analysis" 
-            subtitle="Based on your profile data"
+            title={t('dashboards:jobseeker.skillsMatch.title', 'Skills Match Analysis')} 
+            subtitle={t('dashboards:jobseeker.skillsMatch.subtitle', 'Based on your profile data')}
             variant="glass"
             className={styles.skillsCard}
           >
             <SkillsAnalysisCard
               skillsAnalysis={skillsAnalysis}
-              onEdit={() => navigate('/dashboard/profile/skills')}
+              onEdit={() => navigate('/dashboard/profile')}
               onAssess={() => navigate('/dashboard/assessments')}
             />
           </Card>
@@ -110,14 +112,14 @@ const JobseekerDashboard = () => {
 
         {/* Row 2: Recent Applications (full width) */}
         <Card
-          title="Recent Applications"
-          subtitle={`${applications.length} active applications`}
+          title={t('dashboards:jobseeker.recentApplications.title', 'Recent Applications')}
+          subtitle={t('dashboards:jobseeker.recentApplications.subtitle', '{{count}} active applications', { count: applications.length })}
           className={styles.applicationsCard}
           variant="glass"
           action={
             <Link to="/dashboard/applications">
               <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
+                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
               </Button>
             </Link>
           }
@@ -130,14 +132,14 @@ const JobseekerDashboard = () => {
 
         {/* Row 3: Recommended Jobs (full width) */}
         <Card
-          title="Recommended For You"
-          subtitle="Based on your skills and preferences"
+          title={t('dashboards:jobseeker.recommendedJobs.title', 'Recommended For You')}
+          subtitle={t('dashboards:jobseeker.recommendedJobs.subtitle', 'Based on your skills and preferences')}
           className={styles.recommendedCard}
           variant="glass"
           action={
             <Link to="/dashboard/recommended-jobs">
               <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
+                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
               </Button>
             </Link>
           }
@@ -151,14 +153,14 @@ const JobseekerDashboard = () => {
 
         {/* Row 4: Saved Jobs (full width) */}
         <Card
-          title="Saved Jobs"
-          subtitle={`${savedJobs.length} jobs saved for later`}
+          title={t('dashboards:jobseeker.savedJobs.title', 'Saved Jobs')}
+          subtitle={t('dashboards:jobseeker.savedJobs.subtitle', '{{count}} jobs saved for later', { count: savedJobs.length })}
           className={styles.savedJobsCard}
           variant="glass"
           action={
             <Link to="/dashboard/saved-jobs">
               <Button variant="ghost" size="small">
-                View All <ArrowUpRight size={14} />
+                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
               </Button>
             </Link>
           }
@@ -174,8 +176,8 @@ const JobseekerDashboard = () => {
         {/* Row 5: Pending Actions + Recent Activity (side by side) */}
         <div className={styles.twoColRow}>
           <Card
-            title="Pending Actions"
-            subtitle={`${dashboardData.pendingActions?.length || 0} tasks to complete`}
+            title={t('dashboards:common.pendingActions.title', 'Pending Actions')}
+            subtitle={t('dashboards:common.pendingActions.subtitle', '{{count}} tasks to complete', { count: dashboardData.pendingActions?.length || 0 })}
             className={styles.actionsCard}
             variant="glass"
           >
@@ -185,19 +187,20 @@ const JobseekerDashboard = () => {
             />
           </Card>
           <Card
-            title="Recent Activity"
-            subtitle="Your latest interactions"
+            title={t('dashboards:common.recentActivity.title', 'Recent Activity')}
+            subtitle={t('dashboards:common.recentActivity.subtitle', 'Your latest interactions')}
             className={styles.activityCard}
             variant="glass"
             action={
-              <Button variant="ghost" size="small" onClick={() => navigate('/dashboard/activity')}>
-                View History <ArrowUpRight size={14} />
+              <Button variant="ghost" size="small" onClick={() => navigate('/dashboard/applications')}>
+                {t('dashboards:common.recentActivity.viewHistory', 'View History')} <ArrowUpRight size={14} />
               </Button>
             }
           >
             <RecentActivity
               activities={recentActivity}
               limit={5}
+              onViewAll={() => navigate('/dashboard/applications')}
             />
           </Card>
         </div>

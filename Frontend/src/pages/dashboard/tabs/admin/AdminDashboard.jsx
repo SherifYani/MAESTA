@@ -6,6 +6,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Users,
   FileText,
@@ -26,7 +28,14 @@ import { adminStats, activitiesData, pendingActions, healthData } from './config
  * @returns {JSX.Element} Rendered component
  */
 const AdminDashboard = () => {
+  const { t } = useTranslation(['dashboards', 'common']);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleExportReport = () => {
+    // Navigate to reports page or trigger export functionality
+    navigate('/dashboard/admin/reports');
+  };
 
   useEffect(() => {
     // Simulate initial data loading
@@ -38,36 +47,36 @@ const AdminDashboard = () => {
 
   const adminMetrics = [
     {
-      title: "Total Users",
+      title: t('dashboards:admin.stats.totalUsers', 'Total Users'),
       value: adminStats.totalUsers.toLocaleString(),
       change: adminStats.userGrowth,
       icon: Users,
       trendType: adminStats.userGrowth.includes('+') ? 'up' : 'down',
-      description: "Registered users"
+      description: t('dashboards:admin.stats.registeredUsers', 'Registered users')
     },
     {
-      title: "Total Revenue",
+      title: t('dashboards:admin.stats.totalRevenue', 'Total Revenue'),
       value: `$${adminStats.totalRevenue.toLocaleString()}`,
       change: adminStats.revenueGrowth,
       icon: CreditCard,
       trendType: adminStats.revenueGrowth.includes('+') ? 'up' : 'down',
-      description: "Monthly revenue"
+      description: t('dashboards:admin.stats.monthlyRevenue', 'Monthly revenue')
     },
     {
-      title: "Active Jobs",
+      title: t('dashboards:admin.stats.activeJobs', 'Active Jobs'),
       value: adminStats.activeJobs,
       change: "+5", // Mock change
       icon: FileText,
       trendType: "up",
-      description: "Currently active"
+      description: t('dashboards:admin.stats.currentlyActive', 'Currently active')
     },
     {
-      title: "Pending Moderation",
+      title: t('dashboards:admin.stats.pendingModeration', 'Pending Moderation'),
       value: adminStats.pendingModeration,
       change: adminStats.pendingModeration > 10 ? "+5" : "-2",
       icon: ShieldAlert,
-      trendType: "down", // Assuming fewer is better or neutral
-      description: "Items to review"
+      trendType: "down",
+      description: t('dashboards:admin.stats.itemsToReview', 'Items to review')
     }
   ];
 
@@ -75,17 +84,16 @@ const AdminDashboard = () => {
     <div className={styles.adminOverview}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>Admin Overview</h1>
-          <p className={styles.subtitle}>Welcome back, Admin. Here's what's happening today.</p>
+          <h1 className={styles.title}>{t('dashboards:admin.title', 'Admin Overview')}</h1>
+          <p className={styles.subtitle}>{t('dashboards:admin.subtitle', "Welcome back, Admin. Here's what's happening today.")}</p>
         </div>
         <div className={styles.headerActions}>
-          {/* Add actions if needed */}
-          <button className={styles.actionBtn}>Export Report</button>
+          <button className={styles.actionBtn} onClick={handleExportReport}>{t('dashboards:admin.exportReport', 'Export Report')}</button>
         </div>
       </header>
 
       {isLoading ? (
-        <div className={styles.loadingState}>Loading dashboard data...</div>
+        <div className={styles.loadingState}>{t('dashboards:common.loading', 'Loading your dashboard...')}</div>
       ) : (
         <div className={styles.dashboardGrid}>
           {/* Section 1: Key Metrics */}
