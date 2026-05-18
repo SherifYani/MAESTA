@@ -1,7 +1,5 @@
 {
-  "a11y": {
-    "languageChanged": "Language changed to {{lang}}"
-  },
+  "a11y": { "languageChanged": "Language changed to {{lang}}" },
   "aiAssistant": "AI Assistant",
   "appName": "MAESTA",
   "back": "Back",
@@ -29,5 +27,63 @@
   "success": "Success",
   "view": "View",
   "welcome": "Welcome",
-  "yes": "Yes"
+  "yes": "Yes",
+  "actions": {
+    "search": "Search",
+    "filters": "Filters",
+    "viewAll": "View All",
+    "viewHistory": "View History",
+    "getStarted": "Get Started",
+    "export": "Export",
+    "refresh": "Refresh",
+    "skipToContent": "Skip to content",
+    "close": "Close"
+  },
+  "error": {
+    "tryAgain": "Try Again"
+  },
+  "footer": {
+    "brandDescription": "Connecting talented professionals with exceptional opportunities. Find your dream job or the perfect candidate today.",
+    "sections": {
+      "jobSeekers": "For Job Seekers",
+      "companies": "For Companies",
+      "company": "Company",
+      "legalSupport": "Legal & Support"
+    },
+    "links": {
+      "browseJobs": "Browse Jobs",
+      "pricing": "Pricing",
+      "careerGuide": "Career Guide",
+      "resumeBuilder": "Resume Builder",
+      "interviewPrep": "Interview Prep",
+      "startHiring": "Start Hiring",
+      "employersPricing": "Pricing",
+      "features": "Features",
+      "postJob": "Post a Job",
+      "contactSales": "Contact Sales",
+      "aboutUs": "About Us",
+      "blog": "Blog",
+      "careers": "Careers",
+      "pressKit": "Press Kit",
+      "brandGuidelines": "Brand Guidelines",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "security": "Security",
+      "cookiePolicy": "Cookie Policy",
+      "contactSupport": "Contact Support",
+      "accessibility": "Accessibility"
+    },
+    "contact": {
+      "address": "Address",
+      "addressValue": "123 Career St, San Francisco, CA 94107"
+    },
+    "followUs": "Follow Us",
+    "socialMediaLinks": "Social media links",
+    "copyright": "MAESTA. All rights reserved.",
+    "madeWith": "Made with",
+    "toHelpYou": "to help you find your dream job.",
+    "legalLinksAria": "Legal links",
+    "backToTopAria": "Scroll back to top of page",
+    "backToTop": "Back to Top"
+  }
 }

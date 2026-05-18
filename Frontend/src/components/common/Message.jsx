@@ -4,6 +4,7 @@
  * @author Sherif Talaat
  * @version 1.0.0
  * @date 2026-05-04
+ */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
