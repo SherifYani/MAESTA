@@ -9,6 +9,7 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 import "../../styles/components/form-components.css";
 
 /**
@@ -18,6 +19,7 @@ import "../../styles/components/form-components.css";
  * @returns {Object} Validation utilities
  */
 const useDateValidation = (minAge, maxAge) => {
+  const { t } = useTranslation(['validation']);
   const calculateAge = useCallback((date) => {
     if (!date || isNaN(date.getTime())) return null;
 
@@ -38,7 +40,7 @@ const useDateValidation = (minAge, maxAge) => {
   const validateDate = useCallback(
     (date) => {
       if (!date || isNaN(date.getTime())) {
-        return { isValid: false, message: "Invalid date format", age: null };
+        return { isValid: false, message: t('validation:dateInput.invalidFormat', "Invalid date format"), age: null };
       }
 
       const today = new Date();
@@ -47,7 +49,7 @@ const useDateValidation = (minAge, maxAge) => {
       if (date > today) {
         return {
           isValid: false,
-          message: "Date cannot be in the future",
+          message: t('validation:dateInput.futureDate', "Date cannot be in the future"),
           age: null,
         };
       }
@@ -57,7 +59,7 @@ const useDateValidation = (minAge, maxAge) => {
       if (calculatedAge < minAge) {
         return {
           isValid: false,
-          message: `Must be at least ${minAge} years old`,
+          message: t('validation:dateInput.minAge', "Must be at least {{minAge}} years old", { minAge }),
           age: calculatedAge,
         };
       }
@@ -65,14 +67,14 @@ const useDateValidation = (minAge, maxAge) => {
       if (calculatedAge > maxAge) {
         return {
           isValid: false,
-          message: `Maximum age is ${maxAge} years`,
+          message: t('validation:dateInput.maxAge', "Maximum age is {{maxAge}} years", { maxAge }),
           age: calculatedAge,
         };
       }
 
       return { isValid: true, message: "", age: calculatedAge };
     },
-    [minAge, maxAge, calculateAge]
+    [minAge, maxAge, calculateAge, t]
   );
 
   return { validateDate, calculateAge };
@@ -143,6 +145,7 @@ function DateInput({
   errorMessage = "",
   dateFormat = "dd/mm/yyyy",
 }) {
+  const { t } = useTranslation(['validation', 'common']);
   // Refs
   const containerRef = useRef(null);
   const calendarRef = useRef(null);
@@ -247,7 +250,7 @@ function DateInput({
         }
       } else {
         setIsValid(false);
-        setLocalError("Invalid date");
+        setLocalError(t('validation:dateInput.invalidDate', "Invalid date"));
         setAge(null);
 
         if (onChange) {
@@ -447,21 +450,29 @@ function DateInput({
   const [currentYear, setCurrentYear] = useState(minDate.getFullYear());
 
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    t('common:months.january', "January"),
+    t('common:months.february', "February"),
+    t('common:months.march', "March"),
+    t('common:months.april', "April"),
+    t('common:months.may', "May"),
+    t('common:months.june', "June"),
+    t('common:months.july', "July"),
+    t('common:months.august', "August"),
+    t('common:months.september', "September"),
+    t('common:months.october', "October"),
+    t('common:months.november', "November"),
+    t('common:months.december', "December"),
   ];
 
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayNames = [
+    t('common:days.sun', "Sun"),
+    t('common:days.mon', "Mon"),
+    t('common:days.tue', "Tue"),
+    t('common:days.wed', "Wed"),
+    t('common:days.thu', "Thu"),
+    t('common:days.fri', "Fri"),
+    t('common:days.sat', "Sat")
+  ];
 
   // Generate calendar days
   const calendarDays = useMemo(() => {
@@ -574,9 +585,7 @@ function DateInput({
       )}
 
       <span id={`${name}-description`} className="sr-only">
-        Enter date in{" "}
-        {dateFormat === "dd/mm/yyyy" ? "day month year" : "month day year"}{" "}
-        format
+        {t('common:dateInput.formatDescription', "Enter date in {{format}} format", { format: dateFormat === "dd/mm/yyyy" ? "day month year" : "month day year" })}
       </span>
 
       <div className="date-input__fields-wrapper">
@@ -598,7 +607,7 @@ function DateInput({
             maxLength={2}
             inputMode="numeric"
             className="date-input__part"
-            aria-label="Day"
+            aria-label={t('common:dateInput.day', "Day")}
             aria-describedby={`${name}-description ${name}-feedback`}
           />
 
@@ -617,7 +626,7 @@ function DateInput({
             maxLength={2}
             inputMode="numeric"
             className="date-input__part"
-            aria-label="Month"
+            aria-label={t('common:dateInput.month', "Month")}
           />
 
           <span className="date-input__separator" aria-hidden="true">
@@ -635,7 +644,7 @@ function DateInput({
             maxLength={4}
             inputMode="numeric"
             className="date-input__part"
-            aria-label="Year"
+            aria-label={t('common:dateInput.year', "Year")}
           />
         </div>
 
@@ -645,7 +654,7 @@ function DateInput({
               type="button"
               onClick={handleClear}
               className="date-input__clear-button"
-              aria-label="Clear date">
+              aria-label={t('common:actions.clearDate', "Clear date")}>
               <i className="fa-solid fa-xmark" aria-hidden="true" />
             </button>
           )}
@@ -654,7 +663,7 @@ function DateInput({
             type="button"
             onClick={handleCalendarToggle}
             className="date-input__calendar-button"
-            aria-label={showCalendar ? "Close calendar" : "Open calendar"}
+            aria-label={showCalendar ? t('common:actions.closeCalendar', "Close calendar") : t('common:actions.openCalendar', "Open calendar")}
             aria-expanded={showCalendar}
             aria-controls={`${name}-calendar`}>
             <i
@@ -677,7 +686,7 @@ function DateInput({
           year && (
             <div className="date-input__age-display">
               <i className="fa-solid fa-cake-candles" aria-hidden="true" />
-              <span className="date-input__age-text">Age: {age} years</span>
+              <span className="date-input__age-text">{t('common:dateInput.ageDisplay', "Age: {{age}} years", { age })}</span>
             </div>
           )}
 
@@ -694,7 +703,7 @@ function DateInput({
         <div className="date-input__tips">
           <i className="fa-solid fa-lightbulb" aria-hidden="true" />
           <span>
-            Tip: Use Tab to navigate • Paste full date • Click X to clear
+            {t('common:dateInput.tip', "Tip: Use Tab to navigate • Paste full date • Click X to clear")}
           </span>
         </div>
       </div>
@@ -705,15 +714,15 @@ function DateInput({
           ref={calendarRef}
           id={`${name}-calendar`}
           role="dialog"
-          aria-label="Select date"
+          aria-label={t('common:dateInput.selectDate', "Select date")}
           aria-modal="true">
           <div className="date-input__calendar-header">
-            <h4>Select Date</h4>
+            <h4>{t('common:dateInput.selectDate', "Select Date")}</h4>
             <button
               type="button"
               onClick={() => setShowCalendar(false)}
               className="date-input__calendar-close"
-              aria-label="Close calendar">
+              aria-label={t('common:actions.closeCalendar', "Close calendar")}>
               <i className="fa-solid fa-times" aria-hidden="true" />
             </button>
           </div>
@@ -725,7 +734,7 @@ function DateInput({
                 className="date-input__month-nav"
                 onClick={() => navigateMonth("prev")}
                 disabled={!canGoPrev}
-                aria-label="Previous month">
+                aria-label={t('common:actions.prevMonth', "Previous month")}>
                 <i className="fa-solid fa-chevron-left" aria-hidden="true" />
               </button>
 
@@ -738,7 +747,7 @@ function DateInput({
                 className="date-input__month-nav"
                 onClick={() => navigateMonth("next")}
                 disabled={!canGoNext}
-                aria-label="Next month">
+                aria-label={t('common:actions.nextMonth', "Next month")}>
                 <i className="fa-solid fa-chevron-right" aria-hidden="true" />
               </button>
             </div>
@@ -778,7 +787,7 @@ function DateInput({
                     } ${isToday ? "date-input__calendar-day--today" : ""}`}
                     onClick={() => isSelectable && handleDateSelect(date)}
                     disabled={!isSelectable}
-                    aria-label={`Select ${monthNames[monthNum]} ${dayNum}, ${yearNum}`}>
+                    aria-label={t('common:dateInput.selectDay', "Select {{month}} {{day}}, {{year}}", { month: monthNames[monthNum], day: dayNum, year: yearNum })}>
                     {dayNum}
                   </button>
                 );
@@ -791,7 +800,7 @@ function DateInput({
                 className="date-input__calendar-action"
                 onClick={selectExampleDate}>
                 <i className="fa-solid fa-bolt" aria-hidden="true" />
-                Quick Fill (Age {Math.floor((minAge + maxAge) / 2)})
+                {t('common:dateInput.quickFill', "Quick Fill (Age {{age}})", { age: Math.floor((minAge + maxAge) / 2) })}
               </button>
 
               <button

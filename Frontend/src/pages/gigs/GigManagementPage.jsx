@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useGig } from '../../context/GigContext';
 import { useRole } from '../../hooks/useRole';
 import { Button, LoadingSpinner, Alert, Pagination } from '../../components/common';
@@ -17,6 +18,7 @@ import { PageContainer } from '../../components/layout';
 import styles from './GigManagementPage.module.css';
 
 const GigManagementPage = () => {
+    const { t } = useTranslation(['gigs', 'common']);
     const navigate = useNavigate();
     const { userGigs, isLoading, error, fetchUserGigs } = useGig();
     const { isClient, isFreelancer } = useRole();
@@ -63,10 +65,10 @@ const GigManagementPage = () => {
         <div className={styles.pageWrapper}>
             <header className={styles.header}>
                 <PageContainer className={styles.headerContent}>
-                    <h1 className={styles.title}>My Gigs</h1>
+                    <h1 className={styles.title}>{t('gigs:management.title', 'My Gigs')}</h1>
                     {isClient() && (
                         <Button variant="primary" onClick={handleCreateGig} className={styles.createButton}>
-                            <Plus size={16} /> Post New Gig
+                            <Plus size={16} /> {t('gigs:management.postGig', 'Post New Gig')}
                         </Button>
                     )}
                 </PageContainer>
@@ -80,7 +82,7 @@ const GigManagementPage = () => {
                             className={`${styles.tab} ${activeTab === status ? styles.active : ''}`}
                             onClick={() => setActiveTab(status)}
                         >
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                            {t(`gigs:management.tabs.${status}`, status.charAt(0).toUpperCase() + status.slice(1))}
                         </button>
                     ))}
                 </div>
@@ -103,11 +105,11 @@ const GigManagementPage = () => {
                                         size="small"
                                         onClick={() => handleViewWorkspace(gigId)}
                                     >
-                                        Open Workspace
+                                        {t('gigs:management.openWorkspace', 'Open Workspace')}
                                     </Button>
                                     {isClient() && gig.status === 'active' && (
                                         <Button variant="outline" size="small" onClick={() => setManageBidsGigId(gigId)}>
-                                            Manage Bids
+                                            {t('gigs:management.manageBids', 'Manage Bids')}
                                         </Button>
                                     )}
                                 </div>
@@ -116,9 +118,9 @@ const GigManagementPage = () => {
                         })
                     ) : (
                         <div className={styles.emptyState}>
-                            <p>No {activeTab} gigs found.</p>
+                            <p>{t('gigs:management.noGigs', 'No {{activeTab}} gigs found.', { activeTab: t(`gigs:management.tabs.${activeTab}`, activeTab) })}</p>
                             {isClient() && activeTab === 'active' && (
-                                <Button variant="secondary" onClick={handleCreateGig}>Get Started</Button>
+                                <Button variant="secondary" onClick={handleCreateGig}>{t('common:actions.getStarted', 'Get Started')}</Button>
                             )}
                         </div>
                     )}

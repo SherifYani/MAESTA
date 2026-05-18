@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useGig } from '../../context/GigContext';
 import GigCard from '../../components/gigs/GigCard';
 import GigFilters from '../../components/gigs/GigFilters';
@@ -21,6 +22,7 @@ import styles from './GigListingPage.module.css';
  * @returns {JSX.Element} Gig listing page
  */
 const GigListingPage = () => {
+    const { t } = useTranslation(['gigs', 'common']);
     const navigate = useNavigate();
     const { gigs, isLoading, error, fetchGigs } = useGig();
     const [showFilters, setShowFilters] = useState(false);
@@ -88,16 +90,16 @@ const GigListingPage = () => {
     return (
         <PageContainer className={styles.pageContainer} size="lg">
             <header className={styles.header}>
-                <h1 className={styles.title}>Find Your Next Project</h1>
+                <h1 className={styles.title}>{t('gigs:listing.title', 'Find Your Next Project')}</h1>
                 <p className={styles.subtitle}>
-                    Browse through available gigs and find the perfect match for your skills
+                    {t('gigs:listing.subtitle', 'Browse through available gigs and find the perfect match for your skills')}
                 </p>
                 <Button
                     variant="primary"
                     onClick={navigateToPostGig}
                     className={styles.postButton}
                 >
-                    Post a New Gig
+                    {t('gigs:listing.postGig', 'Post a New Gig')}
                 </Button>
             </header>
 
@@ -107,7 +109,7 @@ const GigListingPage = () => {
                         <Search className={styles.searchIcon} size={18} />
                         <Input
                             type="text"
-                            placeholder="Search gigs by title, skills..."
+                            placeholder={t('gigs:listing.searchPlaceholder', 'Search gigs by title, skills...')}
                             value={filters.search}
                             onChange={(e) => handleFilterChange({ search: e.target.value })}
                             className={styles.searchInput}
@@ -117,7 +119,7 @@ const GigListingPage = () => {
                             onClick={applyFilters}
                             className={styles.searchButton}
                         >
-                            Search
+                            {t('common:actions.search', 'Search')}
                         </Button>
                     </div>
 
@@ -126,7 +128,7 @@ const GigListingPage = () => {
                         onClick={() => setShowFilters(!showFilters)}
                     >
                         <Filter size={16} />
-                        Filters {Object.values(filters).some(f => f && f !== 'all' && (f?.length ?? 0) !== 0 && typeof f !== 'object') ? '•' : ''}
+                        {t('common:actions.filters', 'Filters')} {Object.values(filters).some(f => f && f !== 'all' && (f?.length ?? 0) !== 0 && typeof f !== 'object') ? '•' : ''}
                     </button>
                 </div>
 
@@ -142,21 +144,21 @@ const GigListingPage = () => {
                     {error && (
                         <div className={styles.errorAlert}>
                             <p>{error}</p>
-                            <Button onClick={applyFilters}>Try Again</Button>
+                            <Button onClick={applyFilters}>{t('common:error.tryAgain', 'Try Again')}</Button>
                         </div>
                     )}
 
                     <div className={styles.resultsInfo}>
                         <p className={styles.resultsCount}>
-                            Showing {gigs?.length ?? 0} gigs
+                            {t('gigs:listing.showingCount', 'Showing {{count}} gigs', { count: gigs?.length ?? 0 })}
                         </p>
                     </div>
 
                     <div className={styles.gigsGrid}>
                         {(gigs?.length ?? 0) === 0 ? (
                             <div className={styles.noResults}>
-                                <h3>No gigs found</h3>
-                                <p>Try adjusting your search filters</p>
+                                <h3>{t('gigs:listing.noResults', 'No gigs found')}</h3>
+                                <p>{t('gigs:listing.tryAdjusting', 'Try adjusting your search filters')}</p>
                             </div>
                         ) : (
                             gigs.map(gig => {

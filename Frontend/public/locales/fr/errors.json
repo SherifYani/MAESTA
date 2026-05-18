@@ -1,0 +1,38 @@
+{
+  "generic": "Une erreur s'est produite. Veuillez réessayer.",
+  "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+  "notFound": "La ressource demandée est introuvable.",
+  "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+  "forbidden": "Accès refusé.",
+  "serverError": "Erreur du serveur. Veuillez réessayer plus tard.",
+  "timeout": "Délai d'attente de la demande dépassé. Veuillez réessayer.",
+  "api": {
+    "auth": {
+      "login": {
+        "error": {
+          "invalidCredentials": "E-mail ou mot de passe invalide."
+        }
+      }
+    },
+    "jobs": {
+      "create": {
+        "success": "Offre d'emploi publiée avec succès.",
+        "error": "Échec de la publication de l'offre. Veuillez réessayer."
+      },
+      "apply": {
+        "success": "Candidature soumise avec succès.",
+        "error": {
+          "notFound": "Emploi introuvable.",
+          "alreadyApplied": "Vous avez déjà postulé à cet emploi."
+        }
+      }
+    },
+    "gigs": {
+      "proposal": {
+        "submit": {
+          "success": "Proposition soumise avec succès."
+        }
+      }
+    }
+  }
+}

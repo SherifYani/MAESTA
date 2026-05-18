@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useGig } from '../../context/GigContext';
 import { useRole } from '../../hooks/useRole';
 import { Button, LoadingSpinner, Alert } from '../../components/common';
@@ -19,6 +20,7 @@ import { PageContainer } from '../../components/layout';
 import styles from './WorkspacePage.module.css';
 
 const WorkspacePage = () => {
+    const { t } = useTranslation(['gigs', 'common']);
     const { id } = useParams();
     const navigate = useNavigate();
     const { workspace, fetchWorkspace, isLoading, error } = useGig();
@@ -65,7 +67,7 @@ const WorkspacePage = () => {
                     className={styles.closeVideoButton}
                     onClick={() => setIsVideoCallOpen(false)}
                 >
-                    Exit Call
+                    {t('gigs:workspace.exitCall', 'Exit Call')}
                 </Button>
                 <VideoCallUI isHost={isClient()} roomId={id} />
             </div>
@@ -78,7 +80,7 @@ const WorkspacePage = () => {
                 <PageContainer size="xl" className={styles.headerContent}>
                     <div>
                         <h1 className={styles.title}>{workspace.title}</h1>
-                        <span className={styles.statusBadge}>In Progress</span>
+                        <span className={styles.statusBadge}>{t('gigs:workspace.inProgress', 'In Progress')}</span>
                     </div>
                     <div className={styles.headerActions}>
                         <Button
@@ -86,10 +88,10 @@ const WorkspacePage = () => {
                             className={styles.videoButton}
                             onClick={() => setIsVideoCallOpen(true)}
                         >
-                            <Video size={16} /> Join Video Call
+                            <Video size={16} /> {t('gigs:workspace.joinVideo', 'Join Video Call')}
                         </Button>
                         <Button variant="secondary" onClick={() => navigate(`/gigs/${id}`)}>
-                            Gig Details
+                            {t('gigs:workspace.gigDetails', 'Gig Details')}
                         </Button>
                     </div>
                 </PageContainer>
@@ -99,8 +101,8 @@ const WorkspacePage = () => {
                 <div className={styles.layout}>
                     <div className={styles.leftPanel}>
                         <div className={styles.sectionHeader}>
-                            <h3>Milestones</h3>
-                            <button onClick={() => navigate(`/gigs/${id}/manage`)} className={styles.manageLink}>Manage</button>
+                            <h3>{t('gigs:workspace.milestones', 'Milestones')}</h3>
+                            <button onClick={() => navigate(`/gigs/${id}/manage`)} className={styles.manageLink}>{t('gigs:workspace.manage', 'Manage')}</button>
                         </div>
                         <MilestoneTracker
                             milestones={workspace.milestones || []}
@@ -110,7 +112,7 @@ const WorkspacePage = () => {
                         />
 
                         <div className={styles.filesSection}>
-                            <h3>Files</h3>
+                            <h3>{t('gigs:workspace.files', 'Files')}</h3>
                             <FileUpload onUpload={handleFileUpload} existingFiles={workspace.files || []} />
                         </div>
                     </div>

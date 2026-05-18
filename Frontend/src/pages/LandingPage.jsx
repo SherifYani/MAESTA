@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
 import "../styles/landing-page.css";
-import generalService from "../services/generalService";
-import jobService from "../services/jobService";
 
 
 /**
@@ -32,67 +30,69 @@ Button.displayName = "Button";
  * @returns {React.ReactElement} The rendered landing page.
  */
 export default function LandingPage() {
-  const navigate = useNavigate();
+  const { t } = useTranslation(['landing', 'common']);
   const [scrollY, setScrollY] = useState(0);
-  const [stats, setStats] = useState({ totalJobs: "50K+", totalCompanies: "1000+", successRate: "95%" });
-  const [featuredJobs, setFeaturedJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    /**
+     * Updates scroll position state on window scroll.
+     */
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
-    
-    // Fetch live data
-    const fetchData = async () => {
-      try {
-        const [statsData, jobsData] = await Promise.all([
-          generalService.getPublicStats(),
-          jobService.getJobs({ limit: 4 })
-        ]);
-        
-        if (statsData) {
-          setStats({
-            totalJobs: statsData.totalJobs > 1000 ? `${(statsData.totalJobs / 1000).toFixed(1)}K+` : statsData.totalJobs,
-            totalCompanies: statsData.totalCompanies > 1000 ? `${(statsData.totalCompanies / 1000).toFixed(1)}K+` : statsData.totalCompanies,
-            successRate: statsData.successfulPlacements > 0 ? "95%" : "0%" // Placeholder logic for success rate
-          });
-        }
-
-        if (jobsData) {
-            const items = jobsData.jobs || jobsData.Jobs || jobsData.items || jobsData.data || (Array.isArray(jobsData) ? jobsData : []);
-            setFeaturedJobs(items.slice(0, 4));
-        }
-      } catch (error) {
-        console.error("Error fetching landing page data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const jobs = [
+    {
+      id: "senior-react-developer",
+      title: t('landing:jobs.seniorReact', "Senior React Developer"),
+      company: "TechFlow Inc",
+      location: t('landing:jobs.sanFrancisco', "San Francisco, CA"),
+      type: t('landing:jobs.fullTime', "Full-time"),
+      salary: "$140K - $180K",
+    },
+    {
+      id: "ux-ui-designer",
+      title: t('landing:jobs.uxDesigner', "UX/UI Designer"),
+      company: "Creative Studios",
+      location: t('landing:jobs.remote', "Remote"),
+      type: t('landing:jobs.fullTime', "Full-time"),
+      salary: "$100K - $130K",
+    },
+    {
+      id: "product-manager",
+      title: t('landing:jobs.productManager', "Product Manager"),
+      company: "StartupHub",
+      location: t('landing:jobs.newYork', "New York, NY"),
+      type: t('landing:jobs.fullTime', "Full-time"),
+      salary: "$120K - $160K",
+    },
+    {
+      id: "devops-engineer",
+      title: t('landing:jobs.devopsEngineer', "DevOps Engineer"),
+      company: "CloudTech Solutions",
+      location: t('landing:jobs.austin', "Austin, TX"),
+      type: t('landing:jobs.contract', "Contract"),
+      salary: "$130K - $170K",
+    },
+  ];
 
   const testimonials = [
     {
       id: "alex-chen",
       name: "Alex Chen",
-      role: "Found job in 2 weeks",
-      company: "Senior Developer at Google",
+      role: t('landing:testimonials.alexRole', "Found job in 2 weeks"),
+      company: t('landing:testimonials.alexCompany', "Senior Developer at Google"),
       avatar: "👨‍💼",
-      content:
-        "maesta made my job search incredibly easy. I found my dream role without any hassle!",
+      content: t('landing:testimonials.alexContent', "maesta made my job search incredibly easy. I found my dream role without any hassle!"),
     },
     {
       id: "sarah-martinez",
       name: "Sarah Martinez",
-      role: "Career switcher",
-      company: "UX Designer at Adobe",
+      role: t('landing:testimonials.sarahRole', "Career switcher"),
+      company: t('landing:testimonials.sarahCompany', "UX Designer at Adobe"),
       avatar: "👩‍💼",
-      content:
-        "The platform is intuitive and the job matches are spot on. Highly recommend!",
+      content: t('landing:testimonials.sarahContent', "The platform is intuitive and the job matches are spot on. Highly recommend!"),
     },
   ];
 
@@ -100,45 +100,47 @@ export default function LandingPage() {
     {
       id: "smart-matching",
       icon: "🎯",
-      title: "Smart Matching",
-      description:
-        "AI-powered algorithm finds jobs that match your skills and goals perfectly",
+      title: t('landing:features.smartMatchingTitle', "Smart Matching"),
+      description: t('landing:features.smartMatchingDesc', "AI-powered algorithm finds jobs that match your skills and goals perfectly"),
     },
     {
       id: "quick-apply",
       icon: "⚡",
-      title: "Quick Apply",
-      description:
-        "Apply to jobs with one click using your profile information",
+      title: t('landing:features.quickApplyTitle', "Quick Apply"),
+      description: t('landing:features.quickApplyDesc', "Apply to jobs with one click using your profile information"),
     },
     {
       id: "salary-insights",
       icon: "📊",
-      title: "Salary Insights",
-      description: "See real salary data and compensation packages upfront",
+      title: t('landing:features.salaryInsightsTitle', "Salary Insights"),
+      description: t('landing:features.salaryInsightsDesc', "See real salary data and compensation packages upfront"),
     },
   ];
 
   const pricingPlans = [
     {
       id: "free",
-      name: "Job Seeker Free",
-      price: "Free",
-      description: "Perfect for exploring opportunities",
-      features: ["Unlimited job search", "5 applications/day", "Resume upload"],
-      cta: "Get Started",
+      name: t('landing:pricing.freeName', "Job Seeker Free"),
+      price: t('landing:pricing.freePrice', "Free"),
+      description: t('landing:pricing.freeDesc', "Perfect for exploring opportunities"),
+      features: [
+        t('landing:pricing.freeFeat1', "Unlimited job search"),
+        t('landing:pricing.freeFeat2', "5 applications/day"),
+        t('landing:pricing.freeFeat3', "Resume upload")
+      ],
+      cta: t('landing:pricing.freeCta', "Get Started"),
     },
     {
       id: "premium",
-      name: "Premium",
+      name: t('landing:pricing.premiumName', "Premium"),
       price: "$9.99",
-      description: "For serious job hunters",
+      description: t('landing:pricing.premiumDesc', "For serious job hunters"),
       features: [
-        "Unlimited applications",
-        "Advanced job alerts",
-        "Salary negotiation guide",
+        t('landing:pricing.premiumFeat1', "Unlimited applications"),
+        t('landing:pricing.premiumFeat2', "Advanced job alerts"),
+        t('landing:pricing.premiumFeat3', "Salary negotiation guide"),
       ],
-      cta: "Start Free Trial",
+      cta: t('landing:pricing.premiumCta', "Start Free Trial"),
       highlighted: true,
     },
   ];
@@ -155,7 +157,7 @@ export default function LandingPage() {
   return (
     <div className="landing" data-scroll-y={Math.round(scrollY)}>
       <a className="landing__skip-link" href="#main-content">
-        Skip to content
+        {t('common:actions.skipToContent', "Skip to content")}
       </a>
 
       {/* Unified Header — rendered first, always on top via z-index in CSS */}
@@ -192,39 +194,37 @@ export default function LandingPage() {
       <main id="main-content">
         <section className="landing__hero" aria-labelledby="hero-heading">
           <div className="landing__hero-content">
-            <p className="landing__badge">Your next opportunity awaits</p>
+            <p className="landing__badge">{t('landing:hero.badge', "Your next opportunity awaits")}</p>
             <h1 id="hero-heading" className="landing__hero-title">
-              Find Your Dream Job
+              {t('landing:hero.title', "Find Your Dream Job")}
             </h1>
             <p className="landing__hero-subtitle">
-              Discover opportunities at top tech companies. Smart matching,
-              quick apply, and real salaries. Your next great career move is
-              just a few clicks away.
+              {t('landing:hero.subtitle', "Discover opportunities at top tech companies. Smart matching, quick apply, and real salaries. Your next great career move is just a few clicks away.")}
             </p>
 
             <div className="landing__hero-btns">
               <Button variant="primary" onClick={() => scrollToId("jobs")}>
-                Start Searching
+                {t('landing:hero.startSearching', "Start Searching")}
               </Button>
               <Button
                 variant="secondary"
                 onClick={() => scrollToId("features")}>
-                Learn More
+                {t('landing:hero.learnMore', "Learn More")}
               </Button>
             </div>
 
             <ul className="landing__hero-stats" aria-hidden>
               <li>
-                <span className="landing__stat-value">{stats.totalJobs}</span>
-                <span className="landing__stat-label">Active Jobs</span>
+                <span className="landing__stat-value">50K+</span>
+                <span className="landing__stat-label">{t('landing:hero.activeJobs', "Active Jobs")}</span>
               </li>
               <li>
-                <span className="landing__stat-value">{stats.totalCompanies}</span>
-                <span className="landing__stat-label">Companies</span>
+                <span className="landing__stat-value">1000+</span>
+                <span className="landing__stat-label">{t('landing:hero.companies', "Companies")}</span>
               </li>
               <li>
-                <span className="landing__stat-value">{stats.successRate}</span>
-                <span className="landing__stat-label">Success Rate</span>
+                <span className="landing__stat-value">95%</span>
+                <span className="landing__stat-label">{t('landing:hero.successRate', "Success Rate")}</span>
               </li>
             </ul>
           </div>
@@ -235,35 +235,32 @@ export default function LandingPage() {
           className="landing__jobs"
           aria-labelledby="jobs-heading">
           <h2 id="jobs-heading" className="landing__section-title">
-            Featured Opportunities
+            {t('landing:jobs.heading', "Featured Opportunities")}
           </h2>
           <div className="landing__jobs-grid">
-            {featuredJobs.map((job) => (
+            {jobs.map((job) => (
               <article
-                key={job.id || job.jobId}
+                key={job.id}
                 className="landing__job-card"
-                aria-labelledby={`${job.id || job.jobId}-title`}>
+                aria-labelledby={`${job.id}-title`}>
                 <header className="landing__job-header">
-                  <h3 id={`${job.id || job.jobId}-title`}>{job.title || job.jobTitle}</h3>
-                  <span className="landing__job-type">{job.type || job.jobType}</span>
+                  <h3 id={`${job.id}-title`}>{job.title}</h3>
+                  <span className="landing__job-type">{job.type}</span>
                 </header>
-                <p className="landing__job-company">{job.company || job.companyName}</p>
-                <p className="landing__job-location">📍 {job.location || job.jobLocation}</p>
-                {(job.salary || job.salaryRange) && (
-                  <p className="landing__job-salary">{job.salary || job.salaryRange}</p>
+                <p className="landing__job-company">{job.company}</p>
+                <p className="landing__job-location">📍 {job.location}</p>
+                {job.salary && (
+                  <p className="landing__job-salary">{job.salary}</p>
                 )}
                 <div className="landing__job-actions">
                   <Button
                     variant="secondary"
-                    onClick={() => navigate(`/jobs/${job.id || job.jobId}`)}>
-                    View Details
+                    onClick={() => alert(`Open: ${job.title}`)}>
+                    {t('landing:jobs.viewDetails', "View Details")}
                   </Button>
                 </div>
               </article>
             ))}
-            {featuredJobs.length === 0 && !loading && (
-                <p className="landing__no-data">No featured jobs available at the moment.</p>
-            )}
           </div>
         </section>
 
@@ -272,7 +269,7 @@ export default function LandingPage() {
           className="landing__features"
           aria-labelledby="features-heading">
           <h2 id="features-heading" className="landing__section-title">
-            Why Choose maesta
+            {t('landing:features.heading', "Why Choose maesta")}
           </h2>
           <div className="landing__features-grid">
             {features.map((f) => (
@@ -289,23 +286,23 @@ export default function LandingPage() {
 
         <section className="landing__success" aria-labelledby="impact-heading">
           <h2 id="impact-heading" className="landing__section-title">
-            Our Impact
+            {t('landing:impact.heading', "Our Impact")}
           </h2>
           <div className="landing__success-grid">
             <div className="landing__success-card">
               <div className="landing__success-icon">🚀</div>
-              <h3>TechFlow Hiring</h3>
-              <div className="landing__success-result">500+ Hires</div>
+              <h3>{t('landing:impact.stat1Title', "TechFlow Hiring")}</h3>
+              <div className="landing__success-result">{t('landing:impact.stat1Result', "500+ Hires")}</div>
               <p className="landing__success-desc">
-                Found top engineering talent in weeks, not months
+                {t('landing:impact.stat1Desc', "Found top engineering talent in weeks, not months")}
               </p>
             </div>
             <div className="landing__success-card">
               <div className="landing__success-icon">😊</div>
-              <h3>Talent Satisfaction</h3>
-              <div className="landing__success-result">95% Happy</div>
+              <h3>{t('landing:impact.stat2Title', "Talent Satisfaction")}</h3>
+              <div className="landing__success-result">{t('landing:impact.stat2Result', "95% Happy")}</div>
               <p className="landing__success-desc">
-                95% of job seekers find roles in under 30 days
+                {t('landing:impact.stat2Desc', "95% of job seekers find roles in under 30 days")}
               </p>
             </div>
           </div>
@@ -316,7 +313,7 @@ export default function LandingPage() {
           className="landing__pricing"
           aria-labelledby="pricing-heading">
           <h2 id="pricing-heading" className="landing__section-title">
-            Simple Pricing
+            {t('landing:pricing.heading', "Simple Pricing")}
           </h2>
           <div className="landing__pricing-grid">
             {pricingPlans.map((plan) => (
@@ -327,10 +324,7 @@ export default function LandingPage() {
                 <h3>{plan.name}</h3>
                 <p className="landing__plan-desc">{plan.description}</p>
                 <div className="landing__plan-price">{plan.price}</div>
-                <Button 
-                  variant={plan.highlighted ? "primary" : "secondary"}
-                  onClick={() => navigate("/register")}
-                >
+                <Button variant={plan.highlighted ? "primary" : "secondary"}>
                   {plan.cta}
                 </Button>
                 <ul className="landing__plan-features">
@@ -350,7 +344,7 @@ export default function LandingPage() {
           className="landing__testimonials"
           aria-labelledby="testimonials-heading">
           <h2 id="testimonials-heading" className="landing__section-title">
-            Success Stories From Our Users
+            {t('landing:testimonials.heading', "Success Stories From Our Users")}
           </h2>
           <div className="landing__testimonials-grid">
             {testimonials.map((t) => (
@@ -376,15 +370,15 @@ export default function LandingPage() {
         </section>
 
         <section className="landing__cta-section">
-          <h2>Ready to find your perfect role?</h2>
+          <h2>{t('landing:cta.heading', "Ready to find your perfect role?")}</h2>
           <p>
-            Join thousands of professionals who found their dream job on maesta
+            {t('landing:cta.subtitle', "Join thousands of professionals who found their dream job on maesta")}
           </p>
           <Button
             variant="primary"
             className="landing__cta-btn--large"
             onClick={() => scrollToId("jobs")}>
-            Start Your Search
+            {t('landing:cta.button', "Start Your Search")}
           </Button>
         </section>
 

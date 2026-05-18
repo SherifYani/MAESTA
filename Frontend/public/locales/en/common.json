@@ -1,0 +1,33 @@
+{
+  "a11y": {
+    "languageChanged": "Language changed to {{lang}}"
+  },
+  "aiAssistant": "AI Assistant",
+  "appName": "MAESTA",
+  "back": "Back",
+  "cancel": "Cancel",
+  "close": "Close",
+  "confirm": "Confirm",
+  "dashboard": "Dashboard",
+  "delete": "Delete",
+  "edit": "Edit",
+  "error": "Error",
+  "filter": "Filter",
+  "loading": "Loading...",
+  "login": "Login",
+  "logout": "Logout",
+  "messages": "Messages",
+  "next": "Next",
+  "no": "No",
+  "previous": "Previous",
+  "profile": "Profile",
+  "register": "Register",
+  "save": "Save",
+  "search": "Search",
+  "settings": "Settings",
+  "submit": "Submit",
+  "success": "Success",
+  "view": "View",
+  "welcome": "Welcome",
+  "yes": "Yes"
+}

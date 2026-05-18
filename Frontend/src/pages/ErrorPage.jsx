@@ -8,6 +8,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Home, ArrowLeft, Search, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import styles from "./ErrorPage.module.css";
 
 /**
@@ -17,6 +18,7 @@ import styles from "./ErrorPage.module.css";
  */
 const ErrorPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['common']);
 
   /**
    * Navigate to home page
@@ -69,10 +71,9 @@ const ErrorPage = () => {
         </div>
 
         {/* Error Message */}
-        <h1 className={styles.title}>Page Not Found</h1>
+        <h1 className={styles.title}>{t('common:error404.title', "Page Not Found")}</h1>
         <p className={styles.description}>
-          Oops! The page you're looking for seems to have wandered off. Don't
-          worry, we'll help you find your way back.
+          {t('common:error404.description', "Oops! The page you're looking for seems to have wandered off. Don't worry, we'll help you find your way back.")}
         </p>
 
         {/* Action Buttons */}
@@ -81,14 +82,14 @@ const ErrorPage = () => {
             className={`${styles.button} ${styles.primary}`}
             onClick={handleGoHome}>
             <Home size={20} />
-            <span>Go Home</span>
+            <span>{t('common:error404.goHome', "Go Home")}</span>
           </button>
 
           <button
             className={`${styles.button} ${styles.secondary}`}
             onClick={handleGoBack}>
             <ArrowLeft size={20} />
-            <span>Go Back</span>
+            <span>{t('common:error404.goBack', "Go Back")}</span>
           </button>
         </div>
 
@@ -96,39 +97,39 @@ const ErrorPage = () => {
         <div className={styles.links}>
           <button className={styles.link} onClick={handleSearch}>
             <Search size={18} />
-            <span>Search</span>
+            <span>{t('common:error404.search', "Search")}</span>
           </button>
 
           <span className={styles.separator}>•</span>
 
           <button className={styles.link} onClick={handleContact}>
             <Mail size={18} />
-            <span>Contact Support</span>
+            <span>{t('common:error404.contactSupport', "Contact Support")}</span>
           </button>
         </div>
 
         {/* Helpful Suggestions */}
         <div className={styles.suggestions}>
-          <h3 className={styles.suggestionsTitle}>You might be looking for:</h3>
+          <h3 className={styles.suggestionsTitle}>{t('common:error404.suggestionsTitle', "You might be looking for:")}</h3>
           <ul className={styles.suggestionsList}>
             <li>
               <a href="/dashboard" className={styles.suggestionLink}>
-                Dashboard
+                {t('common:error404.dashboard', "Dashboard")}
               </a>
             </li>
             <li>
               <a href="/jobs" className={styles.suggestionLink}>
-                Browse Jobs
+                {t('common:error404.browseJobs', "Browse Jobs")}
               </a>
             </li>
             <li>
               <a href="/profile" className={styles.suggestionLink}>
-                Your Profile
+                {t('common:error404.yourProfile', "Your Profile")}
               </a>
             </li>
             <li>
               <a href="/help" className={styles.suggestionLink}>
-                Help Center
+                {t('common:error404.helpCenter', "Help Center")}
               </a>
             </li>
           </ul>
@@ -137,7 +138,7 @@ const ErrorPage = () => {
 
       {/* Footer */}
       <footer className={styles.footer}>
-        <p>© 2025 MAESTA. All rights reserved.</p>
+        <p>{t('common:footer.copyright', "© {{year}} MAESTA. All rights reserved.", { year: new Date().getFullYear() })}</p>
       </footer>
     </div>
   );
