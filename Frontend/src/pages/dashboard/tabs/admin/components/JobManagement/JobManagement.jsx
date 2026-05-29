@@ -8,13 +8,13 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Eye, Edit, Trash, FileText, Briefcase } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { jobsData } from '../../config/adminMockData';
+import adminService from '../../../../../../services/adminService';
 import styles from './JobManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -24,7 +24,13 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const JobManagement = () => {
-    const [jobs, setJobs] = useState(jobsData);
+    const [jobs, setJobs] = useState([]);
+
+    useEffect(() => {
+        adminService.getJobsForModeration()
+            .then(res => setJobs(res?.data?.jobs || res?.data || []))
+            .catch(console.error);
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

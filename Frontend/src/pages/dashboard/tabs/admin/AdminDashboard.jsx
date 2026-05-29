@@ -17,9 +17,9 @@ import styles from './AdminDashboard.module.css';
 
 import StatsGrid from '../../components/StatsGrid';
 import RecentActivity from './components/Overview/RecentActivity';
-import PendingActions from './components/Overview/PendingActions';
+import PendingActions from '../../components/PendingActions';
 import SystemHealth from './components/Overview/SystemHealth';
-import { adminStats, activitiesData, pendingActions, healthData } from './config/adminMockData';
+import adminService from '../../../../services/adminService';
 
 /**
  * Admin Dashboard Component
@@ -29,51 +29,57 @@ import { adminStats, activitiesData, pendingActions, healthData } from './config
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [metrics, setMetrics] = useState(null);
 
   const handleExportReport = () => {
-    // Navigate to reports page or trigger export functionality
-    navigate('/dashboard/admin/reports');
+    navigate('/dashboard/reports');
   };
 
   useEffect(() => {
-    // Simulate initial data loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const fetchMetrics = async () => {
+      try {
+        const data = await adminService.getDashboardMetrics();
+        setMetrics(data);
+      } catch (err) {
+        console.error('[AdminDashboard] Failed to fetch metrics:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMetrics();
   }, []);
 
   const adminMetrics = [
     {
       title: "Total Users",
-      value: adminStats.totalUsers.toLocaleString(),
-      change: adminStats.userGrowth,
+      value: (metrics?.totalUsers ?? 0).toLocaleString(),
+      change: metrics?.userGrowth ?? '+0%',
       icon: Users,
-      trendType: adminStats.userGrowth.includes('+') ? 'up' : 'down',
+      trendType: (metrics?.userGrowth ?? '').includes('+') ? 'up' : 'down',
       description: "Registered users"
     },
     {
       title: "Total Revenue",
-      value: `$${adminStats.totalRevenue.toLocaleString()}`,
-      change: adminStats.revenueGrowth,
+      value: `$${(metrics?.totalRevenue ?? 0).toLocaleString()}`,
+      change: metrics?.revenueGrowth ?? '+0%',
       icon: CreditCard,
-      trendType: adminStats.revenueGrowth.includes('+') ? 'up' : 'down',
+      trendType: (metrics?.revenueGrowth ?? '').includes('+') ? 'up' : 'down',
       description: "Monthly revenue"
     },
     {
       title: "Active Jobs",
-      value: adminStats.activeJobs,
-      change: "+5", // Mock change
+      value: metrics?.activeJobs ?? 0,
+      change: "+0",
       icon: FileText,
       trendType: "up",
       description: "Currently active"
     },
     {
       title: "Pending Moderation",
-      value: adminStats.pendingModeration,
-      change: adminStats.pendingModeration > 10 ? "+5" : "-2",
+      value: metrics?.pendingModeration ?? 0,
+      change: (metrics?.pendingModeration ?? 0) > 10 ? "+5" : "-2",
       icon: ShieldAlert,
-      trendType: "down", // Assuming fewer is better or neutral
+      trendType: "down",
       description: "Items to review"
     }
   ];
@@ -102,14 +108,17 @@ const AdminDashboard = () => {
           <div className={styles.contentLayout}>
             {/* Left Column: Activity & Jobs */}
             <div className={styles.leftColumn}>
-              <RecentActivity activities={activitiesData} />
+              <RecentActivity activities={metrics?.recentActivity || []} />
               {/* Placeholder for Recent Jobs or another large widget */}
             </div>
 
             {/* Right Column: Actions & Health */}
             <div className={styles.rightColumn}>
-              <PendingActions actions={pendingActions} />
-              <SystemHealth healthData={healthData} />
+              <PendingActions
+                mode="admin"
+                actions={metrics?.pendingActions || []}
+              />
+              <SystemHealth healthData={metrics?.systemHealth || {}} />
             </div>
           </div>
         </div>

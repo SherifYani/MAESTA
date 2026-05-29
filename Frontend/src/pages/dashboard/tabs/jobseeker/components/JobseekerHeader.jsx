@@ -44,14 +44,6 @@ const JobseekerHeader = ({
                 >
                     Search Jobs
                 </Button>
-                <Button
-                    variant="outline"
-                    icon={Bell}
-                    onClick={onAlerts}
-                    className={styles.secondaryButton}
-                >
-                    Set Alerts
-                </Button>
             </div>
         </header>
     );

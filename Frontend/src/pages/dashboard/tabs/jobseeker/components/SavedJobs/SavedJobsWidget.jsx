@@ -1,12 +1,23 @@
 import React from 'react';
-import { Bookmark, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Bookmark, MapPin, Clock, Trash2, ArrowRight } from 'lucide-react';
+import Button from '../../../../components/ui/Button';
 import styles from './SavedJobsWidget.module.css';
 
 /**
  * SavedJobsWidget Component
- * @description A condensed view of saved jobs for the dashboard
+ * @description A condensed view of saved jobs for the dashboard with action buttons
  */
 const SavedJobsWidget = ({ jobs = [], onRemove = () => {}, onView = () => {}, onApply = () => {} }) => {
+  const handleRemove = (e, jobId) => {
+    e.stopPropagation();
+    onRemove(jobId);
+  };
+
+  const handleApply = (e, jobId) => {
+    e.stopPropagation();
+    onApply(jobId);
+  };
+
   if (jobs.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -20,8 +31,8 @@ const SavedJobsWidget = ({ jobs = [], onRemove = () => {}, onView = () => {}, on
     <div className={styles.savedJobsWidget}>
       <div className={styles.jobsList}>
         {jobs.slice(0, 3).map((job) => (
-          <div 
-            key={job.id} 
+          <div
+            key={job.id}
             className={styles.jobItem}
             onClick={() => onView(job.id)}
           >
@@ -40,6 +51,26 @@ const SavedJobsWidget = ({ jobs = [], onRemove = () => {}, onView = () => {}, on
                   {job.postedDate}
                 </div>
               </div>
+            </div>
+
+            <div className={styles.actionButtons}>
+              <Button
+                variant="primary"
+                size="small"
+                icon={ArrowRight}
+                onClick={(e) => handleApply(e, job.id)}
+              >
+                Apply Now
+              </Button>
+              <Button
+                variant="ghost"
+                size="small"
+                icon={Trash2}
+                onClick={(e) => handleRemove(e, job.id)}
+                title="Remove from saved"
+              >
+                Remove
+              </Button>
             </div>
           </div>
         ))}

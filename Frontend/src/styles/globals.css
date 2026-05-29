@@ -98,6 +98,16 @@
 }
 
 /* ==========================================================================
+   Screen Width Breakpoints
+   ========================================================================== */
+
+:root {
+  --screen-sm: 40rem;   /* 640px - Mobile */
+  --screen-md: 60.5rem; /* 968px - Tablet */
+  --screen-lg: 75rem;   /* 1200px - Desktop */
+}
+
+/* ==========================================================================
    THEME: SAND (Default)
    Warm neutral — bronze-gold accents, timeless professional base.
    This is the default theme applied to :root — no theme class required.

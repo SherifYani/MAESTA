@@ -1222,13 +1222,13 @@ export const ROLE_NAVIGATION = {
       id: "projects",
       label: "Projects",
       icon: Briefcase,
-      path: "/dashboard/projects",
+      path: "/gigs",
     },
     {
       id: "talent",
       label: "Talent Pool",
       icon: Users,
-      path: "/dashboard/talent",
+      path: "/gigs",
     },
     {
       id: "escrow",
@@ -1240,13 +1240,13 @@ export const ROLE_NAVIGATION = {
       id: "messages",
       label: "Messages",
       icon: Mail,
-      path: "/dashboard/messages",
+      path: "/chat",
     },
     {
       id: "reports",
       label: "Reports",
       icon: BarChart,
-      path: "/dashboard/reports",
+      path: "/dashboard/statistics",
     },
   ],
   [ROLES.FREELANCER]: [
@@ -1255,7 +1255,7 @@ export const ROLE_NAVIGATION = {
       id: "projects",
       label: "Projects",
       icon: Briefcase,
-      path: "/dashboard/projects",
+      path: "/dashboard/applications",
     },
     {
       id: "my-gigs",
@@ -1267,7 +1267,7 @@ export const ROLE_NAVIGATION = {
       id: "proposals",
       label: "Proposals",
       icon: Send,
-      path: "/dashboard/proposals",
+      path: "/gigs",
     },
     {
       id: "escrow",
@@ -1279,7 +1279,7 @@ export const ROLE_NAVIGATION = {
       id: "earnings",
       label: "Earnings",
       icon: DollarSign,
-      path: "/dashboard/earnings",
+      path: "/subscription/plans",
     },
     {
       id: "profile",

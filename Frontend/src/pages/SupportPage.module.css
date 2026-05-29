@@ -1,0 +1,226 @@
+/**
+ * @file SupportPage.module.css
+ * @description Styles for the SupportPage component.
+ */
+
+.container {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100vh;
+  padding: var(--space-4);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page {
+  max-width: var(--screen-sm);
+  margin: 0 auto;
+  padding: var(--space-6) 0;
+}
+
+@media (min-width: 40rem) {
+  .page {
+    max-width: var(--screen-md);
+    padding: var(--space-8) 0;
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .page {
+    max-width: var(--screen-lg);
+  }
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────── */
+
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-foreground);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+/* ─── Layout Wrapper ────────────────────────────────────────────────── */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+@media (min-width: 60.5rem) {
+  .wrapper {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+}
+
+.sidebar {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 60.5rem) {
+  .sidebar {
+    flex: 0 0 30%;
+  }
+}
+
+.main {
+  flex: 1;
+}
+
+/* ─── Contact Card ──────────────────────────────────────────────────── */
+
+.contact-card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.contact-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-6) 0;
+  color: var(--color-foreground);
+}
+
+.contact-item {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.contact-item:last-of-type {
+  margin-bottom: var(--space-4);
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  color: var(--color-accent-pink);
+  margin-top: var(--space-1);
+}
+
+.contact-item > div {
+  flex: 1;
+}
+
+.contact-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.contact-value {
+  font-size: var(--font-size-base);
+  color: var(--color-foreground);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.contact-value:hover {
+  color: var(--color-accent-pink);
+}
+
+.contact-note {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-input);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.note-icon {
+  flex-shrink: 0;
+  color: var(--color-info);
+  margin-top: var(--space-1);
+}
+
+.note-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+/* ─── Form Card ──────────────────────────────────────────────────────── */
+
+.form__card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  margin: -var(--space-2) 0 0 0;
+  padding: 0 var(--space-2);
+}
+
+/* ─── Submit Button ────────────────────────────────────────────────── */
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: var(--color-vivid-pink);
+  transform: translateY(-1px);
+}
+
+.submit-btn:active:not(:disabled) {
+  background-color: var(--color-select-pink);
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  background-color: var(--color-muted);
+  color: var(--color-muted-foreground);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-icon {
+  flex-shrink: 0;
+}

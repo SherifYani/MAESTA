@@ -34,6 +34,8 @@ const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => 
 // Static Pages
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
+const TermsPage = lazy(() => import("./pages/TermsPage.jsx"));
+const SupportPage = lazy(() => import("./pages/SupportPage.jsx"));
 
 // Loading Fallback
 const PageLoader = () => (
@@ -109,6 +111,12 @@ function App() {
         <Route path="/chat/*" element={<ProtectedRoute><ChatRoutes /></ProtectedRoute>} />
         <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
         <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
+
+        {/* Public Pages */}
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/support" element={<SupportPage />} />
+
+        {/* Protected Pages */}
 
         {/* 404 & Redirects */}
         <Route path="/404" element={<ErrorPage />} />

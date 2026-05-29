@@ -49,7 +49,7 @@ const PendingActions = ({ actions }) => {
      */
     const handleActionClick = (action) => {
         // Navigate to the specific pending items page
-        navigate(`/dashboard/admin/pending/${action.id}`);
+        navigate(`/dashboard/pending/${action.id}`);
     };
 
     /**
@@ -60,7 +60,7 @@ const PendingActions = ({ actions }) => {
     const handleResolveClick = (action, event) => {
         event.stopPropagation();
         // Navigate to resolve action page
-        navigate(`/dashboard/admin/resolve/${action.id}`);
+        navigate(`/dashboard/resolve/${action.id}`);
     };
 
     return (

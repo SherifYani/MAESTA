@@ -83,7 +83,21 @@ const NewApplicantsWithData = () => {
 
     useEffect(() => {
         jobService.getCompanyApplicants()
-            .then(res => setApplicants(res || []))
+            .then(res => {
+                const data = res?.items || res || [];
+                const mappedData = data.map(app => ({
+                    ...app,
+                    id: app.applicationId || app.id,
+                    jobTitle: app.jobTitle,
+                    applicantName: app.applicantName,
+                    status: app.status,
+                    date: app.appliedAt || app.date,
+                    matchScore: app.matchScore,
+                    actions: { canViewResume: !!app.cvUrl, canShortlist: true, canReject: true, canScheduleInterview: true },
+                    resume: { url: app.cvUrl }
+                }));
+                setApplicants(mappedData);
+            })
             .catch(err => console.error("Failed to load applicants", err))
             .finally(() => setLoading(false));
     }, []);
@@ -208,7 +222,19 @@ const DetailedApplicationsWithData = () => {
 
     useEffect(() => {
         jobService.getMyApplications()
-            .then(res => setApplications(res?.items || res || []))
+            .then(res => {
+                const data = res?.items || res || [];
+                const mappedData = data.map(app => ({
+                    ...app,
+                    id: app.applicationId || app.id,
+                    title: app.jobTitle || app.title,
+                    company: app.companyName || app.company || 'Unknown Company',
+                    date: app.appliedAt || app.date,
+                    status: app.status,
+                    matchScore: app.matchScore
+                }));
+                setApplications(mappedData);
+            })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);

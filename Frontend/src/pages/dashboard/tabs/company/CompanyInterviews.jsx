@@ -112,12 +112,12 @@ const CompanyInterviews = () => {
   const confirmReschedule = async () => {
     if (!selectedInterview || !newDate || !newTime) return;
     try {
-      const response = await interviewService.rescheduleInterview(
-        selectedInterview.id,
-        newDate.toISOString().split('T')[0],
-        newTime,
-        rescheduleReason
-      );
+      const datePart = newDate.toISOString().split('T')[0];
+      const newScheduledAt = new Date(`${datePart}T${newTime}:00`).toISOString();
+      const response = await interviewService.rescheduleInterview(selectedInterview.id, {
+        newScheduledAt,
+        reason: rescheduleReason
+      });
       if (response.success) {
         setSuccess('Interview rescheduled successfully');
         loadInterviews();

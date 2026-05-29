@@ -138,7 +138,7 @@ const AdminPendingActions = () => {
 
   // Navigate to resolve page for individual item
   const handleViewItem = (item) => {
-    navigate(`/dashboard/admin/resolve/${actionId}?itemId=${item.id}`);
+    navigate(`/dashboard/resolve/${actionId}?itemId=${item.id}`);
   };
 
   // Handle individual approve/reject (if needed – can also redirect to resolve page)

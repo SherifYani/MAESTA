@@ -48,7 +48,7 @@ const getHubConnection = async () => {
     const { HubConnectionBuilder, LogLevel } = await import('@microsoft/signalr');
 
     const token = tokenService.getToken();
-    const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5024';
+    const BASE_URL = process.env.REACT_APP_API_URL || 'https://localhost:7000';
 
     hubConnection = new HubConnectionBuilder()
         .withUrl(`${BASE_URL}/hubs/chat`, {
@@ -110,6 +110,15 @@ const chatService = {
      * @param {number} senderId
      */
     markMessagesAsRead: async (senderId) => {
+        const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
+        return response.data;
+    },
+
+    /**
+     * Mark all messages from a sender as read (alias for markMessagesAsRead).
+     * @param {number} senderId
+     */
+    markAsRead: async (senderId) => {
         const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
         return response.data;
     },

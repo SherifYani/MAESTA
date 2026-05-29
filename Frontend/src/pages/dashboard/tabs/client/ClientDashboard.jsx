@@ -13,6 +13,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import gigService from '../../../../services/gigService';
+import dashboardService from '../../../../services/dashboardService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -44,16 +45,29 @@ import styles from "./ClientDashboard.module.css";
 /**
  * Enhanced ClientDashboard - Clean, No Nested Cards
  */
-const ClientDashboard = ({ data }) => {
+const ClientDashboard = () => {
   // Live API data
-  const [jobPosts,  setJobPosts]  = useState([]);
+  const [jobPosts,   setJobPosts]   = useState([]);
   const [apiLoading, setApiLoading] = useState(true);
+  const [dashData,   setDashData]   = useState(null);
 
-  // Static / mock-backed data (no API endpoints yet)
-  const activities        = data.activities;
-  const pendingActions    = data.pendingActions;
-  const earningsData      = data.earningsData;
-  const performanceMetrics = data.performanceMetrics;
+  // Safe defaults — populated from API once loaded
+  const activities         = dashData?.activities          || [];
+  const pendingActions     = dashData?.pendingActions      || [];
+  const earningsData       = dashData?.earningsData        || null;
+  const performanceMetrics = dashData?.performanceMetrics  || null;
+
+  // ── Fetch client dashboard data on mount ──────────────────────────
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const raw = await dashboardService.getClientDashboard();
+      setDashData(raw);
+    } catch (err) {
+      console.error('[ClientDashboard] Failed to fetch dashboard data:', err);
+    }
+  }, []);
+
+  useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
 
   // ── Fetch client gigs on mount ───────────────────────────────────
   const fetchGigs = useCallback(async () => {
@@ -73,11 +87,11 @@ const ClientDashboard = ({ data }) => {
     } catch (err) {
       console.error('[ClientDashboard] Failed to fetch gigs:', err);
       // Fall back to static mock data
-      setJobPosts(data.recentJobPosts || []);
+      setJobPosts([]);
     } finally {
       setApiLoading(false);
     }
-  }, [data.recentJobPosts]);
+  }, []);
 
   useEffect(() => { fetchGigs(); }, [fetchGigs]);
 
@@ -139,17 +153,17 @@ const ClientDashboard = ({ data }) => {
 
   // Event handlers
   const handleActionToggle = (id, completed) => {
-    console.log(
-      `Action ${id} toggled to ${completed ? "completed" : "pending"}`
+    window.alert(
+      `Action ${id} toggled to ${completed ? "completed" : "pending"} - Backend integration pending.`
     );
   };
 
   const handleJobClick = (jobId) => {
-    console.log(`Job ${jobId} clicked`);
+    window.alert(`Job ${jobId} clicked - Backend integration pending.`);
   };
 
   const handleQuickAction = (action) => {
-    console.log(`Quick action: ${action}`);
+    window.alert(`Quick action: ${action} - Backend integration pending.`);
   };
 
   return (

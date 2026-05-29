@@ -8,13 +8,13 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, Shield } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { reportsData } from '../../config/adminMockData';
+import adminService from '../../../../../../services/adminService';
 import styles from './ContentModeration.module.css';
 
 const PAGE_SIZE = 10;
@@ -24,7 +24,13 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const ContentModeration = () => {
-    const [reports, setReports] = useState(reportsData);
+    const [reports, setReports] = useState([]);
+
+    useEffect(() => {
+        adminService.getPendingReports()
+            .then(data => setReports(Array.isArray(data) ? data : (data?.items || data?.data || [])))
+            .catch(console.error);
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -101,7 +107,7 @@ const ContentModeration = () => {
     }, [totalPages]);
 
     const handleAction = useCallback((id, action) => {
-        console.log(`Report ${id} action: ${action}`);
+        window.alert(`Report ${id} action: ${action} - Backend integration pending.`);
         setReports(prev => prev.map(report =>
             report.id === id
                 ? {

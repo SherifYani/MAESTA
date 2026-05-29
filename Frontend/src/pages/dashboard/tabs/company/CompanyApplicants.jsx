@@ -67,7 +67,8 @@ const CompanyApplicants = () => {
             appliedAt: app.appliedAt,
             status: app.status?.toLowerCase() || 'pending',
             rating: 0, // Not implemented in backend
-            notes: app.coverLetter || ''
+            notes: app.coverLetter || '',
+            cvUrl: app.cvUrl
         }));
 
         setApplicants(mappedApplicants);
@@ -370,6 +371,14 @@ const CompanyApplicants = () => {
               <span className={styles.detailLabel}>Rating:</span>
               <RatingStars rating={selectedApplicant.rating} readonly />
             </div>
+            {selectedApplicant.cvUrl && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Resume:</span>
+                <a href={selectedApplicant.cvUrl} target="_blank" rel="noreferrer" style={{color: 'var(--primary-color)'}}>
+                  Download / View Resume
+                </a>
+              </div>
+            )}
             {selectedApplicant.notes && (
               <div className={styles.detailRow}>
                 <span className={styles.detailLabel}>Notes:</span>

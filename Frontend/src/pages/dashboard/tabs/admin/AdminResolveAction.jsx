@@ -83,7 +83,7 @@ const AdminResolveAction = () => {
       if (response.success) {
         setSuccess(`Item ${resolutionAction}d successfully`);
         setTimeout(() => {
-          navigate(`/dashboard/admin/pending/${actionId}`);
+          navigate(`/dashboard/pending/${actionId}`);
         }, 2000);
       } else {
         setError('Failed to resolve item');

@@ -11,7 +11,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
     MoreVertical, Edit, Trash, CheckCircle, Ban,
     UserPlus, Users, UserCheck, UserX, Shield,
@@ -21,7 +21,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { usersData } from '../../config/adminMockData';
+import adminService from '../../../../../../services/adminService';
 import styles from './UserManagement.module.css';
 
 // Number of rows to display per page
@@ -35,7 +35,13 @@ const PAGE_SIZE = 10;
  */
 const UserManagement = () => {
     // ── Data source ─────────────────────────────────────────────────────────
-    const [users, setUsers] = useState(usersData);
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        adminService.getUsers()
+            .then(res => setUsers(res?.data?.users || res?.data || []))
+            .catch(console.error);
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

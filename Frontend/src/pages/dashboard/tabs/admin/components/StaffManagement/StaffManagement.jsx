@@ -15,7 +15,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { staffData as initialStaffData } from '../../config/adminMockData';
+
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -25,7 +25,7 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const StaffManagement = () => {
-    const [staffData, setStaffData] = useState(initialStaffData);
+    const [staffData, setStaffData] = useState([]);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -117,14 +117,12 @@ const StaffManagement = () => {
     }, [totalPages]);
 
     const handleResendInvite = useCallback((staff) => {
-        console.log(`Resending invitation to ${staff.email}`);
-        alert(`Invitation resent to ${staff.email}`);
+        window.alert(`Resending invitation to ${staff.email} - Backend integration pending.`);
         setSelectedStaff(null);
     }, []);
 
     const handleResetPassword = useCallback((staff) => {
-        console.log(`Resetting password for ${staff.email}`);
-        alert(`Password reset instructions sent to ${staff.email}`);
+        window.alert(`Resetting password for ${staff.email} - Backend integration pending.`);
         setSelectedStaff(null);
     }, []);
 

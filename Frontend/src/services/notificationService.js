@@ -30,7 +30,16 @@ const notificationService = {
      */
     getNotifications: async (page = 1, limit = 20) => {
         const response = await ApiService.get('/api/notifications', { params: { page, limit } });
-        return response.data;
+        const items = Array.isArray(response.data) ? response.data : [];
+        return items.map(n => ({
+            id: n.notificationId,
+            title: n.title || '',
+            message: n.message || '',
+            type: n.type || 'system',
+            read: n.isRead ?? false,
+            actionUrl: n.actionUrl || null,
+            created_at: n.createdAt
+        }));
     },
 
     /**
@@ -73,7 +82,29 @@ const notificationService = {
      */
     getPreferences: async () => {
         const response = await ApiService.get('/api/notifications/preferences');
-        return response.data;
+        const p = response.data || {};
+        return {
+            inApp: {
+                jobs: true,
+                gigs: true,
+                communication: true,
+                system: true,
+            },
+            email: {
+                jobs: p.emailNotifications ?? true,
+                gigs: p.emailNotifications ?? true,
+                communication: p.smsNotifications ?? false,
+                system: p.emailNotifications ?? true,
+            },
+            push: {
+                enabled: p.pushNotifications ?? false,
+                jobs: p.pushNotifications ?? false,
+                gigs: p.pushNotifications ?? false,
+                communication: p.pushNotifications ?? false,
+                system: p.pushNotifications ?? false,
+            },
+            language: p.language ?? "en"
+        };
     },
 
     /**
@@ -81,8 +112,14 @@ const notificationService = {
      * @param {Object} preferences
      */
     updatePreferences: async (preferences) => {
-        const response = await ApiService.put('/api/notifications/preferences', preferences);
-        return response.data;
+        const dto = {
+            emailNotifications: Object.values(preferences?.email || {}).some(val => val === true),
+            smsNotifications: preferences?.email?.communication ?? false,
+            pushNotifications: preferences?.push?.enabled ?? false,
+            language: preferences?.language ?? "en"
+        };
+        const response = await ApiService.put('/api/notifications/preferences', dto);
+        return preferences;
     },
 
     /**
@@ -105,8 +142,6 @@ const notificationService = {
         // MOCKED: Not implemented in backend yet.
         console.warn("unsubscribeFromPush is mocked");
         return { success: true };
-        // const response = await ApiService.delete('/api/notifications/subscribe');
-        // return response.data;
     },
 
     /**
@@ -117,8 +152,6 @@ const notificationService = {
         // MOCKED: Not implemented in backend yet.
         console.warn("getByType is mocked");
         return [];
-        // const response = await ApiService.get(`/api/notifications/type/${type}`);
-        // return response.data;
     },
 };
 

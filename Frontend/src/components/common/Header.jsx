@@ -38,25 +38,26 @@ const NAV_GUEST = [
  */
 const NAV_AUTHENTICATED = {
   jobseeker: [
-    { name: 'Dashboard',    path: '/dashboard' },
-    { name: 'Jobs',         path: '/jobs' },
-    { name: 'Applications', path: '/applications' },
-    { name: 'Gigs',         path: '/gigs' },
-    { name: 'Messages',     path: '/messages' },
+    { name: 'Dashboard',      path: '/dashboard' },
+    { name: 'Jobs',           path: '/jobs' },
+    { name: 'Applications',   path: '/dashboard/applications' },
+    { name: 'Gigs',           path: '/gigs' },
+    { name: 'Messages',       path: '/chat' },
+    { name: 'Help & Support', path: '/support' },
   ],
   freelancer: [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Find Gigs', path: '/gigs' },
     { name: 'My Gigs',   path: '/gigs/manage' },
     { name: 'Proposals', path: '/proposals' },
-    { name: 'Messages',  path: '/messages' },
+    { name: 'Messages',  path: '/chat' },
   ],
   company: [
     { name: 'Dashboard',       path: '/dashboard' },
     { name: 'Post Job',        path: '/jobs/post' },
     { name: 'My Jobs',         path: '/jobs/manage' },
     { name: 'Candidates',      path: '/candidates' },
-    { name: 'Messages',        path: '/messages' },
+    { name: 'Messages',        path: '/chat' },
   ],
 };
 

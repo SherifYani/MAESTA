@@ -225,7 +225,7 @@ const CompanyDashboard = () => {
 
   // Event handlers
   const handleViewApplicant  = (id)    => navigate(`/dashboard/applicants/${id}`);
-  const handleViewJob        = (id)    => navigate(`/jobs/${id}`);
+  const handleViewJob        = (id)    => navigate(`/dashboard/published-jobs/${id}/edit`);
   const handleEditJob        = (id)    => navigate(`/dashboard/published-jobs/${id}/edit`);
   const handleManageApplicants = (id)  => navigate(`/dashboard/applicants?jobId=${id}`);
   const handleScheduleInterview = (id) => navigate(`/dashboard/interviews/schedule?applicantId=${id}`);
@@ -461,24 +461,30 @@ const CompanyDashboard = () => {
       {/* Performance Summary Footer */}
       <div className={styles.performanceFooter}>
         <div className={styles.footerStats}>
-          <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>Total Jobs Posted</span>
-            <span className={styles.footerStatValue}>
-              {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
-            </span>
-          </div>
-          <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>Open Positions</span>
-            <span className={styles.footerStatValue}>
-              {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
-            </span>
-          </div>
-          <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>Total Applications</span>
-            <span className={styles.footerStatValue}>
-              {newApplicants.length || dashboardData.profile?.stats?.totalApplications?.toLocaleString() || 0}
-            </span>
-          </div>
+          <Link to="/dashboard/published-jobs" className={styles.footerStatLink}>
+            <div className={styles.footerStat}>
+              <span className={styles.footerStatLabel}>Total Jobs Posted</span>
+              <span className={styles.footerStatValue}>
+                {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
+              </span>
+            </div>
+          </Link>
+          <Link to="/dashboard/published-jobs?status=active" className={styles.footerStatLink}>
+            <div className={styles.footerStat}>
+              <span className={styles.footerStatLabel}>Open Positions</span>
+              <span className={styles.footerStatValue}>
+                {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
+              </span>
+            </div>
+          </Link>
+          <Link to="/dashboard/applicants" className={styles.footerStatLink}>
+            <div className={styles.footerStat}>
+              <span className={styles.footerStatLabel}>Total Applications</span>
+              <span className={styles.footerStatValue}>
+                {newApplicants.length || dashboardData.profile?.stats?.totalApplications?.toLocaleString() || 0}
+              </span>
+            </div>
+          </Link>
           <div className={styles.footerStat}>
             <span className={styles.footerStatLabel}>Interview Rate</span>
             <span className={styles.footerStatValue}>

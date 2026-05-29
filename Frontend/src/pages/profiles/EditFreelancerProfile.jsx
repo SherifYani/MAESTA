@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import profileService from "../../services/profileService";
 import GeneralSelect from "../../components/common/GeneralSelect";
@@ -15,27 +15,33 @@ import "../../styles/edit-profile.css";
  * @date 2025-12-11
  *
  * @last-modified-by Antigravity
- * @last-modified-date 2026-05-01
- * 
- * @update :-
+ * @last-modified-date 2026-05-27
+ *
+ * @update:
  * - Fixed duplicate company profile issue and implemented true Freelancer form
- * - wired profileService API endpoints
+ * - Wired profileService API endpoints
+ * - Use API response to update context (not local data)
+ * - Improved error message extraction
+ * - Added successMsg state and banner
+ * - Added disabled={loading} to all inputs/textareas
+ * - Removed unused Link import
  */
 export default function EditFreelancerProfile() {
   const navigate = useNavigate();
   const { freelancerData, updateFreelancerData } = useProfile();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
   // Form state management
   const [formData, setFormData] = useState({
-    fullName: freelancerData.fullName,
-    email: freelancerData.email,
-    phoneNumber: freelancerData.phoneNumber,
-    profilePictureUrl: freelancerData.profilePictureUrl,
-    headline: freelancerData.profile.headline,
-    overview: freelancerData.profile.overview,
-    hourlyRate: freelancerData.profile.hourlyRate,
+    fullName: freelancerData.fullName || "",
+    email: freelancerData.email || "",
+    phoneNumber: freelancerData.phoneNumber || "",
+    profilePictureUrl: freelancerData.profilePictureUrl || "",
+    headline: freelancerData.profile?.headline || "",
+    overview: freelancerData.profile?.overview || "",
+    hourlyRate: freelancerData.profile?.hourlyRate || 0,
   });
 
   const [skills, setSkills] = useState(freelancerData.skills || []);
@@ -127,12 +133,17 @@ export default function EditFreelancerProfile() {
     try {
       setLoading(true);
       setError(null);
-      await profileService.updateFreelancerProfile(updatedFreelancerData);
-      
-      updateFreelancerData(updatedFreelancerData);
-      navigate("/dashboard/profile");
+      setSuccessMsg(null);
+
+      // Call the API via profileService and use the API response to update context
+      const apiResponse = await profileService.updateFreelancerProfile(updatedFreelancerData);
+      updateFreelancerData(apiResponse || updatedFreelancerData);
+
+      setSuccessMsg("Profile updated successfully!");
+      setTimeout(() => navigate("/dashboard/profile"), 1500);
     } catch (err) {
-      setError(err.message || "Failed to update profile. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Failed to update profile. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -152,38 +163,116 @@ export default function EditFreelancerProfile() {
           <p className="edit__subtitle">Update your personal information, skills, and portfolio.</p>
         </header>
 
+        {error && (
+          <div className="edit__error-banner" role="alert">
+            <i className="fa-solid fa-circle-exclamation" />
+            &nbsp; {error}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="edit__success-banner" role="status">
+            <i className="fa-solid fa-circle-check" />
+            &nbsp; {successMsg}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="edit__form" noValidate>
           {/* Personal Info */}
           <section className="edit__section">
             <h2 className="edit__section-title">Personal Information</h2>
             <div className="edit__grid">
               <div className="edit__field">
-                <label className="edit__label">Full Name *</label>
-                <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} className="edit__input" required />
+                <label className="edit__label">Full Name <span className="edit__required">*</span></label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="edit__input"
+                  required
+                  aria-required="true"
+                  aria-label="Full name"
+                />
               </div>
               <div className="edit__field">
-                <label className="edit__label">Email *</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="edit__input" required />
+                <label className="edit__label">Email <span className="edit__required">*</span></label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="edit__input"
+                  required
+                  aria-required="true"
+                  aria-label="Email address"
+                />
               </div>
               <div className="edit__field">
                 <label className="edit__label">Phone Number</label>
-                <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} className="edit__input" />
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="edit__input"
+                  aria-label="Phone number"
+                />
               </div>
               <div className="edit__field">
                 <label className="edit__label">Profile Picture URL</label>
-                <input type="url" name="profilePictureUrl" value={formData.profilePictureUrl} onChange={handleInputChange} className="edit__input" />
+                <input
+                  type="url"
+                  name="profilePictureUrl"
+                  value={formData.profilePictureUrl}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="edit__input"
+                  aria-label="Profile picture URL"
+                  placeholder="https://example.com/profile.jpg"
+                />
               </div>
               <div className="edit__field">
                 <label className="edit__label">Headline</label>
-                <input type="text" name="headline" value={formData.headline} onChange={handleInputChange} className="edit__input" />
+                <input
+                  type="text"
+                  name="headline"
+                  value={formData.headline}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="edit__input"
+                  aria-label="Professional headline"
+                  maxLength={200}
+                />
               </div>
               <div className="edit__field">
                 <label className="edit__label">Hourly Rate ($)</label>
-                <input type="number" name="hourlyRate" value={formData.hourlyRate} onChange={handleInputChange} className="edit__input" />
+                <input
+                  type="number"
+                  name="hourlyRate"
+                  value={formData.hourlyRate}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  min="0"
+                  className="edit__input"
+                  aria-label="Hourly rate in dollars"
+                />
               </div>
               <div className="edit__field edit__field--full">
                 <label className="edit__label">Overview</label>
-                <textarea name="overview" value={formData.overview} onChange={handleInputChange} rows={4} className="edit__textarea" />
+                <textarea
+                  name="overview"
+                  value={formData.overview}
+                  onChange={handleInputChange}
+                  rows={4}
+                  disabled={loading}
+                  className="edit__textarea"
+                  aria-label="Professional overview"
+                  maxLength={1000}
+                />
               </div>
             </div>
           </section>
@@ -192,53 +281,137 @@ export default function EditFreelancerProfile() {
           <section className="edit__section">
             <div className="edit__section-header">
               <h2 className="edit__section-title">Skills</h2>
-              <button type="button" className="edit__add-btn" onClick={addSkill}>+ Add Skill</button>
+              <button type="button" className="edit__add-btn" onClick={addSkill} aria-label="Add new skill">
+                + Add Skill
+              </button>
             </div>
-            <div className="edit__skills-grid">
-              {skills.map((skill, index) => (
-                <div key={index} className="edit__member-item">
-                  <input type="text" value={skill.name} onChange={(e) => handleSkillChange(index, "name", e.target.value)} className="edit__input" placeholder="Skill name" />
-                  <GeneralSelect value={skill.proficiencyLevel} onChange={(v) => handleSkillChange(index, "proficiencyLevel", v)} options={[
-                    { value: "Beginner", label: "Beginner" },
-                    { value: "Intermediate", label: "Intermediate" },
-                    { value: "Expert", label: "Expert" }
-                  ]} className="edit__select" />
-                  <button type="button" className="edit__remove-btn" onClick={() => removeSkill(index)}>Remove</button>
-                </div>
-              ))}
-            </div>
+            {skills.length === 0 ? (
+              <div className="edit__empty-state">
+                <p>No skills added yet. Click "Add Skill" to create one.</p>
+              </div>
+            ) : (
+              <div className="edit__skills-grid">
+                {skills.map((skill, index) => (
+                  <div key={index} className="edit__member-item">
+                    <input
+                      type="text"
+                      value={skill.name}
+                      onChange={(e) => handleSkillChange(index, "name", e.target.value)}
+                      disabled={loading}
+                      className="edit__input"
+                      placeholder="Skill name"
+                      aria-label={`Skill ${index + 1} name`}
+                    />
+                    <GeneralSelect
+                      value={skill.proficiencyLevel || "Beginner"}
+                      onChange={(v) => handleSkillChange(index, "proficiencyLevel", v)}
+                      options={[
+                        { value: "Beginner", label: "Beginner" },
+                        { value: "Intermediate", label: "Intermediate" },
+                        { value: "Expert", label: "Expert" }
+                      ]}
+                      className="edit__select"
+                    />
+                    <button
+                      type="button"
+                      className="edit__remove-btn"
+                      onClick={() => removeSkill(index)}
+                      aria-label={`Remove skill ${index + 1}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Portfolio */}
           <section className="edit__section">
             <div className="edit__section-header">
               <h2 className="edit__section-title">Portfolio</h2>
-              <button type="button" className="edit__add-btn" onClick={addPortfolio}>+ Add Item</button>
+              <button type="button" className="edit__add-btn" onClick={addPortfolio} aria-label="Add portfolio item">
+                + Add Item
+              </button>
             </div>
-            {portfolio.map((item, index) => (
-              <div key={index} className="edit__item-card">
-                <div className="edit__field">
-                  <label className="edit__label">Title</label>
-                  <input type="text" value={item.title} onChange={(e) => handlePortfolioChange(index, "title", e.target.value)} className="edit__input" />
-                </div>
-                <div className="edit__field">
-                  <label className="edit__label">Image URL</label>
-                  <input type="url" value={item.itemUrl} onChange={(e) => handlePortfolioChange(index, "itemUrl", e.target.value)} className="edit__input" />
-                </div>
-                <div className="edit__field edit__field--full">
-                  <label className="edit__label">Description</label>
-                  <textarea value={item.description} onChange={(e) => handlePortfolioChange(index, "description", e.target.value)} rows={2} className="edit__textarea" />
-                </div>
-                <button type="button" className="edit__remove-btn" onClick={() => removePortfolio(index)}>Remove</button>
+            {portfolio.length === 0 ? (
+              <div className="edit__empty-state">
+                <p>No portfolio items yet. Click "Add Item" to create one.</p>
               </div>
-            ))}
+            ) : (
+              portfolio.map((item, index) => (
+                <div key={index} className="edit__item-card">
+                  <div className="edit__item-header">
+                    <h3 className="edit__item-title">Portfolio Item {index + 1}</h3>
+                    <button
+                      type="button"
+                      className="edit__remove-btn"
+                      onClick={() => removePortfolio(index)}
+                      aria-label={`Remove portfolio item ${index + 1}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="edit__grid">
+                    <div className="edit__field">
+                      <label className="edit__label">Title</label>
+                      <input
+                        type="text"
+                        value={item.title}
+                        onChange={(e) => handlePortfolioChange(index, "title", e.target.value)}
+                        disabled={loading}
+                        className="edit__input"
+                        aria-label={`Portfolio item ${index + 1} title`}
+                      />
+                    </div>
+                    <div className="edit__field">
+                      <label className="edit__label">Image URL</label>
+                      <input
+                        type="url"
+                        value={item.itemUrl}
+                        onChange={(e) => handlePortfolioChange(index, "itemUrl", e.target.value)}
+                        disabled={loading}
+                        className="edit__input"
+                        placeholder="https://example.com/project.jpg"
+                        aria-label={`Portfolio item ${index + 1} URL`}
+                      />
+                    </div>
+                    <div className="edit__field edit__field--full">
+                      <label className="edit__label">Description</label>
+                      <textarea
+                        value={item.description}
+                        onChange={(e) => handlePortfolioChange(index, "description", e.target.value)}
+                        rows={2}
+                        disabled={loading}
+                        className="edit__textarea"
+                        aria-label={`Portfolio item ${index + 1} description`}
+                        maxLength={500}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </section>
 
-          {error && <div className="edit__error-message" role="alert">{error}</div>}
+          {/* Error and success messages are displayed in the header banner area above */}
 
           <div className="edit__actions">
-            <button type="button" className="edit__cancel-btn" onClick={handleCancel} disabled={loading}>Cancel</button>
-            <button type="submit" className="edit__save-btn" disabled={loading}>
+            <button
+              type="button"
+              className="edit__cancel-btn"
+              onClick={handleCancel}
+              disabled={loading}
+              aria-label="Cancel editing and return to profile"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="edit__save-btn"
+              disabled={loading}
+              aria-label="Save all freelancer profile changes"
+            >
               {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>

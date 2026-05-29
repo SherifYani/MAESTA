@@ -405,10 +405,20 @@ const DetailedApplications = ({
         </div>
         
         <div className={styles.viewOptions}>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/profile')}>
             <BarChart size={16} /> Analytics
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => {
+            const rows = [['Job Title','Company','Status','Date Applied','Match Score']];
+            applications.forEach(app => {
+              rows.push([app.jobTitle || app.title || '', app.company || '', app.status || '', app.appliedDate || app.date || '', app.matchScore || '']);
+            });
+            const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'my-applications.csv'; a.click();
+            URL.revokeObjectURL(url);
+          }}>
             Export
           </Button>
         </div>
@@ -586,7 +596,13 @@ const DetailedApplications = ({
                     <Button
                       variant="primary"
                       size="small"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newStatus = window.prompt('Update status (applied/review/interview/offer/withdrawn):',  application.status || 'applied');
+                        if (newStatus && newStatus !== application.status) {
+                          onUpdateStatus(application.id, newStatus);
+                        }
+                      }}
                     >
                       Update Status
                     </Button>

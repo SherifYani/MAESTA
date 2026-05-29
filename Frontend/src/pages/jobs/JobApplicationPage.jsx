@@ -13,6 +13,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
+import ApiService from '../../services/ApiService';
 import { PageContainer } from '../../components/layout';
 import styles from './JobApplicationPage.module.css';
 
@@ -101,17 +102,27 @@ const JobApplicationPage = () => {
             setSubmitting(true);
             setError(null);
 
-            const applicationData = new FormData();
-            applicationData.append('coverLetter', formData.coverLetter);
+            let uploadedCvUrl = '';
             if (formData.resume) {
-                applicationData.append('resume', formData.resume);
+                const cvFormData = new FormData();
+                cvFormData.append('file', formData.resume);
+                cvFormData.append('bucketName', 'resumes');
+                const uploadRes = await ApiService.upload('/api/files/upload', cvFormData);
+                uploadedCvUrl = uploadRes.data.Url;
             }
-            applicationData.append('portfolioUrl', formData.portfolioUrl);
-            applicationData.append('expectedSalary', formData.expectedSalary);
-            applicationData.append('availableStartDate', formData.availableStartDate);
-            applicationData.append('additionalInfo', formData.additionalInfo);
 
-            await jobService.applyToJob(jobId, applicationData);
+            let fullCoverLetter = formData.coverLetter;
+            if (formData.portfolioUrl) fullCoverLetter += `\n\nPortfolio: ${formData.portfolioUrl}`;
+            if (formData.expectedSalary) fullCoverLetter += `\nExpected Salary: ${formData.expectedSalary}`;
+            if (formData.availableStartDate) fullCoverLetter += `\nAvailable Start Date: ${formData.availableStartDate}`;
+            if (formData.additionalInfo) fullCoverLetter += `\nAdditional Info: ${formData.additionalInfo}`;
+
+            const applicationPayload = {
+                coverLetter: fullCoverLetter,
+                cvUrl: uploadedCvUrl
+            };
+
+            await jobService.applyToJob(jobId, applicationPayload);
             setSuccess(true);
 
             setTimeout(() => {

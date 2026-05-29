@@ -249,7 +249,7 @@ const RecommendedJobs = ({
         </div>
         <h3>No Job Recommendations</h3>
         <p>Complete your profile to get personalized job recommendations</p>
-        <Button variant="primary">Complete Profile</Button>
+        <Button variant="primary" onClick={() => onJobApply('profile')}>Complete Profile</Button>
       </div>
     );
   }

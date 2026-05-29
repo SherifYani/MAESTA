@@ -13,6 +13,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import gigService from '../../../../services/gigService';
+import dashboardService from '../../../../services/dashboardService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -42,17 +43,30 @@ import styles from "./FreelancerDashboard.module.css";
 /**
  * Enhanced FreelancerDashboard
  */
-const FreelancerDashboard = ({ data }) => {
+const FreelancerDashboard = () => {
   // Live API data
   const [jobPosts,    setJobPosts]    = useState([]);
   const [apiLoading,  setApiLoading]  = useState(true);
+  const [dashData,    setDashData]    = useState(null);
 
-  // Static / mock-backed data (no API endpoints yet)
-  const activities        = data.activities;
-  const pendingActions    = data.pendingActions;
-  const earningsData      = data.earningsData;
-  const performanceMetrics = data.performanceMetrics;
-  const skillAnalysis     = data.skillAnalysis;
+  // Safe defaults — populated from API once loaded
+  const activities         = dashData?.activities         || [];
+  const pendingActions     = dashData?.pendingActions     || [];
+  const earningsData       = dashData?.earningsData       || null;
+  const performanceMetrics = dashData?.performanceMetrics || null;
+  const skillAnalysis      = dashData?.skillAnalysis      || null;
+
+  // ── Fetch freelancer dashboard data on mount ──────────────────────
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const raw = await dashboardService.getFreelancerDashboard();
+      setDashData(raw);
+    } catch (err) {
+      console.error('[FreelancerDashboard] Failed to fetch dashboard data:', err);
+    }
+  }, []);
+
+  useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
 
   // ── Fetch proposals on mount ──────────────────────────────────────
   const fetchProposals = useCallback(async () => {
@@ -71,11 +85,11 @@ const FreelancerDashboard = ({ data }) => {
       })));
     } catch (err) {
       console.error('[FreelancerDashboard] Failed to fetch proposals:', err);
-      setJobPosts(data.recentJobPosts || []);
+      setJobPosts([]);
     } finally {
       setApiLoading(false);
     }
-  }, [data.recentJobPosts]);
+  }, []);
 
   useEffect(() => { fetchProposals(); }, [fetchProposals]);
 
@@ -133,17 +147,17 @@ const FreelancerDashboard = ({ data }) => {
 
   // Event handlers
   const handleActionToggle = (id, completed) => {
-    console.log(
-      `Action ${id} toggled to ${completed ? "completed" : "pending"}`
+    window.alert(
+      `Action ${id} toggled to ${completed ? "completed" : "pending"} - Backend integration pending.`
     );
   };
 
   const handleJobClick = (jobId) => {
-    console.log(`Job ${jobId} clicked`);
+    window.alert(`Job ${jobId} clicked - Backend integration pending.`);
   };
 
   const handleQuickAction = (action) => {
-    console.log(`Quick action: ${action}`);
+    window.alert(`Quick action: ${action} - Backend integration pending.`);
   };
 
   return (

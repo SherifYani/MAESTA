@@ -53,7 +53,7 @@ const RecentActivity = ({ activities }) => {
      */
     const handleViewAll = () => {
         // Navigate to activities page
-        navigate('/dashboard/admin/activities');
+        navigate('/dashboard/activities');
     };
 
     return (

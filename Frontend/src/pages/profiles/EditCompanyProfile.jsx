@@ -34,6 +34,7 @@ export default function EditCompanyProfile() {
   const { companyData, updateCompanyData } = useProfile();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
   // Form state management
   const [formData, setFormData] = useState({
@@ -216,14 +217,16 @@ export default function EditCompanyProfile() {
     try {
       setLoading(true);
       setError(null);
-      // Call the API via profileService
-      await profileService.updateCompanyProfile(updatedCompanyData);
-      
-      // Update context and navigate back
-      updateCompanyData(updatedCompanyData);
-      navigate("/dashboard/profile");
+      setSuccessMsg(null);
+      // Call the API via profileService and use the API response to update context
+      const apiResponse = await profileService.updateCompanyProfile(updatedCompanyData);
+      updateCompanyData(apiResponse || updatedCompanyData);
+
+      setSuccessMsg("Company profile updated successfully!");
+      setTimeout(() => navigate("/dashboard/profile"), 1500);
     } catch (err) {
-      setError(err.message || "Failed to update company profile. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Failed to update company profile. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -256,6 +259,20 @@ export default function EditCompanyProfile() {
           </p>
         </header>
 
+        {error && (
+          <div className="edit__error-banner" role="alert">
+            <i className="fa-solid fa-circle-exclamation" />
+            &nbsp; {error}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="edit__success-banner" role="status">
+            <i className="fa-solid fa-circle-check" />
+            &nbsp; {successMsg}
+          </div>
+        )}
+
         {/* Edit Form */}
         <form
           onSubmit={handleSubmit}
@@ -278,6 +295,7 @@ export default function EditCompanyProfile() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                   className="edit__input"
                   aria-required="true"
                   aria-label="Company name"
@@ -295,6 +313,7 @@ export default function EditCompanyProfile() {
                   name="websiteUrl"
                   value={formData.websiteUrl}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Company website URL"
                   placeholder="https://example.com"
@@ -311,6 +330,7 @@ export default function EditCompanyProfile() {
                   name="logoUrl"
                   value={formData.logoUrl}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Company logo URL"
                   placeholder="https://example.com/logo.png"
@@ -327,6 +347,7 @@ export default function EditCompanyProfile() {
                   name="industry"
                   value={formData.industry}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Company industry"
                   maxLength={50}
@@ -363,6 +384,7 @@ export default function EditCompanyProfile() {
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Company location"
                   maxLength={100}
@@ -381,6 +403,7 @@ export default function EditCompanyProfile() {
                   name="commercialRegistrationID"
                   value={formData.commercialRegistrationID}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Commercial registration ID"
                   maxLength={50}
@@ -397,6 +420,7 @@ export default function EditCompanyProfile() {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
+                  disabled={loading}
                   className="edit__textarea"
                   aria-label="Company description"
                   maxLength={1000}
@@ -637,12 +661,7 @@ export default function EditCompanyProfile() {
             )}
           </section>
 
-          {/* Error Message */}
-          {error && (
-            <div className="edit__error-message" role="alert">
-              {error}
-            </div>
-          )}
+          {/* Error and success messages are displayed in the header banner area above */}
 
           {/* Form Actions */}
           <div className="edit__actions">

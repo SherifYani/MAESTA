@@ -47,9 +47,12 @@ const normalizeApplication = (app) => ({
     ...app,
     id: app.id || app.applicationId,
     jobTitle: app.jobTitle || app.job?.title || 'Unknown Position',
+    title: app.jobTitle || app.job?.title || 'Unknown Position',
     company: app.company || app.job?.company || 'Unknown Company',
     status: app.status || 'pending',
     appliedAt: app.appliedAt || app.createdAt || null,
+    date: app.appliedAt || app.createdAt || null,
+    appliedDate: app.appliedAt || app.createdAt || null,
     location: app.location || app.job?.location || 'Remote',
 });
 
@@ -280,6 +283,7 @@ export const useJobseekerLogic = (initialData) => {
         profile,
         applications,
         savedJobs,
+        recommendedJobs,
         // Handlers
         handleRefresh,
         handleQuickAction,

@@ -207,15 +207,13 @@ const PublishedJobs = ({
 
     const handleToggleStatus = (jobId, currentStatus, e) => {
         e.stopPropagation();
-        console.log(`Toggling job ${jobId} status from ${currentStatus}`);
-        // In a real app, this would call an API
+        window.alert(`Status for job ${jobId} would be toggled from ${currentStatus}. Backend integration pending.`);
     };
 
     const handleDeleteJob = (jobId, e) => {
         e.stopPropagation();
         if (window.confirm("Are you sure you want to delete this job? This action cannot be undone.")) {
-            console.log(`Deleting job ${jobId}`);
-            // In a real app, this would call an API
+            window.alert(`Job ${jobId} deleted successfully (Frontend simulation).`);
         }
     };
 

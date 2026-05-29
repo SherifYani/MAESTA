@@ -263,8 +263,7 @@ const PerformanceAnalytics = ({
      * @param {number} index - Index of clicked item
      */
     const handleChartClick = (item, index) => {
-        console.log(`Chart item clicked:`, item, index);
-        // In a real app, this might show detailed information or navigate
+        window.alert(`Chart item clicked: ${item.name} (${item.value})`);
     };
 
     // Period options configuration
@@ -511,7 +510,7 @@ const PerformanceAnalytics = ({
                                 </div>
                                 <button
                                     className={styles.insightAction}
-                                    onClick={() => console.log(`View details for ${job.name}`)}
+                                    onClick={() => window.alert(`View details for ${job.name}`)}
                                 >
                                     <Eye size={16} />
                                 </button>

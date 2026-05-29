@@ -240,13 +240,14 @@ const NewApplicants = ({
     const handleViewResume = (applicantId, resumeUrl, e) => {
         e.stopPropagation();
         console.log(`Viewing resume for applicant ${applicantId}: ${resumeUrl}`);
-        // In a real app, this would open the resume
+        if (resumeUrl) {
+            window.open(resumeUrl, '_blank');
+        }
     };
 
     const handleViewProfile = (applicantId, profileUrl, e) => {
         e.stopPropagation();
-        console.log(`Viewing profile for applicant ${applicantId}: ${profileUrl}`);
-        // In a real app, this would open the profile
+        window.alert(`Navigating to profile for applicant ${applicantId}: ${profileUrl}`);
     };
 
     // Bulk action menu
@@ -556,7 +557,7 @@ const NewApplicants = ({
                             className={styles.rowMoreButton}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log("More actions for", applicant.id);
+                                window.alert("More actions dropdown for " + applicant.id);
                             }}
                             title="More actions"
                         >

@@ -2,11 +2,32 @@
  * @file profileService.js
  * @description Profile services - handles user profiles for all roles (jobseeker, freelancer, company, client)
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 05-02-2026
+ *
+ * @last-modified-by Antigravity
+ * @last-modified-date 2026-05-27
+ *
+ * @update:
+ * - Standardized all catch blocks to always throw Error objects (never raw objects or strings)
+ *   so callers can reliably read err.message.
 **/
 
 import ApiService from './ApiService';
+
+/**
+ * Extracts a human-readable error message from an Axios error.
+ * Prefers the backend response message, then falls back to the JS error message.
+ * @param {unknown} error - The caught error value.
+ * @returns {string} A user-friendly error message.
+ */
+const extractErrorMessage = (error) => {
+    const errorData = error?.response?.data;
+    if (typeof errorData === 'object' && errorData !== null && errorData.message) {
+        return errorData.message;
+    }
+    return error?.message || 'An unexpected error occurred';
+};
 
 const profileService = {
     // ==================== General Profile Operations ====================
@@ -17,7 +38,7 @@ const profileService = {
             const response = await ApiService.get('/api/Profile/me');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -27,7 +48,7 @@ const profileService = {
             const response = await ApiService.get(`/api/Profile/${userId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -37,7 +58,7 @@ const profileService = {
             const response = await ApiService.put('/api/Profile/me', profileData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -53,7 +74,7 @@ const profileService = {
             });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -64,7 +85,7 @@ const profileService = {
             const response = await ApiService.delete(`/api/Files/avatars/${fileName}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -79,7 +100,7 @@ const profileService = {
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -89,7 +110,7 @@ const profileService = {
             const response = await ApiService.put('/api/JobSeeker/me', profileData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -104,7 +125,7 @@ const profileService = {
             });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -114,7 +135,7 @@ const profileService = {
             const response = await ApiService.post('/api/JobSeeker/experience', experienceData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -124,7 +145,7 @@ const profileService = {
             const response = await ApiService.put(`/api/JobSeeker/experience/${experienceId}`, experienceData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -134,7 +155,7 @@ const profileService = {
             const response = await ApiService.delete(`/api/JobSeeker/experience/${experienceId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -144,7 +165,7 @@ const profileService = {
             const response = await ApiService.post('/api/JobSeeker/education', educationData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -154,7 +175,7 @@ const profileService = {
             const response = await ApiService.put(`/api/JobSeeker/education/${educationId}`, educationData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -164,7 +185,7 @@ const profileService = {
             const response = await ApiService.delete(`/api/JobSeeker/education/${educationId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -174,7 +195,7 @@ const profileService = {
             const response = await ApiService.put('/api/JobSeeker/skills', { skills });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -189,7 +210,7 @@ const profileService = {
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -199,7 +220,7 @@ const profileService = {
             const response = await ApiService.put('/api/freelancers/me', profileData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -209,7 +230,7 @@ const profileService = {
             const response = await ApiService.post('/api/freelancers/portfolio', portfolioData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -219,7 +240,7 @@ const profileService = {
             const response = await ApiService.put(`/api/freelancers/portfolio/${portfolioId}`, portfolioData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -229,7 +250,7 @@ const profileService = {
             const response = await ApiService.delete(`/api/freelancers/portfolio/${portfolioId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -243,7 +264,7 @@ const profileService = {
             const response = await ApiService.put('/api/freelancers/me', updatedProfile);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -258,7 +279,7 @@ const profileService = {
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -268,7 +289,7 @@ const profileService = {
             const response = await ApiService.put('/api/Companies/me', profileData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -284,7 +305,7 @@ const profileService = {
             });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -294,7 +315,7 @@ const profileService = {
             const response = await ApiService.post('/api/Companies/team', memberData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -304,7 +325,7 @@ const profileService = {
             const response = await ApiService.delete(`/api/Companies/team/${memberId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -319,7 +340,7 @@ const profileService = {
             const response = await ApiService.get(endpoint);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -329,7 +350,7 @@ const profileService = {
             const response = await ApiService.put('/api/clients/me', profileData);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -344,7 +365,7 @@ const profileService = {
             // const response = await ApiService.put('/api/profile/visibility', { isPublic });
             // return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -354,7 +375,7 @@ const profileService = {
             const response = await ApiService.put('/api/Profile/me/settings', preferences);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     },
 
@@ -365,7 +386,7 @@ const profileService = {
             const response = await ApiService.delete('/api/Profile/me', { data: { password } });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw new Error(extractErrorMessage(error));
         }
     }
 };

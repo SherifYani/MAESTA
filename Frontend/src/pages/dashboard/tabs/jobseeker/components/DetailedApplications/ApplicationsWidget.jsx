@@ -21,12 +21,20 @@ const ApplicationsWidget = ({ applications = [], onViewApplication = () => {} })
       <div className={styles.appList}>
         {applications.slice(0, 3).map((app) => {
           const statusClass = `status_${(app.status || 'applied').toLowerCase().replace(' ', '-')}`;
-          
+
           return (
-            <div 
-              key={app.id} 
+            <div
+              key={app.id}
               className={styles.applicationItem}
               onClick={() => onViewApplication(app.id)}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onViewApplication(app.id);
+                }
+              }}
             >
               <div className={styles.itemHeader}>
                 <div className={styles.jobInfo}>

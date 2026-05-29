@@ -23,7 +23,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { subscriptionsData } from '../../config/adminMockData';
+
 import styles from './SubscriptionManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -33,7 +33,7 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const SubscriptionManagement = () => {
-    const [subscriptions, setSubscriptions] = useState(subscriptionsData);
+    const [subscriptions, setSubscriptions] = useState([]);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -125,8 +125,7 @@ const SubscriptionManagement = () => {
     }, [totalPages]);
 
     const handleDownloadInvoice = useCallback((subscription) => {
-        console.log(`Downloading invoice ${subscription.invoiceId} for ${subscription.user}`);
-        alert(`Downloading invoice ${subscription.invoiceId} for ${subscription.user}`);
+        window.alert(`Downloading invoice ${subscription.invoiceId} for ${subscription.user} - Backend integration pending.`);
     }, []);
 
     const handleUpdateStatus = useCallback((id, newStatus) => {

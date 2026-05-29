@@ -68,7 +68,6 @@ const JobseekerDashboard = () => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
         onSearch={() => handleQuickAction('search-jobs')}
-        onAlerts={() => handleQuickAction('set-alerts')}
       />
 
       {/* Stats Section */}
@@ -103,7 +102,7 @@ const JobseekerDashboard = () => {
             <SkillsAnalysisCard
               skillsAnalysis={skillsAnalysis}
               onEdit={() => navigate('/dashboard/profile')}
-              onAssess={() => navigate('/dashboard/assessments')}
+              onAssess={() => navigate('/dashboard/profile')}
             />
           </Card>
         </div>

@@ -15,7 +15,7 @@
  * - wired profileService API endpoints
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import profileService from "../../services/profileService";
@@ -34,17 +34,29 @@ export default function EditClientProfile() {
   const { clientData, updateClientData } = useProfile();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
   // Form state management
   const [formData, setFormData] = useState({
-    fullName: clientData.fullName,
-    email: clientData.email,
-    phoneNumber: clientData.phoneNumber,
-    profilePictureUrl: clientData.profilePictureUrl,
+    fullName: clientData?.fullName || "",
+    email: clientData?.email || "",
+    phoneNumber: clientData?.phoneNumber || "",
+    profilePictureUrl: clientData?.profilePictureUrl || "",
   });
 
   // Projects state management
-  const [projects, setProjects] = useState(clientData.projects);
+  const [projects, setProjects] = useState(clientData?.projects || []);
+
+  // Sync form whenever context data is refreshed from the API
+  useEffect(() => {
+    setFormData({
+      fullName: clientData?.fullName || "",
+      email: clientData?.email || "",
+      phoneNumber: clientData?.phoneNumber || "",
+      profilePictureUrl: clientData?.profilePictureUrl || "",
+    });
+    setProjects(clientData?.projects || []);
+  }, [clientData]);
 
   /**
    * Handles changes to form input fields.
@@ -197,14 +209,16 @@ export default function EditClientProfile() {
     try {
       setLoading(true);
       setError(null);
-      // Call the API via profileService
-      await profileService.updateClientProfile(updatedClientData);
+      setSuccessMsg(null);
+      // Call the API via profileService and use the API response to update context
+      const apiResponse = await profileService.updateClientProfile(updatedClientData);
+      updateClientData(apiResponse || updatedClientData);
 
-      // Update context and navigate back
-      updateClientData(updatedClientData);
-      navigate("/dashboard/profile");
+      setSuccessMsg("Profile updated successfully!");
+      setTimeout(() => navigate("/dashboard/profile"), 1500);
     } catch (err) {
-      setError(err.message || "Failed to update profile. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Failed to update profile. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -237,6 +251,20 @@ export default function EditClientProfile() {
           </p>
         </header>
 
+        {error && (
+          <div className="edit__error-banner" role="alert">
+            <i className="fa-solid fa-circle-exclamation" />
+            &nbsp; {error}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="edit__success-banner" role="status">
+            <i className="fa-solid fa-circle-check" />
+            &nbsp; {successMsg}
+          </div>
+        )}
+
         {/* Edit Form */}
         <form
           onSubmit={handleSubmit}
@@ -259,6 +287,7 @@ export default function EditClientProfile() {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                   className="edit__input"
                   aria-required="true"
                   aria-label="Full name"
@@ -277,6 +306,7 @@ export default function EditClientProfile() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                   className="edit__input"
                   aria-required="true"
                   aria-label="Email address"
@@ -293,6 +323,7 @@ export default function EditClientProfile() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Phone number"
                   pattern="[\+]\d{1,4}[-\s]?\(?\d{1,3}?\)?[-\s]?\d{1,4}[-\s]?\d{1,4}[-\s]?\d{1,9}"
@@ -310,6 +341,7 @@ export default function EditClientProfile() {
                   name="profilePictureUrl"
                   value={formData.profilePictureUrl}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Profile picture URL"
                   placeholder="https://example.com/image.jpg"
@@ -373,6 +405,7 @@ export default function EditClientProfile() {
                           )
                         }
                         required
+                        disabled={loading}
                         className="edit__input"
                         aria-required="true"
                         aria-label={`Project ${projectIndex + 1} title`}
@@ -398,6 +431,7 @@ export default function EditClientProfile() {
                         }
                         min="0"
                         step="1"
+                        disabled={loading}
                         className="edit__input"
                         aria-label={`Project ${
                           projectIndex + 1
@@ -447,6 +481,7 @@ export default function EditClientProfile() {
                           )
                         }
                         rows={3}
+                        disabled={loading}
                         className="edit__textarea"
                         aria-label={`Project ${projectIndex + 1} description`}
                         maxLength={500}
@@ -477,6 +512,7 @@ export default function EditClientProfile() {
                                   event.target.value
                                 )
                               }
+                              disabled={loading}
                               placeholder="Skill name"
                               className="edit__skill-input"
                               aria-label={`Skill ${skillIndex + 1}`}
@@ -509,12 +545,7 @@ export default function EditClientProfile() {
             )}
           </section>
 
-          {/* Error Message */}
-          {error && (
-            <div className="edit__error-message" role="alert">
-              {error}
-            </div>
-          )}
+          {/* Error and success messages are displayed in the header banner area above */}
 
           {/* Form Actions */}
           <div className="edit__actions">

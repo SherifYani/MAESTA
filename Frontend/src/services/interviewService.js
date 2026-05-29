@@ -71,7 +71,7 @@ export const deleteInterview = async (id) => {
 export const getCompanyInterviews = async (params) => getMyInterviews(params?.page, params?.limit);
 
 export const cancelInterview = async (id, reason) => {
-    return updateStatus(id, { status: 'cancelled', notes: reason });
+    return updateStatus(id, { status: 'cancelled', reason: reason });
 };
 
 export const getApplicant = async (applicantId) => {

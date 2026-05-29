@@ -20,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthContext";
 import profileService from "../../services/profileService";
-import authService from "../../services/authService";
 import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
@@ -67,14 +66,13 @@ export default function EditJobSeekerProfile() {
   // Education state management
   const [education, setEducation] = useState(jobSeekerData.education || []);
 
-  // Sync form whenever context profile data is refreshed from the API
+  // Sync form whenever context profile data or auth user is refreshed from the API
   useEffect(() => {
     setFormData(buildFormState(jobSeekerData, user));
     setSkills(jobSeekerData.skills || []);
     setExperiences(jobSeekerData.experiences || []);
     setEducation(jobSeekerData.education || []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobSeekerData]);
+  }, [jobSeekerData, user]);
 
   /**
    * Handles changes to form input fields.
@@ -277,7 +275,6 @@ export default function EditJobSeekerProfile() {
 
   /**
    * Handles form submission and updates job seeker profile data.
-   * Handles "Upsert" logic: if the profile doesn't exist (no jobSeekerId), it creates it first.
    * @param {React.FormEvent<HTMLFormElement>} event - The form submit event.
    */
   const handleSubmit = async (event) => {
@@ -287,29 +284,18 @@ export default function EditJobSeekerProfile() {
       return;
     }
 
+    // Guard: profile must already exist (should be created during registration Step 2)
+    if (!jobSeekerData.jobSeekerId) {
+      setError("Profile not found. Please complete registration first.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccessMsg(null);
 
     try {
-      // 1. If profile doesn't exist (seeded state), create it first via RegisterStep2
-      if (!jobSeekerData.jobSeekerId) {
-        console.log("Profile record missing (404 seeded state). Creating profile first...");
-        await authService.registerStep2({
-          userType: "JobSeeker",
-          professionalTitle: formData.headline,
-          experienceYears: parseInt(formData.experienceYears) || 0,
-          bio: formData.summary,
-          cvUrl: formData.resumeUrl || undefined,
-          preferredJobType: formData.preferredJobType,
-        });
-        
-        // Refresh profile data from backend to get the real jobSeekerId and other fields
-        const freshProfile = await profileService.getJobseekerProfile();
-        updateJobSeekerData(freshProfile);
-      }
-
-      // 2. Prepare updated job seeker data for the standard Update call
+      // Prepare updated job seeker data
       const updatedJobSeekerData = {
         fullName: formData.fullName,
         email: formData.email,
@@ -332,11 +318,10 @@ export default function EditJobSeekerProfile() {
         education,
       };
 
-      // 3. Call the API via profileService
-      await profileService.updateJobseekerProfile(updatedJobSeekerData);
-      
-      // Update context so the rest of the UI reflects changes immediately
-      updateJobSeekerData(updatedJobSeekerData);
+      // Call the API via profileService and use the API response to update context
+      const apiResponse = await profileService.updateJobseekerProfile(updatedJobSeekerData);
+      updateJobSeekerData(apiResponse || updatedJobSeekerData);
+
       setSuccessMsg("Profile updated successfully!");
       setTimeout(() => navigate("/dashboard/profile"), 1500);
     } catch (err) {
@@ -436,6 +421,7 @@ export default function EditJobSeekerProfile() {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                   className="edit__input"
                   aria-required="true"
                   aria-label="Full name"
@@ -454,6 +440,7 @@ export default function EditJobSeekerProfile() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
+                  disabled={loading}
                   className="edit__input"
                   aria-required="true"
                   aria-label="Email address"
@@ -470,6 +457,7 @@ export default function EditJobSeekerProfile() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Phone number"
                   pattern="[\+]\d{1,4}[-\s]?\(?\d{1,3}?\)?[-\s]?\d{1,4}[-\s]?\d{1,4}[-\s]?\d{1,9}"
@@ -487,6 +475,7 @@ export default function EditJobSeekerProfile() {
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Location"
                   maxLength={100}
@@ -506,6 +495,7 @@ export default function EditJobSeekerProfile() {
                   onChange={handleInputChange}
                   min="0"
                   max="50"
+                  disabled={loading}
                   className="edit__input"
                   required
                 />
@@ -539,6 +529,7 @@ export default function EditJobSeekerProfile() {
                   name="profilePictureUrl"
                   value={formData.profilePictureUrl}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Profile picture URL"
                   placeholder="https://example.com/profile.jpg"
@@ -555,6 +546,7 @@ export default function EditJobSeekerProfile() {
                   name="resumeUrl"
                   value={formData.resumeUrl}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Resume URL"
                   placeholder="https://example.com/resume.pdf"
@@ -571,6 +563,7 @@ export default function EditJobSeekerProfile() {
                   name="headline"
                   value={formData.headline}
                   onChange={handleInputChange}
+                  disabled={loading}
                   className="edit__input"
                   aria-label="Professional headline"
                   maxLength={200}
@@ -587,6 +580,7 @@ export default function EditJobSeekerProfile() {
                   value={formData.summary}
                   onChange={handleInputChange}
                   rows={4}
+                  disabled={loading}
                   className="edit__textarea"
                   aria-label="Professional summary"
                   maxLength={1000}
@@ -988,12 +982,7 @@ export default function EditJobSeekerProfile() {
             )}
           </section>
 
-          {/* Error Message */}
-          {error && (
-            <div className="edit__error-message" role="alert">
-              {error}
-            </div>
-          )}
+          {/* Error and success messages are displayed in the header banner area (lines 403-415) */}
 
           {/* Form Actions */}
           <div className="edit__actions">
