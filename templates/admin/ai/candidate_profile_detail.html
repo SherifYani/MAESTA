@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}ملف المرشح - {{ profile.profile.name | default('مجهول') }} | MAESTA AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.candidate-hero {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.06) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    direction: rtl;
+}
+.big-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 2px solid rgba(99,102,241,0.4);
+    background: rgba(99,102,241,0.15);
+    color: var(--accent-primary);
+}
+.main-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    direction: rtl;
+}
+@media (max-width: 950px) { .main-grid { grid-template-columns: 1fr; } }
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    gap: 12px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--text-muted); min-width: 120px; flex-shrink: 0; font-size: 13px; }
+.info-val { font-weight: 500; word-break: break-word; text-align: left; font-size: 13px; }
+.cv-text-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 20px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 420px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    direction: ltr;
+    text-align: left;
+}
+.reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.35);
+    color: var(--warning);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.reveal-btn:hover {
+    background: rgba(245,158,11,0.22);
+}
+.data-revealed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--success);
+}
+.masked-val {
+    font-family: monospace;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.action-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.section-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% set p = profile.profile if profile.profile else {} %}
+{% set name = p.get('name', 'مرشح مجهول') %}
+{% set initials = (name[:1]).upper() %}
+<div>
+    <!-- Back -->
+    <a href="{{ url_for('admin_ai.candidates') }}" class="btn btn-secondary btn-sm" style="margin-bottom: 20px; font-size: 12px; direction: rtl; display: inline-flex; align-items: center; gap: 6px;">
+        ⬅️ العودة لقائمة المرشحين
+    </a>
+
+    <!-- Hero -->
+    <div class="candidate-hero">
+        <div class="big-avatar">{{ initials }}</div>
+        <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h2 style="font-size: 22px; font-weight: 700; margin: 0;">
+                    {% if revealed %}{{ name }}{% else %}{{ name[:1] }}*** (مخفي){% endif %}
+                </h2>
+                {% if revealed %}
+                <span class="data-revealed-badge">🔓 بيانات مكشوفة</span>
+                {% else %}
+                <a href="{{ url_for('admin_ai.candidate_detail', id=profile.id, reveal='true') }}" class="reveal-btn">
+                    🔑 كشف البيانات الحساسة
+                </a>
+                {% endif %}
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); display: flex; gap: 20px; flex-wrap: wrap;">
+                <span>🆔 {{ profile.id[:16] }}...</span>
+                <span>📅 {{ profile.created_at[:10] if profile.created_at else '—' }}</span>
+                <span>
+                    {% set src = profile.source | lower if profile.source else 'other' %}
+                    {% if src == 'chatbot' %}🤖 Chatbot{% elif src == 'api' %}🔌 API{% elif src == 'upload' %}📤 Upload{% else %}{{ profile.source or '—' }}{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <!-- العمود الأيمن: معلومات شخصية وبيانات النظام -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+            <!-- المعلومات الشخصية -->
+            <div class="card">
+                <div class="section-header">👤 المعلومات الشخصية</div>
+                <div class="info-row">
+                    <span class="info-label">الاسم الكامل</span>
+                    <span class="info-val">
+                        {% if revealed %}{{ p.get('name', '—') }}{% else %}<span class="masked-val">{{ (p.get('name','?')[:1]) + '***' }}</span>{% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">البريد الإلكتروني</span>
+                    <span class="info-val" style="direction: ltr; text-align: left; font-family: monospace; font-size: 12px;">
+                        {% if revealed %}{{ p.get('email', '—') }}{% else %}<span class="masked-val">{{ p.get('email','') | truncate(3, True, '***@***') if p.get('email') else '—' }}</span>{% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الهاتف</span>
+                    <span class="info-val" style="direction: ltr; text-align: left; font-family: monospace;">
+                        {% if revealed %}{{ p.get('phone', '—') }}{% else %}<span class="masked-val">+***-****</span>{% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الجنسية</span>
+                    <span class="info-val">{{ p.get('nationality', '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الموقع</span>
+                    <span class="info-val">{{ p.get('location', p.get('city', '—')) }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الخبرة</span>
+                    <span class="info-val">{{ p.get('experience_years', '—') }} {{ 'سنة' if p.get('experience_years') else '' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">المؤهل العلمي</span>
+                    <span class="info-val">{{ p.get('education', '—') }}</span>
+                </div>
+            </div>
+
+            <!-- بيانات النظام -->
+            <div class="card">
+                <div class="section-header">🔧 بيانات النظام</div>
+                <div class="info-row">
+                    <span class="info-label">معرف الملف</span>
+                    <span class="info-val" style="font-family: monospace; font-size: 11px;">{{ profile.id[:24] }}...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">مصدر البيانات</span>
+                    <span class="info-val">{{ profile.source or '—' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tenant ID</span>
+                    <span class="info-val" style="font-family: monospace; font-size: 11px;">{{ profile.tenant_id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bot ID</span>
+                    <span class="info-val" style="font-family: monospace; font-size: 11px;">{{ profile.bot_id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">تاريخ الإنشاء</span>
+                    <span class="info-val">{{ profile.created_at or '—' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">آخر تحديث</span>
+                    <span class="info-val">{{ profile.updated_at or '—' }}</span>
+                </div>
+            </div>
+
+            <!-- إجراءات -->
+            <div class="card">
+                <div class="section-header">⚡ الإجراءات</div>
+                <div class="action-card">
+                    {% if not revealed %}
+                    <a href="{{ url_for('admin_ai.candidate_detail', id=profile.id, reveal='true') }}" class="btn btn-warning" style="text-align:center; font-size:13px;">
+                        🔑 كشف البيانات الحساسة
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('admin_ai.candidate_detail', id=profile.id) }}" class="btn btn-secondary" style="text-align:center; font-size:13px;">
+                        🔒 إخفاء البيانات الحساسة
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('admin_ai.applications') }}" class="btn btn-secondary" style="text-align:center; font-size:13px;">
+                        📨 عرض طلبات التقديم
+                    </a>
+                    <a href="{{ url_for('admin_ai.candidates') }}" class="btn btn-secondary" style="text-align:center; font-size:13px;">
+                        ⬅️ العودة للقائمة
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- العمود الأيسر: السيرة الذاتية والمهارات -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+            <!-- المهارات -->
+            {% if p.get('skills') %}
+            <div class="card">
+                <div class="section-header">💡 المهارات التقنية</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    {% set skills = p.skills %}
+                    {% if skills is string %}
+                        {% for skill in skills.split(',') %}
+                        <span style="display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: var(--accent-primary);">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        {% for skill in skills %}
+                        <span style="display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: var(--accent-primary);">{{ skill }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- نص السيرة الذاتية -->
+            <div class="card" style="flex: 1;">
+                <div class="section-header" style="justify-content: space-between;">
+                    <span>📄 نص السيرة الذاتية (CV Text)</span>
+                    {% if revealed and p.get('cv_text') %}
+                    <button onclick="copyCvText()" class="btn btn-secondary btn-sm" style="font-size: 11px;">📋 نسخ</button>
+                    {% endif %}
+                </div>
+                {% if p.get('cv_text') %}
+                    {% if not revealed %}
+                    <div style="text-align:center; padding: 32px 20px; color: var(--text-muted);">
+                        <div style="font-size: 40px; margin-bottom: 12px;">🔒</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">السيرة الذاتية مخفية لحماية خصوصية المرشح</div>
+                        <div style="font-size: 12px; margin-bottom: 16px;">اضغط "كشف البيانات الحساسة" لعرض المحتوى الكامل</div>
+                        <div class="cv-text-box" style="max-height: 120px; filter: blur(4px); user-select: none; pointer-events: none; direction: ltr; text-align: left;">{{ p.cv_text[:300] }}...</div>
+                    </div>
+                    {% else %}
+                    <div class="cv-text-box" id="cvTextContent">{{ p.cv_text }}</div>
+                    {% endif %}
+                {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                    <div style="font-size: 40px; margin-bottom: 12px;">📝</div>
+                    <div style="font-size: 14px;">لا يوجد نص سيرة ذاتية مرفق مع هذا الملف</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- الملاحظات الإضافية -->
+            {% if p.get('notes') or p.get('summary') %}
+            <div class="card">
+                <div class="section-header">📝 ملاحظات الـ AI</div>
+                <p style="font-size: 14px; line-height: 1.8; color: var(--text-secondary);">
+                    {{ p.get('summary') or p.get('notes') }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyCvText() {
+    const text = document.getElementById('cvTextContent')?.innerText || '';
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        btn.textContent = '✅ تم النسخ!';
+        setTimeout(() => btn.textContent = '📋 نسخ', 2000);
+    });
+}
+</script>
+{% endblock %}

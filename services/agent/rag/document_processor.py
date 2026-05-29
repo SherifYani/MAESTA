@@ -123,15 +123,15 @@ class DocumentProcessor:
     def _extract_csv(self, file_path: str) -> str:
         """Extract text from CSV file"""
         try:
-            import pandas as pd
+            import pandas as pd  # type: ignore
             
             df = pd.read_csv(file_path)
             
             # Create a readable text representation
             text_parts = []
             text_parts.append(f"CSV File with {len(df)} rows and {len(df.columns)} columns")
-            column_names = [str(c) for c in df.columns]
-            text_parts.append(f"Columns: {', '.join(column_names)}")
+            column_names = [c for c in df.columns]
+            text_parts.append(f"Columns: {', '.join(map(str, column_names))}")
             text_parts.append("\nData:")
             
             # Convert each row to readable text
@@ -147,7 +147,7 @@ class DocumentProcessor:
     def _extract_excel(self, file_path: str) -> str:
         """Extract text from Excel file"""
         try:
-            import pandas as pd
+            import pandas as pd  # type: ignore
             
             # Read all sheets
             excel_file = pd.ExcelFile(file_path)
@@ -158,8 +158,8 @@ class DocumentProcessor:
                 df = pd.read_excel(excel_file, sheet_name=sheet_name, nrows=5000)
                 text_parts.append(f"\n[Sheet: {sheet_name}]")
                 text_parts.append(f"Rows: {len(df)}, Columns: {len(df.columns)}")
-                column_names = [str(c) for c in df.columns]
-                text_parts.append(f"Columns: {', '.join(column_names)}")
+                column_names = [c for c in df.columns]
+                text_parts.append(f"Columns: {', '.join(map(str, column_names))}")
                 
                 for i, (idx, row) in enumerate(df.iterrows()):
                     row_text = " | ".join([f"{col}: {val}" for col, val in row.items()])

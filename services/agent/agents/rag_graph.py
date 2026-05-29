@@ -40,6 +40,7 @@ from services.agent.rag.knowledge_base import knowledge_base
 from services.agent.agents.company_prompt import (
     build_company_system_prompt,
     build_company_user_message,
+    get_company_profile,
     DEFAULT_COMPANY_PROFILE,
 )
 import config
@@ -52,8 +53,8 @@ logger = get_logger(__name__)
 
 MAX_RETRIEVAL_ATTEMPTS = 1
 MAX_GENERATION_ATTEMPTS = 1
-MAX_DOCS_IN_CONTEXT = 5
-MAX_DOC_PREVIEW_CHARS = 1_000
+MAX_DOCS_IN_CONTEXT = 15
+MAX_DOC_PREVIEW_CHARS = 800
 
 # #############################################################
 # Internal State
@@ -79,6 +80,10 @@ class RagAgentState(BaseModel):
     is_grounded: bool = True
     language: Literal["ar", "en"] = "ar"
     models_used: List[str] = Field(default_factory=list)
+    company_name: str = ""
+    tenant_id: str = ""
+    site_id: str = ""
+    bot_id: str = ""
 
 # #############################################################
 # Pydantic Structured Outputs
@@ -119,12 +124,33 @@ def _get_answer_llm() -> ChatOpenAI:
     if config.USE_FINETUNED_MODEL:
         return ChatOpenAI(
             model=config.FINETUNED_MODEL_NAME,
-            temperature=0,
+            temperature=0.2,
+            max_tokens=300,
             base_url=f"{config.FINETUNED_MODEL_BASE_URL}/v1",
             api_key=config.FINETUNED_MODEL_API_KEY,
             timeout=300,
+            presence_penalty=1.1,
+            frequency_penalty=1.1
         )
-    return _get_utility_llm() or ChatOpenAI(model="qwen3-company-assistant", base_url=f"{config.FINETUNED_MODEL_BASE_URL}/v1")
+    
+    if config.USE_UTILITY_LLM and config.UTILITY_MODEL_NAME:
+        return ChatOpenAI(
+            model=config.UTILITY_MODEL_NAME,
+            temperature=0.5,
+            base_url=f"{config.UTILITY_MODEL_BASE_URL}/v1",
+            api_key=config.UTILITY_MODEL_API_KEY,
+            timeout=120,
+            presence_penalty=1.1,
+            frequency_penalty=1.1
+        )
+
+    return ChatOpenAI(
+        model="qwen3-company-assistant", 
+        temperature=0.5,
+        base_url=f"{config.FINETUNED_MODEL_BASE_URL}/v1",
+        presence_penalty=1.1,
+        frequency_penalty=1.1
+    )
 
 # #############################################################
 # Nodes
@@ -134,6 +160,15 @@ def query_analyzer(state: RagAgentState) -> dict:
     logger.info("[RAG:query_analyzer] Analysing question.")
     msg_lower = state.question.lower()
 
+    # Language detection
+    import re
+    arabic_chars = re.findall(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]', state.question)
+    total_chars = len(state.question.strip())
+    if total_chars > 0 and len(arabic_chars) / total_chars > 0.3:
+        detected_language = "ar"
+    else:
+        detected_language = "en"
+
     # Intent Detection
     name_keywords = [
         'اسم المشروع', 'اسم البروجيكت', 'project name', 'اسمك ايه', 'اسمك إيه',
@@ -142,7 +177,9 @@ def query_analyzer(state: RagAgentState) -> dict:
     overview_keywords = [
         'عبارة عن ايه', 'عبارة عن إيه', 'بيعمل ايه', 'بيعمل إيه', 'اشرح المشروع',
         'إشرح المشروع', 'project overview', 'what is this project about', 'about the project',
-        'شرح المشروع', 'وصف المشروع', 'بتاع ايه', 'بتاع إيه', 'ما هو المشروع'
+        'شرح المشروع', 'وصف المشروع', 'بتاع ايه', 'بتاع إيه', 'ما هو المشروع',
+        'مشروع ايه', 'المشروع ايه', 'project about', 'what is this',
+        'ده ايه', 'دي ايه', 'ده مشروع ايه', 'دي مشروع ايه', 'ده بيعمل ايه',
     ]
 
     if any(k in msg_lower for k in name_keywords):
@@ -153,27 +190,15 @@ def query_analyzer(state: RagAgentState) -> dict:
         queries = ["Project Overview", "MAESTA Project Overview", "comprehensive job marketplace platform", "description", "وصف المشروع"]
     else:
         intent = "general"
+        # Simple keyword-based expansion (no LLM)
         queries = [state.question]
+        # Add English translation hints for better search
+        if any(c in msg_lower for c in ['?', 'ايه', 'إيه', 'ليه', 'ازاي', 'كيف']):
+            queries.append(state.question)
 
-    logger.info(f"[RAG:query_analyzer] Detected intent: {intent}")
+    logger.info(f"[RAG:query_analyzer] Detected intent: {intent} | language: {detected_language}")
 
-    if intent != "general":
-        return {"queries": queries, "language": "ar", "intent": intent, "models_used": []}
-
-    llm_instance = _get_utility_llm()
-    if not llm_instance:
-        return {"queries": [state.question], "language": "ar", "intent": "general", "models_used": []}
-
-    try:
-        llm = llm_instance.with_structured_output(QueryExpansion)
-        messages = [
-            SystemMessage(content="Expand the user question into search queries."),
-            HumanMessage(content=state.question),
-        ]
-        result = cast(QueryExpansion, llm.invoke(messages))
-        return {"queries": [result.primary_query, *result.alternative_queries], "language": result.language, "intent": "general", "models_used": [config.UTILITY_MODEL_NAME]}
-    except Exception:
-        return {"queries": [state.question], "language": "ar", "intent": "general", "models_used": []}
+    return {"queries": queries, "language": detected_language, "intent": intent, "models_used": []}
 
 def retriever(state: RagAgentState) -> dict:
     attempt = state.retrieval_attempts + 1
@@ -181,8 +206,15 @@ def retriever(state: RagAgentState) -> dict:
 
     seen = set()
     merged = []
+    
+    runtime = {
+        "tenant_id": state.tenant_id or "default_tenant",
+        "site_id": state.site_id or "default_site",
+        "bot_id": state.bot_id or "default_bot"
+    }
+    
     for query in state.queries:
-        results = knowledge_base.search(query, top_k=config.TOP_K_RESULTS)
+        results = knowledge_base.search(query, top_k=config.TOP_K_RESULTS, runtime=runtime)
         for doc in results:
             h = hash(doc["content"].strip())
             if h not in seen:
@@ -203,45 +235,41 @@ def relevance_grader(state: RagAgentState) -> dict:
     question = state.question
     relevant = []
 
-    # Rule-based grading for special intents or if no LLM
-    llm_instance = _get_utility_llm()
-    if not llm_instance or intent != "general":
-        logger.info(f"[RAG:relevance_grader] Rule-based grading for {intent}")
-        for doc in docs[:MAX_DOCS_IN_CONTEXT]:
-            content = doc["content"].lower()
-            if intent == "project_overview":
-                keywords = [
-                    'project', 'marketplace', 'platform', 'connect', 'job', 'maesta', 'overview',
-                    'comprehensive', 'designed to connect', 'job seekers', 'companies', 'freelancers',
-                    'core value propositions', 'tech stack', 'mission', 'platform description'
-                ]
-                if any(kw in content for kw in keywords):
-                    relevant.append(doc)
-            elif intent == "project_name":
-                if "maesta" in content or "name" in content:
-                    relevant.append(doc)
-            else:
-                relevant.append(doc) # Fallback keep
-
-        if not relevant and docs:
-            relevant.append(docs[0])
-        return {"relevant_docs": relevant, "models_used": state.models_used}
-
-    # LLM Grading
-    llm = llm_instance.with_structured_output(RelevanceGrade)
-    for doc in docs[:3]:
-        try:
-            messages = [SystemMessage(content="Is this doc relevant?"), HumanMessage(content=f"Q: {question}\nDoc: {doc['content'][:500]}")]
-            grade = cast(RelevanceGrade, llm.invoke(messages))
-            if grade.score == "relevant":
+    # Always use rule-based grading (no LLM calls) for speed
+    # First, add all docs from retrieved set
+    for doc in docs[:MAX_DOCS_IN_CONTEXT]:
+        content = doc["content"].lower()
+        if intent == "project_overview":
+            keywords = [
+                'project', 'marketplace', 'platform', 'connect', 'job', 'maesta', 'overview',
+                'comprehensive', 'designed to connect', 'job seekers', 'companies', 'freelancers',
+                'core value propositions', 'tech stack', 'mission', 'platform description',
+                'مشروع', 'منصة', 'سوق', 'وظائف', 'عملاء', 'مستقلين',
+            ]
+            if any(kw in content for kw in keywords):
                 relevant.append(doc)
-        except Exception:
-            relevant.append(doc)
+        elif intent == "project_name":
+            if "maesta" in content or "name" in content or "اسم" in content:
+                relevant.append(doc)
+        else:
+            # General intent: keep docs with any overlap
+            if len(content) > 100:
+                relevant.append(doc)
+
+    # Also add any docs that contain technology keywords (from full retrieved set)
+    tech_keywords = ['react', 'node', 'python', 'html', 'css', 'javascript', 'typescript',
+                     'frontend', 'backend', 'database', 'api', 'framework', 'library',
+                     'django', 'laravel', 'angular', 'vue', 'next.js', 'express']
+    for doc in docs:
+        content = doc["content"].lower()
+        if any(kw in content for kw in tech_keywords):
+            if doc not in relevant:
+                relevant.append(doc)
+
+    if not relevant and docs:
+        relevant.append(docs[0])
 
     models = state.models_used.copy()
-    if llm_instance and state.intent == "general" and config.UTILITY_MODEL_NAME not in models:
-        models.append(config.UTILITY_MODEL_NAME)
-
     return {"relevant_docs": relevant, "models_used": models}
 
 def generator(state: RagAgentState) -> dict:
@@ -252,22 +280,42 @@ def generator(state: RagAgentState) -> dict:
     lang = state.language
 
     if config.COMPANY_ASSISTANT_MODE:
-        plain_context = "\n\n".join(d['content'] for d in docs[:MAX_DOCS_IN_CONTEXT])
+        plain_context = "\n\n".join(
+            d['content'][:MAX_DOC_PREVIEW_CHARS] for d in docs[:MAX_DOCS_IN_CONTEXT]
+        )
         logger.info(f"[RAG:generator] Context preview: {plain_context[:500]}...")
 
-        system_msg = build_company_system_prompt()
-        user_msg = build_company_user_message(
-            retrieved_context=plain_context,
-            user_question=state.question,
-            conversation_history=state.conversation_history,
-            **DEFAULT_COMPANY_PROFILE
-        )
+        # Load company profile from DB using tenant_id as company_id
+        company_id = state.tenant_id.replace("company_", "") if state.tenant_id and state.tenant_id.startswith("company_") else None
+        profile = get_company_profile(company_id)
+        system_msg = build_company_system_prompt(company_id)
 
         try:
             llm = _get_answer_llm()
+            
+            company_name = state.company_name or profile.get("company_name", "")
+            
+            user_msg = build_company_user_message(
+                retrieved_context=plain_context,
+                user_question=state.question,
+                company_name=company_name,
+            )
+            
             response = llm.invoke([SystemMessage(content=system_msg), HumanMessage(content=user_msg)])
             content = str(response.content)
             answer = re.sub(r"<think>[\s\S]*?</think>", "", content).strip()
+            
+            # Post-process: Replace hallucinated "MAESTA" with actual company name
+            if company_name and "MAESTA" in answer:
+                answer = answer.replace("MAESTA", company_name)
+                logger.info(f"[RAG:generator] Replaced 'MAESTA' with '{company_name}'")
+            
+            # Output Sanitizer
+            banned_placeholders = ["[اسم الشركة", "[company", "{company", "nhé", "اسم الشركة المذكورة في البيانات", "اسم الشركة المذكورة"]
+            if any(p in answer for p in banned_placeholders):
+                logger.warning(f"[RAG:generator] Sanitizer caught blocked placeholder or foreign word in answer: {answer[:100]}...")
+                answer = "لا أستطيع تحديد هذه المعلومة من البيانات المتاحة حالياً."
+                
             logger.info(f"[RAG:generator] Final answer preview: {answer[:300]}...")
             models = state.models_used.copy()
             answer_model = config.FINETUNED_MODEL_NAME if config.USE_FINETUNED_MODEL else config.UTILITY_MODEL_NAME
@@ -352,6 +400,13 @@ def rag_graph_node(state: AgentState) -> dict:
     if not question:
         return {"messages": [AIMessage(content="سؤالك غير واضح.")]}
 
+    # Extract tenant context from runtime
+    runtime = getattr(state, 'runtime', {}) or {}
+    tenant_id = runtime.get('tenant_id', '')
+    site_id = runtime.get('site_id', '')
+    bot_id = runtime.get('bot_id', '')
+    company_name = runtime.get('company_name', '')
+
     initial = RagAgentState(
         question=str(question),
         queries=[],
@@ -363,12 +418,35 @@ def rag_graph_node(state: AgentState) -> dict:
         is_grounded=True,
         language="ar",
         intent="general",
-        conversation_history=""
+        conversation_history="",
+        company_name=company_name,
+        tenant_id=tenant_id,
+        site_id=site_id,
+        bot_id=bot_id,
     )
 
     try:
         final = rag_graph.invoke(initial)
-        return {"messages": [AIMessage(content=final.get("answer") or "خطأ.")]}
+        answer = final.get("answer") or "خطأ."
+        
+        # Extract relevant docs for sources
+        relevant_docs = final.get("relevant_docs", []) or final.get("retrieved_docs", [])
+        sources = []
+        for i, doc in enumerate(relevant_docs[:5]):
+            sources.append({
+                "id": f"source_{i}",
+                "content": doc.get("content", "")[:200],
+                "metadata": doc.get("metadata", {})
+            })
+        
+        return {
+            "messages": [AIMessage(content=answer)],
+            "metadata": {
+                "relevant_docs": relevant_docs,
+                "sources": sources,
+                "from_documents": len(sources) > 0,
+            }
+        }
     except Exception as exc:
         logger.error(f"RAG Node error: {exc}")
         return {"messages": [AIMessage(content="حدث خطأ أثناء البحث.")]}

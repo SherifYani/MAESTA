@@ -26,6 +26,10 @@ from services.agent.rag.knowledge_base import knowledge_base
 # ── Memory Management ───────────────────────────────────────────────
 from services.agent.memory.memory_service import conversation_memory
 
+# ── AI Storage Initialization (Phase 5) ─────────────────────────────
+from services.agent.storage.ai_storage import AIStorage
+AIStorage.initialize()
+
 # ── LLM Providers (available for direct use if needed) ──────────────
 from services.agent.llm.gemini_provider import GeminiProvider
 from services.agent.llm.claude_provider import ClaudeProvider

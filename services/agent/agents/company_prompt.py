@@ -6,31 +6,58 @@ Company System Prompt Builder — agent/agents/company_prompt.py
 
 الاستخدام:
     from services.agent.agents.company_prompt import build_company_system_prompt
-    prompt = build_company_system_prompt()
+    prompt = build_company_system_prompt(company_id="xxx")
 
 لو الموديل يعمل في COMPANY_ASSISTANT_MODE، استخدم هذا الـ prompt
 بدلًا من SYSTEM_PERSONA الموجود في config.py.
 """
 
 
-def build_company_system_prompt() -> str:
+def get_company_profile(company_id: str = None) -> dict:
+    """Load company profile from database. Falls back to DEFAULT_COMPANY_PROFILE."""
+    if company_id:
+        try:
+            from models.database import get_company_by_id
+            company = get_company_by_id(company_id)
+            if company:
+                return {
+                    "company_name": company['name'],
+                    "business_type": company.get('business_type', ''),
+                    "platform_type": company.get('platform_type', ''),
+                    "tone": company.get('tone', 'helpful, clear Arabic'),
+                    "support_behavior": company.get('support_behavior', ''),
+                    "fallback_message": company.get('fallback_message', 'المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.'),
+                    "system_prompt": company.get('system_prompt', ''),
+                    "language": company.get('language', 'ar'),
+                }
+        except Exception:
+            pass
+    return DEFAULT_COMPANY_PROFILE.copy()
+
+
+def build_company_system_prompt(company_id: str = None) -> str:
     """
-    Return the universal company assistant system prompt.
+    Return the company assistant system prompt.
+    If company has a custom system_prompt, use it. Otherwise use default.
     """
+    profile = get_company_profile(company_id)
+
+    # If company has a custom system prompt, use it directly
+    if profile.get("system_prompt"):
+        return profile["system_prompt"]
+
+    # Otherwise use the default company prompt
+    lang_instruction = "رد بنفس لغة المستخدم (عربي إذا كتب بالعربي، إنجليزي إذا كتب بالإنجليزي)." if profile.get("language", "ar") == "auto" else ""
     return (
-        "أنت المساعد الذكي الرسمي للشركة المذكورة في البيانات. مهمتك هي مساعدة العملاء بتقديم معلومات دقيقة بناءً على البيانات المتاحة فقط.\n"
+        f"أنت مساعد {profile.get('company_name', 'الشركة')}. مهمتك الإجابة على أسئلة العملاء بناءً على المعلومات المتاحة أدناه.\n"
         "\n"
-        "القواعد الصارمة:\n"
-        "- أجب مباشرة بناءً على 'المعلومات المتاحة للشركة' فقط.\n"
-        "- استنتج اسم الشركة من البيانات وإذا سُئلت عن هويتك، قدم نفسك كممثل لها.\n"
-        "- إذا كانت الإجابة موجودة، قدمها بوضوح ودقة.\n"
-        "- حافظ على مسارات الروابط، الأسماء، الإيميلات، وأرقام الهواتف كما هي مكتوبة تماماً.\n"
-        "- لا تخترع أسعاراً، عروضاً، سياسات، أو وعوداً غير موجودة في البيانات.\n"
-        "- إذا كانت المعلومة غير متاحة، قل بوضوح: 'المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.'\n"
-        "- ممنوع منعاً باتاً ذكر أي تفاصيل تقنية مثل (RAG، chunks، قاعدة بيانات، ملفات، سياق مسترجع).\n"
-        "- استخدم لغة العميل (العربية الفصحى أو العامية حسب سؤاله).\n"
-        "- كن موجزاً ومفيداً.\n"
+        "قواعد مهمة جداً:\n"
+        "- أجب من المعلومات الموجودة في 'Available Information' فقط.\n"
+        "- لا تقل 'المعلومة غير متاحة' إلا إذا لم تجد أي معلومة مرتبطة في السياق.\n"
+        "- إذا وجدت معلومة حتى لو جزئية، أجب بها.\n"
+        "- لا تذكر أسماء مشاريع أو شركات غير موجودة في السياق.\n"
         "- لا تستخدم علامة <think> أو أي وسوم تفكير داخلية.\n"
+        f"- {lang_instruction}\n" if lang_instruction else ""
     )
 
 
@@ -46,54 +73,25 @@ def build_company_user_message(
     conversation_history: str = "",
 ) -> str:
     """
-    بناء user message بنفس شكل dataset التدريب.
-
-    هذا الـ format ضروري لو الـ fine-tuned model شغّال،
-    لأنه تدرّب على هذا الـ format تحديدًا.
-
-    Args:
-        retrieved_context:   نص الـ chunks المسترجعة من FAISS/BM25.
-        user_question:       سؤال العميل الأصلي.
-        company_name:        اسم الشركة (من company profile أو default).
-        business_type:       نوع النشاط التجاري.
-        platform_type:       نوع الموقع أو المنصة.
-        tone:                أسلوب التواصل.
-        support_behavior:    سلوك الدعم.
-        fallback_message:    رسالة "المعلومة غير متاحة".
-        conversation_history: سياق المحادثة السابقة (اختياري).
-
-    Returns:
-        user message string جاهز للـ tokenizer.
+    بناء user message بسيط وفعال.
     """
     return (
-        f"Company Data:\n"
-        f"Company name: {company_name}\n"
-        f"Business type: {business_type}\n"
-        f"Website or platform type: {platform_type}\n"
-        f"Tone: {tone}\n"
-        f"Language preference: same as customer\n"
-        f"Support behavior: {support_behavior}\n"
-        f"Fallback message: {fallback_message}\n"
-        f"\n"
-        f"Available Company Information:\n"
+        f"Company: {company_name}\n"
+        f"Available Information:\n"
         f"{retrieved_context}\n"
-        f"\n"
-        f"Conversation History:\n"
-        f"{conversation_history}\n"
         f"\n"
         f"Customer Message:\n"
         f"{user_question}"
     )
 
 
-# ── Default company profile (used when COMPANY_ASSISTANT_MODE=true
-#    but no dynamic company profile is configured yet) ─────────────────
+# ── Default company profile (used when no company is configured) ─────────
 
 DEFAULT_COMPANY_PROFILE = {
-    "company_name": "الشركة المذكورة في البيانات المتاحة",
+    "company_name": "",
     "business_type": "المجال المذكور في المستندات",
     "platform_type": "الموقع الرسمي",
     "tone": "helpful, clear Arabic",
     "support_behavior": "answer only from available information",
-    "fallback_message": "المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.",
+    "fallback_message": "لا أستطيع تحديد هذه المعلومة من البيانات المتاحة حالياً.",
 }

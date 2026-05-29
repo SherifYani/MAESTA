@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}مسودات الوظائف | MAESTA AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    gap: 20px;
+    flex-wrap: wrap;
+    direction: rtl;
+}
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+    direction: rtl;
+}
+@media (max-width: 850px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+.mini-stat {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.mini-stat-icon {
+    font-size: 26px;
+    line-height: 1;
+}
+.mini-stat-num {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text-primary);
+}
+.mini-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+.toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    direction: rtl;
+}
+.search-box {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    width: 260px;
+    transition: border-color 0.2s;
+}
+.search-box:focus { border-color: var(--accent-primary); }
+.filter-chip {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.filter-chip:hover, .filter-chip.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+.data-table { width: 100%; border-collapse: collapse; direction: rtl; }
+.data-table th {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    white-space: nowrap;
+}
+.data-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+}
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+.job-title-cell { font-weight: 600; color: var(--text-primary); }
+.job-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+.page-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.page-btn:hover, .page-btn.current {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+.empty-state .icon { font-size: 52px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="direction: rtl;">
+
+    <!-- Header -->
+    <div class="page-topbar">
+        <div>
+            <h2 style="font-size: 22px; font-weight: 700; margin: 0 0 6px 0;">💼 مسودات الوظائف</h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin: 0;">الوظائف التي ولّدها الـ AI وتنتظر المراجعة والاعتماد</p>
+        </div>
+        <a href="{{ url_for('admin_ai.overview') }}" class="btn btn-secondary btn-sm" style="font-size:12px;">
+            ⬅️ لوحة قيادة الـ AI
+        </a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="mini-stat" style="border-right: 3px solid var(--accent-primary);">
+            <div class="mini-stat-icon">📦</div>
+            <div>
+                <div class="mini-stat-num">{{ total }}</div>
+                <div class="mini-stat-label">إجمالي المسودات</div>
+            </div>
+        </div>
+        <div class="mini-stat" style="border-right: 3px solid var(--warning);">
+            <div class="mini-stat-icon">⏳</div>
+            <div>
+                <div class="mini-stat-num">{{ drafts | selectattr('status', 'equalto', 'pending') | list | length }}</div>
+                <div class="mini-stat-label">قيد المراجعة</div>
+            </div>
+        </div>
+        <div class="mini-stat" style="border-right: 3px solid var(--success);">
+            <div class="mini-stat-icon">✅</div>
+            <div>
+                <div class="mini-stat-num">{{ drafts | selectattr('status', 'equalto', 'approved') | list | length }}</div>
+                <div class="mini-stat-label">معتمدة</div>
+            </div>
+        </div>
+        <div class="mini-stat" style="border-right: 3px solid var(--danger);">
+            <div class="mini-stat-icon">❌</div>
+            <div>
+                <div class="mini-stat-num">{{ drafts | selectattr('status', 'equalto', 'rejected') | list | length }}</div>
+                <div class="mini-stat-label">مرفوضة</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 ابحث بالعنوان..." oninput="filterTable()">
+            <button class="filter-chip active" data-status="" onclick="setFilter('', this)">الكل</button>
+            <button class="filter-chip" data-status="pending" onclick="setFilter('pending', this)">⏳ قيد المراجعة</button>
+            <button class="filter-chip" data-status="approved" onclick="setFilter('approved', this)">✅ معتمدة</button>
+            <button class="filter-chip" data-status="rejected" onclick="setFilter('rejected', this)">❌ مرفوضة</button>
+            <span style="margin-right: auto; font-size: 12px; color: var(--text-muted);" id="countLabel">
+                عرض {{ drafts | length }} من {{ total }}
+            </span>
+        </div>
+
+        {% if drafts %}
+        <div style="overflow-x: auto;">
+            <table class="data-table" id="mainTable">
+                <thead>
+                    <tr>
+                        <th>المعرف</th>
+                        <th>عنوان الوظيفة</th>
+                        <th>الحالة</th>
+                        <th>الشركة / الموقع</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th style="text-align:center;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    {% for draft in drafts %}
+                    <tr class="table-row" data-status="{{ draft.status }}" data-title="{{ draft.title | lower if draft.title else '' }}">
+                        <td><code style="font-size: 11px; color: var(--text-muted);">{{ draft.id[:10] }}...</code></td>
+                        <td>
+                            <div class="job-title-cell">{{ draft.title or 'وظيفة بدون عنوان' }}</div>
+                            <div class="job-meta">🤖 AI-Generated</div>
+                        </td>
+                        <td>
+                            {% if draft.status == 'approved' %}
+                                <span class="badge badge-success">✅ معتمدة</span>
+                            {% elif draft.status == 'pending' %}
+                                <span class="badge badge-warning">⏳ قيد المراجعة</span>
+                            {% elif draft.status == 'rejected' %}
+                                <span class="badge badge-danger">❌ مرفوضة</span>
+                            {% else %}
+                                <span class="badge badge-info">{{ draft.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set job = draft.job_post if draft.job_post else {} %}
+                            <div style="font-size: 13px;">{{ job.get('company', '—') }}</div>
+                            <div class="job-meta">📍 {{ job.get('location', '—') }}</div>
+                        </td>
+                        <td style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">
+                            {{ draft.created_at[:10] if draft.created_at else '—' }}
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="{{ url_for('admin_ai.job_detail', id=draft.id) }}" class="btn btn-secondary btn-sm" style="font-size: 11px;">
+                                👁️ عرض
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" style="display:none;" class="empty-state">
+            <div class="icon">🔍</div>
+            <h3>لا توجد نتائج</h3>
+            <p>جرب تغيير فلتر البحث</p>
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">💼</div>
+            <h3>لا توجد مسودات وظائف بعد</h3>
+            <p>سيقوم الـ AI بإنشاء مسودات الوظائف تلقائياً عند استلام الطلبات</p>
+        </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if total > page_size %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="?page={{ page - 1 }}" class="page-btn">◀ السابق</a>
+            {% endif %}
+            {% set total_pages = ((total / page_size) | round(0, 'ceil')) | int %}
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <span class="page-btn current">{{ p }}</span>
+                {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                    <a href="?page={{ p }}" class="page-btn">{{ p }}</a>
+                {% elif p == page - 3 or p == page + 3 %}
+                    <span style="color: var(--text-muted);">...</span>
+                {% endif %}
+            {% endfor %}
+            {% if page < total_pages %}
+            <a href="?page={{ page + 1 }}" class="page-btn">التالي ▶</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentFilter = '';
+
+function setFilter(status, btn) {
+    currentFilter = status;
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterTable();
+}
+
+function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.table-row');
+    let visible = 0;
+
+    rows.forEach(row => {
+        const status = row.dataset.status || '';
+        const title = row.dataset.title || '';
+        const matchStatus = !currentFilter || status === currentFilter;
+        const matchSearch = !search || title.includes(search);
+        if (matchStatus && matchSearch) {
+            row.style.display = '';
+            visible++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    document.getElementById('countLabel').textContent = `عرض ${visible} من {{ total }}`;
+}
+</script>
+{% endblock %}

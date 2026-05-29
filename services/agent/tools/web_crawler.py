@@ -6,8 +6,8 @@ import re
 from urllib.parse import urljoin, urlparse
 from typing import List, Dict, Set, Optional
 from dataclasses import dataclass
-import requests
-from bs4 import BeautifulSoup
+import requests  # type: ignore
+from bs4 import BeautifulSoup  # type: ignore
 
 import config
 from core.logger import get_logger

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}AI Overview - MAESTA{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>نظرة عامة على الذكاء الاصطناعي (AI Overview)</h2>
+    <p class="text-muted">إحصائيات مخرجات الذكاء الاصطناعي وحالة العمليات.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-info">
+            <h3>المرشحون</h3>
+            <p class="stat-value">قيد التنفيذ</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+            <h3>مسودات الوظائف</h3>
+            <p class="stat-value">قيد التنفيذ</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⚖️</div>
+        <div class="stat-info">
+            <h3>الموافقات المعلقة</h3>
+            <p class="stat-value">قيد التنفيذ</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📜</div>
+        <div class="stat-info">
+            <h3>سجلات التدقيق</h3>
+            <p class="stat-value">قيد التنفيذ</p>
+        </div>
+    </div>
+</div>
+
+<div class="ai-navigation-grid" style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+    <a href="{{ url_for('admin_ai.candidates') }}" class="nav-card">
+        <h4>إدارة المرشحين</h4>
+        <p>مراجعة الملفات الشخصية المستخرجة.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.jobs') }}" class="nav-card">
+        <h4>مسودات الوظائف</h4>
+        <p>إدارة توصيف الوظائف المقترح.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.approvals') }}" class="nav-card">
+        <h4>لوحة الموافقات</h4>
+        <p>الموافقة أو الرفض على إجراءات الـ AI.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.rankings') }}" class="nav-card">
+        <h4>ترتيب المرشحين</h4>
+        <p>نتائج المطابقة والترتيب.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.audit_logs') }}" class="nav-card">
+        <h4>سجل العمليات</h4>
+        <p>تتبع التحركات الإدارية.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.interviews') }}" class="nav-card">
+        <h4>المقابلات الذكية</h4>
+        <p>متابعة المقابلات التفاعلية وجلسات المرشحين.</p>
+    </a>
+    <a href="{{ url_for('admin_ai.connectors') }}" class="nav-card">
+        <h4>الموصلات الخارجية</h4>
+        <p>تهيئة واختبار موصلات البيانات والـ APIs.</p>
+    </a>
+</div>
+
+<style>
+.nav-card {
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--border-color, #eee);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+.nav-card h4 { margin: 0 0 10px 0; color: var(--primary-color, #007bff); }
+.nav-card p { margin: 0; font-size: 14px; color: var(--text-muted, #666); }
+</style>
+{% endblock %}

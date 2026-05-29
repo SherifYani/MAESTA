@@ -2,6 +2,9 @@
 Admin Routes - Dashboard and management pages
 """
 import os
+import json
+import time
+import base64
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.utils import secure_filename
 from controllers.auth import admin_required
@@ -41,7 +44,8 @@ def dashboard():
 def documents():
     """Document management page"""
     docs = database.get_all_documents()
-    return render_template('documents.html', documents=docs)
+    companies = database.get_all_companies()
+    return render_template('documents.html', documents=docs, companies=companies)
 
 
 @admin_bp.route('/documents/upload', methods=['POST'])
@@ -65,12 +69,17 @@ def upload_document():
         flash(f'File type not allowed. Allowed: {", ".join(config.ALLOWED_EXTENSIONS)}', 'danger')
         return redirect(url_for('admin.documents'))
     
+    # Get company_id from form
+    company_id = request.form.get('company_id', '').strip() or None
+    tenant_id = f"company_{company_id}" if company_id else "default_tenant"
+    site_id = "default_site"
+    bot_id = "default_bot"
+    
     try:
         # Save file
         config.init_directories()
         filename_secure = secure_filename(filename)
         # Add timestamp to prevent duplicates
-        import time
         unique_filename = f"{int(time.time())}_{filename_secure}"
         file_path = config.UPLOAD_FOLDER / unique_filename
         file.save(str(file_path))
@@ -78,12 +87,13 @@ def upload_document():
         # Get file size
         file_size = os.path.getsize(file_path)
         
-        # Add to database
+        # Add to database with company_id
         doc_id = database.add_document(
             filename=unique_filename,
             original_filename=filename,
             file_type=ext,
-            file_size=file_size
+            file_size=file_size,
+            company_id=company_id,
         )
         
         # Process document
@@ -92,15 +102,15 @@ def upload_document():
         # Add chunks to database
         database.add_document_chunks(doc_id, result['chunks'])
         
-        # Add to knowledge base (vector index)
-        knowledge_base.add_documents(doc_id, result['chunks'])
+        # Add to knowledge base (vector index) with tenant context
+        runtime = {"tenant_id": tenant_id, "site_id": site_id, "bot_id": bot_id}
+        knowledge_base.add_documents(doc_id, result['chunks'], runtime=runtime)
         
         # Update document as indexed
         database.update_document_indexed(doc_id, result['chunk_count'])
         
         # Save automatically extracted Knowledge Graph
         if 'graph_data' in result:
-            import json
             database.update_document_graph(doc_id, json.dumps(result['graph_data']))
             logger.info(f"Knowledge Graph automatically saved for {filename}")
 
@@ -148,7 +158,6 @@ def view_document_graph(doc_id):
         flash('Document not found.', 'danger')
         return redirect(url_for('admin.documents'))
     
-    import json
     direction = request.args.get('direction', 'LR')
     try:
         graph_data = json.loads(doc['graph_json']) if doc.get('graph_json') else {"nodes": [], "edges": []}
@@ -175,7 +184,6 @@ def generate_document_graph(doc_id):
         text = "\n\n".join([c['content'] for c in chunks[:10]]) 
         
         graph_data = graph_extractor.extract_graph(text)
-        import json
         database.update_document_graph(doc_id, json.dumps(graph_data))
         
         return jsonify({'success': True, 'message': 'Graph generated successfully'})
@@ -188,7 +196,8 @@ def generate_document_graph(doc_id):
 def api_keys():
     """API key management page"""
     keys = database.get_all_api_keys()
-    return render_template('api_keys.html', api_keys=keys)
+    companies = database.get_all_companies()
+    return render_template('api_keys.html', api_keys=keys, companies=companies)
 
 
 @admin_bp.route('/api-keys/create', methods=['POST'])
@@ -197,13 +206,14 @@ def create_api_key():
     """Create a new API key"""
     name = request.form.get('name', '').strip()
     rate_limit = int(request.form.get('rate_limit', 60))
+    company_id = request.form.get('company_id', '').strip() or None
     
     if not name:
         flash('Please provide a name for the API key.', 'danger')
         return redirect(url_for('admin.api_keys'))
     
     try:
-        result = database.create_api_key(name, rate_limit)
+        result = database.create_api_key(name, rate_limit, company_id=company_id)
         # Store the key temporarily to show to user
         flash(f'API Key created! Key: {result["key"]} (Save this, it won\'t be shown again!)', 'success')
     except Exception as e:
@@ -287,9 +297,11 @@ def chat():
 @admin_required
 def send_chat():
     """Send a chat message (admin testing), with optional image for Janus-Pro Vision."""
-    import base64
+    from services.agent.schemas import BotRuntimeContext
+
     question = request.form.get('question', '').strip()
     use_rag = request.form.get('use_rag', 'true').lower() == 'true'
+    company_id = request.form.get('company_id', '').strip() or None
 
     if not question:
         return jsonify({'error': 'Please enter a question'}), 400
@@ -301,11 +313,30 @@ def send_chat():
         if img_file and img_file.filename:
             image_b64 = base64.b64encode(img_file.read()).decode('utf-8')
 
+    # Build runtime context
+    runtime = None
+    if company_id:
+        company = database.get_company_by_id(company_id)
+        runtime = BotRuntimeContext(
+            tenant_id=f"company_{company_id}",
+            site_id="default_site",
+            bot_id="default_bot",
+            api_key_id="",
+            session_id=f"admin-{session.get('user_id', 'unknown')}",
+            user_id=session.get('user_id', ''),
+            user_role="admin",
+            enabled_modules=["chat", "rag"],
+            language=company.get('language', 'ar') if company else 'ar',
+            allowed_actions=["read", "ask"],
+            company_name=company['name'] if company else "",
+        )
+
     try:
         result = chat_service.process_question(
             question,
             use_rag=use_rag,
-            image_b64=image_b64
+            image_b64=image_b64,
+            runtime=runtime,
         )
         return jsonify(result)
     except Exception as e:
@@ -330,7 +361,8 @@ def clear_memory():
 def websites():
     """Website management page"""
     sources = database.get_all_web_sources()
-    return render_template('websites.html', web_sources=sources)
+    companies = database.get_all_companies()
+    return render_template('websites.html', web_sources=sources, companies=companies)
 
 
 @admin_bp.route('/websites/crawl', methods=['POST'])
@@ -340,6 +372,7 @@ def crawl_website():
     url = request.form.get('url', '').strip()
     max_depth = int(request.form.get('max_depth', config.MAX_CRAWL_DEPTH))
     max_pages = int(request.form.get('max_pages', config.MAX_CRAWL_PAGES))
+    company_id = request.form.get('company_id', '').strip() or None
     
     if not url:
         flash('Please provide a URL to crawl.', 'danger')
@@ -348,6 +381,8 @@ def crawl_website():
     # Add http if missing
     if not url.startswith(('http://', 'https://')):
         url = 'https://' + url
+    
+    tenant_id = f"company_{company_id}" if company_id else "default_tenant"
     
     try:
         # Add web source record
@@ -365,8 +400,9 @@ def crawl_website():
         # Save chunks to database
         database.add_web_source_chunks(source_id, result['chunks'])
         
-        # Add to knowledge base (vector index)
-        knowledge_base.add_documents(source_id, result['chunks'])
+        # Add to knowledge base (vector index) with tenant context
+        runtime = {"tenant_id": tenant_id, "site_id": "default_site", "bot_id": "default_bot"}
+        knowledge_base.add_documents(source_id, result['chunks'], runtime=runtime)
         
         # Update status
         database.update_web_source_status(
@@ -560,7 +596,6 @@ def view_quiz(quiz_id):
         flash('Quiz not found.', 'danger')
         return redirect(url_for('admin.quizzes'))
         
-    import json
     try:
         raw = json.loads(quiz['content_json'])
     except Exception:
@@ -623,6 +658,103 @@ def view_quiz(quiz_id):
         content['is_professional'] = False
 
     return render_template('quiz_view.html', quiz=quiz, content=content)
+
+
+# ----- Company Management Routes -----
+
+@admin_bp.route('/companies')
+@admin_required
+def companies():
+    """List all companies"""
+    all_companies = database.get_all_companies()
+    return render_template('companies.html', companies=all_companies)
+
+
+@admin_bp.route('/companies/create', methods=['GET', 'POST'])
+@admin_required
+def create_company():
+    """Create a new company"""
+    if request.method == 'GET':
+        return render_template('company_form.html', company=None)
+
+    name = request.form.get('name', '').strip()
+    slug = request.form.get('slug', '').strip()
+
+    if not name or not slug:
+        flash('Name and slug are required.', 'danger')
+        return redirect(url_for('admin.companies'))
+
+    # Auto-generate slug if empty
+    if not slug:
+        import re as _re
+        slug = _re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+
+    try:
+        company_id = database.create_company(
+            name=name,
+            slug=slug,
+            description=request.form.get('description', ''),
+            business_type=request.form.get('business_type', ''),
+            platform_type=request.form.get('platform_type', ''),
+            tone=request.form.get('tone', 'helpful, clear Arabic'),
+            support_behavior=request.form.get('support_behavior', ''),
+            fallback_message=request.form.get('fallback_message', ''),
+            system_prompt=request.form.get('system_prompt', ''),
+            language=request.form.get('language', 'ar'),
+        )
+        flash(f'Company "{name}" created successfully.', 'success')
+        return redirect(url_for('admin.companies'))
+    except Exception as e:
+        flash(f'Error creating company: {e}', 'danger')
+        return redirect(url_for('admin.companies'))
+
+
+@admin_bp.route('/companies/<company_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_company(company_id):
+    """Edit company settings"""
+    company = database.get_company_by_id(company_id)
+    if not company:
+        flash('Company not found.', 'danger')
+        return redirect(url_for('admin.companies'))
+
+    if request.method == 'GET':
+        stats = database.get_company_stats(company_id)
+        return render_template('company_form.html', company=company, stats=stats)
+
+    try:
+        database.update_company(
+            company_id,
+            name=request.form.get('name', company['name']),
+            slug=request.form.get('slug', company['slug']),
+            description=request.form.get('description', ''),
+            business_type=request.form.get('business_type', ''),
+            platform_type=request.form.get('platform_type', ''),
+            tone=request.form.get('tone', ''),
+            support_behavior=request.form.get('support_behavior', ''),
+            fallback_message=request.form.get('fallback_message', ''),
+            system_prompt=request.form.get('system_prompt', ''),
+            language=request.form.get('language', 'ar'),
+            is_active=request.form.get('is_active') == 'on',
+        )
+        flash('Company updated successfully.', 'success')
+    except Exception as e:
+        flash(f'Error updating company: {e}', 'danger')
+
+    return redirect(url_for('admin.edit_company', company_id=company_id))
+
+
+@admin_bp.route('/companies/<company_id>/delete', methods=['POST'])
+@admin_required
+def delete_company(company_id):
+    """Delete a company"""
+    company = database.get_company_by_id(company_id)
+    if company:
+        database.delete_company(company_id)
+        flash(f'Company "{company["name"]}" deleted.', 'success')
+    else:
+        flash('Company not found.', 'danger')
+    return redirect(url_for('admin.companies'))
 
 
 # ----- Admin Dashboard -----

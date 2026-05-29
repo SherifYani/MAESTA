@@ -7,3 +7,4 @@ class AgentState(BaseModel):
     messages: Annotated[List[BaseMessage], operator.add] = Field(default_factory=list)
     next: str = ""
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    runtime: Dict[str, Any] = Field(default_factory=dict)

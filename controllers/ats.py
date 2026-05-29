@@ -9,6 +9,9 @@ from controllers.auth import admin_required
 from models import database
 from services.cvs.ats_pipeline import ats_pipeline, ats_service
 import config
+from core.logger import get_logger
+
+logger = get_logger(__name__)
 
 ats_bp = Blueprint('ats', __name__, url_prefix='/ats')
 
@@ -84,7 +87,12 @@ def upload_cvs():
         flash('No valid PDF files found. Only PDF files are accepted.', 'danger')
         return redirect(url_for('ats.ats_main'))
 
-    result = ats_service.index_cv_files(saved_paths)
+    try:
+        result = ats_service.index_cv_files(saved_paths)
+    except Exception as e:
+        logger.error(f"ATS indexing failed: {e}")
+        flash(f'⚠️ Indexing failed: {e}', 'danger')
+        return redirect(url_for('ats.ats_main'))
 
     msg = f"✅ Indexed {result['success']} CV(s). Total in database: {result['total']}."
     if result['failed']:
@@ -103,9 +111,17 @@ def upload_cvs():
 @ats_bp.route('/reset-index', methods=['POST'])
 @admin_required
 def reset_index():
-    """Clear all indexed CVs from the ATS vector store"""
+    """Clear all indexed CVs and delete uploaded PDF files"""
     ats_service.reset_index()
-    flash('✅ CV index has been reset.', 'success')
+    cv_dir = config.UPLOAD_FOLDER / 'cvs'
+    if cv_dir.exists():
+        for f in cv_dir.iterdir():
+            try:
+                f.unlink()
+            except Exception as e:
+                logger.warning(f"ATS: could not delete {f}: {e}")
+        logger.info(f"ATS: Deleted all CV files from {cv_dir}")
+    flash('✅ CV index and all uploaded files have been reset.', 'success')
     return redirect(url_for('ats.ats_main'))
 
 
@@ -124,7 +140,10 @@ def analyze():
     """
     title = request.form.get('job_title', '').strip()
     jd_text = request.form.get('job_description', '').strip()
-    top_n = int(request.form.get('top_n', 3))
+    try:
+        top_n = int(request.form.get('top_n', 3))
+    except (ValueError, TypeError):
+        top_n = 3
 
     if not jd_text:
         flash('Please enter a Job Description.', 'danger')
@@ -138,24 +157,39 @@ def analyze():
         flash('No CVs indexed yet. Please upload CV files first.', 'warning')
         return redirect(url_for('ats.ats_main'))
 
-    # Step 1: Vector search – top 10 (Fast mode enabled)
-    top_k = min(10, stats['total_cvs'])
-    candidates = ats_service.search_top_candidates(jd_text, top_k=top_k)
+    try:
+        # Step 1: Vector search – top 10
+        top_k = min(10, stats['total_cvs'])
+        candidates = ats_service.search_top_candidates(jd_text, top_k=top_k)
+    except Exception as e:
+        logger.error(f"ATS search failed: {e}")
+        flash(f'⚠️ Search failed: {e}', 'danger')
+        return redirect(url_for('ats.ats_main'))
 
     if not candidates:
         flash('No candidates found. The CV index may be empty.', 'warning')
         return redirect(url_for('ats.ats_main'))
 
-    # Step 2: LLM re-ranking – best top_n
-    ranking = ats_service.rank_with_llm(jd_text, candidates, top_n=top_n)
+    try:
+        # Step 2: LLM re-ranking – best top_n
+        ranking = ats_service.rank_with_llm(jd_text, candidates, top_n=top_n)
+    except Exception as e:
+        logger.error(f"ATS ranking failed: {e}")
+        flash(f'⚠️ LLM ranking failed: {e}', 'danger')
+        return redirect(url_for('ats.ats_main'))
 
-    # Step 3: Save to DB
-    job_id = database.create_ats_job(title, jd_text, top_n)
-    database.update_ats_job_results(
-        job_id,
-        results_json=json.dumps(ranking, ensure_ascii=False),
-        cv_count=stats['total_cvs']
-    )
+    try:
+        # Step 3: Save to DB
+        job_id = database.create_ats_job(title, jd_text, top_n)
+        database.update_ats_job_results(
+            job_id,
+            results_json=json.dumps(ranking, ensure_ascii=False),
+            cv_count=stats['total_cvs']
+        )
+    except Exception as e:
+        logger.error(f"ATS DB save failed: {e}")
+        flash(f'⚠️ Failed to save results: {e}', 'danger')
+        return redirect(url_for('ats.ats_main'))
 
     return redirect(url_for('ats.ats_results', job_id=job_id))
 

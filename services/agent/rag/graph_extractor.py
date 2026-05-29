@@ -17,6 +17,7 @@ class GraphExtractor:
     
     def __init__(self):
         self.is_cloud = False
+        self.llm: Any = None
         if config.CLAUDE_API_KEY and config.CLOUD_PROVIDER in ("claude", "auto"):
             from services.agent.llm.claude_provider import ClaudeProvider
             self.llm = ClaudeProvider()
@@ -26,7 +27,6 @@ class GraphExtractor:
             self.llm = GeminiProvider()
             self.is_cloud = True
         else:
-            from services.agent.ollama_service import ollama_service
             self.llm = ollama_service
 
     def extract_graph(self, text: str, max_entities: int = 40) -> Dict[str, Any]:

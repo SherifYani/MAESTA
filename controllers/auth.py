@@ -20,18 +20,34 @@ def login_required(f):
 
 
 def admin_required(f):
-    """Decorator to require admin role"""
+    """Decorator to require admin role.
+
+    Uses the ``is_admin`` flag stored in the session at login time,
+    avoiding a redundant DB round-trip on every protected request.
+    Falls back to a DB look-up only when the flag is absent (e.g. old
+    sessions created before the flag was added).
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('auth.login'))
-        
+
+        # Fast path: flag already stored in session
+        if 'is_admin' in session:
+            if not session['is_admin']:
+                flash('Admin access required.', 'danger')
+                return redirect(url_for('auth.login'))
+            return f(*args, **kwargs)
+
+        # Slow path: legacy session without the flag — do a single DB check
+        # and refresh the session so subsequent calls use the fast path.
         user = database.get_user_by_id(session['user_id'])
         if not user or not user.get('is_admin'):
             flash('Admin access required.', 'danger')
             return redirect(url_for('auth.login'))
-        
+
+        session['is_admin'] = bool(user.get('is_admin'))
         return f(*args, **kwargs)
     return decorated_function
 

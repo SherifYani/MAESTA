@@ -26,6 +26,10 @@ class KnowledgeBase:
         self.index_path = config.VECTOR_STORE_PATH / "faiss_index.bin"
         self.docs_path = config.VECTOR_STORE_PATH / "documents.pkl"
 
+        # Initialize vector backend (abstraction layer)
+        from services.agent.rag.vector_backend import get_vector_backend
+        self.vector_store = get_vector_backend(self)
+
         # Reindex state (thread-safe)
         self._reindex_lock = __import__('threading').Lock()
         self._reindex_status: dict = {"running": False, "progress": 0, "total": 0, "done": False}
@@ -149,7 +153,11 @@ class KnowledgeBase:
             batch_embeddings = ollama_service.embed(batch)
             all_embeddings.extend(batch_embeddings)
 
-        return np.array(all_embeddings).astype('float32')
+        arr = np.array(all_embeddings).astype('float32')
+        # Normalize embeddings to unit vectors
+        norms = np.linalg.norm(arr, axis=1, keepdims=True)
+        norms[norms == 0] = 1e-12
+        return arr / norms
         
     def _rebuild_bm25(self):
         """Rebuild BM25 index from current documents"""
@@ -323,7 +331,7 @@ class KnowledgeBase:
         """Return current reindex status (useful for admin status endpoints)."""
         return dict(self._reindex_status)
     
-    def add_documents(self, doc_id: str, chunks: List[Dict]) -> int:
+    def add_documents(self, doc_id: str, chunks: List[Dict], runtime: dict | None = None) -> int:
         """Add document chunks to the knowledge base"""
         if not chunks:
             return 0
@@ -337,15 +345,28 @@ class KnowledgeBase:
             self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
             
         idx_any: Any = self.index
-        idx_any.add(np.ascontiguousarray(embeddings.astype('float32')))
+        idx_any.add(np.ascontiguousarray(embeddings.astype("float32")))
         
-        # Store document metadata
+        # Store document metadata with tenant info
+        tenant_id = runtime.get("tenant_id", "default_tenant") if runtime else "default_tenant"
+        site_id = runtime.get("site_id", "default_site") if runtime else "default_site"
+        bot_id = runtime.get("bot_id", "default_bot") if runtime else "default_bot"
+        
         for i, chunk in enumerate(chunks):
+            # Build metadata dict with tenant info
+            meta = {
+                'doc_id': doc_id,
+                'chunk_index': chunk['index'],
+                'tenant_id': tenant_id,
+                'site_id': site_id,
+                'bot_id': bot_id,
+                'source': chunk.get('metadata', ''),
+            }
             self.documents.append({
                 'doc_id': doc_id,
                 'chunk_index': chunk['index'],
                 'content': chunk['content'],
-                'metadata': chunk.get('metadata', '')
+                'metadata': meta
             })
         
         # Save index
@@ -356,10 +377,16 @@ class KnowledgeBase:
         
         return len(chunks)
     
-    def search(self, query: str, top_k: int | None = None, doc_id: str | None = None) -> List[Dict]:
+    def search(self, query: str, top_k: int | None = None, doc_id: str | None = None, runtime: dict | None = None) -> List[Dict]:
         """Hybrid search combining Vector (FAISS) and Keyword (BM25) results"""
         top_k = top_k or config.TOP_K_RESULTS
         
+        if runtime is None:
+            raise ValueError("runtime context is required for search")
+            
+        if not all([runtime.get("tenant_id"), runtime.get("site_id"), runtime.get("bot_id")]):
+            raise ValueError("tenant_id, site_id, and bot_id are required in runtime for search")
+                
         if len(self.documents) == 0:
             logger.warning("No documents in knowledge base!")
             return []
@@ -373,33 +400,52 @@ class KnowledgeBase:
                 return []
 
         # 1. Vector Search
-        if self.index is None:
-            logger.warning("Search failed: Index is not initialized")
-            return []
-            
-        query_embedding = self._get_embeddings([query], task_type='query')
-        
-        # If we are filtering by doc, we can afford to fetch more to ensure we get enough chunks from that doc
-        # or if using IndexFlatL2 we can just filter the indices.
-        fetch_k = min(top_k * 5 if doc_id else top_k * 2, len(self.documents))
-        distances, indices = self.index.search(
-            np.ascontiguousarray(query_embedding.astype('float32')), 
-            fetch_k
-        )
-        
+        backend_type = getattr(config, "RAG_VECTOR_BACKEND", "chroma").lower()
         vector_results = {}
-        vector_distances = {} # Store distances
-        for i, idx in enumerate(indices[0]):
-            if idx < len(self.documents) and idx >= 0:
-                # Filter by doc_id if needed
-                if filtered_indices is not None and idx not in filtered_indices:
-                    continue
-                    
-                distance = distances[0][i]
-                # Convert L2 distance to similarity (0-1)
-                similarity = 1 / (1 + distance)
-                vector_results[idx] = similarity
-                vector_distances[idx] = distance
+        vector_distances = {}
+        
+        # Determine how many results to fetch for initial ranking
+        fetch_k = min(top_k * 5 if doc_id else top_k * 2, len(self.documents))
+
+        if backend_type == "pgvector":
+            query_embeddings = self._get_embeddings([query], task_type='query')
+            query_embedding = query_embeddings[0]
+            # Use native filtering from pgvector
+            native_results = self.vector_store.search(
+                query_embedding=query_embedding,
+                runtime=runtime,
+                top_k=top_k,
+                source_type=None, 
+                visibility=None
+            )
+            # Map native results to vector_results/vector_distances
+            for i, res in enumerate(native_results):
+                vector_results[i] = res['score']
+                vector_distances[i] = 1.0 / res['score'] - 1.0 if res['score'] > 0 else 1.0
+        else:
+            # Fallback to FAISS
+            if self.index is None:
+                logger.warning("Search failed: Index is not initialized")
+                return []
+                
+            query_embedding = self._get_embeddings([query], task_type='query')
+            distances, indices = self.index.search(
+                np.ascontiguousarray(query_embedding.astype('float32')), 
+                fetch_k
+            )
+            
+            for i, idx in enumerate(indices[0]):
+                if idx < len(self.documents) and idx >= 0:
+                    if filtered_indices is not None and idx not in filtered_indices:
+                        continue
+                    distance = distances[0][i]
+                    if float(distance) < 4.0:
+                        cos_sim = 1.0 - (float(distance) / 2.0)
+                        similarity = max(0.0, min(1.0, cos_sim))
+                    else:
+                        similarity = 1.0 / (1.0 + (float(distance) / 100.0))
+                    vector_results[idx] = similarity
+                    vector_distances[idx] = distance
 
         # 2. BM25 Search
         bm25_results = {}
@@ -466,8 +512,42 @@ class KnowledgeBase:
                 unique_results.append(res)
                 seen_contents.add(content_hash)
         
-        logger.info(f"Hybrid search: {len(unique_results)} unique results (from {len(final_results)} total)")
-        return unique_results[:top_k]
+        # 5. Multi-Tenant Post-Filter (Fail-Closed)
+        # TODO: replace post-filter with native vector metadata filter.
+        tenant_id = runtime.get("tenant_id")
+        site_id = runtime.get("site_id")
+        bot_id = runtime.get("bot_id")
+        
+        secure_results = []
+        for res in unique_results:
+            metadata = res.get('metadata', {})
+            if isinstance(metadata, str):
+                try:
+                    import json
+                    metadata = json.loads(metadata)
+                except Exception:
+                    metadata = {}
+            
+            res_tenant = metadata.get('tenant_id')
+            res_site = metadata.get('site_id')
+            res_bot = metadata.get('bot_id')
+            
+            # Fall back to default tenant if metadata is missing/incomplete
+            if not res_tenant or not res_site or not res_bot:
+                logger.debug(f"Chunk {res.get('chunk_index')} missing tenant metadata, defaulting to default_tenant/default_site/default_bot")
+                res_tenant = res_tenant or 'default_tenant'
+                res_site = res_site or 'default_site'
+                res_bot = res_bot or 'default_bot'
+                
+            if res_tenant != tenant_id or res_site != site_id or res_bot != bot_id:
+                logger.warning(f"Rejecting chunk {res.get('chunk_index')} due to metadata mismatch (expected {tenant_id}/{site_id}/{bot_id}, got {res_tenant}/{res_site}/{res_bot})")
+                continue
+                
+            secure_results.append(res)
+            
+        logger.info(f"[RAG:search] tenant_id={tenant_id} site_id={site_id} bot_id={bot_id}")
+        logger.info(f"Hybrid search: {len(secure_results)} secure results (from {len(final_results)} total)")
+        return secure_results[:top_k]
     
     def delete_document(self, doc_id: str) -> bool:
         """Remove all chunks for a document from the index"""

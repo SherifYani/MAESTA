@@ -15,6 +15,17 @@
     </div>
 
     <form action="{{ url_for('admin.upload_document') }}" method="POST" enctype="multipart/form-data">
+        <div style="display: flex; gap: 16px; align-items: end; margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                <label class="form-label" style="display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-muted);">Company (Optional)</label>
+                <select name="company_id" class="form-input" style="width: 100%;">
+                    <option value="">— Global (All Companies) —</option>
+                    {% for company in companies %}
+                    <option value="{{ company.id }}">{{ company.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
         <div class="file-upload" onclick="document.getElementById('file-input').click()">
             <div class="icon">📄</div>
             <p>Click to upload or drag and drop</p>

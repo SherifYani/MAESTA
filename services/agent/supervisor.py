@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from models import database
 from services.agent.agents.chat_agent import agent_app as chat_agent_graph
-from services.agent.agents.quiz_agent import quiz_agent_node
+# from services.agent.agents.quiz_agent import quiz_agent_node  # QUIZ disabled
 from services.agent.agents.rag_graph import rag_graph_node
 from services.agent.state import AgentState
 from core.logger import get_logger
@@ -130,10 +130,6 @@ def _route_with_local_llm(message: str) -> str:
     """
     # 1. Very Fast Keyword Pre-filter to avoid agonizingly slow local LLM generations
     msg_lower = message.lower()
-    quiz_keywords = ['quiz', 'test', 'exam', 'اختبار', 'كويز', 'امتحان', 'أسئلة', 'اسئلة']
-    if any(k in msg_lower for k in quiz_keywords):
-        logger.info("[Supervisor] ⚡ Quiz keywords detected, routing to RAG for context-based answers.")
-        return "RAG"
         
     rag_keywords = [
         'ما هو', 'ايه هو', 'إيه هو', 'من أنت', 'من انت', 'إنت مين', 'انت مين', 'ما هي', 'ما هى',

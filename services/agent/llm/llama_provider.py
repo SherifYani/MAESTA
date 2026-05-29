@@ -118,15 +118,42 @@ class LlamaCppProvider(LLMProviderInterface):
                     else:
                         raise OllamaGenerationError(model, f"HTTP {response.status}")
                         
-        except asyncio.TimeoutError:
-            sentry_sdk.capture_exception()
-            raise OllamaGenerationError(model, f"انتهت مهلة الانتظار ({gen_timeout} ثانية)")
-        except (OllamaGenerationError, OllamaModelNotFoundError):
-            sentry_sdk.capture_exception()
-            raise
+        except asyncio.TimeoutError as e:
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "timeout",
+                    "message": "انتهت مهلة الانتظار أثناء الاتصال بخدمة Llama.",
+                    "status": "failed"
+                }, ensure_ascii=False)
+            return "عذراً، انتهت مهلة الانتظار أثناء الاتصال بخدمة الذكاء الاصطناعي المحلية. يرجى المحاولة مرة أخرى لاحقاً."
+        except aiohttp.ClientConnectorError as e:
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "connection",
+                    "message": "تعذر الاتصال بخدمة Llama (الخادم متوقف أو غير متصل).",
+                    "status": "failed"
+                }, ensure_ascii=False)
+            return "عذراً، تعذر الاتصال بالخادم المحلي لخدمة الذكاء الاصطناعي. يرجى التأكد من تشغيل خادم Llama."
+        except (OllamaGenerationError, OllamaModelNotFoundError) as e:
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "model_error",
+                    "message": str(e),
+                    "status": "failed"
+                }, ensure_ascii=False)
+            return f"عذراً، حدث خطأ في نموذج الذكاء الاصطناعي: {str(e)}"
         except Exception as e:
-            sentry_sdk.capture_exception()
-            raise OllamaGenerationError(model, str(e))
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "unexpected",
+                    "message": f"حدث خطأ غير متوقع: {str(e)}",
+                    "status": "failed"
+                }, ensure_ascii=False)
+            return f"عذراً، حدث خطأ غير متوقع أثناء معالجة الطلب محلياً: {str(e)}"
 
     async def generate_stream(self, prompt: str, model: str | None = None,
                         system_prompt: str | None = None,

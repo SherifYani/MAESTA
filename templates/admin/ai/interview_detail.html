@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_ai.interviews') }}">المقابلات</a></li>
+            <li class="breadcrumb-item active">تفاصيل المقابلة</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Sidebar: Session Info -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 mb-4">
+                <h4 class="mb-4 text-info"><i class="fas fa-info-circle me-2"></i>معلومات الجلسة</h4>
+                <div class="info-item mb-3">
+                    <label class="text-muted d-block small">معرف الجلسة</label>
+                    <span class="text-light">{{ interview.id }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <label class="text-muted d-block small">الوظيفة</label>
+                    <span class="text-light">{{ interview.job_id }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <label class="text-muted d-block small">المرشح</label>
+                    <span class="text-light">{{ interview.candidate_id }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <label class="text-muted d-block small">الحالة</label>
+                    <span class="badge bg-primary">{{ interview.status }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <label class="text-muted d-block small">الموافقة</label>
+                    <span class="badge bg-warning text-dark">{{ interview.consent_status }}</span>
+                </div>
+                <hr class="border-secondary">
+                <div class="info-item">
+                    <a href="{{ url_for('admin_ai.interview_report', id=interview.id) }}" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-file-chart-line me-2"></i>عرض التقرير الاستشاري
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content: Chat Log -->
+        <div class="col-md-8">
+            <div class="glass-card p-0 overflow-hidden">
+                <div class="p-4 border-bottom border-secondary d-flex justify-content-between align-items-center">
+                    <h4 class="m-0 text-info"><i class="fas fa-history me-2"></i>سجل المحادثة</h4>
+                    {% if not revealed %}
+                    <a href="?reveal=true" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-eye me-2"></i>كشف المحادثة (Audit Required)
+                    </a>
+                    {% else %}
+                    <span class="badge bg-danger">محقق: تم كشف المحادثة</span>
+                    {% endif %}
+                </div>
+
+                <div class="chat-container p-4" id="chat-window">
+                    {% if revealed %}
+                        {% for msg in messages %}
+                        <div class="chat-bubble-wrapper d-flex mb-4 {% if msg.sender == 'ai' %}justify-content-start{% else %}justify-content-end{% endif %}">
+                            <div class="chat-bubble p-3 {% if msg.sender == 'ai' %}ai-bubble{% else %}candidate-bubble{% endif %}">
+                                <div class="bubble-header d-flex justify-content-between small mb-1">
+                                    <strong class="text-uppercase">{{ msg.sender }}</strong>
+                                    <span class="text-muted opacity-50 ms-3">{{ msg.created_at }}</span>
+                                </div>
+                                <div class="bubble-content">{{ msg.message }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-lock fa-4x mb-3"></i>
+                            <p>المحادثة مخفية لخصوصية المرشح. انقر على "كشف المحادثة" للمتابعة (سيتم تسجيل هذا الإجراء).</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+.chat-container {
+    height: 600px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+}
+.chat-bubble {
+    max-width: 80%;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.ai-bubble {
+    background: rgba(79, 172, 254, 0.1);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    border-top-left-radius: 2px;
+}
+.candidate-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top-right-radius: 2px;
+}
+.chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+</style>
+{% endblock %}

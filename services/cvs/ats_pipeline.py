@@ -5,7 +5,6 @@ Handles CV indexing, embedding, and ranking using existing FAISS infrastructure
 import os
 import json
 import re
-import pickle
 import uuid
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple, Any
@@ -18,7 +17,7 @@ logger = get_logger(__name__)
 
 # Separate paths for ATS index (isolated from knowledge base)
 ATS_INDEX_PATH = config.VECTOR_STORE_PATH / "ats_faiss_index.bin"
-ATS_DOCS_PATH  = config.VECTOR_STORE_PATH / "ats_documents.pkl"
+ATS_DOCS_PATH  = config.VECTOR_STORE_PATH / "ats_documents.json"
 
 
 class ATSService:
@@ -63,7 +62,11 @@ class ATSService:
                 batch = processed_texts[i:i + batch_size]
                 embeddings = ollama_service.embed(batch)
                 all_embeddings.extend(embeddings)
-            return np.array(all_embeddings).astype('float32')
+            arr = np.array(all_embeddings).astype('float32')
+            # Normalize embeddings to unit vectors
+            norms = np.linalg.norm(arr, axis=1, keepdims=True)
+            norms[norms == 0] = 1e-12
+            return arr / norms
         else:
             if self.embedding_model is None:
                 from sentence_transformers import SentenceTransformer
@@ -84,8 +87,8 @@ class ATSService:
             import faiss
             if ATS_INDEX_PATH.exists() and ATS_DOCS_PATH.exists():
                 self.index = faiss.read_index(str(ATS_INDEX_PATH))
-                with open(ATS_DOCS_PATH, "rb") as f:
-                    data = pickle.load(f)
+                with open(ATS_DOCS_PATH, "r", encoding="utf-8") as f:
+                    data = json.load(f)
                     if isinstance(data, dict):
                         self.cv_documents = data.get("docs", [])
                         self.chunk_metadata = data.get("chunks", [])
@@ -95,10 +98,24 @@ class ATSService:
                         self.chunk_metadata = []
                 logger.info(f"ATS: Loaded index with {len(self.cv_documents)} CVs and {len(self.chunk_metadata)} chunks")
             else:
-                self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
-                self.cv_documents = []
-                self.chunk_metadata = []
-                logger.info("ATS: Created new FAISS index")
+                # Check for old pickle file and migrate
+                old_pkl = config.VECTOR_STORE_PATH / "ats_documents.pkl"
+                if ATS_INDEX_PATH.exists() and old_pkl.exists():
+                    logger.info("ATS: Migrating from pickle to JSON format...")
+                    self.index = faiss.read_index(str(ATS_INDEX_PATH))
+                    import pickle
+                    with open(old_pkl, "rb") as f:
+                        data = pickle.load(f)
+                    self.cv_documents = data.get("docs", []) if isinstance(data, dict) else data
+                    self.chunk_metadata = data.get("chunks", []) if isinstance(data, dict) else []
+                    self._save_index()
+                    old_pkl.rename(old_pkl.with_suffix('.pkl.bak'))
+                    logger.info("ATS: Migration complete.")
+                else:
+                    self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
+                    self.cv_documents = []
+                    self.chunk_metadata = []
+                    logger.info("ATS: Created new FAISS index")
         except Exception as e:
             logger.error(f"ATS index init error: {e}")
             import faiss
@@ -109,14 +126,15 @@ class ATSService:
     def _save_index(self):
         """
         Save both the FAISS index and the CV/chunk metadata to disk.
+        Metadata is stored as JSON (safe) — the binary FAISS index is
+        written separately via faiss.write_index.
         NOTE: Only ONE definition of _save_index should exist to prevent data loss.
         """
         import faiss
         config.init_directories()
         faiss.write_index(self.index, str(ATS_INDEX_PATH))
-        with open(ATS_DOCS_PATH, "wb") as f:
-            # CRITICAL: Save BOTH docs and chunks together
-            pickle.dump({"docs": self.cv_documents, "chunks": self.chunk_metadata}, f)
+        with open(ATS_DOCS_PATH, "w", encoding="utf-8") as f:
+            json.dump({"docs": self.cv_documents, "chunks": self.chunk_metadata}, f, ensure_ascii=False)
         logger.debug(f"ATS: Saved index ({len(self.cv_documents)} CVs, {len(self.chunk_metadata)} chunks)")
 
     @staticmethod
@@ -139,8 +157,8 @@ class ATSService:
             text = pdfminer_extract(path) or ""
             if text.strip() and len(text.strip()) > 50:
                 return text.strip()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(f"ATS: pdfminer text extraction failed for {os.path.basename(path)}: {exc}")
 
         # Method 2: PyPDF2 (fast fallback)
         try:
@@ -152,8 +170,8 @@ class ATSService:
                 )
             if text.strip():
                 return text.strip()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(f"ATS: PyPDF2 text extraction failed for {os.path.basename(path)}: {exc}")
 
         return None
 
@@ -164,7 +182,7 @@ class ATSService:
         """
         if not text:
             return None
-            
+
         # 1. Strip markdown code fences
         cleaned = re.sub(r"```(?:json)?", "", text, flags=re.IGNORECASE).strip()
         cleaned = cleaned.replace("```", "")
@@ -172,24 +190,27 @@ class ATSService:
         # 2. Find the outermost braces
         start = cleaned.find("{")
         end = cleaned.rfind("}")
-        
+
         if start == -1 or end == -1 or end <= start:
             return None
-            
+
         candidate = cleaned[start:end+1]
-        
+
+        # Try direct parse first
         try:
             return json.loads(candidate)
         except json.JSONDecodeError:
-            # Try to fix common small model errors (trailing commas, etc.)
-            try:
-                # Remove trailing commas before closing braces/brackets
-                fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
-                # Remove common non-JSON characters that might slip in
-                fixed = re.sub(r"(\w+):", r'"\1":', fixed) # Fix unquoted keys
-                return json.loads(fixed)
-            except Exception:
-                return None
+            pass
+
+        # Fix trailing commas (most common model error)
+        try:
+            fixed = re.sub(r",\s*([\]}])", r"\1", candidate)
+            return json.loads(fixed)
+        except json.JSONDecodeError:
+            pass
+
+        logger.warning(f"ATS: JSON extraction failed. Raw (200 chars): {candidate[:200]!r}")
+        return None
 
     def _extract_entities_with_spacy(self, text: str) -> Dict:
         """
@@ -207,7 +228,7 @@ class ATSService:
         try:
             # Only process first 10k chars for speed
             doc = self._nlp(text[:10000])
-            entities = {
+            entities: Dict[str, Any] = {
                 "persons": list(set([ent.text for ent in doc.ents if ent.label_ == "PERSON"])),
                 "organizations": list(set([ent.text for ent in doc.ents if ent.label_ == "ORG"])),
                 "locations": list(set([ent.text for ent in doc.ents if ent.label_ == "GPE"])),
@@ -223,6 +244,20 @@ class ATSService:
         except Exception as e:
             logger.error(f"ATS: spaCy extraction error: {e}")
             return {}
+            
+    def _scale_similarity(self, raw_sim: float) -> float:
+        """
+        Scale raw similarity score to naturally distributed percentage for human consumption.
+        Addresses embedding anisotropy where raw similarity values are clustered in [0.58, 0.82].
+        """
+        min_val = 0.58
+        max_val = 0.82
+        if raw_sim <= min_val:
+            return (raw_sim / min_val) * 0.10
+        elif raw_sim >= max_val:
+            return 0.95 + ((raw_sim - max_val) / (1.0 - max_val)) * 0.05
+        else:
+            return 0.10 + ((raw_sim - min_val) / (max_val - min_val)) * 0.85
 
     # ------------------------------------------------------------------ #
     #  Public API                                                          #
@@ -263,6 +298,13 @@ class ATSService:
 
         for path in file_paths:
             filename = os.path.basename(path)
+
+            # Skip duplicate filenames
+            if any(d["filename"] == filename for d in self.cv_documents):
+                logger.warning(f"ATS: Skipping duplicate CV '{filename}' — already indexed")
+                failed.append(f"{filename} (duplicate)")
+                continue
+
             text = self._extract_text_from_pdf(path)
             if not text:
                 logger.warning(f"ATS: Could not extract text from {filename}")
@@ -328,7 +370,13 @@ class ATSService:
 
             meta = self.chunk_metadata[idx]
             doc_id = meta["doc_id"]
-            sim = 1 / (1 + float(dist))
+            if float(dist) < 4.0:
+                # Normalized vectors: L2^2 = 2 - 2*cos_sim => cos_sim = 1 - L2^2 / 2
+                cos_sim = 1.0 - (float(dist) / 2.0)
+                sim = max(0.0, min(1.0, cos_sim))
+            else:
+                # Unnormalized fallback: scale to a reasonable score
+                sim = 1.0 / (1.0 + (float(dist) / 100.0))
 
             if doc_id not in doc_analysis:
                 doc_analysis[doc_id] = {"scores": []}
@@ -347,15 +395,16 @@ class ATSService:
 
             # Grouping by filename to avoid duplicates if same file uploaded multiple times
             existing = next((c for c in candidates if c["filename"] == doc["filename"]), None)
+            scaled_score = round(self._scale_similarity(final_sim) * 100, 1)
             if existing:
-                if final_sim > existing["similarity_score"]:
-                    existing["similarity_score"] = round(final_sim * 100, 1)
+                if scaled_score > existing["similarity_score"]:
+                    existing["similarity_score"] = scaled_score
                 continue
 
             candidates.append({
                 "id": doc_id,
                 "filename": doc["filename"],
-                "similarity_score": round(final_sim * 100, 1),
+                "similarity_score": scaled_score,
                 "full_text": doc.get("full_text", ""),
                 "parsed_info": doc.get("parsed_info", {}),
             })
@@ -375,11 +424,191 @@ class ATSService:
         top_n: int = 3,
     ) -> Dict:
         """
-        FAST MODE: Skips LLM 'thinking' and returns results immediately 
-        based on similarity scores to avoid timeouts on slow hardware.
+        Re-rank top candidates using LLM reasoning.
+        Falls back gracefully if LLM is unavailable or times out.
         """
-        logger.info(f"ATS: Fast Ranking Mode (Skipping LLM thinking for {len(candidates)} candidates)")
-        return self._fallback_ranking(candidates, top_n)
+        if not candidates:
+            return {"top_candidates": [], "selection_summary": "No candidates to rank."}
+
+        top_candidates = candidates[:min(10, len(candidates))]
+
+        try:
+            from services.agent.ollama_service import ollama_service
+            from models import database
+
+            settings = database.get_model_settings()
+            model_name = settings.get("active_model", config.DEFAULT_MODEL)
+
+            candidates_text = ""
+            for i, c in enumerate(top_candidates, 1):
+                info = c.get("parsed_info", {})
+                name = info.get("candidate_name", c["filename"])
+                skills = ", ".join(info.get("organizations", [])[:5]) or "N/A"
+                score = c["similarity_score"]
+                candidates_text += (
+                    f"\n[{i}] {name} | Score: {score}% | Skills: {skills}\n"
+                    f"    CV Summary: {c.get('full_text', '')[:400]}\n"
+                )
+
+            prompt = f"""Rank the top {top_n} candidates for this job. Return ONLY JSON.
+
+JOB: {jd_text[:600]}
+
+CANDIDATES:
+{candidates_text}
+
+Return this exact format:
+{{"candidates": [{{
+  "rank": 1,
+  "filename": "from input",
+  "score": 85,
+  "strengths": ["s1", "s2"],
+  "weaknesses": ["w1"],
+  "reason": "in Arabic"
+}}], "summary": "in Arabic"}}
+
+Select exactly {top_n}."""
+
+            # Use fast model for ATS ranking (1.7b is better for JSON than company-assistant)
+            from config import UTILITY_MODEL_NAME
+            ats_model = UTILITY_MODEL_NAME or model_name
+
+            raw = ollama_service.generate(
+                prompt=prompt,
+                model=ats_model,
+                system_prompt=(
+                    "/no_think\n"
+                    "You are a JSON-only assistant. Output ONLY a JSON object. "
+                    "No markdown, no code fences, no explanation, no text outside the JSON. "
+                    "Start with { and end with }."
+                ),
+                temperature=0.1,
+                timeout=500,
+                max_tokens=500,
+                json_mode=False,
+            )
+
+            logger.debug(f"ATS: LLM raw response (first 300 chars): {raw[:300]!r}")
+            result = self._extract_json_from_text(raw)
+            if result and "candidates" in result and len(result["candidates"]) > 0:
+                for item in result["candidates"]:
+                    match = next((
+                        c for c in top_candidates
+                        if c["filename"].strip().lower() == item.get("filename", "").strip().lower()
+                    ), None)
+                    if match:
+                        item["id"] = match["id"]
+                        item["parsed_info"] = match.get("parsed_info", {})
+                        if "score" not in item or not item["score"]:
+                            item["score"] = int(match["similarity_score"])
+                    else:
+                        item["score"] = item.get("score", 0)
+                # Normalize field names for downstream
+                for item in result["candidates"]:
+                    item["overall_score"] = item.pop("score", 0)
+                    item["why_selected"] = item.pop("reason", "")
+                output = {
+                    "top_candidates": result["candidates"],
+                    "selection_summary": result.get("summary", "تم الترتيب بناءً على تحليل الذكاء الاصطناعي."),
+                }
+                logger.info(f"ATS: LLM ranked {len(output['top_candidates'])} candidates successfully")
+                return output
+
+            logger.warning(f"ATS: LLM returned invalid/unusable JSON. Raw (500 chars): {raw[:500]!r}")
+            # Try simpler format before expensive individual reasoning
+            simple = self._try_simple_list_ranking(jd_text, top_candidates[:top_n], model_name)
+            if simple:
+                return simple
+            return self._fallback_ranking(candidates, top_n)
+
+        except Exception as exc:
+            logger.warning(f"ATS: LLM ranking failed ({exc}), using similarity fallback")
+            return self._fallback_ranking(candidates, top_n)
+
+    def _try_simple_list_ranking(self, jd_text: str, top_candidates: List[Dict], model_name: str) -> Optional[Dict]:
+        """
+        Intermediate fallback: ask LLM for a simple ranked list (easier than full JSON).
+        Returns None if this also fails.
+        """
+        from services.agent.ollama_service import ollama_service
+
+        filenames = [c["filename"] for c in top_candidates]
+        filenames_str = ", ".join(f"{i+1}. {fn}" for i, fn in enumerate(filenames))
+
+        prompt = f"""Rank these candidates by best fit for the job. Return ONLY a numbered list.
+
+JOB: {jd_text[:400]}
+
+CANDIDATES: {filenames_str}
+
+Return ONLY this format (no JSON, no explanation):
+1. filename - reason in Arabic
+2. filename - reason in Arabic
+3. filename - reason in Arabic"""
+
+        try:
+            from config import UTILITY_MODEL_NAME
+            ats_model = UTILITY_MODEL_NAME or model_name
+
+            raw = ollama_service.generate(
+                prompt=prompt,
+                model=ats_model,
+                system_prompt="/no_think\nReturn ONLY a numbered list. No other text.",
+                temperature=0.1,
+                timeout=90,
+                max_tokens=500,
+                json_mode=False,
+            )
+            logger.debug(f"ATS: Simple ranking response: {raw[:300]!r}")
+            return self._parse_simple_list(raw, top_candidates)
+        except Exception as exc:
+            logger.debug(f"ATS: Simple list ranking failed: {exc}")
+            return None
+
+    def _parse_simple_list(self, raw: str, top_candidates: List[Dict]) -> Optional[Dict]:
+        """
+        Parse a numbered list like '1. file.pdf - reason' into a ranking result.
+        """
+        lines = [l.strip() for l in raw.strip().splitlines() if l.strip()]
+        results = []
+
+        for line in lines:
+            # Match patterns: "1. filename.pdf - reason" or "1. filename.pdf: reason" or "1) filename.pdf - reason"
+            match = re.match(r"^\d+[\.\)]\s*(.+?)(?:\s*[-:]\s*(.+))?$", line)
+            if not match:
+                continue
+
+            filename_part = match.group(1).strip()
+            reason = (match.group(2) or "").strip()
+
+            # Fuzzy match against known candidates
+            matched_candidate = next((
+                c for c in top_candidates
+                if filename_part.lower().strip() in c["filename"].lower()
+                or c["filename"].lower().strip() in filename_part.lower()
+                or c["filename"].strip().lower() == filename_part.strip().lower()
+            ), None)
+
+            if matched_candidate:
+                results.append({
+                    "rank": len(results) + 1,
+                    "id": matched_candidate["id"],
+                    "filename": matched_candidate["filename"],
+                    "overall_score": int(matched_candidate["similarity_score"]),
+                    "parsed_info": matched_candidate.get("parsed_info", {}),
+                    "strengths": [],
+                    "weaknesses": [],
+                    "why_selected": reason or f"تم الترتيب بناءً على التحليل بنسبة {matched_candidate['similarity_score']}%.",
+                })
+
+        if len(results) < 1:
+            return None
+
+        logger.info(f"ATS: Parsed {len(results)} candidates from simple list ranking")
+        return {
+            "top_candidates": results,
+            "selection_summary": "تم الترتيب بناءً على تحليل مبسط للذكاء الاصطناعي.",
+        }
 
     def _rank_with_individual_reasoning(self, jd_text: str, top_candidates: List[Dict], model_name: str) -> Dict:
         """
@@ -426,8 +655,8 @@ Return ONLY a JSON object:
                         "why_selected": reasoning.get("why_selected", f"تم اختياره بناءً على قوة المطابقة ({cand['similarity_score']}%).")
                     })
                     continue
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning(f"ATS: Individual reasoning failed for {cand['filename']}: {exc}")
             
             # Sub-fallback for this specific candidate
             results.append({

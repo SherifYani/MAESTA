@@ -2,7 +2,7 @@
 Chat Router Pipeline - Routes questions through the Dual-LLM Orchestrator.
 Handles request routing, AI matching, and background tasks.
 """
-from typing import Dict, Optional, List
+from typing import Dict, Optional, Any, List
 import asyncio
 import threading
 import json
@@ -20,7 +20,7 @@ import config
 logger = get_logger(__name__)
 
 
-def background_save_task(question: str, answer: str, source_type: str, sources: List, session_id: str, api_key_id: Optional[str]):
+def background_save_task(question: str, answer: str, source_type: str, sources: List, session_id: Optional[str], api_key_id: Optional[str], company_id: Optional[str] = None):
     """Background task to save chat history and memory without blocking the user response"""
     try:
         logger.debug(f"Background save task started for session {session_id}")
@@ -33,7 +33,8 @@ def background_save_task(question: str, answer: str, source_type: str, sources: 
             api_key_id=api_key_id, question=question, answer=answer,
             source_type=source_type,
             source_documents=json.dumps(sources),
-            session_id=session_id
+            session_id=session_id,
+            company_id=company_id,
         )
         logger.debug(f"Background save task completed for session {session_id}")
     except Exception as e:
@@ -62,7 +63,7 @@ class ChatRouterPipeline:
 
     def process_question(self, question: str, api_key_id: Optional[str] = None,
                          use_rag: bool = True, session_id: Optional[str] = None,
-                         image_b64: Optional[str] = None) -> Dict:
+                         image_b64: Optional[str] = None, runtime: Optional[Any] = None) -> Dict:
         """Route the question through the Dual-LLM pipeline"""
         sid = session_id or api_key_id or "default_session"
         logger.info(f"Pipeline processing: {question[:30]}... | use_rag={use_rag} | agent={config.USE_AGENT} | has_image={bool(image_b64)}")
@@ -74,24 +75,32 @@ class ChatRouterPipeline:
             result = loop.run_until_complete(self._async_process_with_vision(question, image_b64, sid))
         elif config.USE_AGENT:
             try:
-                result = self._process_with_agent(question, sid)
+                result = self._process_with_agent(question, sid, runtime)
             except Exception as e:
                 logger.error(f"Agent failed, falling back: {e}")
                 if use_rag:
-                    result = loop.run_until_complete(self._async_process_with_rag(question, sid))
+                    result = loop.run_until_complete(self._async_process_with_rag(question, sid, runtime))
                 else:
                     result = loop.run_until_complete(self._async_process_with_nlp(question, sid))
         elif use_rag:
-            result = loop.run_until_complete(self._async_process_with_rag(question, sid))
+            result = loop.run_until_complete(self._async_process_with_rag(question, sid, runtime))
         else:
             result = loop.run_until_complete(self._async_process_with_nlp(question, sid))
 
         # Background save
+        company_id = None
+        if runtime:
+            company_id = getattr(runtime, 'api_key_id', None)
+            # Extract company_id from tenant_id if available
+            tenant_id = getattr(runtime, 'tenant_id', '')
+            if tenant_id and tenant_id.startswith('company_'):
+                company_id = tenant_id.replace('company_', '')
+
         save_thread = threading.Thread(
             target=background_save_task,
             args=(question, result.get('answer', ''),
                   result.get('source_type', 'unknown'),
-                  result.get('sources', []), sid, api_key_id)
+                  result.get('sources', []), sid, api_key_id, company_id)
         )
         save_thread.start()
 
@@ -103,7 +112,7 @@ class ChatRouterPipeline:
 
         return result
 
-    def _process_with_agent(self, question: str, session_id: str) -> Dict:
+    def _process_with_agent(self, question: str, session_id: str, runtime: Optional[Any] = None) -> Dict:
         """Agent processing using LangGraph Supervisor"""
         from services.agent.supervisor import supervisor_app
         from langchain_core.messages import HumanMessage, AIMessage
@@ -112,17 +121,20 @@ class ChatRouterPipeline:
         AGENT_TIMEOUT_SECONDS = config.AGENT_TIMEOUT
 
         messages = []
-        # History is disabled here because large histories cause the local LLM to 
-        # slow down significantly and sometimes it mistakenly tries to re-answer old questions.
-        # We only pass the current question to keep it lightning fast.
-        try:
-            # history_dicts = self.get_chat_history(limit=0)
-            pass
-        except Exception as e:
-            logger.warning(f"Failed to load history for agent: {e}")
-
         messages.append(HumanMessage(content=question))
-        inputs = {"messages": messages}
+
+        # Build runtime dict for tenant context
+        runtime_dict = {}
+        if runtime:
+            runtime_dict = {
+                "tenant_id": getattr(runtime, 'tenant_id', ''),
+                "site_id": getattr(runtime, 'site_id', ''),
+                "bot_id": getattr(runtime, 'bot_id', ''),
+                "company_name": getattr(runtime, 'company_name', ''),
+                "api_key_id": getattr(runtime, 'api_key_id', ''),
+            }
+
+        inputs = {"messages": messages, "runtime": runtime_dict}
 
         def run_agent():
             return supervisor_app.invoke(inputs, config={"recursion_limit": 10})
@@ -139,16 +151,47 @@ class ChatRouterPipeline:
         else:
             response_text = "I'm sorry, I couldn't process your request."
 
+        # Extract sources from RAG graph output if available
+        sources = []
+        from_documents = False
+        
+        # Check metadata for sources (from rag_graph_node)
+        if "metadata" in output and output["metadata"]:
+            meta = output["metadata"]
+            if isinstance(meta, dict) and "sources" in meta:
+                sources = meta["sources"]
+                from_documents = meta.get("from_documents", False)
+        
+        # Fallback: check relevant_docs/retrieved_docs directly
+        if not sources:
+            if "relevant_docs" in output and output["relevant_docs"]:
+                for i, doc in enumerate(output["relevant_docs"][:5]):
+                    sources.append({
+                        "id": f"source_{i}",
+                        "content": doc.get("content", "")[:200],
+                        "metadata": doc.get("metadata", {})
+                    })
+                from_documents = len(sources) > 0
+            elif "retrieved_docs" in output and output["retrieved_docs"]:
+                for i, doc in enumerate(output["retrieved_docs"][:3]):
+                    sources.append({
+                        "id": f"source_{i}",
+                        "content": doc.get("content", "")[:200],
+                        "metadata": doc.get("metadata", {})
+                    })
+                from_documents = len(sources) > 0
+
         settings = database.get_model_settings()
         return {
             'answer': response_text,
-            'source_type': 'agent_network',
+            'source_type': 'rag_graph' if from_documents else 'agent_network',
             'rag_enabled': True,
+            'from_documents': from_documents,
             'models_used': [settings.get('active_model', config.DEFAULT_MODEL)],
-            'sources': []
+            'sources': sources,
         }
 
-    async def _async_process_with_rag(self, question: str, session_id: str) -> Dict:
+    async def _async_process_with_rag(self, question: str, session_id: str, runtime: Optional[Any] = None) -> Dict:
         """Asynchronous RAG pipeline using the advanced RAG Graph workflow"""
         logger.info(f"Pipeline: Routing through RAG Graph... | Session: {session_id}")
         
@@ -161,7 +204,11 @@ class ChatRouterPipeline:
             retrieval_attempts=0,
             generation_attempts=0,
             is_grounded=True,
-            language="ar"
+            language="ar",
+            tenant_id=runtime.tenant_id if runtime else "",
+            site_id=runtime.site_id if runtime else "",
+            bot_id=runtime.bot_id if runtime else "",
+            company_name=getattr(runtime, 'company_name', '') if runtime else "",
         )
 
         try:

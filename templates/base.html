@@ -76,10 +76,22 @@
                         <span>الاختبارات (Quizzes)</span>
                     </a>
                     -->
+                    <a href="{{ url_for('admin_ai.overview') }}" 
+                       class="nav-link {% if request.endpoint and request.endpoint.startswith('admin_ai.') %}active{% endif %}">
+                        <span class="icon">🧠</span>
+                        <span>لوحة قيادة الـ AI</span>
+                    </a>
+                    
                     <a href="{{ url_for('ats.ats_main') }}" 
                        class="nav-link {% if request.endpoint and request.endpoint.startswith('ats.') %}active{% endif %}">
                         <span class="icon">🎯</span>
                         <span>محلل السير الذاتية (ATS)</span>
+                    </a>
+                    
+                    <a href="{{ url_for('admin.companies') }}"
+                       class="nav-link {% if request.endpoint and 'company' in (request.endpoint or '') %}active{% endif %}">
+                        <span class="icon">🏢</span>
+                        <span>إدارة الشركات</span>
                     </a>
                 </div>
 

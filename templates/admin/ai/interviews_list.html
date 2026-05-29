@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-gradient"><i class="fas fa-comments-alt me-2"></i>إدارة المقابلات الذكية</h2>
+    </div>
+
+    <div class="glass-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle custom-table">
+                <thead>
+                    <tr>
+                        <th>المعرف</th>
+                        <th>الوظيفة</th>
+                        <th>المرشح</th>
+                        <th>الحالة</th>
+                        <th>الموافقة</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for interview in interviews %}
+                    <tr>
+                        <td><code class="text-info">{{ interview.id[:8] }}...</code></td>
+                        <td>{{ interview.job_id }}</td>
+                        <td>{{ interview.candidate_id }}</td>
+                        <td>
+                            <span class="badge rounded-pill 
+                                {% if interview.status == 'completed' %}bg-success
+                                {% elif interview.status == 'in_progress' %}bg-primary
+                                {% elif interview.status == 'cancelled' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ interview.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if interview.consent_status == 'accepted' %}bg-success
+                                {% elif interview.consent_status == 'declined' %}bg-danger
+                                {% else %}bg-warning{% endif %} text-dark">
+                                {{ interview.consent_status }}
+                            </span>
+                        </td>
+                        <td>{{ interview.created_at }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('admin_ai.interview_detail', id=interview.id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('admin_ai.interview_report', id=interview.id) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-file-chart-line"></i>
+                                </a>
+                                {% if interview.status != 'cancelled' and interview.status != 'completed' %}
+                                <form action="{{ url_for('admin_ai.cancel_interview', id=interview.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('هل أنت متأكد من إلغاء المقابلة؟')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                لا توجد مقابلات مسجلة حالياً.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(45deg, #00f2fe 0%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+.custom-table {
+    color: #e0e0e0;
+}
+.custom-table thead th {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: #4facfe;
+    font-weight: 600;
+}
+.custom-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}تفاصيل مسودة الوظيفة - {{ draft.title }} | MAESTA AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-hero {
+    background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(16,185,129,0.08) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+.job-icon-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(99,102,241,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+@media (max-width: 900px) {
+    .detail-grid { grid-template-columns: 1fr; }
+}
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    gap: 16px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label {
+    color: var(--text-muted);
+    min-width: 140px;
+    flex-shrink: 0;
+}
+.info-val {
+    color: var(--text-primary);
+    text-align: left;
+    font-weight: 500;
+    word-break: break-word;
+}
+.section-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.section-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.req-tag {
+    display: inline-block;
+    background: rgba(99,102,241,0.15);
+    color: var(--accent-primary);
+    border: 1px solid rgba(99,102,241,0.3);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin: 4px;
+}
+.desc-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.json-block {
+    background: #09090e;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #a5f3fc;
+    max-height: 300px;
+    overflow-y: auto;
+    direction: ltr;
+    text-align: left;
+    margin-top: 12px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="direction: rtl;">
+    <!-- زر الرجوع -->
+    <a href="{{ url_for('admin_ai.jobs') }}" class="btn btn-secondary btn-sm" style="margin-bottom: 20px; font-size: 12px;">
+        ⬅️ العودة لقائمة الوظائف
+    </a>
+
+    <!-- Hero Section -->
+    <div class="detail-hero">
+        <div class="job-icon-badge">💼</div>
+        <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h2 style="font-size: 22px; font-weight: 700; margin: 0;">{{ draft.title or 'وظيفة بدون عنوان' }}</h2>
+                <span class="badge {% if draft.status == 'approved' %}badge-success{% elif draft.status == 'pending' %}badge-warning{% elif draft.status == 'rejected' %}badge-danger{% else %}badge-info{% endif %}">
+                    {% if draft.status == 'approved' %}✅ معتمدة{% elif draft.status == 'pending' %}⏳ قيد المراجعة{% elif draft.status == 'rejected' %}❌ مرفوضة{% else %}{{ draft.status }}{% endif %}
+                </span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); display: flex; gap: 20px; flex-wrap: wrap;">
+                <span>🆔 {{ draft.id[:12] }}...</span>
+                <span>📅 {{ draft.created_at[:10] if draft.created_at else 'غير محدد' }}</span>
+                <span>🤖 Bot: <code style="font-size: 11px;">{{ draft.bot_id }}</code></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <!-- العمود الأيمن -->
+        <div>
+            <!-- بيانات الوظيفة الأساسية -->
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--accent-primary);">📋 بيانات الوظيفة الأساسية</h3>
+                
+                {% set job = draft.job_post if draft.job_post else {} %}
+                
+                <div class="info-row">
+                    <span class="info-label">عنوان الوظيفة</span>
+                    <span class="info-val">{{ job.get('title', draft.title or '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الشركة</span>
+                    <span class="info-val">{{ job.get('company', '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الموقع / المكان</span>
+                    <span class="info-val">{{ job.get('location', '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">نوع التوظيف</span>
+                    <span class="info-val">
+                        {% set emp_type = job.get('employment_type', '') %}
+                        {% if emp_type == 'full_time' %}🟢 دوام كامل
+                        {% elif emp_type == 'part_time' %}🟡 دوام جزئي
+                        {% elif emp_type == 'contract' %}🔵 عقد مؤقت
+                        {% elif emp_type == 'remote' %}🏠 عن بُعد
+                        {% else %}{{ emp_type or '—' }}{% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">مستوى الخبرة</span>
+                    <span class="info-val">{{ job.get('experience_level', '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الراتب المتوقع</span>
+                    <span class="info-val" style="color: var(--success);">
+                        {% if job.get('salary_min') and job.get('salary_max') %}
+                            {{ job.salary_min | int | string }} – {{ job.salary_max | int | string }} {{ job.get('currency', 'SAR') }}
+                        {% elif job.get('salary_range') %}
+                            {{ job.salary_range }}
+                        {% else %}
+                            غير محدد
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">تاريخ الانتهاء</span>
+                    <span class="info-val">{{ job.get('deadline', '—') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">تاريخ الإنشاء</span>
+                    <span class="info-val">{{ draft.created_at or '—' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">تاريخ التحديث</span>
+                    <span class="info-val">{{ draft.updated_at or '—' }}</span>
+                </div>
+            </div>
+
+            <!-- حالة المسودة والموافقة -->
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--warning);">⚡ حالة المسودة والموافقة</h3>
+                <div class="info-row">
+                    <span class="info-label">الحالة الحالية</span>
+                    <span class="info-val">
+                        <span class="badge {% if draft.status == 'approved' %}badge-success{% elif draft.status == 'pending' %}badge-warning{% elif draft.status == 'rejected' %}badge-danger{% else %}badge-info{% endif %}">
+                            {{ draft.status }}
+                        </span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">معرف الموافقة</span>
+                    <span class="info-val"><code style="font-size: 11px;">{{ draft.approval_id[:16] + '...' if draft.approval_id else '—' }}</code></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tenant ID</span>
+                    <span class="info-val"><code style="font-size: 11px;">{{ draft.tenant_id }}</code></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Site ID</span>
+                    <span class="info-val"><code style="font-size: 11px;">{{ draft.site_id }}</code></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bot ID</span>
+                    <span class="info-val"><code style="font-size: 11px;">{{ draft.bot_id }}</code></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- العمود الأيسر -->
+        <div>
+            <!-- وصف الوظيفة -->
+            {% set job = draft.job_post if draft.job_post else {} %}
+            {% if job.get('description') or job.get('summary') %}
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary);">📄 وصف الوظيفة</h3>
+                <p class="desc-text">{{ job.get('description') or job.get('summary') or '—' }}</p>
+            </div>
+            {% endif %}
+
+            <!-- المتطلبات -->
+            {% if job.get('requirements') %}
+            <div class="section-card">
+                <h4>🎯 المتطلبات والمؤهلات</h4>
+                {% if job.requirements is string %}
+                    <p class="desc-text">{{ job.requirements }}</p>
+                {% else %}
+                    {% for req in job.requirements %}
+                    <span class="req-tag">{{ req }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- المهارات المطلوبة -->
+            {% if job.get('skills') or job.get('required_skills') %}
+            <div class="section-card">
+                <h4>💡 المهارات التقنية المطلوبة</h4>
+                {% set skills_list = job.get('skills') or job.get('required_skills') %}
+                {% if skills_list is string %}
+                    <p class="desc-text">{{ skills_list }}</p>
+                {% else %}
+                    {% for skill in skills_list %}
+                    <span class="req-tag" style="background: rgba(16,185,129,0.1); color: var(--success); border-color: rgba(16,185,129,0.3);">{{ skill }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Raw JSON للمطورين -->
+            <div class="card">
+                <h3 style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>🔧 بيانات JSON الخام (للمطورين)</span>
+                    <button onclick="toggleJson()" class="btn btn-secondary btn-sm" style="font-size: 11px;">عرض/إخفاء</button>
+                </h3>
+                <div id="jsonBlock" class="json-block" style="display:none;">{{ draft | tojson(indent=2) }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- أزرار الإجراءات -->
+    <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+        <a href="{{ url_for('admin_ai.jobs') }}" class="btn btn-secondary">⬅️ العودة للقائمة</a>
+        {% if draft.approval_id %}
+        <a href="{{ url_for('admin_ai.approval_detail', id=draft.approval_id) }}" class="btn btn-primary">🔍 عرض تفاصيل الموافقة</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleJson() {
+    const block = document.getElementById('jsonBlock');
+    block.style.display = block.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

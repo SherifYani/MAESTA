@@ -4,6 +4,8 @@ from controllers.admin import admin_bp
 from controllers.api import api_bp
 from controllers.quiz import quiz_bp
 from controllers.ats import ats_bp
+from chatbot.routes.admin_ai import admin_ai_bp
+from chatbot.routes.candidate_interview import candidate_interview_bp
 
 def register_controllers(app: Flask):
     """
@@ -20,3 +22,7 @@ def register_controllers(app: Flask):
     
     # ── ATS Blueprint ────────────────────────────────────────────────
     app.register_blueprint(ats_bp)
+    # ── Admin AI Blueprint ───────────────────────────────────────────
+    app.register_blueprint(admin_ai_bp)
+    # ── Candidate Interview Blueprint ─────────────────────────────────
+    app.register_blueprint(candidate_interview_bp)

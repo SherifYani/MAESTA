@@ -13,9 +13,34 @@ MAESTA Chatbot — نقطة البداية الرئيسية للتطبيق
   python main.py
 """
 
+import sys
+import os
+import builtins
+
+# Force UTF-8 encoding on stdout/stderr to support emoji and special box characters in Windows console (e.g. cp1256)
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+except Exception:
+    pass
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+
+# Monkeypatch builtins.open to handle UnicodeDecodeError in transformers library
+original_open = builtins.open
+
+def patched_open(*args, **kwargs):
+    if len(args) > 0 and isinstance(args[0], str) and 'transformers' in args[0]:
+        if kwargs.get('encoding') == 'utf-8':
+            kwargs['errors'] = 'ignore'
+    return original_open(*args, **kwargs)
+
+builtins.open = patched_open
+
+
 from flask import Flask, redirect, url_for
 from flask_cors import CORS
 import config
+
 from models import database
 
 

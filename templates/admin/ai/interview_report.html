@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-gradient"><i class="fas fa-file-chart-pie me-2"></i>التقرير الاستشاري للذكاء الاصطناعي</h2>
+        <button class="btn btn-outline-info" onclick="window.print()"><i class="fas fa-print me-2"></i>طباعة التقرير</button>
+    </div>
+
+    <div class="row">
+        <!-- Main Scores -->
+        <div class="col-md-12 mb-4">
+            <div class="glass-card p-4">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="score-circle mx-auto mb-2" style="--score: {{ report.technical_score }}%">
+                            <span>{{ report.technical_score }}%</span>
+                        </div>
+                        <h6 class="text-info">التقييم التقني</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="score-circle mx-auto mb-2" style="--score: {{ report.communication_score }}%">
+                            <span>{{ report.communication_score }}%</span>
+                        </div>
+                        <h6 class="text-info">مهارات التواصل</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="score-circle mx-auto mb-2" style="--score: {{ report.job_fit_score }}%">
+                            <span>{{ report.job_fit_score }}%</span>
+                        </div>
+                        <h6 class="text-info">ملاءمة الوظيفة</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strengths & Concerns -->
+        <div class="col-md-6 mb-4">
+            <div class="glass-card p-4 h-100 border-success-subtle">
+                <h5 class="text-success mb-3"><i class="fas fa-check-circle me-2"></i>نقاط القوة</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for strength in report.strengths %}
+                    <li class="list-group-item bg-transparent text-light border-secondary-subtle">
+                        <i class="fas fa-plus text-success me-2 small"></i>{{ strength }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="glass-card p-4 h-100 border-danger-subtle">
+                <h5 class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>مخاوف محتملة</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for concern in report.concerns %}
+                    <li class="list-group-item bg-transparent text-light border-secondary-subtle">
+                        <i class="fas fa-minus text-danger me-2 small"></i>{{ concern }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary & Recommendation -->
+        <div class="col-md-8 mb-4">
+            <div class="glass-card p-4 h-100">
+                <h5 class="text-info mb-3"><i class="fas fa-align-left me-2"></i>ملخص التقييم</h5>
+                <div class="summary-text text-light opacity-75 mb-4" style="line-height: 1.8;">
+                    {{ report.summary_for_company }}
+                </div>
+                <div class="alert alert-info border-info-subtle bg-info-subtle text-dark">
+                    <strong><i class="fas fa-lightbulb me-2"></i>توصية الوكيل:</strong> {{ report.recommendation }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Details & Evidence -->
+        <div class="col-md-4 mb-4">
+            <div class="glass-card p-4 h-100">
+                <h5 class="text-info mb-3"><i class="fas fa-search me-2"></i>بيانات إضافية</h5>
+                <div class="mb-3">
+                    <label class="text-muted small d-block">توقعات الراتب</label>
+                    <span class="text-light">{{ report.salary_expectation or 'لم يذكر' }}</span>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small d-block">الجاهزية للبدء</label>
+                    <span class="text-light">{{ report.availability or 'لم يذكر' }}</span>
+                </div>
+                <hr class="border-secondary">
+                <div class="alert alert-warning py-2 small">
+                    <i class="fas fa-user-shield me-2"></i>هذا التقرير استشاري ويتطلب مراجعة بشرية. لا يمثل قرار توظيف نهائي.
+                </div>
+            </div>
+        </div>
+
+        <!-- Relevant Quotes (Evidence) -->
+        <div class="col-md-12 mb-4">
+            <div class="glass-card p-4">
+                <h5 class="text-info mb-3"><i class="fas fa-quote-right me-2"></i>أدلة التقييم (اقتباسات من المرشح)</h5>
+                {% if report.relevant_quotes %}
+                <div class="row">
+                    {% for quote in report.relevant_quotes %}
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 border border-secondary-subtle rounded bg-dark opacity-75">
+                            <blockquote class="blockquote mb-2 fs-6 text-light">
+                                "{{ quote.text }}"
+                            </blockquote>
+                            <figcaption class="blockquote-footer text-info mb-0">
+                                سياق الدليل: <cite title="Source Title">{{ quote.context }}</cite>
+                            </figcaption>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-danger bg-danger-subtle text-danger border-danger-subtle">
+                    <i class="fas fa-exclamation-triangle me-2"></i>لا توجد أدلة كافية (Insufficient Evidence).
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(45deg, #00f2fe 0%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+.score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(#4facfe var(--score), rgba(255,255,255,0.1) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fff;
+}
+.score-circle::after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    z-index: -1;
+}
+@media print {
+    .btn, nav, .breadcrumb { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .glass-card { border: 1px solid #ccc !important; backdrop-filter: none !important; background: transparent !important; }
+    .text-light { color: black !important; }
+}
+</style>
+{% endblock %}

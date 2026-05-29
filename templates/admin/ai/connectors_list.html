@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة موصلات الأنظمة الخارجية - MAESTA AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.connectors-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 28px;
+}
+@media (max-width: 992px) {
+    .connectors-layout {
+        grid-template-columns: 1fr;
+    }
+}
+.connector-card {
+    position: relative;
+    border-radius: var(--border-radius);
+    background: var(--bg-card, #1e1e32);
+    border: 1px solid var(--border-color, #2d2d4a);
+    padding: 24px;
+    transition: var(--transition, all 0.3s ease);
+}
+.connector-card:hover {
+    border-color: var(--accent-primary, #6366f1);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+.connector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.connector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+.connector-icon {
+    font-size: 28px;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--accent-primary, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.connector-card.active-conn {
+    border-left: 4px solid var(--success, #10b981);
+}
+.connector-card.disabled-conn {
+    border-left: 4px solid var(--danger, #ef4444);
+}
+.connector-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+.connector-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.connector-details {
+    margin-top: 16px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.detail-item span:first-child {
+    color: var(--text-muted);
+}
+.detail-item span:last-child {
+    font-family: monospace;
+}
+.status-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.card-form-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--accent-primary, #6366f1);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header" style="direction: rtl;">
+    <h2>إدارة موصلات الأنظمة الخارجية (Action Connectors) 🛠️</h2>
+    <p>قم بتهيئة وتجربة موصلات البيانات لتسهيل التكامل التلقائي لإجراءات الذكاء الاصطناعي مع الأنظمة الخارجية.</p>
+</div>
+
+<div class="connectors-layout" style="direction: rtl;">
+    <!-- العمود الأيمن: قائمة الموصلات -->
+    <div>
+        <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <span>🔗</span> الموصلات المهيأة حالياً
+        </h3>
+        
+        <div class="connector-grid">
+            {% for conn in configs %}
+            <div class="connector-card {% if conn.enabled %}active-conn{% else %}disabled-conn{% endif %}">
+                <div class="connector-header">
+                    <div class="connector-icon">
+                        {% if conn.action_type == 'submit_application' %}
+                        📥
+                        {% elif conn.action_type == 'publish_job' %}
+                        💼
+                        {% elif conn.action_type == 'send_interview_invite' %}
+                        ✉️
+                        {% else %}
+                        ⚙️
+                        {% endif %}
+                    </div>
+                    
+                    <div class="status-badges">
+                        {% if conn.enabled %}
+                        <span class="badge badge-success">نشط</span>
+                        {% else %}
+                        <span class="badge badge-danger">معطل</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <h4 class="connector-title">
+                    {% if conn.action_type == 'submit_application' %}
+                    تقديم طلبات التوظيف
+                    {% elif conn.action_type == 'publish_job' %}
+                    نشر توصيف الوظائف
+                    {% elif conn.action_type == 'send_interview_invite' %}
+                    دعوات المقابلات الشخصية
+                    {% elif conn.action_type == 'send_candidate_message' %}
+                    مراسلة المتقدمين
+                    {% elif conn.action_type == 'send_company_message' %}
+                    إشعارات مسؤولي الشركة
+                    {% else %}
+                    {{ conn.action_type }}
+                    {% endif %}
+                </h4>
+                
+                <p class="connector-subtitle">نوع الموصل: <code style="color:#8b5cf6;">{{ conn.connector_type }}</code></p>
+                
+                <div class="connector-details">
+                    <div class="detail-item">
+                        <span>بيئة العمل:</span>
+                        <span>
+                            <span class="badge 
+                                {% if conn.environment == 'production' %}badge-danger
+                                {% elif conn.environment == 'staging' %}badge-warning
+                                {% else %}badge-info{% endif %} btn-sm">
+                                {{ conn.environment }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span>حالة الربط:</span>
+                        <span>
+                            <span class="badge 
+                                {% if conn.onboarding_status == 'sandbox_test_passed' %}badge-primary
+                                {% elif conn.onboarding_status == 'enabled_staging' %}badge-success
+                                {% elif conn.onboarding_status == 'failed' %}badge-danger
+                                {% else %}badge-warning{% endif %} btn-sm">
+                                {{ conn.onboarding_status }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span>الرابط المستهدف:</span>
+                        <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ conn.endpoint or 'Mock Delivery' }}">
+                            {{ conn.endpoint or 'Mock Delivery' }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                    <a href="{{ url_for('admin_ai.connector_detail', id=conn.id) }}" class="btn btn-secondary btn-sm" style="width: 100%;">
+                        🔍 استعراض واختبار الموصل
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="card text-center" style="grid-column: 1 / -1; padding: 48px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                <h4>لا توجد موصلات خارجية مهيأة بعد</h4>
+                <p class="text-muted" style="margin-top: 8px;">استخدم النموذج الجانبي لإنشاء موصل للبدء في الربط التلقائي.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- العمود الأيسر: إضافة موصل جديد -->
+    <div>
+        <div class="card">
+            <h3 class="card-form-title">
+                <span>➕</span> إضافة موصل جديد
+            </h3>
+            
+            <form method="POST" action="{{ url_for('admin_ai.create_connector') }}">
+                <div class="form-group">
+                    <label class="form-label">نوع الإجراء المستهدف</label>
+                    <select name="action_type" class="form-select" required>
+                        <option value="submit_application">submit_application (تقديم طلبات التوظيف)</option>
+                        <option value="publish_job">publish_job (نشر وتصدير الوظائف)</option>
+                        <option value="send_interview_invite">send_interview_invite (إرسال دعوات المقابلات)</option>
+                        <option value="send_candidate_message">send_candidate_message (مراسلة المتقدمين)</option>
+                        <option value="send_company_message">send_company_message (إشعارات مسؤولي الشركة)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">نوع الاتصال</label>
+                    <select name="connector_type" class="form-select" required>
+                        <option value="webhook">Webhook (رابط خارجي مستهدف)</option>
+                        <option value="mock">Mock Connector (موصل تجريبي وهمي)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">البيئة التشغيلية</label>
+                    <select name="environment" class="form-select" required>
+                        <option value="sandbox">Sandbox (بيئة التطوير والتجربة)</option>
+                        <option value="staging">Staging (بيئة الاختبار)</option>
+                        <option value="production" disabled>Production (التشغيل الفعلي - مقفل للمرحلة التجريبية)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">عنوان الـ Webhook (Endpoint)</label>
+                    <input type="url" name="endpoint" class="form-input" placeholder="https://api.yourcompany.com/webhook" required>
+                    <small class="text-muted" style="margin-top: 4px; display: block; font-size: 11px;">مطلوب فقط في حالة Webhook. يجب استخدام HTTPS للبيئات الحقيقية.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">المضيف المسموح به (Allowed Host)</label>
+                    <input type="text" name="allowed_host" class="form-input" placeholder="api.yourcompany.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">آلية المصادقة (Auth Type)</label>
+                    <select name="auth_type" class="form-select">
+                        <option value="none">بدون مصادقة (None)</option>
+                        <option value="bearer">Bearer Token (مفتاح المصادقة)</option>
+                        <option value="basic">Basic Authentication</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">مفتاح المصادقة المستهدف (Secret Reference / Key)</label>
+                    <input type="text" name="secret_ref" class="form-input" placeholder="e.g. COMPANY_API_KEY">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:11px;">معدل الطلبات/د</label>
+                        <input type="number" name="rate_limit_per_minute" class="form-input" value="30" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:11px;">إعادة المحاولة</label>
+                        <input type="number" name="max_retries" class="form-input" value="2" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-size:11px;">المهلة (ثواني)</label>
+                        <input type="number" name="timeout_seconds" class="form-input" value="10" min="1" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">
+                    🚀 إضافة وتجهيز الموصل
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

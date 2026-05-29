@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Approval Detail{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <a href="{{ url_for('admin_ai.approvals') }}" class="btn btn-sm btn-outline">← Back</a>
+    <h2>تفاصيل طلب الموافقة والارتباط الخارجي</h2>
+</div>
+
+<div class="row">
+    <div class="col-main">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">{{ draft.action_type }}</h3>
+                <span class="badge status-{{ draft.status }}">{{ draft.status }}</span>
+            </div>
+            <div class="card-body">
+                <div class="info-grid mb-4">
+                    <div class="info-item">
+                        <label>ID:</label>
+                        <code>{{ draft.id }}</code>
+                    </div>
+                    <div class="info-item">
+                        <label>مستوى المخاطر:</label>
+                        <span class="risk-{{ draft.risk_level }}">{{ draft.risk_level }}</span>
+                    </div>
+                </div>
+
+                <div class="payload-box bg-light p-3 rounded">
+                    <h4 class="h5 mb-2">بيانات الإجراء (Payload):</h4>
+                    <pre class="m-0" style="font-size: 0.85rem;">{{ draft.draft_payload | tojson(indent=2) }}</pre>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-white border-top-0 pt-0">
+                <div class="action-buttons py-3">
+                    {% if draft.status == 'pending_backend_approval' %}
+                    <form action="{{ url_for('admin_ai.approve', id=draft.id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-success px-4">موافقة نهائية وتجهيز للتنفيذ</button>
+                    </form>
+                    <button class="btn btn-outline-danger ms-2" onclick="showRejectModal('{{ draft.id }}')">رفض الطلب</button>
+                    
+                    {% elif draft.status == 'approved' or can_retry %}
+                        {% if connector_enabled %}
+                        <form action="{{ url_for('admin_ai.execute', id=draft.id) }}" method="POST" class="d-inline">
+                            <input type="hidden" name="idempotency_key" value="{{ range(1, 1000000) | random }}">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                {% if draft.status == 'failed' %}إعادة المحاولة (Retry #{{ draft.retry_count }}){% else %}إرسال إلى الموصل (Execute Action){% endif %}
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-warning d-inline-block m-0">
+                            <i class="fas fa-exclamation-triangle"></i> الرابط (Connector) غير مُفعل لهذا الإجراء.
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">سجل عمليات التسليم (Delivery Outbox)</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>الحالة</th>
+                                <th>الموصل</th>
+                                <th>المرجع الخارجي</th>
+                                <th>Status Code</th>
+                                <th>الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in delivery_logs %}
+                            <tr>
+                                <td><span class="badge bg-{{ 'success' if log.status == 'sent' else 'danger' if log.status == 'failed' else 'secondary' }}">{{ log.status }}</span></td>
+                                <td>{{ log.connector_type }}</td>
+                                <td><code>{{ log.external_reference or '-' }}</code></td>
+                                <td>{{ log.status_code or '-' }}</td>
+                                <td class="small">{{ log.created_at }}</td>
+                            </tr>
+                            {% if log.error_message %}
+                            <tr class="table-danger">
+                                <td colspan="5" class="small text-danger">خطأ: {{ log.error_message }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            {% if not delivery_logs %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">لا يوجد سجل تسليم لهذا الطلب حتى الآن.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sidebar" style="width: 300px; flex-shrink: 0; margin-left: 20px;">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">إعدادات الموصل (Connector)</h5>
+            </div>
+            <div class="card-body">
+                {% if connector_config %}
+                <div class="connector-status mb-3">
+                    <label class="small text-muted d-block">البيئة (Environment):</label>
+                    <span class="badge bg-{{ 'info' if connector_config.environment == 'sandbox' else 'warning' if connector_config.environment == 'staging' else 'danger' }}">
+                        {{ connector_config.environment | upper }}
+                    </span>
+                </div>
+                <div class="connector-status mb-3">
+                    <label class="small text-muted d-block">وضع التشغيل:</label>
+                    {% if connector_config.dry_run %}
+                    <span class="text-info"><i class="fas fa-vial"></i> Dry Run Mode</span>
+                    {% else %}
+                    <span class="text-success"><i class="fas fa-bolt"></i> Real Mode</span>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="connector-detail mb-2">
+                    <label class="small text-muted d-block">نوع الموصل:</label>
+                    <strong>{{ connector_config.connector_type }}</strong>
+                </div>
+                <div class="connector-detail mb-2">
+                    <label class="small text-muted d-block">Endpoint:</label>
+                    <code class="small d-block text-truncate" title="{{ connector_config.endpoint }}">{{ connector_config.endpoint or 'N/A' }}</code>
+                </div>
+                <div class="connector-detail mb-2">
+                    <label class="small text-muted d-block">التوثيق (Auth):</label>
+                    <span class="badge bg-secondary">{{ connector_config.auth_type }}</span>
+                </div>
+                {% else %}
+                <p class="text-muted small">لم يتم العثور على إعدادات مخصصة لهذا الموصل. سيتم استخدام الإعدادات الافتراضية للنظام.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .row { display: flex; flex-direction: row; }
+    .col-main { flex-grow: 1; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .status-pending_backend_approval { background: #f39c12; color: #fff; }
+    .status-approved { background: #3498db; color: #fff; }
+    .status-executed { background: #2ecc71; color: #fff; }
+    .status-failed { background: #e74c3c; color: #fff; }
+    .risk-high { color: #e74c3c; font-weight: bold; }
+    .risk-medium { color: #f39c12; }
+    .risk-low { color: #2ecc71; }
+</style>
+
+<div id="rejectModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>رفض الطلب</h3>
+        <form id="rejectForm" method="POST">
+            <textarea name="reason" placeholder="سبب الرفض..." required></textarea>
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-danger">تأكيد الرفض</button>
+                <button type="button" class="btn btn-outline" onclick="hideRejectModal()">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showRejectModal(id) {
+    const modal = document.getElementById('rejectModal');
+    const form = document.getElementById('rejectForm');
+    form.action = `/admin/ai/approvals/${id}/reject`;
+    modal.style.display = 'block';
+}
+function hideRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+</script>
+{% endblock %}

@@ -67,6 +67,24 @@ endblock %} {% block content %}
           <option value="200">200</option>
         </select>
       </div>
+      <div style="flex: 0.5; min-width: 120px">
+        <label
+          for="company_id"
+          style="display: block; margin-bottom: 8px; font-weight: 500"
+          >Company</label
+        >
+        <select
+          id="company_id"
+          name="company_id"
+          class="form-control"
+          style="width: 100%"
+        >
+          <option value="">— Global —</option>
+          {% for company in companies %}
+          <option value="{{ company.id }}">{{ company.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
       <div>
         <button type="submit" class="btn btn-primary">🕷️ Start Crawl</button>
       </div>

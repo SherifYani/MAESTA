@@ -2,7 +2,7 @@
 Ollama Service - Manages connection to local Ollama server
 (Supports both Ollama native API and OpenAI-compatible /v1 API)
 """
-import requests
+import requests  # type: ignore
 import json
 from typing import List, Dict, Optional, Generator
 import config
@@ -122,6 +122,9 @@ class OllamaService:
                 "top_p": top_p,
                 "top_k": top_k,
                 "num_predict": max_tokens if max_tokens else 512,
+                "repeat_penalty": 1.3,
+                "presence_penalty": 1.3,
+                "frequency_penalty": 1.3
             }
         }
         
@@ -148,17 +151,72 @@ class OllamaService:
                     logger.warning(f"Ollama returned empty response for model={model}")
                     generated_text = "للأسف مش قادر أجاوب دلوقتي. جرب تسأل بطريقة تانية!"
                 
+                # Detect repetition loop (single word repeated >5 times)
+                words = generated_text.split()
+                if len(words) > 10:
+                    word_counts = {}
+                    for w in words:
+                        word_counts[w] = word_counts.get(w, 0) + 1
+                    most_common_count = max(word_counts.values()) if word_counts else 0
+                    if most_common_count > max(5, len(words) * 0.15):
+                        logger.warning(f"Ollama repetition loop detected ({most_common_count}x repeats). Retrying with higher penalty.")
+                        payload["options"]["repeat_penalty"] = 2.0
+                        payload["options"]["frequency_penalty"] = 2.0
+                        retry_resp = requests.post(
+                            f"{self.base_url}/api/chat",
+                            json=payload,
+                            timeout=gen_timeout
+                        )
+                        if retry_resp.status_code == 200:
+                            retry_text = retry_resp.json().get("message", {}).get("content", "").strip()
+                            if retry_text:
+                                logger.info(f"Ollama retry succeeded | model={model}")
+                                return retry_text
+                        logger.warning("Ollama retry also failed, returning fallback")
+                        return "عذراً، حدث خطأ في توليد الإجابة. يرجى المحاولة مرة أخرى."
+                
                 logger.info(f"Ollama took {elapsed:.2f}s | model={model}")
                 return generated_text
             else:
                 logger.error(f"Ollama generation failed: {response.status_code} - {response.text}")
                 raise OllamaGenerationError(model, f"HTTP {response.status_code}")
                 
-        except requests.exceptions.Timeout:
-            raise OllamaGenerationError(model, f"انتهت مهلة الانتظار ({gen_timeout} ثانية).")
+        except requests.exceptions.Timeout as e:
+            logger.error(f"Ollama timeout error (timeout={gen_timeout}s): {e}")
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "timeout",
+                    "message": "انتهت مهلة الانتظار أثناء الاتصال بخدمة الذكاء الاصطناعي Ollama.",
+                    "status": "failed",
+                    "strengths": ["لا يمكن جلب البيانات بسبب انتهاء المهلة"],
+                    "weaknesses": [],
+                    "why_selected": "حدثت مهلة اتصال أثناء التحليل الفردي للمترشح."
+                }, ensure_ascii=False)
+            return "عذراً، انتهت مهلة الانتظار أثناء الاتصال بخدمة الذكاء الاصطناعي Ollama. يرجى المحاولة مرة أخرى لاحقاً."
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Ollama connection error: {e}")
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "connection",
+                    "message": "تعذر الاتصال بخدمة الذكاء الاصطناعي Ollama (الخادم غير متصل أو متوقف).",
+                    "status": "failed",
+                    "strengths": ["لا يمكن جلب البيانات بسبب عطل في الاتصال"],
+                    "weaknesses": [],
+                    "why_selected": "حدث عطل في الاتصال بخدمة الذكاء الاصطناعي أثناء تحليل المترشح."
+                }, ensure_ascii=False)
+            return "عذراً، تعذر الاتصال بخدمة الذكاء الاصطناعي Ollama. يرجى التأكد من أن الخادم قيد التشغيل."
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
-            raise OllamaGenerationError(model, str(e))
+            logger.error(f"Unexpected error during Ollama generation: {e}")
+            sentry_sdk.capture_exception(e)
+            if json_mode:
+                return json.dumps({
+                    "error": "unexpected",
+                    "message": f"حدث خطأ غير متوقع: {str(e)}",
+                    "status": "failed"
+                }, ensure_ascii=False)
+            return f"عذراً، حدث خطأ غير متوقع أثناء معالجة الطلب: {str(e)}"
     
     def generate_stream(self, prompt: str, model: str | None = None,
                         system_prompt: str | None = None,
@@ -226,14 +284,38 @@ class OllamaService:
             return False
     
     def embed(self, texts: List[str], model: str | None = None) -> List[List[float]]:
-        """Get embeddings for a list of texts using Ollama /api/embeddings endpoint"""
+        """Get embeddings for a list of texts using Ollama /api/embed (batch) with fallback to /api/embeddings"""
         model = model or config.EMBEDDING_MODEL
         logger.debug(f"Getting embeddings for {len(texts)} texts with model: {model}")
         
+        if not texts:
+            return []
+
+        # Try batch /api/embed first
+        try:
+            logger.debug("Attempting batch embedding via /api/embed")
+            response = requests.post(
+                f"{self.base_url}/api/embed",
+                json={"model": model, "input": texts},
+                timeout=120
+            )
+            if response.status_code == 200:
+                data = response.json()
+                embeddings = data.get("embeddings", [])
+                if embeddings and len(embeddings) == len(texts):
+                    logger.debug(f"Successfully retrieved {len(embeddings)} batch embeddings from /api/embed")
+                    return embeddings
+                logger.warning(f"Batch embedding returned unexpected result (length mismatch or empty). Falling back.")
+            else:
+                logger.warning(f"Batch embedding /api/embed returned status code {response.status_code}. Falling back.")
+        except Exception as e:
+            logger.warning(f"Batch embedding via /api/embed failed ({e}). Falling back to sequential /api/embeddings.")
+
+        # Fallback to sequential /api/embeddings
         try:
             embeddings = []
             for i, text in enumerate(texts):
-                logger.debug(f"Embedding text {i+1}/{len(texts)}")
+                logger.debug(f"Embedding text {i+1}/{len(texts)} (fallback)")
                 response = requests.post(
                     f"{self.base_url}/api/embeddings",
                     json={"model": model, "prompt": text},
@@ -251,12 +333,13 @@ class OllamaService:
             if len(embeddings) == 0 and len(texts) > 0:
                 raise OllamaGenerationError(model, "No embeddings returned")
 
-            logger.debug(f"Successfully retrieved {len(embeddings)} embeddings from Ollama")
+            logger.debug(f"Successfully retrieved {len(embeddings)} embeddings from Ollama fallback")
             return embeddings
                 
         except Exception as e:
             logger.error(f"Error getting embeddings from Ollama: {e}")
             raise OllamaGenerationError(model, str(e))
+
 
     def _format_size(self, size_bytes: float) -> str:
         """Format file size to human readable format"""

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}{{ 'تعديل' if company else 'إضافة' }} شركة{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-container { direction: rtl; text-align: right; max-width: 800px; margin: 0 auto; }
+.section-card {
+    background: var(--bg-secondary, #1e1e2e);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 14px; padding: 24px; margin-bottom: 24px;
+}
+.section-card h3 { margin: 0 0 18px; font-size: 1.05rem; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted, #aaa); }
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%; background: var(--bg-primary, #13131f);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--text-primary, #eee); font-size: 0.9rem; box-sizing: border-box;
+    resize: vertical;
+}
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: #818cf8; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.btn-primary-ats {
+    background: linear-gradient(135deg, #4c1d95, #818cf8);
+    color: white; border: none; border-radius: 8px;
+    padding: 11px 26px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+}
+.btn-secondary { background: transparent; color: #888; border: 1px solid #444; border-radius: 8px; padding: 11px 26px; text-decoration: none; font-size: 0.95rem; }
+.stats-box { background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.2); border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; gap: 24px; }
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 1.5rem; font-weight: 700; color: #818cf8; }
+.stat-item .lbl { font-size: 0.75rem; color: #888; }
+.help-text { font-size: 0.75rem; color: #666; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 style="margin-bottom: 20px;">{{ 'تعديل' if company else 'إضافة شركة جديدة' }}</h2>
+
+    {% if company and stats %}
+    <div class="stats-box">
+        <div class="stat-item"><div class="num">{{ stats.documents }}</div><div class="lbl">مستندات</div></div>
+        <div class="stat-item"><div class="num">{{ stats.chats }}</div><div class="lbl">محادثات</div></div>
+        <div class="stat-item"><div class="num">{{ stats.api_keys }}</div><div class="lbl">API Keys</div></div>
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        <div class="section-card">
+            <h3>المعلومات الأساسية</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>اسم الشركة *</label>
+                    <input type="text" name="name" value="{{ company.name if company else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug (للروابط) *</label>
+                    <input type="text" name="slug" value="{{ company.slug if company else '' }}" required
+                           placeholder="my-company">
+                    <div class="help-text">يُستخدم في: api_key, chat URL, etc.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>الوصف</label>
+                <textarea name="description" rows="2">{{ company.description if company else '' }}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>اللغة الافتراضية</label>
+                    <select name="language">
+                        <option value="ar" {{ 'selected' if company and company.language == 'ar' }}>العربية</option>
+                        <option value="en" {{ 'selected' if company and company.language == 'en' }}>English</option>
+                        <option value="auto" {{ 'selected' if company and company.language == 'auto' }}>تلقائي (حسب المستخدم)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الحالة</label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" name="is_active" {{ 'checked' if not company or company.is_active else '' }}>
+                        <span>نشط</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3>إعدادات الشخصية (Company Persona)</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>نوع النشاط</label>
+                    <input type="text" name="business_type" value="{{ company.business_type if company else '' }}"
+                           placeholder="مثال: شركة تقنية, جامعة, مستشفى">
+                </div>
+                <div class="form-group">
+                    <label>نوع المنصة</label>
+                    <input type="text" name="platform_type" value="{{ company.platform_type if company else '' }}"
+                           placeholder="مثال: موقع إلكتروني, تطبيق موبايل">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>أسلوب التواص (Tone)</label>
+                <input type="text" name="tone" value="{{ company.tone if company else 'helpful, clear Arabic' }}"
+                       placeholder="مثال: رسمي, ودي, مهني">
+            </div>
+            <div class="form-group">
+                <label>سلوك الدعم</label>
+                <input type="text" name="support_behavior"
+                       value="{{ company.support_behavior if company else 'answer only from available information' }}">
+            </div>
+            <div class="form-group">
+                <label>رسالة الخطأ (Fallback)</label>
+                <input type="text" name="fallback_message"
+                       value="{{ company.fallback_message if company else 'المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.' }}">
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3>System Prompt مخصص (اختياري)</h3>
+            <div class="form-group">
+                <label>System Prompt</label>
+                <textarea name="system_prompt" rows="6"
+                          placeholder="اتركه فاضي لاستخدام الـ prompt الافتراضي. اكتب prompt مخصص إذا أردت تخصيص ردود الشركة.">{{ company.system_prompt if company else '' }}</textarea>
+                <div class="help-text">إذا كان فاضيًا، سيستخدم الـ prompt الافتراضي.</div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <button type="submit" class="btn-primary-ats">
+                {{ 'حفظ التعديلات' if company else 'إنشاء الشركة' }}
+            </button>
+            <a href="{{ url_for('admin.companies') }}" class="btn-secondary">إلغاء</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

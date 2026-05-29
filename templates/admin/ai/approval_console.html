@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Approval Console - MAESTA AI{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>لوحة الموافقات (Approval Console)</h2>
+    <p class="text-muted">مراجعة مخرجات الذكاء الاصطناعي والموافقة على تغيير حالتها.</p>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>النوع</th>
+                    <th>الوصف</th>
+                    <th>مستوى المخاطر</th>
+                    <th>الحالة</th>
+                    <th>تاريخ الإنشاء</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for draft in drafts %}
+                <tr>
+                    <td><span class="badge badge-primary">{{ draft.action_type }}</span></td>
+                    <td>{{ draft.draft_payload.summary or "بدون وصف" }}</td>
+                    <td>
+                        <span class="badge {% if draft.risk_level == 'high' %}badge-danger{% elif draft.risk_level == 'medium' %}badge-warning{% else %}badge-success{% endif %}">
+                            {{ draft.risk_level }}
+                        </span>
+                    </td>
+                    <td><span class="status-dot {{ draft.status }}"></span> {{ draft.status }}</td>
+                    <td>{{ draft.created_at }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('admin_ai.approval_detail', id=draft.id) }}" class="btn btn-sm btn-outline">مراجعة</a>
+                            {% if draft.status == 'pending_backend_approval' %}
+                            <form action="{{ url_for('admin_ai.approve', id=draft.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">موافقة</button>
+                            </form>
+                            <button class="btn btn-sm btn-danger" onclick="showRejectModal('{{ draft.id }}')">رفض</button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">لا يوجد طلبات موافقة معلقة.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>رفض الطلب</h3>
+        <form id="rejectForm" method="POST">
+            <div class="form-group">
+                <label>سبب الرفض:</label>
+                <textarea name="reason" rows="3" class="form-control" placeholder="اختياري..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeRejectModal()">إلغاء</button>
+                <button type="submit" class="btn btn-danger">تأكيد الرفض</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showRejectModal(id) {
+    const modal = document.getElementById('rejectModal');
+    const form = document.getElementById('rejectForm');
+    form.action = `/admin/ai/approvals/${id}/reject`;
+    modal.style.display = 'flex';
+}
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+</script>
+
+<style>
+.modal {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center;
+    z-index: 1000;
+}
+.modal-content {
+    background: white; padding: 30px; border-radius: 12px; width: 400px;
+}
+.status-dot {
+    height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px;
+}
+.status-dot.pending_backend_approval { background-color: #ffc107; }
+.status-dot.approved { background-color: #28a745; }
+.status-dot.rejected { background-color: #dc3545; }
+.status-dot.draft { background-color: #6c757d; }
+</style>
+{% endblock %}

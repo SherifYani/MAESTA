@@ -19,6 +19,7 @@ BASE_DIR = Path(__file__).parent.absolute()
 
 # Database
 DATABASE_PATH = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "data" / "chatbot.db"))).resolve()
+AI_DATABASE_PATH = Path(os.getenv("AI_DATABASE_PATH", str(BASE_DIR / "data" / "ai_storage.db"))).resolve()
 
 # File uploads
 UPLOAD_FOLDER = BASE_DIR / "uploads"
@@ -34,7 +35,7 @@ MODELS_WEIGHTS_DIR = MODELS_DIR / "weights"
 
 # Ollama settings
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "qwen3:8b")
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "qwen3:1.7b")
 
 # Model default parameters
 DEFAULT_MODEL_PARAMS = {
@@ -162,6 +163,21 @@ SYSTEM_PERSONA_AR = """أنت MAESTA، مساعد ذكي متخصص في قوا�
 - لا تبدأ أبداً بعبارات تمهيدية مثل "بالطبع!" أو "سؤال رائع!".
 - رد دائماً بنفس لغة المستخدم.
 - إذا كنت غير متأكد، قل ذلك بصراحة."""
+
+# --- Phase 5: AI Storage Settings ---
+ENABLE_AI_STORAGE = os.getenv("ENABLE_AI_STORAGE", "true").lower() == "true"
+AI_STORAGE_BACKEND = os.getenv("AI_STORAGE_BACKEND", "sqlite") # sqlite|postgres|memory
+AI_STORAGE_DATABASE_URL = os.getenv("AI_STORAGE_DATABASE_URL", "postgresql://localhost/ai_storage")
+AI_STORAGE_SCHEMA = os.getenv("AI_STORAGE_SCHEMA", "ai_storage")
+
+# --- Phase 7.1: Action Connector Hardening ---
+ENABLE_REAL_CONNECTORS = os.getenv("ENABLE_REAL_CONNECTORS", "false").lower() == "true"
+ENABLE_WEBHOOK_CONNECTOR = os.getenv("ENABLE_WEBHOOK_CONNECTOR", "false").lower() == "true"
+ENABLE_EMAIL_CONNECTOR = os.getenv("ENABLE_EMAIL_CONNECTOR", "false").lower() == "true"
+ACTION_CONNECTOR_TIMEOUT_SECONDS = int(os.getenv("ACTION_CONNECTOR_TIMEOUT_SECONDS", "10"))
+ACTION_CONNECTOR_MAX_RETRIES = int(os.getenv("ACTION_CONNECTOR_MAX_RETRIES", "2"))
+ACTION_CONNECTOR_RATE_LIMIT_PER_MINUTE = int(os.getenv("ACTION_CONNECTOR_RATE_LIMIT_PER_MINUTE", "30"))
+ACTION_WEBHOOK_ALLOWED_HOSTS = os.getenv("ACTION_WEBHOOK_ALLOWED_HOSTS", "").split(",") if os.getenv("ACTION_WEBHOOK_ALLOWED_HOSTS") else []
 
 # Create necessary directories
 def init_directories():

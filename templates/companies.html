@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Companies Management{% endblock %}
+
+{% block extra_css %}
+<style>
+.companies-container { direction: rtl; text-align: right; }
+.section-card {
+    background: var(--bg-secondary, #1e1e2e);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+.section-card h3 { margin: 0 0 18px; font-size: 1.05rem; }
+.btn-primary-ats {
+    background: linear-gradient(135deg, #4c1d95, #818cf8);
+    color: white; border: none; border-radius: 8px;
+    padding: 10px 22px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+}
+.btn-primary-ats:hover { opacity: 0.9; }
+.btn-danger-sm {
+    background: transparent; color: #f87171; border: 1px solid #f87171;
+    border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; cursor: pointer;
+}
+.btn-danger-sm:hover { background: #f87171; color: white; }
+.company-card {
+    background: var(--bg-primary, #13131f);
+    border: 1px solid var(--border-color, #2a2a3e);
+    border-radius: 12px; padding: 20px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.company-card:hover { border-color: #818cf8; }
+.company-info h4 { margin: 0 0 6px; font-size: 1rem; color: #eee; }
+.company-info p { margin: 0; font-size: 0.85rem; color: #888; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.badge-success { background: #065f46; color: #6ee7b7; }
+.badge-danger { background: #450a0a; color: #fca5a5; }
+.actions { display: flex; gap: 8px; align-items: center; }
+.stats-row { display: flex; gap: 16px; font-size: 0.8rem; color: #888; margin-top: 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="companies-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">🏢 إدارة الشركات</h2>
+        <a href="{{ url_for('admin.create_company') }}" class="btn-primary-ats">+ إضافة شركة جديدة</a>
+    </div>
+
+    {% if companies %}
+        {% for company in companies %}
+        <div class="company-card">
+            <div class="company-info">
+                <h4>{{ company.name }}</h4>
+                <p>{{ company.description or 'بدون وصف' }}</p>
+                <div class="stats-row">
+                    <span>📎 Slug: <strong>{{ company.slug }}</strong></span>
+                    <span>🌐 اللغة: {{ company.language }}</span>
+                    <span class="badge {{ 'badge-success' if company.is_active else 'badge-danger' }}">
+                        {{ 'نشط' if company.is_active else 'معطّل' }}
+                    </span>
+                </div>
+            </div>
+            <div class="actions">
+                <a href="{{ url_for('admin.edit_company', company_id=company.id) }}"
+                   style="color: #818cf8; font-size: 0.85rem;">تعديل</a>
+                <form method="POST" action="{{ url_for('admin.delete_company', company_id=company.id) }}"
+                      style="margin: 0;" onsubmit="return confirm('هل أنت متأكد من حذف {{ company.name }}؟')">
+                    <button type="submit" class="btn-danger-sm">حذف</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="section-card" style="text-align: center; color: #888;">
+            <p>لا توجد شركات بعد. اضغط "إضافة شركة جديدة" للبدء.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

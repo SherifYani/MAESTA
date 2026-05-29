@@ -180,6 +180,33 @@ def init_db():
         )
     ''')
 
+    # Companies table (multi-tenant)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS companies (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            slug TEXT UNIQUE NOT NULL,
+            description TEXT DEFAULT '',
+            business_type TEXT DEFAULT '',
+            platform_type TEXT DEFAULT '',
+            tone TEXT DEFAULT 'helpful, clear Arabic',
+            support_behavior TEXT DEFAULT 'answer only from available information',
+            fallback_message TEXT DEFAULT 'المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.',
+            system_prompt TEXT DEFAULT '',
+            language TEXT DEFAULT 'ar',
+            is_active INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Migration: Add company_id to existing tables
+    for table in ['api_keys', 'documents', 'document_chunks', 'chat_history', 'web_sources', 'quizzes']:
+        try:
+            cursor.execute(f"ALTER TABLE {table} ADD COLUMN company_id TEXT")
+        except sqlite3.OperationalError:
+            pass
+
     
     # Insert default admin user if not exists
     admin_password_hash = generate_password_hash(config.ADMIN_PASSWORD)
@@ -249,7 +276,7 @@ def generate_api_key() -> str:
     return str(uuid.uuid4()).replace('-', '') + str(uuid.uuid4()).replace('-', '')[:config.API_KEY_LENGTH - 32]
 
 
-def create_api_key(name: str, rate_limit: int = 60) -> Dict:
+def create_api_key(name: str, rate_limit: int = 60, company_id: str | None = None) -> Dict:
     """Create a new API key"""
     key = generate_api_key()
     key_hash = hashlib.sha256(key.encode()).hexdigest()
@@ -258,9 +285,9 @@ def create_api_key(name: str, rate_limit: int = 60) -> Dict:
     
     conn = get_db_connection()
     conn.execute('''
-        INSERT INTO api_keys (id, key_hash, key_prefix, name, rate_limit)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (key_id, key_hash, key_prefix, name, rate_limit))
+        INSERT INTO api_keys (id, key_hash, key_prefix, name, rate_limit, company_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (key_id, key_hash, key_prefix, name, rate_limit, company_id))
     conn.commit()
     conn.close()
     
@@ -269,7 +296,8 @@ def create_api_key(name: str, rate_limit: int = 60) -> Dict:
         'key': key,  # Only returned once!
         'key_prefix': key_prefix,
         'name': name,
-        'rate_limit': rate_limit
+        'rate_limit': rate_limit,
+        'company_id': company_id,
     }
 
 
@@ -320,16 +348,115 @@ def delete_api_key(key_id: str) -> bool:
     return True
 
 
+# ----- Company Functions (Multi-Tenant) -----
+
+def create_company(name: str, slug: str, **kwargs) -> str:
+    """Create a new company"""
+    company_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO companies (id, name, slug, description, business_type, platform_type,
+                              tone, support_behavior, fallback_message, system_prompt, language)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        company_id, name, slug,
+        kwargs.get('description', ''),
+        kwargs.get('business_type', ''),
+        kwargs.get('platform_type', ''),
+        kwargs.get('tone', 'helpful, clear Arabic'),
+        kwargs.get('support_behavior', 'answer only from available information'),
+        kwargs.get('fallback_message', 'المعلومة دي مش متاحة حاليًا في المعلومات المتوفرة لدينا.'),
+        kwargs.get('system_prompt', ''),
+        kwargs.get('language', 'ar'),
+    ))
+    conn.commit()
+    conn.close()
+    return company_id
+
+
+def get_company_by_id(company_id: str) -> Optional[Dict]:
+    """Get company by ID"""
+    conn = get_db_connection()
+    company = conn.execute('SELECT * FROM companies WHERE id = ?', (company_id,)).fetchone()
+    conn.close()
+    return dict(company) if company else None
+
+
+def get_company_by_slug(slug: str) -> Optional[Dict]:
+    """Get company by slug"""
+    conn = get_db_connection()
+    company = conn.execute('SELECT * FROM companies WHERE slug = ? AND is_active = 1', (slug,)).fetchone()
+    conn.close()
+    return dict(company) if company else None
+
+
+def get_all_companies() -> List[Dict]:
+    """Get all companies"""
+    conn = get_db_connection()
+    companies = conn.execute('SELECT * FROM companies ORDER BY created_at DESC').fetchall()
+    conn.close()
+    return [dict(c) for c in companies]
+
+
+def get_active_companies() -> List[Dict]:
+    """Get all active companies"""
+    conn = get_db_connection()
+    companies = conn.execute('SELECT * FROM companies WHERE is_active = 1 ORDER BY name').fetchall()
+    conn.close()
+    return [dict(c) for c in companies]
+
+
+def update_company(company_id: str, **kwargs) -> bool:
+    """Update company fields"""
+    allowed = ['name', 'slug', 'description', 'business_type', 'platform_type',
+               'tone', 'support_behavior', 'fallback_message', 'system_prompt',
+               'language', 'is_active']
+    updates = {k: v for k, v in kwargs.items() if k in allowed}
+    if not updates:
+        return False
+    updates['updated_at'] = datetime.now()
+    set_clause = ', '.join(f'{k} = ?' for k in updates)
+    values = list(updates.values()) + [company_id]
+    conn = get_db_connection()
+    conn.execute(f'UPDATE companies SET {set_clause} WHERE id = ?', values)
+    conn.commit()
+    conn.close()
+    return True
+
+
+def delete_company(company_id: str) -> bool:
+    """Delete a company"""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM companies WHERE id = ?', (company_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def get_company_stats(company_id: str) -> Dict:
+    """Get company statistics"""
+    conn = get_db_connection()
+    docs = conn.execute('SELECT COUNT(*) as cnt FROM documents WHERE company_id = ?', (company_id,)).fetchone()
+    chats = conn.execute('SELECT COUNT(*) as cnt FROM chat_history WHERE company_id = ?', (company_id,)).fetchone()
+    keys = conn.execute('SELECT COUNT(*) as cnt FROM api_keys WHERE company_id = ?', (company_id,)).fetchone()
+    conn.close()
+    return {
+        'documents': docs['cnt'] if docs else 0,
+        'chats': chats['cnt'] if chats else 0,
+        'api_keys': keys['cnt'] if keys else 0,
+    }
+
+
 # ----- Document Functions -----
 
-def add_document(filename: str, original_filename: str, file_type: str, file_size: int) -> str:
+def add_document(filename: str, original_filename: str, file_type: str, file_size: int, company_id: str | None = None) -> str:
     """Add a new document record"""
     doc_id = str(uuid.uuid4())
     conn = get_db_connection()
     conn.execute('''
-        INSERT INTO documents (id, filename, original_filename, file_type, file_size)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (doc_id, filename, original_filename, file_type, file_size))
+        INSERT INTO documents (id, filename, original_filename, file_type, file_size, company_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (doc_id, filename, original_filename, file_type, file_size, company_id))
     conn.commit()
     conn.close()
     return doc_id
@@ -510,14 +637,14 @@ def get_all_chunks() -> List[Dict]:
 
 def add_chat_history(api_key_id: Optional[str], question: str, answer: str, 
                      source_type: str, source_documents: Optional[str] = None,
-                     session_id: Optional[str] = None) -> str:
+                     session_id: Optional[str] = None, company_id: Optional[str] = None) -> str:
     """Add a chat history record"""
     chat_id = str(uuid.uuid4())
     conn = get_db_connection()
     conn.execute('''
-        INSERT INTO chat_history (id, api_key_id, session_id, question, answer, source_type, source_documents)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (chat_id, api_key_id, session_id, question, answer, source_type, source_documents))
+        INSERT INTO chat_history (id, api_key_id, session_id, question, answer, source_type, source_documents, company_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (chat_id, api_key_id, session_id, question, answer, source_type, source_documents, company_id))
     conn.commit()
     conn.close()
     return chat_id
