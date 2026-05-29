@@ -57,7 +57,7 @@ CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "100"))
 
 # Search settings
 SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.20"))
-TOP_K_RESULTS = int(os.getenv("TOP_K_RESULTS", "6"))  # Increased to handle noisy/short chunks
+TOP_K_RESULTS = int(os.getenv("TOP_K_RESULTS", "15"))  # Increased for re-ranking headroom
 
 # Admin credentials (change in production!)
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")

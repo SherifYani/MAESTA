@@ -102,6 +102,9 @@ def upload_document():
         # Add chunks to database
         database.add_document_chunks(doc_id, result['chunks'])
         
+        # Store full document text for complete context retrieval
+        database.update_document_full_text(doc_id, result['text'])
+        
         # Add to knowledge base (vector index) with tenant context
         runtime = {"tenant_id": tenant_id, "site_id": site_id, "bot_id": bot_id}
         knowledge_base.add_documents(doc_id, result['chunks'], runtime=runtime)

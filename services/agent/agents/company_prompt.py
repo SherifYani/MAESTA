@@ -77,9 +77,10 @@ def build_company_user_message(
     """
     return (
         f"Company: {company_name}\n"
-        f"Available Information:\n"
+        f"---\n"
+        f"Available Information (Full Documents):\n"
         f"{retrieved_context}\n"
-        f"\n"
+        f"---\n"
         f"Customer Message:\n"
         f"{user_question}"
     )

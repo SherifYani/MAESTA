@@ -43,6 +43,7 @@ from services.agent.agents.company_prompt import (
     get_company_profile,
     DEFAULT_COMPANY_PROFILE,
 )
+from models.database import get_document_full_text
 import config
 
 logger = get_logger(__name__)
@@ -190,11 +191,27 @@ def query_analyzer(state: RagAgentState) -> dict:
         queries = ["Project Overview", "MAESTA Project Overview", "comprehensive job marketplace platform", "description", "وصف المشروع"]
     else:
         intent = "general"
-        # Simple keyword-based expansion (no LLM)
+        # Rich query expansion (rule-based, no LLM)
         queries = [state.question]
-        # Add English translation hints for better search
-        if any(c in msg_lower for c in ['?', 'ايه', 'إيه', 'ليه', 'ازاي', 'كيف']):
-            queries.append(state.question)
+        # Extract meaningful keywords (remove stop words)
+        stop_words = {'what', 'is', 'the', 'a', 'an', 'of', 'to', 'in', 'for', 'on', 'and',
+            'or', 'does', 'do', 'are', 'how', 'why', 'when', 'where', 'which', 'with',
+            'this', 'that', 'these', 'those', 'it', 'its', 'we', 'our', 'they', 'their',
+            'عن', 'في', 'من', 'الى', 'على', 'مع', 'ما', 'هو', 'هل', 'لم', 'لقد', 'كان',
+            'هذه', 'هذا', 'ذلك', 'ان', 'إن', 'أن'}
+        words = [w for w in re.findall(r'[\w\u0600-\u06FF]+', msg_lower) if len(w) > 2 and w not in stop_words]
+        if len(words) >= 2:
+            # Reorder keywords — try different combinations for BM25
+            queries.append(' '.join(words))
+            queries.append(' '.join(reversed(words)))
+        # Add tech/domain keywords separately for BM25 hit
+        tech_keywords = ['react', 'node', 'python', 'html', 'css', 'javascript',
+            'typescript', 'frontend', 'backend', 'database', 'api', 'framework',
+            'laravel', 'angular', 'vue', 'next', 'express', 'skills', 'experience',
+            'tools', 'technologies', 'stack', 'خدمات', 'تقنيات', 'مهارات', 'خبرة']
+        found_tech = [kw for kw in tech_keywords if kw in msg_lower]
+        if found_tech and intent == "general":
+            queries.append(' '.join(found_tech))
 
     logger.info(f"[RAG:query_analyzer] Detected intent: {intent} | language: {detected_language}")
 
@@ -280,9 +297,24 @@ def generator(state: RagAgentState) -> dict:
     lang = state.language
 
     if config.COMPANY_ASSISTANT_MODE:
-        plain_context = "\n\n".join(
-            d['content'][:MAX_DOC_PREVIEW_CHARS] for d in docs[:MAX_DOCS_IN_CONTEXT]
-        )
+        # Build structured context — prefer full documents over chunks
+        doc_ids = list(dict.fromkeys(d.get('doc_id') for d in docs if d.get('doc_id')))
+        full_texts = []
+        seen_docs = set()
+        for did in doc_ids:
+            if did not in seen_docs:
+                seen_docs.add(did)
+                full = get_document_full_text(did)
+                if full:
+                    full_texts.append(full)
+        if full_texts:
+            plain_context = "\n\n========== المستند التالي ==========\n\n".join(full_texts)
+            if len(plain_context) > 15000:
+                plain_context = plain_context[:15000] + "\n\n[... تم اختصار المستند الطويل]"
+        else:
+            plain_context = "\n\n---\n\n".join(
+                d['content'][:MAX_DOC_PREVIEW_CHARS] for d in docs[:MAX_DOCS_IN_CONTEXT]
+            )
         logger.info(f"[RAG:generator] Context preview: {plain_context[:500]}...")
 
         # Load company profile from DB using tenant_id as company_id

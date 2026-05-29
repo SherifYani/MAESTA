@@ -65,6 +65,7 @@ def init_db():
             chunk_count INTEGER DEFAULT 0,
             is_indexed INTEGER DEFAULT 0,
             graph_json TEXT, -- Extracted Knowledge Graph
+            full_text TEXT, -- Full document text for complete context
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -73,7 +74,13 @@ def init_db():
     try:
         cursor.execute("ALTER TABLE documents ADD COLUMN graph_json TEXT")
     except sqlite3.OperationalError:
-        pass # Already exists
+        pass
+    
+    # Migration: Add full_text to documents
+    try:
+        cursor.execute("ALTER TABLE documents ADD COLUMN full_text TEXT")
+    except sqlite3.OperationalError:
+        pass
 
     # Document chunks table (for text chunks)
     cursor.execute('''
@@ -496,6 +503,24 @@ def get_document_by_id(doc_id: str) -> Optional[Dict]:
     doc = conn.execute('SELECT * FROM documents WHERE id = ?', (doc_id,)).fetchone()
     conn.close()
     return dict(doc) if doc else None
+
+
+def update_document_full_text(doc_id: str, full_text: str):
+    """Store the full document text in the database"""
+    conn = get_db_connection()
+    conn.execute('''
+        UPDATE documents SET full_text = ? WHERE id = ?
+    ''', (full_text, doc_id))
+    conn.commit()
+    conn.close()
+
+
+def get_document_full_text(doc_id: str) -> Optional[str]:
+    """Get the full text of a document by ID"""
+    conn = get_db_connection()
+    doc = conn.execute('SELECT full_text FROM documents WHERE id = ?', (doc_id,)).fetchone()
+    conn.close()
+    return doc['full_text'] if doc and doc['full_text'] else None
 
 
 def delete_document(doc_id: str) -> bool:

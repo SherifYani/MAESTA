@@ -405,7 +405,7 @@ class KnowledgeBase:
         vector_distances = {}
         
         # Determine how many results to fetch for initial ranking
-        fetch_k = min(top_k * 5 if doc_id else top_k * 2, len(self.documents))
+        fetch_k = min(max(top_k * 3, 15), len(self.documents))
 
         if backend_type == "pgvector":
             query_embeddings = self._get_embeddings([query], task_type='query')
@@ -471,9 +471,29 @@ class KnowledgeBase:
             except Exception as e:
                 logger.warning(f"BM25 search failed: {e}")
 
-        # 3. Hybrid Fusion (Weighted Sum)
-        # Weighting: 70% Vector, 30% Keyword (configurable)
-        alpha = 0.7  
+        # 3. Hybrid Fusion (Dynamic Weighted Sum)
+        # alpha varies: tech-heavy queries → 0.4 (BM25 dominant),
+        # descriptive queries → 0.7 (vector dominant),
+        # general queries → 0.5 (balanced)
+        tech_keywords_in_query = ['react', 'node', 'python', 'html', 'css', 'javascript',
+            'typescript', 'frontend', 'backend', 'database', 'api', 'framework', 'library',
+            'django', 'laravel', 'angular', 'vue', 'next', 'express', 'sql', 'nosql',
+            'docker', 'kubernetes', 'aws', 'git', 'rest', 'graphql', 'linux', 'ubuntu',
+            'nginx', 'redis', 'postgresql', 'mongodb', 'flutter', 'swift', 'kotlin',
+            'skills', 'experience', 'سنين', 'خبرة', 'تقنيات', 'تكنولوجيا', 'stack',
+            'tools', 'مكتبات', 'أدوات', 'مهارات']
+        query_lower = query.lower()
+        tech_count = sum(1 for kw in tech_keywords_in_query if kw in query_lower)
+        # Long descriptive queries → vector is better
+        desc_keywords = ['what is', 'شرح', 'وصف', 'describe', 'tell me about',
+            'ما هو', 'عبارة عن', 'overview', 'summary', 'تلخيص', 'نبذة']
+        desc_count = sum(1 for kw in desc_keywords if kw in query_lower)
+        if tech_count >= 2:
+            alpha = 0.4
+        elif desc_count >= 1 or len(query_lower.split()) > 8:
+            alpha = 0.7
+        else:
+            alpha = 0.5
         
         all_indices = set(vector_results.keys()) | set(bm25_results.keys())
         final_results = []
@@ -502,7 +522,17 @@ class KnowledgeBase:
         # Sort by hybrid score
         final_results.sort(key=lambda x: x['score'], reverse=True)
         
-        # 4. Content Deduplication (Prevent identical chunks from crowding context)
+        # 4. Re-ranking: Boost chunks containing query terms
+        import re as _re
+        query_terms = set(t for t in _re.findall(r'[\w\u0600-\u06FF]+', query_lower) if len(t) > 2)
+        if query_terms:
+            for res in final_results:
+                content_terms = set(_re.findall(r'[\w\u0600-\u06FF]+', res['content'].lower()))
+                overlap = len(query_terms & content_terms) / max(len(query_terms), 1)
+                res['score'] = res['score'] * 0.7 + overlap * 0.3
+            final_results.sort(key=lambda x: x['score'], reverse=True)
+        
+        # 5. Content Deduplication (Prevent identical chunks from crowding context)
         unique_results = []
         seen_contents = set()
         for res in final_results:
@@ -512,7 +542,7 @@ class KnowledgeBase:
                 unique_results.append(res)
                 seen_contents.add(content_hash)
         
-        # 5. Multi-Tenant Post-Filter (Fail-Closed)
+        # 6. Multi-Tenant Post-Filter (Fail-Closed)
         # TODO: replace post-filter with native vector metadata filter.
         tenant_id = runtime.get("tenant_id")
         site_id = runtime.get("site_id")
