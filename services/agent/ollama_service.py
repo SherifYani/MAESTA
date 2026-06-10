@@ -102,7 +102,8 @@ class OllamaService:
                  stream: bool = False,
                  timeout: Optional[int] = None,
                  max_tokens: Optional[int] = None,
-                 json_mode: bool = False) -> str:
+                 json_mode: bool = False,
+                 think: bool = False) -> str:
         """Generate a response using Ollama /api/chat"""
         model = model or config.DEFAULT_MODEL
         gen_timeout = timeout or config.LLM_GENERATION_TIMEOUT
@@ -116,6 +117,7 @@ class OllamaService:
             "model": model,
             "messages": messages,
             "stream": stream,
+            "think": think,  # qwen3: False disables the <think> reasoning block entirely
             "options": {
                 "temperature": temperature,
                 "num_ctx": context_length,

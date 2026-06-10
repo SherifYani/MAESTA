@@ -187,6 +187,37 @@ def init_db():
         )
     ''')
 
+    # ATS: CV Documents table (individual CVs, not the analysis results)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ats_cvs (
+            id TEXT PRIMARY KEY,
+            filename TEXT NOT NULL,
+            filepath TEXT NOT NULL,
+            full_text TEXT,
+            candidate_name TEXT DEFAULT '',
+            organizations TEXT DEFAULT '[]',
+            locations TEXT DEFAULT '[]',
+            emails TEXT DEFAULT '[]',
+            skills_json TEXT DEFAULT '{}',
+            chunk_count INTEGER DEFAULT 0,
+            llm_feedback TEXT DEFAULT '',
+            llm_model TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # ATS: CV Chunks table (text chunks mapped to FAISS index positions)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ats_chunks (
+            id TEXT PRIMARY KEY,
+            cv_id TEXT NOT NULL,
+            chunk_index INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (cv_id) REFERENCES ats_cvs (id) ON DELETE CASCADE
+        )
+    ''')
+
     # Companies table (multi-tenant)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS companies (
@@ -215,6 +246,9 @@ def init_db():
             pass
 
     
+    # Create interview system tables
+    _create_interview_tables(conn)
+
     # Insert default admin user if not exists
     admin_password_hash = generate_password_hash(config.ADMIN_PASSWORD)
     # Be careful here, since we are doing INSERT OR IGNORE, if admin exists, the hash isn't updated, which is fine normally.
@@ -913,3 +947,649 @@ def delete_ats_job(job_id: str) -> bool:
     conn.commit()
     conn.close()
     return True
+
+
+# ----- ATS CV Documents CRUD -----
+
+def create_ats_cv(filename: str, filepath: str, full_text: str = '',
+                  candidate_name: str = '', organizations: str = '[]',
+                  locations: str = '[]', emails: str = '[]',
+                  skills_json: str = '{}') -> str:
+    """Insert a new CV document record"""
+    cv_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO ats_cvs (id, filename, filepath, full_text, candidate_name,
+                             organizations, locations, emails, skills_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (cv_id, filename, filepath, full_text, candidate_name,
+          organizations, locations, emails, skills_json))
+    conn.commit()
+    conn.close()
+    return cv_id
+
+
+def get_ats_cv(cv_id: str) -> Optional[Dict]:
+    """Get a single CV by ID"""
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM ats_cvs WHERE id = ?', (cv_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_all_ats_cvs() -> List[Dict]:
+    """Get all CVs"""
+    conn = get_db_connection()
+    rows = conn.execute('SELECT * FROM ats_cvs ORDER BY created_at DESC').fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_ats_cv_by_filename(filename: str) -> Optional[Dict]:
+    """Find a CV by filename"""
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM ats_cvs WHERE filename = ?', (filename,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_ats_cv_chunk_count(cv_id: str, chunk_count: int):
+    """Update chunk count for a CV"""
+    conn = get_db_connection()
+    conn.execute('UPDATE ats_cvs SET chunk_count = ? WHERE id = ?', (chunk_count, cv_id))
+    conn.commit()
+    conn.close()
+
+
+def delete_ats_cv(cv_id: str) -> bool:
+    """Delete a CV and its chunks (cascade)"""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM ats_cvs WHERE id = ?', (cv_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def update_ats_cv_llm_feedback(cv_id: str, feedback: str, model: str):
+    """Store LLM evaluation feedback for a CV."""
+    conn = get_db_connection()
+    conn.execute(
+        'UPDATE ats_cvs SET llm_feedback = ?, llm_model = ? WHERE id = ?',
+        (feedback, model, cv_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def count_ats_cvs() -> int:
+    """Get total number of CVs"""
+    conn = get_db_connection()
+    count = conn.execute('SELECT COUNT(*) as c FROM ats_cvs').fetchone()['c']
+    conn.close()
+    return count
+
+
+# ----- ATS CV Chunks CRUD -----
+
+def create_ats_chunks(cv_id: str, chunks: List[str]) -> List[str]:
+    """Insert chunks for a CV, return list of chunk IDs"""
+    chunk_ids = []
+    conn = get_db_connection()
+    for i, content in enumerate(chunks):
+        ch_id = str(uuid.uuid4())
+        conn.execute('''
+            INSERT INTO ats_chunks (id, cv_id, chunk_index, content)
+            VALUES (?, ?, ?, ?)
+        ''', (ch_id, cv_id, i, content))
+        chunk_ids.append(ch_id)
+    conn.commit()
+    conn.close()
+    return chunk_ids
+
+
+def get_ats_chunks_by_cv(cv_id: str) -> List[Dict]:
+    """Get all chunks for a CV"""
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM ats_chunks WHERE cv_id = ? ORDER BY chunk_index', (cv_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_all_ats_chunks() -> List[Dict]:
+    """Get all chunks across all CVs"""
+    conn = get_db_connection()
+    rows = conn.execute('SELECT * FROM ats_chunks ORDER BY created_at').fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def count_ats_chunks() -> int:
+    """Get total number of chunks"""
+    conn = get_db_connection()
+    count = conn.execute('SELECT COUNT(*) as c FROM ats_chunks').fetchone()['c']
+    conn.close()
+    return count
+
+
+def delete_all_ats_cvs():
+    """Delete all CVs and chunks (for reset)"""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM ats_chunks')
+    conn.execute('DELETE FROM ats_cvs')
+    conn.commit()
+    conn.close()
+
+
+# ==================================================================== #
+#  AI Interview System — Database Models
+# ==================================================================== #
+
+# --- Table: interview_sessions ---
+
+def _create_interview_tables(conn):
+    """Create interview system tables (called from init_db)"""
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_sessions (
+            id TEXT PRIMARY KEY,
+            candidate_id TEXT,
+            job_id TEXT,
+            company_id TEXT,
+            tenant_id TEXT,
+            site_id TEXT,
+            bot_id TEXT,
+            status TEXT DEFAULT 'pending',
+            current_skill TEXT,
+            matched_skills TEXT,
+            missing_skills TEXT,
+            skill_scores TEXT,
+            confidence_scores TEXT,
+            technical_score REAL DEFAULT 0,
+            experience_score REAL DEFAULT 0,
+            communication_score REAL DEFAULT 0,
+            consistency_score REAL DEFAULT 0,
+            trust_score REAL DEFAULT 0,
+            final_score REAL DEFAULT 0,
+            cv_match REAL DEFAULT 0,
+            recommendation TEXT DEFAULT '',
+            report_json TEXT,
+            started_at TIMESTAMP,
+            completed_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_questions (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            skill TEXT NOT NULL,
+            skill_index INTEGER DEFAULT 0,
+            question TEXT NOT NULL,
+            question_type TEXT DEFAULT 'technical',
+            difficulty_level INTEGER DEFAULT 1,
+            is_followup INTEGER DEFAULT 0,
+            followup_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_answers (
+            id TEXT PRIMARY KEY,
+            question_id TEXT NOT NULL,
+            session_id TEXT NOT NULL,
+            candidate_answer TEXT,
+            score REAL DEFAULT 0,
+            strengths TEXT,
+            weaknesses TEXT,
+            missing_concepts TEXT,
+            semantic_score REAL DEFAULT 0,
+            coverage_score REAL DEFAULT 0,
+            accuracy_score REAL DEFAULT 0,
+            completeness_score REAL DEFAULT 0,
+            confidence REAL DEFAULT 0,
+            evaluated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (question_id) REFERENCES interview_questions (id) ON DELETE CASCADE,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS skill_assessments (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            skill TEXT NOT NULL,
+            claimed_level REAL DEFAULT 0,
+            verified_level REAL DEFAULT 0,
+            confidence REAL DEFAULT 0,
+            questions_asked INTEGER DEFAULT 0,
+            average_score REAL DEFAULT 0,
+            evidence TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS consistency_analyses (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            trust_gaps TEXT,
+            consistency_score REAL DEFAULT 0,
+            trust_score REAL DEFAULT 0,
+            risk_flags TEXT,
+            evidence TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_reports (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            candidate_name TEXT DEFAULT '',
+            job_title TEXT DEFAULT '',
+            cv_match REAL DEFAULT 0,
+            technical_score REAL DEFAULT 0,
+            experience_score REAL DEFAULT 0,
+            consistency_score REAL DEFAULT 0,
+            communication_score REAL DEFAULT 0,
+            trust_score REAL DEFAULT 0,
+            final_score REAL DEFAULT 0,
+            recommendation TEXT DEFAULT '',
+            strengths TEXT,
+            weaknesses TEXT,
+            skill_breakdown TEXT,
+            trust_analysis TEXT,
+            evidence TEXT,
+            recommended_actions TEXT,
+            report_text TEXT,
+            generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    # Migration: Add practical_score to interview_sessions
+    try:
+        cursor.execute("ALTER TABLE interview_sessions ADD COLUMN practical_score REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
+    # Migration: Add practical_score to interview_reports
+    try:
+        cursor.execute("ALTER TABLE interview_reports ADD COLUMN practical_score REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
+    # Table: interview_challenges
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_challenges (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            skill TEXT DEFAULT '',
+            challenge_type TEXT DEFAULT 'coding',
+            title TEXT DEFAULT '',
+            description TEXT DEFAULT '',
+            difficulty INTEGER DEFAULT 1,
+            evaluation TEXT DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+
+    conn.commit()
+
+
+# ----- Interview Session CRUD -----
+
+def create_interview_session(
+    candidate_id: str, job_id: str, company_id: str | None = None,
+    tenant_id: str | None = None, site_id: str | None = None, bot_id: str | None = None
+) -> str:
+    conn = get_db_connection()
+    session_id = str(uuid.uuid4())
+    conn.execute('''
+        INSERT INTO interview_sessions
+            (id, candidate_id, job_id, company_id, tenant_id, site_id, bot_id, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+    ''', (session_id, candidate_id, job_id, company_id, tenant_id, site_id, bot_id))
+    conn.commit()
+    conn.close()
+    return session_id
+
+
+def get_interview_session(session_id: str) -> Optional[Dict]:
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM interview_sessions WHERE id = ?', (session_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_interview_session(session_id: str, **kwargs) -> bool:
+    allowed = [
+        'status', 'current_skill', 'matched_skills', 'missing_skills',
+        'skill_scores', 'confidence_scores', 'technical_score', 'experience_score',
+        'communication_score', 'consistency_score', 'trust_score', 'final_score',
+        'cv_match', 'recommendation', 'report_json', 'started_at', 'completed_at'
+    ]
+    updates = {k: v for k, v in kwargs.items() if k in allowed}
+    if not updates:
+        return False
+    updates['updated_at'] = datetime.now()
+    set_clause = ', '.join(f'{k} = ?' for k in updates)
+    values = list(updates.values()) + [session_id]
+    conn = get_db_connection()
+    conn.execute(f'UPDATE interview_sessions SET {set_clause} WHERE id = ?', values)
+    conn.commit()
+    conn.close()
+    return True
+
+
+def get_all_interview_sessions(company_id: str | None = None, limit: int = 50) -> List[Dict]:
+    conn = get_db_connection()
+    if company_id:
+        rows = conn.execute(
+            'SELECT * FROM interview_sessions WHERE company_id = ? ORDER BY created_at DESC LIMIT ?',
+            (company_id, limit)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            'SELECT * FROM interview_sessions ORDER BY created_at DESC LIMIT ?', (limit,)
+        ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def delete_interview_session(session_id: str) -> bool:
+    conn = get_db_connection()
+    conn.execute('DELETE FROM interview_sessions WHERE id = ?', (session_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ----- Interview Questions CRUD -----
+
+def create_interview_question(
+    session_id: str, skill: str, question: str,
+    question_type: str = 'technical', difficulty_level: int = 1,
+    is_followup: bool = False, followup_count: int = 0, skill_index: int = 0,
+    q_id: str | None = None
+) -> str:
+    if q_id is None:
+        q_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    # Use INSERT OR IGNORE to avoid duplicates on primary key (id)
+    conn.execute('''
+        INSERT OR IGNORE INTO interview_questions
+            (id, session_id, skill, skill_index, question, question_type, difficulty_level, is_followup, followup_count)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (q_id, session_id, skill, skill_index, question, question_type, difficulty_level, int(is_followup), followup_count))
+    conn.commit()
+    conn.close()
+    return q_id
+
+
+def get_interview_question(q_id: str) -> Optional[Dict]:
+    """Get a single question by its ID"""
+    conn = get_db_connection()
+    row = conn.execute(
+        'SELECT * FROM interview_questions WHERE id = ?', (q_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_interview_questions(session_id: str) -> List[Dict]:
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM interview_questions WHERE session_id = ? ORDER BY skill_index, created_at',
+        (session_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# ----- Interview Answers CRUD -----
+
+def create_interview_answer(
+    question_id: str, session_id: str, candidate_answer: str,
+    score: float = 0.0, strengths: str = '[]', weaknesses: str = '[]',
+    missing_concepts: str = '[]', semantic_score: float = 0.0,
+    coverage_score: float = 0.0, accuracy_score: float = 0.0,
+    completeness_score: float = 0.0, confidence: float = 0.0
+) -> str:
+    ans_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO interview_answers
+            (id, question_id, session_id, candidate_answer, score,
+             strengths, weaknesses, missing_concepts,
+             semantic_score, coverage_score, accuracy_score, completeness_score, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (ans_id, question_id, session_id, candidate_answer, score,
+          strengths, weaknesses, missing_concepts,
+          semantic_score, coverage_score, accuracy_score, completeness_score, confidence))
+    conn.commit()
+    conn.close()
+    return ans_id
+
+
+def get_interview_answers(session_id: str) -> List[Dict]:
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM interview_answers WHERE session_id = ? ORDER BY evaluated_at',
+        (session_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_answer_by_question(question_id: str) -> Optional[Dict]:
+    conn = get_db_connection()
+    row = conn.execute(
+        'SELECT * FROM interview_answers WHERE question_id = ? ORDER BY evaluated_at DESC LIMIT 1',
+        (question_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+# ----- Interview Challenges CRUD -----
+
+def create_interview_challenge(
+    session_id: str, skill: str = '', challenge_type: str = 'coding',
+    title: str = '', description: str = '', difficulty: int = 1,
+    evaluation: str = '{}'
+) -> str:
+    ch_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO interview_challenges
+            (id, session_id, skill, challenge_type, title, description, difficulty, evaluation)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (ch_id, session_id, skill, challenge_type, title, description, difficulty, evaluation))
+    conn.commit()
+    conn.close()
+    return ch_id
+
+
+def get_interview_challenges(session_id: str) -> List[Dict]:
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM interview_challenges WHERE session_id = ? ORDER BY created_at',
+        (session_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# ----- Skill Assessments CRUD -----
+
+def create_skill_assessment(
+    session_id: str, skill: str, claimed_level: float = 0.0,
+    verified_level: float = 0.0, confidence: float = 0.0,
+    questions_asked: int = 0, average_score: float = 0.0, evidence: str = '[]'
+) -> str:
+    sa_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO skill_assessments
+            (id, session_id, skill, claimed_level, verified_level,
+             confidence, questions_asked, average_score, evidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (sa_id, session_id, skill, claimed_level, verified_level,
+          confidence, questions_asked, average_score, evidence))
+    conn.commit()
+    conn.close()
+    return sa_id
+
+
+def get_skill_assessments(session_id: str) -> List[Dict]:
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM skill_assessments WHERE session_id = ? ORDER BY created_at',
+        (session_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def update_skill_assessment(sa_id: str, **kwargs) -> bool:
+    allowed = ['verified_level', 'confidence', 'questions_asked', 'average_score', 'evidence']
+    updates = {k: v for k, v in kwargs.items() if k in allowed}
+    if not updates:
+        return False
+    set_clause = ', '.join(f'{k} = ?' for k in updates)
+    values = list(updates.values()) + [sa_id]
+    conn = get_db_connection()
+    conn.execute(f'UPDATE skill_assessments SET {set_clause} WHERE id = ?', values)
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ----- Consistency Analysis CRUD -----
+
+def create_consistency_analysis(
+    session_id: str, trust_gaps: str = '[]', consistency_score: float = 0.0,
+    trust_score: float = 0.0, risk_flags: str = '[]', evidence: str = '[]'
+) -> str:
+    ca_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO consistency_analyses
+            (id, session_id, trust_gaps, consistency_score, trust_score, risk_flags, evidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (ca_id, session_id, trust_gaps, consistency_score, trust_score, risk_flags, evidence))
+    conn.commit()
+    conn.close()
+    return ca_id
+
+
+def get_consistency_analysis(session_id: str) -> Optional[Dict]:
+    conn = get_db_connection()
+    row = conn.execute(
+        'SELECT * FROM consistency_analyses WHERE session_id = ? ORDER BY created_at DESC LIMIT 1',
+        (session_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+# ----- Interview Reports CRUD -----
+
+def create_interview_report(
+    session_id: str, candidate_name: str = '', job_title: str = '',
+    cv_match: float = 0.0, technical_score: float = 0.0,
+    experience_score: float = 0.0, consistency_score: float = 0.0,
+    communication_score: float = 0.0, trust_score: float = 0.0,
+    practical_score: float = 0.0,
+    final_score: float = 0.0, recommendation: str = '',
+    strengths: str = '[]', weaknesses: str = '[]',
+    skill_breakdown: str = '[]', trust_analysis: str = '{}',
+    evidence: str = '{}', recommended_actions: str = '[]',
+    report_text: str = ''
+) -> str:
+    rep_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO interview_reports
+            (id, session_id, candidate_name, job_title, cv_match,
+             technical_score, experience_score, consistency_score,
+             communication_score, trust_score, practical_score,
+             final_score, recommendation,
+             strengths, weaknesses, skill_breakdown, trust_analysis,
+             evidence, recommended_actions, report_text)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (rep_id, session_id, candidate_name, job_title, cv_match,
+          technical_score, experience_score, consistency_score,
+          communication_score, trust_score, practical_score,
+          final_score, recommendation,
+          strengths, weaknesses, skill_breakdown, trust_analysis,
+          evidence, recommended_actions, report_text))
+    conn.commit()
+    conn.close()
+    return rep_id
+
+
+def get_interview_report(session_id: str) -> Optional[Dict]:
+    conn = get_db_connection()
+    row = conn.execute(
+        'SELECT * FROM interview_reports WHERE session_id = ? ORDER BY generated_at DESC LIMIT 1',
+        (session_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_all_interview_reports(company_id: str | None = None, limit: int = 50) -> List[Dict]:
+    conn = get_db_connection()
+    if company_id:
+        rows = conn.execute('''
+            SELECT r.*, s.candidate_id, s.job_id, s.company_id
+            FROM interview_reports r
+            JOIN interview_sessions s ON r.session_id = s.id
+            WHERE s.company_id = ?
+            ORDER BY r.generated_at DESC LIMIT ?
+        ''', (company_id, limit)).fetchall()
+    else:
+        rows = conn.execute('''
+            SELECT r.*, s.candidate_id, s.job_id, s.company_id
+            FROM interview_reports r
+            JOIN interview_sessions s ON r.session_id = s.id
+            ORDER BY r.generated_at DESC LIMIT ?
+        ''', (limit,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# ----- Interview Stats -----
+
+def get_interview_stats(company_id: str | None = None) -> Dict:
+    conn = get_db_connection()
+    if company_id:
+        total = conn.execute(
+            'SELECT COUNT(*) as c FROM interview_sessions WHERE company_id = ?', (company_id,)
+        ).fetchone()['c']
+        completed = conn.execute(
+            "SELECT COUNT(*) as c FROM interview_sessions WHERE company_id = ? AND status = 'completed'", (company_id,)
+        ).fetchone()['c']
+        avg_score = conn.execute(
+            "SELECT COALESCE(AVG(final_score), 0) as a FROM interview_sessions WHERE company_id = ? AND status = 'completed'", (company_id,)
+        ).fetchone()['a']
+        strong_hire = conn.execute(
+            "SELECT COUNT(*) as c FROM interview_reports r JOIN interview_sessions s ON r.session_id = s.id WHERE s.company_id = ? AND r.recommendation = 'Strong Hire'", (company_id,)
+        ).fetchone()['c']
+    else:
+        total = conn.execute('SELECT COUNT(*) as c FROM interview_sessions').fetchone()['c']
+        completed = conn.execute("SELECT COUNT(*) as c FROM interview_sessions WHERE status = 'completed'").fetchone()['c']
+        avg_score = conn.execute("SELECT COALESCE(AVG(final_score), 0) as a FROM interview_sessions WHERE status = 'completed'").fetchone()['a']
+        strong_hire = conn.execute("SELECT COUNT(*) as c FROM interview_reports WHERE recommendation = 'Strong Hire'").fetchone()['c']
+    conn.close()
+    return {
+        'total_sessions': total,
+        'completed_sessions': completed,
+        'average_final_score': round(avg_score, 1),
+        'strong_hires': strong_hire,
+    }

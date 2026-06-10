@@ -1,10 +1,44 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 import uuid
+import re
 from services.agent.storage.ai_storage import ai_storage
 from services.agent.storage.schemas import AIInterviewSession, AIInterviewMessage, AIAuditEvent
 from services.agent.schemas import BotRuntimeContext
 from .interview_safety import interview_safety
+
+def clean_thoughts(text: str) -> str:
+    if not text:
+        return ""
+    # If </think> or </thinking> exists, extract everything after it
+    if '</think>' in text:
+        parts = text.split('</think>', 1)
+        cleaned = parts[1].strip()
+        if cleaned:
+            return cleaned
+    if '</thinking>' in text:
+        parts = text.split('</thinking>', 1)
+        cleaned = parts[1].strip()
+        if cleaned:
+            return cleaned
+    # If there's an unclosed <think> or <thinking>, remove the tag and keep the rest
+    if '<think>' in text:
+        parts = text.split('<think>', 1)
+        cleaned = parts[1].strip()
+        if cleaned:
+            return cleaned
+    if '<thinking>' in text:
+        parts = text.split('<thinking>', 1)
+        cleaned = parts[1].strip()
+        if cleaned:
+            return cleaned
+    # Fallback: remove tags
+    cleaned = text
+    cleaned = re.sub(r'<think>', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'</think>', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'<thinking>', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'</thinking>', '', cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
 
 class InterviewRunner:
     """
@@ -124,17 +158,18 @@ class InterviewRunner:
         
         if next_q:
             # Save and return
+            cleaned_q = clean_thoughts(next_q)
             msg = AIInterviewMessage(
                 interview_id=interview_id,
                 tenant_id=runtime.tenant_id,
                 site_id=runtime.site_id,
                 bot_id=runtime.bot_id,
                 sender="ai",
-                message=next_q,
+                message=cleaned_q,
                 message_type="question"
             )
             ai_storage.messages.save_message(msg)
-            return next_q
+            return cleaned_q
             
         return None
 

@@ -75,6 +75,50 @@ def create_app() -> Flask:
     except Exception:
         pass
 
+    # ── Jinja2 Filters ────────────────────────────────────────────────
+    import json as _json
+    @app.template_filter('from_json')
+    def from_json_filter(value):
+        try:
+            return _json.loads(value) if isinstance(value, str) else value
+        except (_json.JSONDecodeError, TypeError):
+            return value
+
+    @app.template_filter('clean_thoughts')
+    def clean_thoughts_filter(value):
+        if not value or not isinstance(value, str):
+            return value
+        import re
+        # If </think> or </thinking> exists, extract everything after it
+        if '</think>' in value:
+            parts = value.split('</think>', 1)
+            cleaned = parts[1].strip()
+            if cleaned:
+                return cleaned
+        if '</thinking>' in value:
+            parts = value.split('</thinking>', 1)
+            cleaned = parts[1].strip()
+            if cleaned:
+                return cleaned
+        # If there's an unclosed <think> or <thinking>, remove the tag and keep the rest
+        if '<think>' in value:
+            parts = value.split('<think>', 1)
+            cleaned = parts[1].strip()
+            if cleaned:
+                return cleaned
+        if '<thinking>' in value:
+            parts = value.split('<thinking>', 1)
+            cleaned = parts[1].strip()
+            if cleaned:
+                return cleaned
+        # Fallback: remove tags
+        cleaned = value
+        cleaned = re.sub(r'<think>', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'</think>', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'<thinking>', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'</thinking>', '', cleaned, flags=re.IGNORECASE)
+        return cleaned.strip()
+
     # ── Register Controllers (MVC) ────────────────────────────────────
     from controllers.register import register_controllers
     register_controllers(app)

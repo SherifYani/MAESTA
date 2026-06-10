@@ -672,7 +672,9 @@
       if (data.sources && data.sources.length > 0) {
         html += '<div class="sources-list">';
         data.sources.forEach(s => {
-          html += `<div class="source-item">📎 ${s.metadata} <span style="opacity:0.6">(${(s.score * 100).toFixed(0)}%)</span></div>`;
+          const sourceName = s.metadata && s.metadata.source ? s.metadata.source : (s.content ? s.content.substring(0, 60) + '...' : 'مصدر');
+          const scorePct = s.score ? ` (${(s.score * 100).toFixed(0)}%)` : '';
+          html += `<div class="source-item">📎 ${sourceName}${scorePct}</div>`;
         });
         html += '</div>';
       }

@@ -6,6 +6,7 @@ from controllers.quiz import quiz_bp
 from controllers.ats import ats_bp
 from chatbot.routes.admin_ai import admin_ai_bp
 from chatbot.routes.candidate_interview import candidate_interview_bp
+from services.interview.routes.interview_routes import interview_bp, interview_api_bp
 
 def register_controllers(app: Flask):
     """
@@ -26,3 +27,6 @@ def register_controllers(app: Flask):
     app.register_blueprint(admin_ai_bp)
     # ── Candidate Interview Blueprint ─────────────────────────────────
     app.register_blueprint(candidate_interview_bp)
+    # ── AI Interview System ──────────────────────────────────────────
+    app.register_blueprint(interview_bp)
+    app.register_blueprint(interview_api_bp)

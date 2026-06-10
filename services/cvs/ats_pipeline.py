@@ -1,6 +1,7 @@
 """
 ATS Service - Applicant Tracking System
-Handles CV indexing, embedding, and ranking using existing FAISS infrastructure
+Handles CV indexing, embedding, and ranking using smart skill-based scoring
+CV data is stored in SQLite (ats_cvs + ats_chunks), vectors in FAISS binary.
 """
 import os
 import json
@@ -12,12 +13,59 @@ import config
 import numpy as np
 import faiss
 from core.logger import get_logger
+from models import database
 
 logger = get_logger(__name__)
 
-# Separate paths for ATS index (isolated from knowledge base)
+# FAISS binary index path (only the vector index is on disk)
 ATS_INDEX_PATH = config.VECTOR_STORE_PATH / "ats_faiss_index.bin"
-ATS_DOCS_PATH  = config.VECTOR_STORE_PATH / "ats_documents.json"
+
+# ── Skill Definitions for Smart Ranking ────────────────────────────────
+
+REQUIRED_SKILLS = {
+    "C#": [r'c#[\s,;.\]\)(:]', r'c[\s]*sharp', r'\.net[\s,;.\]\)(:]', r'\.net\s*(?:core|\d)'],
+    "ASP.NET Core": [r'asp\.?net[\s,;.\]\)(:]', r'asp\.?net\s*(?:core|\d+)', r'\.net\s*(?:core|\d+)'],
+    "SQL Server": [r'sql\s*server', r'mssql', r'microsoft\s*sql'],
+    "Entity Framework Core": [r'entity\s*framework', r'\bef\s*core', r'\bef\s'],
+    "REST APIs": [r'rest\s*api', r'restful', r'web\s*api', r'api\s*endpoint'],
+    "Git/GitHub": [r'\bgit\b', r'github', r'gitlab', r'bitbucket'],
+}
+
+PREFERRED_SKILLS = {
+    "Docker": [r'docker', r'container(?:ization)?'],
+    "Azure": [r'azure', r'microsoft\s*azure'],
+    "Unit Testing": [r'unit\s*test', r'test\s*frame', r'xunit', r'nunit', r'mstest', r'\bmock\b', r'test\s*driven'],
+    "JWT": [r'\bjwt\b', r'json\s*web\s*token', r'bearer\s*token'],
+    "Clean Architecture": [r'clean\s*arch', r'domain\s*driven', r'\bddd\b', r'\bsolid\b', r'dependency\s*injection', r'repository\s*pattern', r'cqrs', r'mediator'],
+}
+
+# Skills that indicate candidate is NOT a .NET developer (triggers penalty)
+NON_DOTNET_SKILLS = {
+    "Java": [r'\bjava[\s,;.\]\)]', r'\bspring[\s,;.\]\)]', r'\bmaven[\s,;.]'],
+    "Python": [r'\bpython[\s,;.\]\)]', r'\bdjango[\s,;.]', r'\bflask[\s,;.]', r'\bfastapi[\s,;.]'],
+    "PHP": [r'\bphp[\s,;.\]\)]', r'\blaravel[\s,;.]', r'\bwordpress'],
+    "React": [r'\breact[\s,;.\]\)]', r'react\.js', r'next\.js'],
+    "Flutter/Dart": [r'flutter', r'\bdart[\s,;.]'],
+    "Data Science": [r'data\s*(?:anal|sci)', r'machine\s*learn', r'deep\s*learn', r'pandas', r'numpy', r'tensorflow', r'pytorch'],
+    "UI/UX": [r'ui\s*ux', r'figma', r'adobe\s*xd', r'\bsketch\b'],
+}
+
+EXPERIENCE_PATTERNS = [
+    r'(\d+)\+?\s*(?:years?|سنوات|سنين|سن)\s*(?:of\s*)?(?:experience|خبرة|عمل)',
+    r'(?:experience|خبرة|عمل)\s*(?:of|:)?\s*(\d+)\+?\s*(?:years?|سنوات|سنين)',
+    r'(\d+)\+?\s*yr',
+]
+
+EDUCATION_KEYWORDS = {
+    "cs": [r'computer\s*science', r'software\s*engineering', r'علوم\s*حاسب', r'هندسة\s*برمجيات', r'information\s*technology', r'information\s*systems', r'نظم\s*معلومات'],
+    "engineering": [r'engineering', r'هندسة', r'computer\s*engineering', r'electrical\s*engineering'],
+    "degree": [r'bachelor', r'master', r'phd\b', r'doctorate', r'بكالوريوس', r'ماجستير', r'دكتوراه', r'b\.s\.', r'm\.s\.', r'b\.a\.'],
+}
+
+PROJECT_INDICATORS = [
+    r'project', r'mشروع', r'system', r'نظام', r'application', r'تطبيق',
+    r'platform', r'منصة', r'website', r'موقع', r'api\b', r'service',
+]
 
 
 class ATSService:
@@ -31,9 +79,9 @@ class ATSService:
     def __init__(self):
         self.embedding_model = None
         self.index: Any = None
-        self.cv_documents: List[Dict] = []   # [{id, filename, text, filepath, ...}]
-        self.chunk_metadata: List[Dict] = [] # [{doc_id, text}] - maps to FAISS index
-        self._nlp = None # Lazy load spaCy
+        self.cv_documents: List[Dict] = []   # in-memory cache of [{id, filename, full_text, filepath, parsed_info}]
+        self.chunk_metadata: List[Dict] = [] # in-memory cache of [{cv_id, content}] — maps to FAISS index positions
+        self._nlp = None
         self._load_or_create_index()
 
     # ------------------------------------------------------------------ #
@@ -84,58 +132,70 @@ class ATSService:
     def _load_or_create_index(self):
         config.init_directories()
         try:
-            import faiss
-            if ATS_INDEX_PATH.exists() and ATS_DOCS_PATH.exists():
+            if ATS_INDEX_PATH.exists():
                 self.index = faiss.read_index(str(ATS_INDEX_PATH))
-                with open(ATS_DOCS_PATH, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    if isinstance(data, dict):
-                        self.cv_documents = data.get("docs", [])
-                        self.chunk_metadata = data.get("chunks", [])
-                    else:
-                        # Auto-migration for existing users (old format was just list)
-                        self.cv_documents = data
-                        self.chunk_metadata = []
-                logger.info(f"ATS: Loaded index with {len(self.cv_documents)} CVs and {len(self.chunk_metadata)} chunks")
             else:
-                # Check for old pickle file and migrate
-                old_pkl = config.VECTOR_STORE_PATH / "ats_documents.pkl"
-                if ATS_INDEX_PATH.exists() and old_pkl.exists():
-                    logger.info("ATS: Migrating from pickle to JSON format...")
-                    self.index = faiss.read_index(str(ATS_INDEX_PATH))
-                    import pickle
-                    with open(old_pkl, "rb") as f:
-                        data = pickle.load(f)
-                    self.cv_documents = data.get("docs", []) if isinstance(data, dict) else data
-                    self.chunk_metadata = data.get("chunks", []) if isinstance(data, dict) else []
-                    self._save_index()
-                    old_pkl.rename(old_pkl.with_suffix('.pkl.bak'))
-                    logger.info("ATS: Migration complete.")
-                else:
-                    self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
-                    self.cv_documents = []
-                    self.chunk_metadata = []
-                    logger.info("ATS: Created new FAISS index")
+                self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
+                logger.info("ATS: Created new FAISS index")
+
+            # Load CV data from SQLite
+            self.cv_documents = database.get_all_ats_cvs()
+            chunks = database.get_all_ats_chunks()
+            self.chunk_metadata = [{"cv_id": c["cv_id"], "content": c["content"]} for c in chunks]
+
+            # Auto-migrate from old JSON if exists
+            old_json = config.VECTOR_STORE_PATH / "ats_documents.json"
+            if old_json.exists() and len(self.cv_documents) == 0:
+                self._migrate_from_json(old_json)
+
+            logger.info(f"ATS: Loaded {len(self.cv_documents)} CVs and {len(self.chunk_metadata)} chunks from DB")
         except Exception as e:
             logger.error(f"ATS index init error: {e}")
-            import faiss
             self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
             self.cv_documents = []
             self.chunk_metadata = []
 
+    def _migrate_from_json(self, json_path: Path):
+        """One-time migration from old JSON storage to SQLite."""
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            docs = data.get("docs", []) if isinstance(data, dict) else data
+            chunks_data = data.get("chunks", []) if isinstance(data, dict) else []
+            logger.info(f"ATS: Migrating {len(docs)} CVs and {len(chunks_data)} chunks from JSON to SQLite...")
+
+            for doc in docs:
+                parsed = doc.get("parsed_info", {}) or {}
+                cv_id = database.create_ats_cv(
+                    filename=doc.get("filename", ""),
+                    filepath=doc.get("filepath", ""),
+                    full_text=doc.get("full_text", ""),
+                    candidate_name=parsed.get("candidate_name", ""),
+                    organizations=json.dumps(parsed.get("organizations", []), ensure_ascii=False),
+                    locations=json.dumps(parsed.get("locations", []), ensure_ascii=False),
+                    emails=json.dumps(parsed.get("emails", []), ensure_ascii=False),
+                )
+                # Find and save chunks for this doc
+                doc_chunks = [c["content"] for c in chunks_data if c.get("doc_id") == doc.get("id")]
+                if doc_chunks:
+                    database.create_ats_chunks(cv_id, doc_chunks)
+                    database.update_ats_cv_chunk_count(cv_id, len(doc_chunks))
+
+            # Reload from DB
+            self.cv_documents = database.get_all_ats_cvs()
+            chunks = database.get_all_ats_chunks()
+            self.chunk_metadata = [{"cv_id": c["cv_id"], "content": c["content"]} for c in chunks]
+            logger.info("ATS: Migration to SQLite complete.")
+        except Exception as e:
+            logger.error(f"ATS: Migration from JSON failed: {e}")
+
     def _save_index(self):
         """
-        Save both the FAISS index and the CV/chunk metadata to disk.
-        Metadata is stored as JSON (safe) — the binary FAISS index is
-        written separately via faiss.write_index.
-        NOTE: Only ONE definition of _save_index should exist to prevent data loss.
+        Save the FAISS index to disk.
+        CV metadata is already persisted to SQLite via index_cv_files().
         """
-        import faiss
-        config.init_directories()
         faiss.write_index(self.index, str(ATS_INDEX_PATH))
-        with open(ATS_DOCS_PATH, "w", encoding="utf-8") as f:
-            json.dump({"docs": self.cv_documents, "chunks": self.chunk_metadata}, f, ensure_ascii=False)
-        logger.debug(f"ATS: Saved index ({len(self.cv_documents)} CVs, {len(self.chunk_metadata)} chunks)")
+        logger.debug(f"ATS: FAISS index saved ({self.index.ntotal} vectors)")
 
     @staticmethod
     def _chunk_text(text: str, size: int = 1000, overlap: int = 200) -> List[str]:
@@ -247,17 +307,20 @@ class ATSService:
             
     def _scale_similarity(self, raw_sim: float) -> float:
         """
-        Scale raw similarity score to naturally distributed percentage for human consumption.
-        Addresses embedding anisotropy where raw similarity values are clustered in [0.58, 0.82].
+        Scale raw similarity to a natural 0-100% range.
+        Uses a logarithmic-inspired scale so that even moderate
+        cosine similarities (0.4–0.6) produce meaningful scores.
         """
-        min_val = 0.58
-        max_val = 0.82
-        if raw_sim <= min_val:
-            return (raw_sim / min_val) * 0.10
-        elif raw_sim >= max_val:
-            return 0.95 + ((raw_sim - max_val) / (1.0 - max_val)) * 0.05
+        if raw_sim <= 0.1:
+            return 0.0
+        elif raw_sim <= 0.4:
+            return raw_sim * 0.25
+        elif raw_sim <= 0.6:
+            return 0.10 + ((raw_sim - 0.4) / 0.2) * 0.30
+        elif raw_sim <= 0.8:
+            return 0.40 + ((raw_sim - 0.6) / 0.2) * 0.45
         else:
-            return 0.10 + ((raw_sim - min_val) / (max_val - min_val)) * 0.85
+            return 0.85 + ((raw_sim - 0.8) / 0.2) * 0.15
 
     # ------------------------------------------------------------------ #
     #  Public API                                                          #
@@ -265,20 +328,32 @@ class ATSService:
 
     def get_stats(self) -> Dict:
         return {
-            "total_cvs": len(self.cv_documents),
+            "total_cvs": database.count_ats_cvs(),
             "index_size": self.index.ntotal if self.index else 0,
         }
 
     def get_cv_by_id(self, doc_id: str) -> Optional[Dict]:
-        """Find a CV document by its unique ID."""
-        for doc in self.cv_documents:
-            if doc['id'] == doc_id:
-                return doc
+        """Find a CV document by its unique ID from SQLite."""
+        cv = database.get_ats_cv(doc_id)
+        if cv:
+            parsed = {
+                "candidate_name": cv.get("candidate_name", ""),
+                "organizations": json.loads(cv.get("organizations", "[]")),
+                "locations": json.loads(cv.get("locations", "[]")),
+                "emails": json.loads(cv.get("emails", "[]")),
+            }
+            return {
+                "id": cv["id"],
+                "filename": cv["filename"],
+                "filepath": cv["filepath"],
+                "full_text": cv.get("full_text", ""),
+                "parsed_info": parsed,
+            }
         return None
 
     def reset_index(self):
-        """Clear all indexed CVs and chunks."""
-        import faiss
+        """Clear all indexed CVs, chunks, and FAISS index."""
+        database.delete_all_ats_cvs()
         self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
         self.cv_documents = []
         self.chunk_metadata = []
@@ -288,10 +363,11 @@ class ATSService:
     def index_cv_files(self, file_paths: List[str]) -> Dict:
         """
         Extract text, apply chunking, and index each chunk.
-        Respects USE_OLLAMA_EMBEDDING config setting for consistency.
+        CVs stored in SQLite; vectors in FAISS.
         """
         success = 0
         failed = []
+        existing_filenames = {d["filename"] for d in self.cv_documents}
 
         all_new_chunks = []
         all_chunk_payloads = []
@@ -300,7 +376,7 @@ class ATSService:
             filename = os.path.basename(path)
 
             # Skip duplicate filenames
-            if any(d["filename"] == filename for d in self.cv_documents):
+            if filename in existing_filenames:
                 logger.warning(f"ATS: Skipping duplicate CV '{filename}' — already indexed")
                 failed.append(f"{filename} (duplicate)")
                 continue
@@ -311,24 +387,38 @@ class ATSService:
                 failed.append(filename)
                 continue
 
-            doc_id = str(uuid.uuid4())
-            
-            # Use spaCy to extract entities for richer metadata
             parsed_info = self._extract_entities_with_spacy(text)
-            
+            truncated = text[:20000]
+
+            # Store in SQLite
+            cv_id = database.create_ats_cv(
+                filename=filename,
+                filepath=path,
+                full_text=truncated,
+                candidate_name=parsed_info.get("candidate_name", ""),
+                organizations=json.dumps(parsed_info.get("organizations", []), ensure_ascii=False),
+                locations=json.dumps(parsed_info.get("locations", []), ensure_ascii=False),
+                emails=json.dumps(parsed_info.get("emails", []), ensure_ascii=False),
+            )
+
+            # Create chunks
+            chunks = self._chunk_text(text)
+            database.create_ats_chunks(cv_id, chunks)
+            database.update_ats_cv_chunk_count(cv_id, len(chunks))
+
+            # In-memory cache
             self.cv_documents.append({
-                "id": doc_id,
+                "id": cv_id,
                 "filename": filename,
                 "filepath": path,
-                "full_text": text[:20000],  # Limit for LLM context window
+                "full_text": truncated,
                 "parsed_info": parsed_info
             })
+            existing_filenames.add(filename)
 
-            # Create Chunks
-            chunks = self._chunk_text(text)
             for chunk in chunks:
                 all_new_chunks.append(chunk)
-                all_chunk_payloads.append({"doc_id": doc_id, "text": chunk})
+                all_chunk_payloads.append({"cv_id": cv_id, "content": chunk})
 
             success += 1
             logger.info(f"ATS: Extracted {len(chunks)} chunks from {filename}")
@@ -336,18 +426,15 @@ class ATSService:
         if all_new_chunks:
             if self.index is None:
                 logger.warning("ATS: Index was None, initializing now")
-                import faiss
                 self.index = faiss.IndexFlatL2(config.EMBEDDING_DIM)
-                
+
             embeddings = self._get_embeddings(all_new_chunks, task_type='document')
-            # Ensure C-contiguous for FAISS and bypass strict type check
-            idx_any: Any = self.index
-            idx_any.add(np.ascontiguousarray(embeddings.astype("float32")))
+            self.index.add(np.ascontiguousarray(embeddings.astype("float32")))
             self.chunk_metadata.extend(all_chunk_payloads)
             self._save_index()
             logger.info(f"ATS: Indexed {success} CVs into {len(all_new_chunks)} chunks")
 
-        return {"success": success, "failed": failed, "total": len(self.cv_documents)}
+        return {"success": success, "failed": failed, "total": database.count_ats_cvs()}
 
     def search_top_candidates(self, jd_text: str, top_k: int = 10) -> List[Dict]:
         """
@@ -369,7 +456,7 @@ class ATSService:
             if idx < 0 or idx >= len(self.chunk_metadata): continue
 
             meta = self.chunk_metadata[idx]
-            doc_id = meta["doc_id"]
+            doc_id = meta.get("cv_id") or meta.get("doc_id", "")
             if float(dist) < 4.0:
                 # Normalized vectors: L2^2 = 2 - 2*cos_sim => cos_sim = 1 - L2^2 / 2
                 cos_sim = 1.0 - (float(dist) / 2.0)
@@ -424,274 +511,435 @@ class ATSService:
         top_n: int = 3,
     ) -> Dict:
         """
-        Re-rank top candidates using LLM reasoning.
-        Falls back gracefully if LLM is unavailable or times out.
+        Global ATS ranking: smart scoring + LLM enhancement.
+        1. Smart scoring (Skill 50%, Experience 20%, Education 10%, Semantic 20%)
+        2. LLM enhancement for natural-language feedback on top candidates
+        3. Falls back gracefully if LLM unavailable.
         """
         if not candidates:
             return {"top_candidates": [], "selection_summary": "No candidates to rank."}
 
-        top_candidates = candidates[:min(10, len(candidates))]
+        # Step 1: Smart scoring
+        scored = []
+        for c in candidates:
+            full_text = c.get("full_text", "")
+            parsed_info = c.get("parsed_info", {})
+            semantic_score = c.get("similarity_score", 0.0)
+            score_breakdown = self._score_candidate(full_text, parsed_info, semantic_score)
+            scored.append({**c, **score_breakdown})
+
+        scored.sort(key=lambda x: x["final_score"], reverse=True)
+
+        top = scored[:top_n]
+        top_candidates = []
+        for i, c in enumerate(top):
+            top_candidates.append({
+                "rank": i + 1,
+                "id": c["id"],
+                "filename": c["filename"],
+                "overall_score": int(round(c["final_score"])),
+                "skill_match": c["skill_match"],
+                "experience_match": c["experience_match"],
+                "education_match": c["education_match"],
+                "semantic_match": c["semantic_match"],
+                "ats_decision": c["ats_decision"],
+                "matching_skills": c["matching_skills"],
+                "missing_skills": c["missing_skills"],
+                "preferred_skills": c["preferred_skills"],
+                "irrelevant_skills": c["irrelevant_skills"],
+                "keyword_stuffing": c.get("keyword_stuffing", False),
+                "years_experience": c.get("years_experience", 0),
+                "llm_model": config.DEFAULT_MODEL,
+                "llm_feedback": "",
+                "strengths": self._build_strengths(c),
+                "weaknesses": self._build_weaknesses(c),
+                "why_selected": self._build_reason(c),
+            })
+
+        total_cvs = len(candidates)
+        accepted = sum(1 for c in scored if c["ats_decision"] == "ACCEPT")
+        rejected = sum(1 for c in scored if c["ats_decision"] == "REJECT")
+
+        # Step 2: LLM enhancement
+        enhanced = self._llm_enhance(top_candidates, jd_text)
+        if enhanced:
+            top_candidates = enhanced
+
+        return {
+            "top_candidates": top_candidates,
+            "selection_summary": self._build_summary(top_candidates, total_cvs, accepted, rejected),
+        }
+
+    def _llm_enhance(self, top_candidates: List[Dict], jd_text: str) -> Optional[List[Dict]]:
+        """
+        Enhance each candidate individually using LLM + their actual CV text from DB.
+        Falls back gracefully per-candidate so one failure doesn't break others.
+        """
+        if not top_candidates:
+            return None
 
         try:
             from services.agent.ollama_service import ollama_service
-            from models import database
-
-            settings = database.get_model_settings()
-            model_name = settings.get("active_model", config.DEFAULT_MODEL)
-
-            candidates_text = ""
-            for i, c in enumerate(top_candidates, 1):
-                info = c.get("parsed_info", {})
-                name = info.get("candidate_name", c["filename"])
-                skills = ", ".join(info.get("organizations", [])[:5]) or "N/A"
-                score = c["similarity_score"]
-                candidates_text += (
-                    f"\n[{i}] {name} | Score: {score}% | Skills: {skills}\n"
-                    f"    CV Summary: {c.get('full_text', '')[:400]}\n"
-                )
-
-            prompt = f"""Rank the top {top_n} candidates for this job. Return ONLY JSON.
-
-JOB: {jd_text[:600]}
-
-CANDIDATES:
-{candidates_text}
-
-Return this exact format:
-{{"candidates": [{{
-  "rank": 1,
-  "filename": "from input",
-  "score": 85,
-  "strengths": ["s1", "s2"],
-  "weaknesses": ["w1"],
-  "reason": "in Arabic"
-}}], "summary": "in Arabic"}}
-
-Select exactly {top_n}."""
-
-            # Use fast model for ATS ranking (1.7b is better for JSON than company-assistant)
-            from config import UTILITY_MODEL_NAME
-            ats_model = UTILITY_MODEL_NAME or model_name
-
-            raw = ollama_service.generate(
-                prompt=prompt,
-                model=ats_model,
-                system_prompt=(
-                    "/no_think\n"
-                    "You are a JSON-only assistant. Output ONLY a JSON object. "
-                    "No markdown, no code fences, no explanation, no text outside the JSON. "
-                    "Start with { and end with }."
-                ),
-                temperature=0.1,
-                timeout=500,
-                max_tokens=500,
-                json_mode=False,
-            )
-
-            logger.debug(f"ATS: LLM raw response (first 300 chars): {raw[:300]!r}")
-            result = self._extract_json_from_text(raw)
-            if result and "candidates" in result and len(result["candidates"]) > 0:
-                for item in result["candidates"]:
-                    match = next((
-                        c for c in top_candidates
-                        if c["filename"].strip().lower() == item.get("filename", "").strip().lower()
-                    ), None)
-                    if match:
-                        item["id"] = match["id"]
-                        item["parsed_info"] = match.get("parsed_info", {})
-                        if "score" not in item or not item["score"]:
-                            item["score"] = int(match["similarity_score"])
-                    else:
-                        item["score"] = item.get("score", 0)
-                # Normalize field names for downstream
-                for item in result["candidates"]:
-                    item["overall_score"] = item.pop("score", 0)
-                    item["why_selected"] = item.pop("reason", "")
-                output = {
-                    "top_candidates": result["candidates"],
-                    "selection_summary": result.get("summary", "تم الترتيب بناءً على تحليل الذكاء الاصطناعي."),
-                }
-                logger.info(f"ATS: LLM ranked {len(output['top_candidates'])} candidates successfully")
-                return output
-
-            logger.warning(f"ATS: LLM returned invalid/unusable JSON. Raw (500 chars): {raw[:500]!r}")
-            # Try simpler format before expensive individual reasoning
-            simple = self._try_simple_list_ranking(jd_text, top_candidates[:top_n], model_name)
-            if simple:
-                return simple
-            return self._fallback_ranking(candidates, top_n)
-
-        except Exception as exc:
-            logger.warning(f"ATS: LLM ranking failed ({exc}), using similarity fallback")
-            return self._fallback_ranking(candidates, top_n)
-
-    def _try_simple_list_ranking(self, jd_text: str, top_candidates: List[Dict], model_name: str) -> Optional[Dict]:
-        """
-        Intermediate fallback: ask LLM for a simple ranked list (easier than full JSON).
-        Returns None if this also fails.
-        """
-        from services.agent.ollama_service import ollama_service
-
-        filenames = [c["filename"] for c in top_candidates]
-        filenames_str = ", ".join(f"{i+1}. {fn}" for i, fn in enumerate(filenames))
-
-        prompt = f"""Rank these candidates by best fit for the job. Return ONLY a numbered list.
-
-JOB: {jd_text[:400]}
-
-CANDIDATES: {filenames_str}
-
-Return ONLY this format (no JSON, no explanation):
-1. filename - reason in Arabic
-2. filename - reason in Arabic
-3. filename - reason in Arabic"""
-
-        try:
-            from config import UTILITY_MODEL_NAME
-            ats_model = UTILITY_MODEL_NAME or model_name
-
-            raw = ollama_service.generate(
-                prompt=prompt,
-                model=ats_model,
-                system_prompt="/no_think\nReturn ONLY a numbered list. No other text.",
-                temperature=0.1,
-                timeout=90,
-                max_tokens=500,
-                json_mode=False,
-            )
-            logger.debug(f"ATS: Simple ranking response: {raw[:300]!r}")
-            return self._parse_simple_list(raw, top_candidates)
-        except Exception as exc:
-            logger.debug(f"ATS: Simple list ranking failed: {exc}")
+        except Exception:
+            logger.debug("ATS: Ollama not available, skipping LLM enhancement")
             return None
 
-    def _parse_simple_list(self, raw: str, top_candidates: List[Dict]) -> Optional[Dict]:
-        """
-        Parse a numbered list like '1. file.pdf - reason' into a ranking result.
-        """
-        lines = [l.strip() for l in raw.strip().splitlines() if l.strip()]
-        results = []
+        enhanced_any = False
+        for c in top_candidates:
+            cv_id = c.get("id", "")
+            cv = database.get_ats_cv(cv_id) if cv_id else None
+            cv_text = (cv.get("full_text") or "")[:2500] if cv else ""
 
-        for line in lines:
-            # Match patterns: "1. filename.pdf - reason" or "1. filename.pdf: reason" or "1) filename.pdf - reason"
-            match = re.match(r"^\d+[\.\)]\s*(.+?)(?:\s*[-:]\s*(.+))?$", line)
-            if not match:
-                continue
-
-            filename_part = match.group(1).strip()
-            reason = (match.group(2) or "").strip()
-
-            # Fuzzy match against known candidates
-            matched_candidate = next((
-                c for c in top_candidates
-                if filename_part.lower().strip() in c["filename"].lower()
-                or c["filename"].lower().strip() in filename_part.lower()
-                or c["filename"].strip().lower() == filename_part.strip().lower()
-            ), None)
-
-            if matched_candidate:
-                results.append({
-                    "rank": len(results) + 1,
-                    "id": matched_candidate["id"],
-                    "filename": matched_candidate["filename"],
-                    "overall_score": int(matched_candidate["similarity_score"]),
-                    "parsed_info": matched_candidate.get("parsed_info", {}),
-                    "strengths": [],
-                    "weaknesses": [],
-                    "why_selected": reason or f"تم الترتيب بناءً على التحليل بنسبة {matched_candidate['similarity_score']}%.",
-                })
-
-        if len(results) < 1:
-            return None
-
-        logger.info(f"ATS: Parsed {len(results)} candidates from simple list ranking")
-        return {
-            "top_candidates": results,
-            "selection_summary": "تم الترتيب بناءً على تحليل مبسط للذكاء الاصطناعي.",
-        }
-
-    def _rank_with_individual_reasoning(self, jd_text: str, top_candidates: List[Dict], model_name: str) -> Dict:
-        """
-        Stage 2 Fallback: If the model can't handle the full JSON ranking,
-        ask it for strengths/weaknesses of each candidate one-by-one with simple prompts.
-        """
-        from services.agent.ollama_service import ollama_service
-        
-        results = []
-        for i, cand in enumerate(top_candidates):
-            logger.debug(f"ATS: Getting individual reasoning for {cand['filename']}")
-            
-            prompt = f"""Analyze this candidate for the following Job.
-JOB: {jd_text[:500]}
-CV TEXT: {cand['full_text'][:1500]}
-
-Explain in ARABIC (عربي):
-1. Strengths (نقاط القوة)
-2. Weaknesses (نقاط الضعف)
-3. Why selected (لماذا تم اختياره)
-
-Return ONLY a JSON object:
-{{"strengths": ["...", "..."], "weaknesses": ["..."], "why_selected": "..."}}"""
+            prompt = (
+                f"وصف الوظيفة:\n{jd_text[:500]}\n\n"
+                f"المرشح: {c['filename']}\n"
+                f"النتيجة: {c['overall_score']}%\n"
+                f"المهارات المطلوبة المتطابقة: {', '.join(c['matching_skills'][:6])}\n"
+                f"المهارات المطلوبة المفقودة: {', '.join(c['missing_skills'][:3])}\n\n"
+                f"السيرة الذاتية:\n{cv_text[:2000]}\n\n"
+                "بناءً على الوظيفة أعلاه، حلل المرشح بجملتين:\n"
+                "قوة: نقطة قوة واحدة محددة من سيرته تخص الوظيفة\n"
+                "ضعف: نقطة ضعف واحدة محددة من سيرته تخص الوظيفة"
+            )
 
             try:
                 raw = ollama_service.generate(
                     prompt=prompt,
-                    model=model_name,
-                    system_prompt="Return ONLY valid JSON in Arabic.",
-                    temperature=0.1,
-                    timeout=90,
-                    json_mode=True
+                    model=config.DEFAULT_MODEL,
+                    system_prompt="أنت خبير توظيف .NET. أجب مباشرة بدون تفكير. رد بجملتين بالعربية فقط: الأولى تبدأ بـ قوة: والثانية بـ ضعف:",
+                    temperature=0.3,
+                    timeout=300,
+                    max_tokens=600,
                 )
-                reasoning = self._extract_json_from_text(raw)
-                if reasoning:
-                    results.append({
-                        "rank": i + 1,
-                        "id": cand["id"],
-                        "filename": cand["filename"],
-                        "overall_score": int(cand["similarity_score"]),
-                        "parsed_info": cand.get("parsed_info", {}),
-                        "strengths": reasoning.get("strengths", []),
-                        "weaknesses": reasoning.get("weaknesses", []),
-                        "why_selected": reasoning.get("why_selected", f"تم اختياره بناءً على قوة المطابقة ({cand['similarity_score']}%).")
-                    })
-                    continue
+                if raw and len(raw.strip()) > 15:
+                    # Strip thinking block (qwen3 <think>...</think>)
+                    raw = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
+                    logger.debug(f"ATS: LLM cleaned for {c['filename']}: {raw[:300]}")
+                    strength = self._extract_flexible(raw, "قوة")
+                    weakness = self._extract_flexible(raw, "ضعف")
+                    if strength:
+                        c["strengths"] = [strength.strip().lstrip(":-")]
+                    if weakness:
+                        c["weaknesses"] = [weakness.strip().lstrip(":-")]
+                    enhanced_any = True
+                    if strength or weakness:
+                        feedback_text = f"قوة: {strength or '-'} | ضعف: {weakness or '-'}"
+                    else:
+                        feedback_text = f"الرد الخام: {raw.strip()[:150]}"
+                    c["llm_feedback"] = feedback_text
+                    database.update_ats_cv_llm_feedback(cv_id, feedback_text, config.DEFAULT_MODEL)
+                    logger.info(f"ATS: Enhanced {c['filename']} with {config.DEFAULT_MODEL}")
             except Exception as exc:
-                logger.warning(f"ATS: Individual reasoning failed for {cand['filename']}: {exc}")
-            
-            # Sub-fallback for this specific candidate
-            results.append({
-                "rank": i + 1,
-                "id": cand["id"],
-                "filename": cand["filename"],
-                "overall_score": int(cand["similarity_score"]),
-                "strengths": ["مطابقة دلالية قوية"],
-                "weaknesses": [],
-                "why_selected": f"تم اختياره بناءً على البحث الدلالي بنسبة {cand['similarity_score']}%."
-            })
+                logger.debug(f"ATS: LLM skip {c['filename']}: {exc}")
+                continue
+
+        if enhanced_any:
+            logger.info("ATS: LLM enhancement applied to selected candidates")
+        return top_candidates if enhanced_any else None
+
+    @staticmethod
+    def _extract_flexible(text: str, keyword: str) -> Optional[str]:
+        """
+        Flexible parser: finds keyword (قوة/ضعف) with optional markdown/colons/spaces
+        and returns the rest of the line.
+        """
+        escaped = re.escape(keyword)
+        patterns = [
+            rf"(?:\d+[\.\)]\s*)?{escaped}\s*:\s*(.+)",
+            rf"\*{{1,2}}{escaped}\*{{1,2}}\s*:\s*(.+)",
+            rf"\*{{1,2}}{escaped}\*{{1,2}}\s*(.+)",
+            rf"(?:\d+[\.\)]\s*)?{escaped}\s+(.+)",
+        ]
+        for pat in patterns:
+            m = re.search(pat, text)
+            if m:
+                return m.group(1).strip()
+        return None
+
+    # ------------------------------------------------------------------ #
+    #  Smart Candidate Scoring
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _match_skills(text: str, skill_dict: Dict[str, List[str]]) -> List[str]:
+        """Return list of skill names from skill_dict that appear in text."""
+        text_lower = text.lower()
+        matched = []
+        for skill_name, patterns in skill_dict.items():
+            for pat in patterns:
+                if re.search(pat, text_lower):
+                    matched.append(skill_name)
+                    break
+        return matched
+
+    @staticmethod
+    def _count_skill_mentions(text: str, skill_name: str) -> int:
+        """Count approximate mentions of a skill in text."""
+        text_lower = text.lower()
+        # Use the skill name and common variants
+        variants = [skill_name.lower(), skill_name.lower().replace(" ", ""), skill_name.lower().replace("/", " ")]
+        total = 0
+        for v in variants:
+            total += text_lower.count(v)
+        return total
+
+    @staticmethod
+    def _detect_keyword_stuffing(text: str, matched_skills: List[str]) -> bool:
+        """
+        Detect if skills are repeated excessively without supporting context.
+        Checks all known skill keywords, not just matched ones.
+        """
+        text_lower = text.lower()
+        # Check common skill tokens that might be stuffed
+        stuffing_tokens = [
+            'c#', 'csharp', 'c sharp', '.net', 'asp.net', 'aspnet',
+            'sql', 'entity framework', 'rest api', 'git',
+            'docker', 'azure', 'python', 'java', 'react', 'angular',
+        ]
+        for token in stuffing_tokens:
+            count = text_lower.count(token)
+            if count > 7:
+                return True
+        return False
+
+    @staticmethod
+    def _extract_years_experience(text: str) -> float:
+        """Extract total years of professional experience from CV text."""
+        text_lower = text.lower()
+        years = 0.0
+
+        for pat in EXPERIENCE_PATTERNS:
+            matches = re.findall(pat, text_lower)
+            for m in matches:
+                try:
+                    val = float(m)
+                    if val > 50:
+                        continue
+                    if val > years:
+                        years = val
+                except ValueError:
+                    continue
+
+        # Fallback: count date ranges (YYYY - YYYY or YYYY–YYYY)
+        if years == 0:
+            date_ranges = re.findall(r'(?:19|20)\d{2}\s*[–\-to]+\s*(?:(?:19|20)\d{2}|present|current|حتى|الآن)', text_lower)
+            total_years = 0.0
+            for dr in date_ranges:
+                parts = re.findall(r'(?:19|20)\d{2}', dr)
+                if len(parts) == 2:
+                    total_years += abs(float(parts[1]) - float(parts[0]))
+            if total_years > 0:
+                years = total_years
+
+        return years
+
+    @staticmethod
+    def _score_education(text: str) -> float:
+        """Score education relevance (0-100)."""
+        text_lower = text.lower()
+        score = 0.0
+
+        has_cs = any(re.search(pat, text_lower) for pat in EDUCATION_KEYWORDS["cs"])
+        has_eng = any(re.search(pat, text_lower) for pat in EDUCATION_KEYWORDS["engineering"])
+        has_degree = any(re.search(pat, text_lower) for pat in EDUCATION_KEYWORDS["degree"])
+
+        if has_cs and has_degree:
+            score = 100.0
+        elif has_eng and has_degree:
+            score = 80.0
+        elif has_degree:
+            score = 60.0
+        elif has_cs or has_eng:
+            score = 40.0
+
+        return score
+
+    @staticmethod
+    def _score_project_relevance(text: str, matched_skills: List[str]) -> float:
+        """
+        Score project relevance based on whether projects mention
+        the required tech stack.
+        """
+        text_lower = text.lower()
+        # Count project sections that mention .NET / C# related terms
+        project_related = [r'mشروع', r'project', r'system', r'application', r'تطبيق']
+        has_projects = any(re.search(pat, text_lower) for pat in project_related)
+        if not has_projects:
+            return 20.0
+
+        # Check if projects mention .NET-related technologies
+        dotnet_in_projects = any(re.search(pat, text_lower) for pat in [r'\.net', r'c#', r'asp\.net', r'entity\s*framework'])
+        if not dotnet_in_projects:
+            return 30.0
+
+        # Scale based on how many required skills are matched
+        base = 50.0
+        matched_relevant = sum(1 for s in matched_skills if s in REQUIRED_SKILLS)
+        bonus = min(50.0, matched_relevant * 10.0)
+        return min(100.0, base + bonus)
+
+    def _score_candidate(self, full_text: str, parsed_info: Dict, semantic_score: float) -> Dict:
+        """
+        Compute all scoring components for a single candidate.
+        Uses global ATS scoring: Skill 50%, Experience 20%, Education 10%, Semantic 20%.
+        Returns ACCEPT / REVIEW / REJECT decision.
+        """
+        text = full_text if full_text else json.dumps(parsed_info) if parsed_info else ""
+
+        # ── Skill Extraction ────────────────────────────────────────────
+        matched_required = self._match_skills(text, REQUIRED_SKILLS)
+        missing_required = [s for s in REQUIRED_SKILLS if s not in matched_required]
+        matched_preferred = self._match_skills(text, PREFERRED_SKILLS)
+        matched_irrelevant = self._match_skills(text, NON_DOTNET_SKILLS)
+
+        has_csharp = "C#" in matched_required
+        has_aspnet = "ASP.NET Core" in matched_required
+
+        # ── Penalties ───────────────────────────────────────────────────
+        non_dotnet_penalty = 0.0
+        if matched_irrelevant and not matched_required:
+            non_dotnet_penalty = 60.0
+        elif matched_irrelevant:
+            non_dotnet_penalty = min(30.0, len(matched_irrelevant) * 8.0)
+
+        major_penalty = 0.0
+        if not has_csharp and not has_aspnet:
+            major_penalty = 50.0
+        elif not has_csharp:
+            major_penalty = 25.0
+        elif not has_aspnet:
+            major_penalty = 20.0
+
+        # ── Skill Match (50%) ──────────────────────────────────────────
+        required_skill_pct = (len(matched_required) / len(REQUIRED_SKILLS)) * 100.0
+        preferred_bonus = min(15.0, (len(matched_preferred) / len(PREFERRED_SKILLS)) * 15.0)
+        skill_match = max(0.0, min(100.0, required_skill_pct + preferred_bonus - non_dotnet_penalty - major_penalty))
+
+        # ── Experience Match (20%) ──────────────────────────────────────
+        years = self._extract_years_experience(text)
+        if years >= 5:
+            experience_match = 100.0
+        elif years >= 3:
+            experience_match = 80.0
+        elif years >= 1:
+            experience_match = 60.0
+        elif years > 0:
+            experience_match = 40.0
+        else:
+            experience_match = 30.0 if matched_required else 10.0
+
+        # ── Education Match (10%) ───────────────────────────────────────
+        education_match = self._score_education(text)
+
+        # ── Semantic Similarity (20%) ───────────────────────────────────
+        semantic_match = semantic_score if semantic_score else 0.0
+
+        # ── Keyword Stuffing ────────────────────────────────────────────
+        is_stuffed = self._detect_keyword_stuffing(text, matched_required)
+        if is_stuffed:
+            experience_match = max(0.0, experience_match - 15.0)
+            skill_match = max(0.0, skill_match - 10.0)
+
+        # ── Final Score ─────────────────────────────────────────────────
+        final_score = (
+            0.50 * skill_match +
+            0.20 * experience_match +
+            0.10 * education_match +
+            0.20 * semantic_match
+        )
+
+        # ── ATS Decision (global ATS style) ────────────────────────────
+        # Knockout: no .NET skills at all
+        if not has_csharp and not has_aspnet:
+            ats_decision = "REJECT"
+        elif final_score >= 80:
+            ats_decision = "ACCEPT"
+        elif final_score >= 50:
+            ats_decision = "REVIEW"
+        else:
+            ats_decision = "REJECT"
+
+        # Knockout: irrelevant stack with zero .NET skills
+        if matched_irrelevant and not has_csharp and not has_aspnet:
+            ats_decision = "REJECT"
 
         return {
-            "top_candidates": results,
-            "selection_summary": "تم التحليل والترتيب بشكل فردي لكل مترشح لضمان دقة النتائج."
+            "final_score": round(final_score, 1),
+            "skill_match": round(skill_match, 1),
+            "experience_match": round(experience_match, 1),
+            "education_match": round(education_match, 1),
+            "semantic_match": round(semantic_match, 1),
+            "ats_decision": ats_decision,
+            "matching_skills": matched_required,
+            "missing_skills": missing_required,
+            "preferred_skills": matched_preferred,
+            "irrelevant_skills": matched_irrelevant,
+            "keyword_stuffing": is_stuffed,
+            "years_experience": years,
         }
 
-    def _fallback_ranking(self, candidates: List[Dict], top_n: int) -> Dict:
-        """Stage 3 Fallback: use similarity scores if even individual reasoning fails."""
-        top = candidates[:top_n]
-        return {
-            "top_candidates": [
-                {
-                    "rank": i + 1,
-                    "id": c["id"],
-                    "filename": c["filename"],
-                    "overall_score": int(c["similarity_score"]),
-                    "strengths": ["درجة مطابقة عالية"],
-                    "weaknesses": [],
-                    "why_selected": f"تم الترتيب بناءً على البحث الدلالي بنسبة {c['similarity_score']}%.",
-                }
-                for i, c in enumerate(top)
-            ],
-            "selection_summary": "تم الترتيب بناءً على خوارزمية البحث الدلالي.",
-        }
+    # ------------------------------------------------------------------ #
+    #  Output formatting helpers
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _build_strengths(c: Dict) -> List[str]:
+        strengths = []
+        if c["ats_decision"] == "ACCEPT":
+            strengths.append("يستوفي معايير القبول")
+        if c.get("skill_match", 0) >= 80:
+            strengths.append(f"تغطية ممتازة للمهارات ({c['skill_match']:.0f}%)")
+        matched = c.get("matching_skills", [])
+        if matched:
+            strengths.append(f"المهارات المتطابقة: {', '.join(matched[:4])}")
+        if c.get("preferred_skills"):
+            strengths.append(f"مهارات إضافية: {', '.join(c['preferred_skills'][:3])}")
+        if c.get("years_experience", 0) >= 3:
+            strengths.append(f"خبرة {c['years_experience']:.0f} سنوات")
+        return strengths[:5]
+
+    @staticmethod
+    def _build_weaknesses(c: Dict) -> List[str]:
+        weaknesses = []
+        if c["ats_decision"] == "REJECT":
+            weaknesses.append("مرفوض — لا يستوفي الحد الأدنى")
+        elif c["ats_decision"] == "REVIEW":
+            weaknesses.append("يحتاج مراجعة بشرية")
+        missing = c.get("missing_skills", [])
+        if missing:
+            weaknesses.append(f"مهارات مفقودة: {', '.join(missing[:4])}")
+        if c.get("keyword_stuffing"):
+            weaknesses.append("تكرار مفرط للمهارات")
+        if c.get("irrelevant_skills"):
+            weaknesses.append(f"مهارات غير مرتبطة: {', '.join(c['irrelevant_skills'][:3])}")
+        if c.get("years_experience", 0) < 2:
+            weaknesses.append("خبرة محدودة")
+        return weaknesses[:4]
+
+    @staticmethod
+    def _build_reason(c: Dict) -> str:
+        decision = c.get("ats_decision", "REVIEW")
+        score = c.get("final_score", 0)
+        if decision == "REJECT":
+            return f"مرفوض. النتيجة: {score:.0f}%. لا يستوفي متطلبات الوظيفة الأساسية."
+        if decision == "ACCEPT":
+            matched = c.get("matching_skills", [])
+            return f"مقبول. مهارات .NET متطابقة ({', '.join(matched[:4])}). النتيجة: {score:.0f}%."
+        return (
+            f"يحتاج مراجعة. المهارات المتطابقة: {', '.join(c.get('matching_skills', [])[:3])}. "
+            f"المفقودة: {', '.join(c.get('missing_skills', [])[:3])}. النتيجة: {score:.0f}%."
+        )
+
+    @staticmethod
+    def _build_summary(top_candidates: List[Dict], total_cvs: int, accepted: int, rejected: int) -> str:
+        top1 = top_candidates[0] if top_candidates else None
+        if not top1:
+            return "لم يتم العثور على مرشحين مناسبين."
+        return (
+            f"تم تحليل {total_cvs} سيرة ذاتية. {accepted} مقبول، {rejected} مرفوض. "
+            f"الأول: {top1['filename'].rsplit('.', 1)[0]} — {top1['ats_decision']} "
+            f"({top1['overall_score']}%)."
+        )
 
 
 # Singleton

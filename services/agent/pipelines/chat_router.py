@@ -169,7 +169,8 @@ class ChatRouterPipeline:
                     sources.append({
                         "id": f"source_{i}",
                         "content": doc.get("content", "")[:200],
-                        "metadata": doc.get("metadata", {})
+                        "metadata": doc.get("metadata", {}),
+                        "score": doc.get("score", 0.0)
                     })
                 from_documents = len(sources) > 0
             elif "retrieved_docs" in output and output["retrieved_docs"]:
@@ -177,7 +178,8 @@ class ChatRouterPipeline:
                     sources.append({
                         "id": f"source_{i}",
                         "content": doc.get("content", "")[:200],
-                        "metadata": doc.get("metadata", {})
+                        "metadata": doc.get("metadata", {}),
+                        "score": doc.get("score", 0.0)
                     })
                 from_documents = len(sources) > 0
 

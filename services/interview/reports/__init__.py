@@ -1,0 +1,4 @@
+from .final_report import InterviewReportGenerator, report_generator
+from .report_templates import ReportTemplates
+FinalReportGenerator = InterviewReportGenerator
+final_report_generator = report_generator

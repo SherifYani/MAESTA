@@ -35,10 +35,11 @@ def get_company_profile(company_id: str = None) -> dict:
     return DEFAULT_COMPANY_PROFILE.copy()
 
 
-def build_company_system_prompt(company_id: str = None) -> str:
+def build_company_system_prompt(company_id: str = None, detected_language: str = None) -> str:
     """
     Return the company assistant system prompt.
     If company has a custom system_prompt, use it. Otherwise use default.
+    detected_language: 'ar' or 'en' — detected from user message.
     """
     profile = get_company_profile(company_id)
 
@@ -46,8 +47,14 @@ def build_company_system_prompt(company_id: str = None) -> str:
     if profile.get("system_prompt"):
         return profile["system_prompt"]
 
-    # Otherwise use the default company prompt
-    lang_instruction = "رد بنفس لغة المستخدم (عربي إذا كتب بالعربي، إنجليزي إذا كتب بالإنجليزي)." if profile.get("language", "ar") == "auto" else ""
+    # Always include language instruction based on detected language
+    if detected_language == "ar":
+        lang_instruction = "رد دائمًا باللغة العربية الفصحى. حتى لو كان السؤال فيه إنجليزي، لازم يكون الرد بالعربي."
+    elif detected_language == "en":
+        lang_instruction = "Always respond in English. Even if the question contains Arabic words, respond in English."
+    else:
+        lang_instruction = "رد بنفس لغة المستخدم (عربي إذا كتب بالعربي، إنجليزي إذا كتب بالإنجليزي)."
+
     return (
         f"أنت مساعد {profile.get('company_name', 'الشركة')}. مهمتك الإجابة على أسئلة العملاء بناءً على المعلومات المتاحة أدناه.\n"
         "\n"
@@ -57,7 +64,7 @@ def build_company_system_prompt(company_id: str = None) -> str:
         "- إذا وجدت معلومة حتى لو جزئية، أجب بها.\n"
         "- لا تذكر أسماء مشاريع أو شركات غير موجودة في السياق.\n"
         "- لا تستخدم علامة <think> أو أي وسوم تفكير داخلية.\n"
-        f"- {lang_instruction}\n" if lang_instruction else ""
+        f"- {lang_instruction}\n"
     )
 
 

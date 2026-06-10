@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}اختبار Coding Challenge{% endblock %}
+{% block extra_css %}
+<style>
+.form-card { background: var(--card-bg); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+.form-card h3 { margin-top: 0; margin-bottom: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 14px; }
+.form-group input,
+.form-group select,
+.form-group textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 14px; }
+.form-group textarea { font-family: 'Courier New', monospace; direction: ltr; text-align: left; }
+.btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; }
+.btn-primary { background: var(--primary-color); color: #fff; }
+.btn-success { background: #28a745; color: #fff; }
+.challenge-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.challenge-box h4 { margin-top: 0; }
+.result-box { background: var(--bg-color); border-radius: 8px; padding: 16px; margin-top: 12px; direction: ltr; text-align: left; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; }
+.score-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 16px; }
+.score-high { background: #d4edda; color: #155724; }
+.score-medium { background: #fff3cd; color: #856404; }
+.score-low { background: #f8d7da; color: #721c24; }
+</style>
+{% endblock %}
+{% block content %}
+<h1>🧩 اختبار Coding Challenge</h1>
+<p style="color: var(--text-muted); margin-bottom: 24px;">اختبر مولد وتقييم الـ Coding Challenge لأي مهارة</p>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="form-card">
+            <h3>⚙️ إعدادات التحدي</h3>
+            <form id="challenge-form">
+                <div class="form-group">
+                    <label for="skill">المهارة</label>
+                    <select id="skill" name="skill">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="go">Go</option>
+                        <option value="sql">SQL</option>
+                        <option value="rust">Rust</option>
+                        <option value="api_design">API Design</option>
+                        <option value="system_design">System Design</option>
+                        <option value="debugging">Debugging</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="difficulty">المستوى (1-5)</label>
+                    <input type="number" id="difficulty" name="difficulty" value="2" min="1" max="5">
+                </div>
+                <button type="submit" class="btn btn-primary">🔄 توليد التحدي</button>
+            </form>
+        </div>
+
+        <div class="form-card" id="submission-section" style="display:none;">
+            <h3>✍️ كتابة الكود</h3>
+            <form id="evaluate-form">
+                <div class="form-group">
+                    <label for="language">لغة البرمجة</label>
+                    <select id="language" name="language">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="go">Go</option>
+                        <option value="sql">SQL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="code">الكود</label>
+                    <textarea id="code" name="code" rows="10" placeholder="اكتب الكود هنا..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">📤 تقييم الكود</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div id="challenge-display" style="display:none;">
+            <div class="challenge-box">
+                <h4 id="challenge-title"></h4>
+                <p><span id="challenge-type" class="badge" style="background: #6f42c1; color: #fff; padding: 3px 12px; border-radius: 12px;"></span>
+                <span id="challenge-difficulty" class="badge" style="background: #17a2b8; color: #fff; padding: 3px 12px; border-radius: 12px;"></span></p>
+                <p id="challenge-description" style="font-size: 14px; line-height: 1.7;"></p>
+                <div id="challenge-examples" style="margin-top: 12px;"></div>
+                <div id="challenge-starter" style="margin-top: 12px; background: var(--bg-color); padding: 12px; border-radius: 8px; direction: ltr; text-align: left; font-family: 'Courier New', monospace; font-size: 13px;"></div>
+            </div>
+        </div>
+
+        <div id="result-display" style="display:none;">
+            <div class="challenge-box">
+                <h4>📊 نتيجة التقييم</h4>
+                <div id="result-scores" style="display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;"></div>
+                <div id="result-details"></div>
+                <div id="result-feedback" style="margin-top: 12px; padding: 12px; background: var(--bg-color); border-radius: 8px;"></div>
+            </div>
+        </div>
+
+        <div id="loading" style="display:none; text-align: center; padding: 40px;">
+            <p style="color: var(--text-muted);">جاري التحميل...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentChallenge = null;
+
+document.getElementById('challenge-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const skill = document.getElementById('skill').value;
+    const difficulty = document.getElementById('difficulty').value;
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('challenge-display').style.display = 'none';
+    document.getElementById('result-display').style.display = 'none';
+    document.getElementById('submission-section').style.display = 'none';
+
+    const res = await fetch('/interview/challenge/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `skill=${skill}&difficulty=${difficulty}`
+    });
+    currentChallenge = await res.json();
+    document.getElementById('loading').style.display = 'none';
+
+    document.getElementById('challenge-title').textContent = currentChallenge.title || 'تحدي';
+    document.getElementById('challenge-type').textContent = currentChallenge.type || 'coding';
+    document.getElementById('challenge-difficulty').textContent = `المستوى ${currentChallenge.difficulty || difficulty}/5`;
+    document.getElementById('challenge-description').textContent = currentChallenge.description || '';
+
+    const examplesDiv = document.getElementById('challenge-examples');
+    examplesDiv.innerHTML = '';
+    if (currentChallenge.examples) {
+        const ex = currentChallenge.examples;
+        examplesDiv.innerHTML = '<strong style="font-size: 14px;">مثال:</strong><br>';
+        if (ex.input) examplesDiv.innerHTML += `<div style="font-size: 13px; margin-top: 4px;">المدخل: ${ex.input}</div>`;
+        if (ex.output) examplesDiv.innerHTML += `<div style="font-size: 13px;">المخرج: ${ex.output}</div>`;
+        if (ex.explanation) examplesDiv.innerHTML += `<div style="font-size: 13px; color: var(--text-muted);">${ex.explanation}</div>`;
+    }
+
+    document.getElementById('challenge-starter').textContent = 
+        currentChallenge.starter_code || currentChallenge.starting_code || '// اكتب الكود هنا';
+    document.getElementById('challenge-display').style.display = 'block';
+    document.getElementById('submission-section').style.display = 'block';
+});
+
+document.getElementById('evaluate-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!currentChallenge) return;
+
+    const code = document.getElementById('code').value;
+    const language = document.getElementById('language').value;
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('result-display').style.display = 'none';
+
+    const res = await fetch('/interview/challenge/evaluate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({challenge: currentChallenge, code, language})
+    });
+    const result = await res.json();
+    document.getElementById('loading').style.display = 'none';
+
+    document.getElementById('result-scores').innerHTML = '';
+    const addScore = (label, value, color) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'text-align: center; background: var(--bg-color); padding: 12px 20px; border-radius: 8px;';
+        div.innerHTML = `<div style="font-size: 12px; color: var(--text-muted);">${label}</div>
+                         <div class="score-badge score-${value >= 70 ? 'high' : value >= 40 ? 'medium' : 'low'}">${typeof value === 'number' ? value.toFixed(0) + '%' : value}</div>`;
+        document.getElementById('result-scores').appendChild(div);
+    };
+    addScore('الدرجة الكلية', result.overall_score || 0, '');
+    addScore('الصحة', result.correctness_score || 0, '');
+    addScore('الجودة', result.code_quality_score || 0, '');
+    addScore('الكفاءة', result.efficiency_score || 0, '');
+    if (result.passed) {
+        addScore('النجاح', '✅ نعم', '');
+    }
+
+    const detailsDiv = document.getElementById('result-details');
+    detailsDiv.innerHTML = '';
+    if (result.test_results) {
+        detailsDiv.innerHTML = '<h5 style="font-size: 14px; margin-top: 12px;">نتائج الاختبارات</h5>';
+        const tests = Array.isArray(result.test_results) ? result.test_results : [];
+        tests.forEach(t => {
+            const passed = t.passed !== false;
+            detailsDiv.innerHTML += `<div style="padding: 4px 0; font-size: 13px;">
+                ${passed ? '✅' : '❌'} ${t.name || 'test'} ${t.message ? ': ' + t.message : ''}
+            </div>`;
+        });
+    }
+
+    document.getElementById('result-feedback').innerHTML = '';
+    if (result.feedback) {
+        document.getElementById('result-feedback').innerHTML = `<strong style="font-size: 14px;">ملاحظات:</strong><br><span style="font-size: 13px;">${result.feedback}</span>`;
+    }
+
+    document.getElementById('result-display').style.display = 'block';
+});
+</script>
+{% endblock %}

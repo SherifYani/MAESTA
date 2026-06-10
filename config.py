@@ -170,6 +170,29 @@ AI_STORAGE_BACKEND = os.getenv("AI_STORAGE_BACKEND", "sqlite") # sqlite|postgres
 AI_STORAGE_DATABASE_URL = os.getenv("AI_STORAGE_DATABASE_URL", "postgresql://localhost/ai_storage")
 AI_STORAGE_SCHEMA = os.getenv("AI_STORAGE_SCHEMA", "ai_storage")
 
+# --- Interview System Settings ---
+INTERVIEW_WEIGHTS = {
+    "technical": float(os.getenv("INTERVIEW_WEIGHT_TECHNICAL", "0.35")),
+    "practical": float(os.getenv("INTERVIEW_WEIGHT_PRACTICAL", "0.20")),
+    "experience": float(os.getenv("INTERVIEW_WEIGHT_EXPERIENCE", "0.15")),
+    "consistency": float(os.getenv("INTERVIEW_WEIGHT_CONSISTENCY", "0.15")),
+    "communication": float(os.getenv("INTERVIEW_WEIGHT_COMMUNICATION", "0.10")),
+    "trust": float(os.getenv("INTERVIEW_WEIGHT_TRUST", "0.05")),
+}
+INTERVIEW_THRESHOLDS = {
+    "strong_hire": float(os.getenv("INTERVIEW_THRESHOLD_STRONG_HIRE", "90")),
+    "hire": float(os.getenv("INTERVIEW_THRESHOLD_HIRE", "80")),
+    "maybe": float(os.getenv("INTERVIEW_THRESHOLD_MAYBE", "65")),
+    "weak_hire": float(os.getenv("INTERVIEW_THRESHOLD_WEAK_HIRE", "50")),
+}
+INTERVIEW_MAX_FOLLOWUPS = int(os.getenv("INTERVIEW_MAX_FOLLOWUPS", "3"))
+INTERVIEW_QUESTIONS_PER_SKILL = int(os.getenv("INTERVIEW_QUESTIONS_PER_SKILL", "3"))
+INTERVIEW_DEFAULT_LLM_MODEL = os.getenv("INTERVIEW_DEFAULT_LLM_MODEL", "qwen3:1.7b")
+INTERVIEW_ENABLED = os.getenv("INTERVIEW_ENABLED", "true").lower() == "true"
+INTERVIEW_ENABLE_CHALLENGES = os.getenv("INTERVIEW_ENABLE_CHALLENGES", "true").lower() == "true"
+INTERVIEW_ENABLE_ANTI_CHEAT = os.getenv("INTERVIEW_ENABLE_ANTI_CHEAT", "true").lower() == "true"
+INTERVIEW_ENABLE_REDIS = os.getenv("INTERVIEW_ENABLE_REDIS", "false").lower() == "true"
+
 # --- Phase 7.1: Action Connector Hardening ---
 ENABLE_REAL_CONNECTORS = os.getenv("ENABLE_REAL_CONNECTORS", "false").lower() == "true"
 ENABLE_WEBHOOK_CONNECTOR = os.getenv("ENABLE_WEBHOOK_CONNECTOR", "false").lower() == "true"

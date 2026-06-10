@@ -32,11 +32,13 @@ def dashboard():
     stats = database.get_dashboard_stats()
     model_settings = database.get_model_settings()
     ollama_status = ollama_service.check_connection()
+    interview_stats = database.get_interview_stats()
     
     return render_template('dashboard.html', 
                           stats=stats, 
                           model_settings=model_settings,
-                          ollama_status=ollama_status)
+                          ollama_status=ollama_status,
+                          interview_stats=interview_stats)
 
 
 @admin_bp.route('/documents')

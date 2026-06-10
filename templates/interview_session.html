@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block title %}جلسة مقابلة AI{% endblock %}
+{% block extra_css %}
+<style>
+.session-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.session-status { padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+.score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.score-card { background: var(--card-bg); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); text-align: center; }
+.score-value { font-size: 24px; font-weight: 700; }
+.score-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.section { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+.section h3 { margin-top: 0; margin-bottom: 16px; font-size: 16px; }
+.qa-item { padding: 16px; border-bottom: 1px solid var(--border-color); }
+.qa-item:last-child { border-bottom: none; }
+.qa-question { font-weight: 600; margin-bottom: 8px; }
+.qa-answer { color: var(--text-muted); margin-bottom: 8px; padding: 12px; background: var(--bg-color); border-radius: 8px; }
+.qa-score { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+.skill-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.skill-name { width: 120px; font-size: 14px; font-weight: 500; }
+.skill-bar-track { flex: 1; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
+.skill-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.skill-value { width: 60px; text-align: right; font-size: 13px; font-weight: 600; }
+.trust-gap { color: #dc3545; font-size: 13px; }
+.report-section { white-space: pre-wrap; font-family: inherit; font-size: 14px; line-height: 1.7; }
+.actions-list { list-style: none; padding: 0; }
+.actions-list li { padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+.actions-list li:before { content: "→ "; }
+.back-link { display: inline-block; margin-bottom: 16px; color: var(--primary-color); text-decoration: none; font-size: 14px; }
+.btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; }
+.btn-danger { background: #dc3545; color: #fff; }
+.flag-item { padding: 8px 12px; margin-bottom: 6px; border-radius: 8px; font-size: 13px; }
+.flag-high { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.flag-medium { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.flag-low { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.copilot-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #0f3460; }
+.copilot-card h3 { color: #e94560; }
+.next-step { font-size: 18px; font-weight: 700; color: #0f3460; background: #e94560; display: inline-block; padding: 8px 20px; border-radius: 8px; }
+</style>
+{% endblock %}
+{% block content %}
+<a href="{{ url_for('interview.interview_dashboard') }}" class="back-link">← العودة للوحة المقابلات</a>
+
+<div class="session-header">
+    <div>
+        <h1 style="margin: 0;">جلسة مقابلة</h1>
+        <p style="margin: 4px 0 0; color: var(--text-muted); font-size: 14px;">
+            المعرف: <code>{{ session.id }}</code>
+        </p>
+    </div>
+    <div>
+        {% if session.status == 'completed' %}
+            <span class="session-status" style="background: #d4edda; color: #155724;">مكتملة</span>
+        {% elif session.status == 'in_progress' %}
+            <span class="session-status" style="background: #d1ecf1; color: #0c5460;">قيد التنفيذ</span>
+        {% elif session.status == 'error' %}
+            <span class="session-status" style="background: #f8d7da; color: #721c24;">خطأ</span>
+        {% else %}
+            <span class="session-status" style="background: #e2e3e5; color: #383d41;">{{ session.status }}</span>
+        {% endif %}
+    </div>
+</div>
+
+<p><strong>Candidate:</strong> <code>{{ session.candidate_id }}</code> &nbsp;|&nbsp; <strong>Job:</strong> <code>{{ session.job_id }}</code></p>
+
+{% if report %}
+<div class="score-grid">
+    <div class="score-card">
+        <div class="score-value" style="color: var(--primary-color);">{{ "%.0f"|format(report.final_score) }}%</div>
+        <div class="score-label">الدرجة النهائية</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #17a2b8;">{{ "%.0f"|format(report.technical_score) }}%</div>
+        <div class="score-label">تقني</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #6f42c1;">{{ "%.0f"|format(report.practical_score or 0) }}%</div>
+        <div class="score-label">عملي</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #28a745;">{{ "%.0f"|format(report.consistency_score) }}%</div>
+        <div class="score-label">اتساق</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #ffc107;">{{ "%.0f"|format(report.communication_score) }}%</div>
+        <div class="score-label">تواصل</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #6f42c1;">{{ "%.0f"|format(report.trust_score) }}%</div>
+        <div class="score-label">ثقة</div>
+    </div>
+    <div class="score-card">
+        <div class="score-value" style="color: #dc3545; font-size: 20px;">{{ report.recommendation }}</div>
+        <div class="score-label">التوصية</div>
+    </div>
+</div>
+{% endif %}
+
+{% if report_data and report_data.recruiter_copilot %}
+<div class="copilot-card">
+    <h3>🪧 Recruiter Copilot</h3>
+    <div style="margin-bottom: 12px;">
+        <span class="next-step">{{ report_data.recruiter_copilot.recommended_next_step }}</span>
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap;">
+        <span>⚠️ المخاطر: <strong>{{ report_data.recruiter_copilot.risk_count }}</strong></span>
+        <span>المستوى: <strong>{{ report_data.recruiter_copilot.overall_risk }}</strong></span>
+        <span>مخاوف ثقة: {{ "نعم" if report_data.recruiter_copilot.trust_concerns else "لا" }}</span>
+        <span>مخاوف غش: {{ "نعم" if report_data.recruiter_copilot.anti_cheat_concerns else "لا" }}</span>
+    </div>
+</div>
+{% endif %}
+
+{% if challenges %}
+<div class="section">
+    <h3>🧩 Coding Challenge</h3>
+    {% for ch in challenges %}
+    <div style="padding: 12px; background: var(--bg-color); border-radius: 8px; margin-bottom: 12px;">
+        <p><strong>{{ ch.title }}</strong> <span class="badge" style="background: #6f42c1; color: #fff; padding: 2px 10px; border-radius: 12px;">{{ ch.challenge_type }}</span></p>
+        <p style="font-size: 14px; color: var(--text-muted);">{{ ch.description[:150] }}{% if ch.description|length > 150 %}...{% endif %}</p>
+        {% set ev = ch.evaluation|from_json %}
+        {% if ev.overall_score is defined %}
+        <p>النتيجة: <strong>{{ "%.0f"|format(ev.overall_score) }}%</strong>
+        {% if ev.passed %} ✅ نجح{% else %} ❌ لم ينجح{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if ca %}
+<div class="section">
+    <h3>🔍 تحليل Consistency المتقدم</h3>
+    <p>درجة الاتساق: <strong>{{ "%.1f"|format(ca.consistency_score) }}%</strong> | الثقة: <strong>{{ "%.1f"|format(ca.trust_score) }}%</strong></p>
+
+    {% set gaps = ca.trust_gaps|from_json %}
+    {% if gaps %}
+    <h4 style="font-size: 14px; margin-top: 12px;">فجوات الثقة</h4>
+    {% for g in gaps %}
+    <div class="flag-item flag-medium">
+        <strong>{{ g.skill }}</strong>: ادعى {{ "%.0f"|format(g.claimed) }}% ✓ تحقق {{ "%.0f"|format(g.verified) }}% ← فجوة {{ "%.0f"|format(g.gap) }}%
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% set flags = ca.risk_flags|from_json %}
+    {% if flags %}
+    <h4 style="font-size: 14px; margin-top: 12px;">أعلام المخاطر ({{ flags|length }})</h4>
+    {% for f in flags %}
+    <div class="flag-item flag-high">🚩 {{ f }}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endif %}
+
+{% if report_data and report_data.anti_cheat %}
+<div class="section">
+    <h3>🛡️ تحليل Anti-Cheat</h3>
+    {% set ac = report_data.anti_cheat %}
+    <p>درجة الشبهات: <strong>{{ "%.2f"|format(ac.suspicion_score) }}</strong>
+    {% if ac.status == 'clean' %}<span style="color: #28a745;">✅ نظيف</span>
+    {% else %}<span style="color: #dc3545;">🚩 مرفوع</span>{% endif %}
+    </p>
+    {% if ac.flags %}
+    <h4 style="font-size: 14px; margin-top: 12px;">الملاحظات</h4>
+    {% for fl in ac.flags %}
+    <div class="flag-item flag-{{ fl.severity }}">{{ fl.type }}: {{ fl.details }}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endif %}
+
+{% if report_data and report_data.benchmark %}
+<div class="section">
+    <h3>📈 Benchmark</h3>
+    {% set bm = report_data.benchmark %}
+    <p>المئين: <strong>{{ "%.0f"|format(bm.percentile or 0) }}%</strong></p>
+    {% if bm.skill_benchmarks %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 8px;">
+        {% for sk, sv in bm.skill_benchmarks.items() %}
+        <div style="background: var(--bg-color); padding: 8px 12px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 12px; color: var(--text-muted);">{{ sk }}</div>
+            <div style="font-size: 18px; font-weight: 700;">{{ "%.0f"|format(sv) }}%</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if questions %}
+{% set answered_ids = answers | map(attribute='question_id') | list %}
+{% set unanswered = questions | rejectattr('id', 'in', answered_ids) | list %}
+{% if unanswered and session.status == 'in_progress' %}
+<div class="section" style="border-color: #374151; background: var(--bg-secondary);">
+    <h3 style="color: #f59e0b;">❓ السؤال الحالي — مطلوب إجابة</h3>
+    {% for q in unanswered %}
+    <div class="qa-item" style="background: var(--bg-color); border-left: 4px solid #f59e0b;">
+        <div class="qa-question">
+            {% if q.is_followup %}<span style="color: #f59e0b; font-size: 12px;">⬆ متابعة </span>{% endif %}
+            {{ q.question|clean_thoughts }}
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            مهارة: {{ q.skill }} | مستوى: {{ q.difficulty_level }}/5 | {{ q.question_type }}
+        </div>
+        <form method="POST" action="{{ url_for('interview.submit_answer_web', session_id=session.id) }}">
+            <textarea name="answer" rows="6" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-color); font-family: inherit; font-size: 14px; resize: vertical;" placeholder="اكتب إجابتك هنا..." required></textarea>
+            <input type="hidden" name="question_id" value="{{ q.id }}">
+            <div style="margin-top: 12px; display: flex; gap: 12px;">
+                <button type="submit" class="btn" style="background: #f59e0b; color: #111; padding: 10px 24px;">✅ إرسال الإجابة</button>
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+<div class="section">
+    <h3>📋 سجل الأسئلة والإجابات</h3>
+    {% for q in questions %}
+    {% set answer = answers | selectattr('question_id', 'equalto', q.id) | first %}
+    <div class="qa-item">
+        <div class="qa-question">
+            {% if q.is_followup %}<span style="color: #ffc107; font-size: 12px;">⬆ متابعة </span>{% endif %}
+            {{ q.question|clean_thoughts }}
+        </div>
+        {% if answer %}
+        <div class="qa-answer">{{ answer.candidate_answer }}</div>
+        <div>
+            <span class="qa-score" style="background: {% if answer.score >= 70 %}#d4edda; color: #155724{% elif answer.score >= 40 %}#fff3cd; color: #856404{% else %}#f8d7da; color: #721c24{% endif %}">
+                {{ "%.0f"|format(answer.score) }}%
+            </span>
+            <span style="color: var(--text-muted); font-size: 12px;">ثقة: {{ "%.2f"|format(answer.confidence) }}</span>
+            {% if answer.concept_coverage and answer.concept_coverage > 0 %}
+            <span style="color: var(--text-muted); font-size: 12px;">| تغطية: {{ "%.0f"|format(answer.concept_coverage) }}%</span>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="qa-answer" style="color: var(--text-muted); font-style: italic;">لم يتم الإجابة بعد</div>
+        {% endif %}
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            مهارة: {{ q.skill }} | مستوى: {{ q.difficulty_level }}/5 | {{ q.question_type }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if assessments %}
+<div class="section">
+    <h3>📊 تقييم المهارات</h3>
+    {% for sa in assessments %}
+    <div class="skill-bar">
+        <div class="skill-name">{{ sa.skill }}</div>
+        <div class="skill-bar-track">
+            {% set pct = sa.verified_level|round %}
+            <div class="skill-bar-fill" style="width: {{ pct }}%; background: {% if pct >= 70 %}#28a745{% elif pct >= 40 %}#ffc107{% else %}#dc3545{% endif %};"></div>
+        </div>
+        <div class="skill-value">{{ "%.1f"|format(sa.verified_level) }}%</div>
+        {% if sa.claimed_level > 0 %}
+        <div style="font-size: 12px; color: var(--text-muted);">(ادعى {{ "%.1f"|format(sa.claimed_level) }}%)</div>
+        {% if (sa.claimed_level - sa.verified_level) > 20 %}
+        <div class="trust-gap">⚠️ فجوة {{ "%.1f"|format(sa.claimed_level - sa.verified_level) }}%</div>
+        {% endif %}
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if report %}
+<div class="section">
+    <h3>📄 التقرير النهائي</h3>
+    <div class="report-section">{{ report.report_text }}</div>
+
+    {% if report_data and report_data.risks %}
+    <h4 style="margin-top: 16px;">🚨 تحليل المخاطر</h4>
+    <ul class="actions-list">
+    {% for r in report_data.risks %}
+        <li>{{ r }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% set strengths = report.strengths %}
+    {% if strengths is string %}{% set strengths = strengths|from_json %}{% endif %}
+    {% if strengths and strengths is iterable and strengths is not string %}
+    <h4 style="margin-top: 20px;">✅ نقاط القوة</h4>
+    <ul>
+    {% for s in strengths %}
+        <li>{{ s }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% set weaknesses = report.weaknesses %}
+    {% if weaknesses is string %}{% set weaknesses = weaknesses|from_json %}{% endif %}
+    {% if weaknesses and weaknesses is iterable and weaknesses is not string %}
+    <h4 style="margin-top: 16px;">⚠️ نقاط الضعف</h4>
+    <ul>
+    {% for w in weaknesses %}
+        <li>{{ w }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% set actions = report.recommended_actions %}
+    {% if actions is string %}{% set actions = actions|from_json %}{% endif %}
+    {% if actions and actions is iterable and actions is not string %}
+    <h4 style="margin-top: 16px;">📌 الإجراءات الموصى بها</h4>
+    <ul class="actions-list">
+    {% for a in actions %}
+        <li>{{ a }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endif %}
+
+<div style="margin-top: 24px; display: flex; gap: 12px;">
+    <form method="POST" action="{{ url_for('interview.delete_session', session_id=session.id) }}">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('حذف هذه الجلسة وجميع بياناتها؟')">🗑 حذف الجلسة</button>
+    </form>
+</div>
+{% endblock %}

@@ -88,6 +88,22 @@
                         <span>محلل السير الذاتية (ATS)</span>
                     </a>
                     
+                    <a href="{{ url_for('interview.interview_dashboard') }}" 
+                       class="nav-link {% if request.endpoint and request.endpoint.startswith('interview.') and request.endpoint != 'interview.interview_analytics' %}active{% endif %}">
+                        <span class="icon">🤖</span>
+                        <span>مقابلات AI</span>
+                    </a>
+                    <a href="{{ url_for('interview.interview_analytics') }}" 
+                       class="nav-link {% if request.endpoint == 'interview.interview_analytics' %}active{% endif %}" style="padding-right: 40px; font-size: 13px;">
+                        <span class="icon">📊</span>
+                        <span>تحليلات المقابلات</span>
+                    </a>
+                    <a href="{{ url_for('interview.challenge_test') }}" 
+                       class="nav-link {% if request.endpoint == 'interview.challenge_test' %}active{% endif %}" style="padding-right: 40px; font-size: 13px;">
+                        <span class="icon">🧩</span>
+                        <span>اختبار التحدي</span>
+                    </a>
+                    
                     <a href="{{ url_for('admin.companies') }}"
                        class="nav-link {% if request.endpoint and 'company' in (request.endpoint or '') %}active{% endif %}">
                         <span class="icon">🏢</span>

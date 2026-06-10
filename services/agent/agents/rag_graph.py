@@ -126,7 +126,7 @@ def _get_answer_llm() -> ChatOpenAI:
         return ChatOpenAI(
             model=config.FINETUNED_MODEL_NAME,
             temperature=0.2,
-            max_tokens=300,
+            max_tokens=2048,
             base_url=f"{config.FINETUNED_MODEL_BASE_URL}/v1",
             api_key=config.FINETUNED_MODEL_API_KEY,
             timeout=300,
@@ -320,7 +320,8 @@ def generator(state: RagAgentState) -> dict:
         # Load company profile from DB using tenant_id as company_id
         company_id = state.tenant_id.replace("company_", "") if state.tenant_id and state.tenant_id.startswith("company_") else None
         profile = get_company_profile(company_id)
-        system_msg = build_company_system_prompt(company_id)
+        lang_code = "ar" if lang == "ar" else "en"
+        system_msg = build_company_system_prompt(company_id, detected_language=lang_code)
 
         try:
             llm = _get_answer_llm()
@@ -468,7 +469,8 @@ def rag_graph_node(state: AgentState) -> dict:
             sources.append({
                 "id": f"source_{i}",
                 "content": doc.get("content", "")[:200],
-                "metadata": doc.get("metadata", {})
+                "metadata": doc.get("metadata", {}),
+                "score": doc.get("score", 0.0)
             })
         
         return {
