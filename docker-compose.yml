@@ -80,6 +80,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: sherifyani/maesta-api:latest
     container_name: jobmagnet_api
     restart: unless-stopped
     depends_on:
@@ -105,6 +106,23 @@ services:
       - "5024:8080"
     volumes:
       - api_logs:/app/logs
+    networks:
+      - jobmagnet_network
+
+  # ─── JobMagnet Frontend (React + Nginx) ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ""
+    image: sherifyani/maesta-frontend:latest
+    container_name: jobmagnet_frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
     networks:
       - jobmagnet_network
 
