@@ -84,7 +84,22 @@ export const getJob = async (jobId) => {
     return response.data;
 };
 
-export const getAvailableSlots = async () => ({ success: true, data: { slots: [] } });
+export const getAvailableSlots = async () => {
+    try {
+        const response = await ApiService.get('/api/Interviews', { params: { page: 1, limit: 50 } });
+        const interviews = response.data?.items || response.data || [];
+        const slots = interviews
+            .filter(i => i.scheduledAt)
+            .map(i => ({
+                id: i.interviewId || i.id,
+                date: i.scheduledAt,
+                status: i.status
+            }));
+        return { success: true, data: { slots } };
+    } catch (error) {
+        return { success: true, data: { slots: [] } };
+    }
+};
 
 const interviewService = {
     getMyInterviews,

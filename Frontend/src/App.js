@@ -30,6 +30,7 @@ const GigRoutes = lazy(() => import("./routes/GigRoutes"));
 const ChatRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.ChatRoutes })));
 const NotificationRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.NotificationRoutes })));
 const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.SubscriptionRoutes })));
+const CommunityRoutes = lazy(() => import("./routes/CommunityRoutes"));
 
 // Static Pages
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
@@ -109,6 +110,7 @@ function App() {
         <Route path="/chat/*" element={<ProtectedRoute><ChatRoutes /></ProtectedRoute>} />
         <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
         <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
+        <Route path="/community/*" element={<ProtectedRoute><CommunityRoutes /></ProtectedRoute>} />
 
         {/* 404 & Redirects */}
         <Route path="/404" element={<ErrorPage />} />

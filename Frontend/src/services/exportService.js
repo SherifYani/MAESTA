@@ -7,7 +7,7 @@
  */
 import ApiService from './ApiService';
 
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 const mockExportTypes = {
     success: true,
@@ -21,7 +21,7 @@ const mockExportTypes = {
 
 export const getExportTypes = async () => {
     if (USE_MOCK_DATA) return mockExportTypes;
-    const response = await ApiService.get('/api/company/export/types');
+    const response = await ApiService.get('/api/Admin/reports');
     return response.data;
 };
 
@@ -39,7 +39,7 @@ export const generateExport = async (exportType, dateRange, filters, format) => 
             },
         };
     }
-    const response = await ApiService.post('/api/company/export/generate', { exportType, dateRange, filters, format });
+    const response = await ApiService.post('/api/Admin/reports', { exportType, dateRange, filters, format });
     return response.data;
 };
 
@@ -48,12 +48,12 @@ export const downloadExport = async (exportId) => {
         window.open(`/mock-download/${exportId}`, '_blank');
         return { success: true };
     }
-    const response = await ApiService.get(`/api/company/export/download/${exportId}`, { responseType: 'blob' });
+    const response = await ApiService.get(`/api/Admin/reports/${exportId}`, { responseType: 'blob' });
     return response.data;
 };
 
 export const getExportHistory = async () => {
     if (USE_MOCK_DATA) return { success: true, data: [] };
-    const response = await ApiService.get('/api/company/export/history');
+    const response = await ApiService.get('/api/Admin/reports');
     return response.data;
 };

@@ -32,12 +32,18 @@ export const getPublicCompany = async (companyId) => {
     return response.data;
 };
 
+export const searchCompanies = async (query) => {
+    const response = await ApiService.get('/api/companies/search', { params: { query } });
+    return response.data;
+};
+
 const generalService = {
     getPublicStats,
     getCategories,
     autocompleteSkills,
     autocompleteLocations,
-    getPublicCompany
+    getPublicCompany,
+    searchCompanies
 };
 
 export default generalService;

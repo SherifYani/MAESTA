@@ -206,21 +206,23 @@ export default function EditCompanyProfile() {
       return;
     }
 
-    // Prepare updated company data
+    // Map frontend field names to backend expected names
     const updatedCompanyData = {
       ...formData,
+      companyName: formData.name,
+      website: formData.websiteUrl,
       members,
       jobs,
     };
+    delete updatedCompanyData.name;
+    delete updatedCompanyData.websiteUrl;
 
     try {
       setLoading(true);
       setError(null);
-      // Call the API via profileService
-      await profileService.updateCompanyProfile(updatedCompanyData);
-      
-      // Update context and navigate back
-      updateCompanyData(updatedCompanyData);
+      // Call the API via profileService and use the response to update context
+      const savedProfile = await profileService.updateCompanyProfile(updatedCompanyData);
+      updateCompanyData(savedProfile || updatedCompanyData);
       navigate("/dashboard/profile");
     } catch (err) {
       setError(err.message || "Failed to update company profile. Please try again.");

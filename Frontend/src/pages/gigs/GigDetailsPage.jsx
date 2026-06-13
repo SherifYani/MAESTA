@@ -18,7 +18,7 @@ import styles from './GigDetailsPage.module.css';
 const GigDetailsPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { currentGig, isLoading, error, fetchGigById } = useGig();
+    const { currentGig, isLoading, error, fetchGigById, submitBid } = useGig();
     const { isFreelancer, canBidOnGigs } = useRole();
 
     const [showBidForm, setShowBidForm] = useState(false);
@@ -31,9 +31,12 @@ const GigDetailsPage = () => {
     }, [id, fetchGigById]);
 
     const handleBidSubmit = async (bidData) => {
-        // Implement bid submission logic
-        console.log('Bid submitted:', bidData);
-        // Here you would typically call submitBid from context
+        try {
+            await submitBid(id, bidData);
+            await fetchGigById(id);
+        } catch (err) {
+            console.error('Bid submission failed:', err);
+        }
         setShowBidForm(false);
     };
 

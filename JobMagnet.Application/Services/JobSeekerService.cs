@@ -222,14 +222,34 @@ namespace JobMagnet.Application.Services
             var existingSkills = await _context.UserSkills.Where(s => s.UserId == jobSeeker.UserId).ToListAsync();
             _context.UserSkills.RemoveRange(existingSkills);
 
-            // Add new skills
-            var newSkills = request.Skills.Select(s => new Domain.Entities.UserSkill
+            if (request.Skills != null && request.Skills.Any())
             {
-                UserId = jobSeeker.UserId,
-                SkillId = 1 // You might need a way to resolve this if it's a foreign key to Skill table
-            });
+                var newSkills = new List<Domain.Entities.UserSkill>();
+                foreach (var skillName in request.Skills.Where(s => !string.IsNullOrWhiteSpace(s)))
+                {
+                    var trimmedName = skillName.Trim();
+                    var skill = await _context.Skills.FirstOrDefaultAsync(s => s.Name.ToLower() == trimmedName.ToLower() && !s.IsDeleted);
+                    if (skill == null)
+                    {
+                        skill = new Domain.Entities.Skill
+                        {
+                            Name = trimmedName,
+                            CreatedAt = DateTimeOffset.UtcNow
+                        };
+                        _context.Skills.Add(skill);
+                        await _context.SaveChangesAsync();
+                    }
 
-            await _context.UserSkills.AddRangeAsync(newSkills);
+                    newSkills.Add(new Domain.Entities.UserSkill
+                    {
+                        UserId = jobSeeker.UserId,
+                        SkillId = skill.SkillId,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    });
+                }
+                await _context.UserSkills.AddRangeAsync(newSkills);
+            }
+
             await _context.SaveChangesAsync();
         }
 

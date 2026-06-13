@@ -127,9 +127,8 @@ export default function EditFreelancerProfile() {
     try {
       setLoading(true);
       setError(null);
-      await profileService.updateFreelancerProfile(updatedFreelancerData);
-      
-      updateFreelancerData(updatedFreelancerData);
+      const savedProfile = await profileService.updateFreelancerProfile(updatedFreelancerData);
+      updateFreelancerData(savedProfile || updatedFreelancerData);
       navigate("/dashboard/profile");
     } catch (err) {
       setError(err.message || "Failed to update profile. Please try again.");

@@ -102,11 +102,8 @@ const notificationService = {
      * Unsubscribe from push notifications.
      */
     unsubscribeFromPush: async () => {
-        // MOCKED: Not implemented in backend yet.
-        console.warn("unsubscribeFromPush is mocked");
-        return { success: true };
-        // const response = await ApiService.delete('/api/notifications/subscribe');
-        // return response.data;
+        const response = await ApiService.delete('/api/notifications/push/subscribe');
+        return response.data;
     },
 
     /**
@@ -114,11 +111,8 @@ const notificationService = {
      * @param {string} type - e.g. 'application', 'message', 'system'
      */
     getByType: async (type) => {
-        // MOCKED: Not implemented in backend yet.
-        console.warn("getByType is mocked");
-        return [];
-        // const response = await ApiService.get(`/api/notifications/type/${type}`);
-        // return response.data;
+        const response = await ApiService.get('/api/notifications', { params: { type, page: 1, limit: 50 } });
+        return response.data;
     },
 };
 

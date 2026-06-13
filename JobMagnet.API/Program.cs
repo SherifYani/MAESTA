@@ -23,32 +23,17 @@ builder.Services.AddDbContext<JobMagnetDbContext>(options =>
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddScoped<IEmailService, JobMagnet.Application.Services.SmtpEmailService>();
 
-// ─── File Storage (MinIO or Local) ───────────────────────────────────────────
-builder.Services.AddHttpContextAccessor();
-var storageProvider = builder.Configuration.GetValue<string>("Storage:Provider") ?? "Minio";
-if (storageProvider.Equals("Local", StringComparison.OrdinalIgnoreCase))
+// ─── MinIO (File Storage) ─────────────────────────────────────────────────────
+builder.Services.Configure<MinioOptions>(builder.Configuration.GetSection("Minio"));
+var minioOptions = builder.Configuration.GetSection("Minio").Get<MinioOptions>();
+if (minioOptions is not null)
 {
-    builder.Services.AddScoped<IStorageService>(sp =>
-    {
-        var env = sp.GetRequiredService<IWebHostEnvironment>();
-        var httpAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-        var baseUrl = builder.Configuration.GetValue<string>("Storage:LocalBaseUrl") ?? "";
-        return new LocalStorageService(env, httpAccessor, baseUrl);
-    });
-}
-else
-{
-    builder.Services.Configure<MinioOptions>(builder.Configuration.GetSection("Minio"));
-    var minioOptions = builder.Configuration.GetSection("Minio").Get<MinioOptions>();
-    if (minioOptions is not null)
-    {
-        builder.Services.AddMinio(configureClient => configureClient
-            .WithEndpoint(minioOptions.Endpoint)
-            .WithCredentials(minioOptions.AccessKey, minioOptions.SecretKey)
-            .WithSSL(minioOptions.UseSSL)
-            .Build());
-        builder.Services.AddScoped<IStorageService, MinioStorageService>();
-    }
+    builder.Services.AddMinio(configureClient => configureClient
+        .WithEndpoint(minioOptions.Endpoint)
+        .WithCredentials(minioOptions.AccessKey, minioOptions.SecretKey)
+        .WithSSL(minioOptions.UseSSL)
+        .Build());
+    builder.Services.AddScoped<IStorageService, MinioStorageService>();
 }
 
 // ─── JWT Options ─────────────────────────────────────────────────────────────
@@ -182,7 +167,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

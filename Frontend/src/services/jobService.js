@@ -11,8 +11,6 @@
  **/
 
 import ApiService from './ApiService';
-// Mock data retained only for categories/types/levels until backend provides those endpoints
-import { jobCategories, jobTypes, experienceLevels } from '../pages/jobs/config/jobsMockData';
 
 const jobService = {
     // ==================== Job CRUD Operations ====================
@@ -60,22 +58,25 @@ const jobService = {
         return response.data;
     },
 
-    // Get similar jobs
+    // Get similar jobs — uses recommended endpoint
     getSimilarJobs: async (jobId) => {
-        // MOCKED: Not implemented in backend yet.
-        console.warn("getSimilarJobs is mocked");
-        return [];
-        // const response = await ApiService.get(`/api/jobs/${jobId}/similar`);
-        // return response.data;
+        try {
+            const response = await ApiService.get('/api/jobs/recommended');
+            const jobs = response.data?.items || response.data || [];
+            return jobs.filter(j => j.id !== jobId).slice(0, 5);
+        } catch (error) {
+            return [];
+        }
     },
 
     // Get jobs by category
     getJobsByCategory: async (categoryId) => {
-        // MOCKED: Not implemented in backend yet.
-        console.warn("getJobsByCategory is mocked");
-        return [];
-        // const response = await ApiService.get(`/api/jobs/category/${categoryId}`);
-        // return response.data;
+        try {
+            const response = await ApiService.get('/api/jobs', { params: { categoryId } });
+            return response.data?.items || response.data || [];
+        } catch (error) {
+            return [];
+        }
     },
 
     // ==================== Job Applications ====================
@@ -155,31 +156,56 @@ const jobService = {
 
     // Get job statistics
     getJobStatistics: async (jobId) => {
-        // MOCKED: Not implemented in backend yet.
-        console.warn("getJobStatistics is mocked");
-        return { views: 0, applications: 0, active: true };
-        // const response = await ApiService.get(`/api/jobs/${jobId}/statistics`);
-        // return response.data;
+        try {
+            const [jobRes, appsRes] = await Promise.all([
+                ApiService.get(`/api/jobs/${jobId}`),
+                ApiService.get(`/api/jobs/${jobId}/applications`)
+            ]);
+            const job = jobRes.data;
+            const applications = appsRes.data?.items || appsRes.data || [];
+            return {
+                views: job?.views || 0,
+                applications: applications?.length || 0,
+                active: job?.isPublished ?? true
+            };
+        } catch (error) {
+            return { views: 0, applications: 0, active: true };
+        }
     },
 
     // ==================== Categories & Filters ====================
 
     // Get job categories
-    // Get job categories
     getCategories: async () => {
-        return jobCategories;
+        try {
+            const response = await ApiService.get('/api/categories');
+            return response.data?.items || response.data || [];
+        } catch (error) {
+            return [];
+        }
     },
 
-    // Get job types
     // Get job types
     getJobTypes: async () => {
-        return jobTypes;
+        try {
+            const response = await ApiService.get('/api/categories');
+            const categories = response.data?.items || response.data || [];
+            return categories.filter(c => c.type === 'job' || !c.type);
+        } catch (error) {
+            return [];
+        }
     },
 
     // Get experience levels
-    // Get experience levels
     getExperienceLevels: async () => {
-        return experienceLevels;
+        return [
+            { id: 'entry', name: 'Entry Level' },
+            { id: 'junior', name: 'Junior' },
+            { id: 'mid', name: 'Mid Level' },
+            { id: 'senior', name: 'Senior' },
+            { id: 'lead', name: 'Lead / Manager' },
+            { id: 'executive', name: 'Executive' }
+        ];
     },
 };
 

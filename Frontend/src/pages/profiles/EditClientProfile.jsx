@@ -197,11 +197,9 @@ export default function EditClientProfile() {
     try {
       setLoading(true);
       setError(null);
-      // Call the API via profileService
-      await profileService.updateClientProfile(updatedClientData);
-
-      // Update context and navigate back
-      updateClientData(updatedClientData);
+      // Call the API via profileService and use the response to update context
+      const savedProfile = await profileService.updateClientProfile(updatedClientData);
+      updateClientData(savedProfile || updatedClientData);
       navigate("/dashboard/profile");
     } catch (err) {
       setError(err.message || "Failed to update profile. Please try again.");

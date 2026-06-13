@@ -12,6 +12,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import generalService from '../../services/generalService';
 import FormInput from "../../components/forms/FormInput";
 import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
@@ -41,13 +42,6 @@ function CompanyMemberOnboarding() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({
-    role: "",
-    position: "",
-    department: "",
-  });
 
   // Completion status aligned with database requirements
   const [completionStatus, setCompletionStatus] = useState({
@@ -59,55 +53,24 @@ function CompanyMemberOnboarding() {
 
   const [overallProgress, setOverallProgress] = useState(0);
 
-  // Mock company data - will be replaced with actual API call to Companies table
-  const mockCompanies = [
-    {
-      Id: 1,
-      Uuid: "123e4567-e89b-12d3-a456-426614174000",
-      Name: "TechCorp Inc.",
-      Industry: "Technology",
-      Location: "San Francisco, CA",
-      VerificationStatus: "Verified",
-    },
-    {
-      Id: 2,
-      Uuid: "123e4567-e89b-12d3-a456-426614174001",
-      Name: "HealthPlus Medical",
-      Industry: "Healthcare",
-      Location: "New York, NY",
-      VerificationStatus: "Verified",
-    },
-    {
-      Id: 3,
-      Uuid: "123e4567-e89b-12d3-a456-426614174002",
-      Name: "FinanceGlobal",
-      Industry: "Finance",
-      Location: "Chicago, IL",
-      VerificationStatus: "Pending",
-    },
-  ];
-
   /**
    * Handles company search input changes with debouncing
    * @param {React.ChangeEvent<HTMLInputElement>} e - The change event
    */
-  const handleCompanySearch = (e) => {
+  const handleCompanySearch = async (e) => {
     const query = e.target.value;
     setCompanySearch(query);
 
     if (query.length > 2) {
       setIsSearching(true);
-      // Simulate API call to Companies table
-      setTimeout(() => {
-        const results = mockCompanies.filter(
-          (company) =>
-            company.Name.toLowerCase().includes(query.toLowerCase()) ||
-            company.Industry.toLowerCase().includes(query.toLowerCase()) ||
-            company.Location.toLowerCase().includes(query.toLowerCase())
-        );
+      try {
+        const results = await generalService.searchCompanies(query);
         setSearchResults(results);
+      } catch {
+        setSearchResults([]);
+      } finally {
         setIsSearching(false);
-      }, 300);
+      }
     } else {
       setSearchResults([]);
     }

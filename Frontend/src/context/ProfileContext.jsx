@@ -373,19 +373,65 @@ export function ProfileProvider({ children }) {
         if (user.role === 'jobseeker') {
           // Seed from AuthContext while waiting for API
           setJobSeekerData(emptyJobSeekerFromUser(user));
-          const data = await profileService.getJobseekerProfile();
-          // Merge API data; fall back to user seed if profile fields are missing
+          
+          const [profileData, jobseekerData, skillsData, experiencesData, educationData] = await Promise.all([
+            profileService.getMyProfile().catch(err => ({})),
+            profileService.getJobseekerProfile().catch(err => ({})),
+            profileService.getJobseekerSkills().catch(err => []),
+            profileService.getJobseekerExperiences().catch(err => []),
+            profileService.getJobseekerEducation().catch(err => [])
+          ]);
+
+          const userObj = profileData?.user || {};
+          const jobseekerObj = profileData?.jobSeeker || jobseekerData || {};
+
+          // Map skills list from array of strings to array of objects
+          const skillsList = (skillsData || []).map(skillName => ({
+            name: skillName,
+            proficiencyLevel: "Intermediate"
+          }));
+
+          // Map experiences list
+          const experiencesList = (experiencesData || []).map(exp => ({
+            id: exp.workExperienceId,
+            jobTitle: exp.jobTitle,
+            companyName: exp.company,
+            startDate: exp.startDate ? exp.startDate.substring(0, 7) : "", // YYYY-MM
+            endDate: exp.endDate ? exp.endDate.substring(0, 7) : null,
+            description: exp.description || ""
+          }));
+
+          // Map education list
+          const educationList = (educationData || []).map(edu => ({
+            id: edu.educationId,
+            institutionName: edu.institution,
+            degree: edu.degree,
+            fieldOfStudy: edu.fieldOfStudy || "",
+            startYear: edu.startYear || new Date().getFullYear(),
+            endYear: edu.endYear || null
+          }));
+
           setJobSeekerData(prev => ({
             ...prev,
-            ...data,
-            fullName: data.fullName || user.name || prev.fullName,
-            email: data.email || user.email || prev.email,
-            profilePictureUrl: data.profilePictureUrl || user.profilePicture || prev.profilePictureUrl,
-            profile: { ...prev.profile, ...(data.profile || {}) },
-            phoneNumber: data.phoneNumber || localStorage.getItem(`phone_${user.id}`) || prev.phoneNumber,
-            skills: data.skills ?? prev.skills,
-            experiences: data.experiences ?? prev.experiences,
-            education: data.education ?? prev.education,
+            jobSeekerId: jobseekerObj.jobSeekerId || prev.jobSeekerId,
+            userId: userObj.userId || prev.userId,
+            fullName: `${userObj.firstName || ''} ${userObj.lastName || ''}`.trim() || user.name || prev.fullName,
+            email: userObj.email || user.email || prev.email,
+            profilePictureUrl: userObj.profilePictureUrl || user.profilePicture || prev.profilePictureUrl,
+            phoneNumber: userObj.phone || prev.phoneNumber,
+            experienceYears: jobseekerObj.experienceYears !== undefined ? jobseekerObj.experienceYears : prev.experienceYears,
+            preferredJobType: jobseekerObj.preferredJobType || prev.preferredJobType,
+            profile: {
+              ...prev.profile,
+              headline: jobseekerObj.professionalTitle || prev.profile.headline,
+              summary: jobseekerObj.bio || prev.profile.summary,
+              resumeUrl: jobseekerObj.cvUrl || prev.profile.resumeUrl,
+              location: [userObj.city, userObj.country].filter(Boolean).join(', ') || prev.profile.location,
+              identityVerificationStatus: jobseekerObj.isVerified ? 'Verified' : 'Unverified',
+            },
+            skills: skillsList.length > 0 ? skillsList : prev.skills,
+            experiences: experiencesList.length > 0 ? experiencesList : prev.experiences,
+            education: educationList.length > 0 ? educationList : prev.education,
           }));
         } else if (user.role === 'freelancer') {
           const data = await profileService.getFreelancerProfile();
@@ -427,12 +473,10 @@ export function ProfileProvider({ children }) {
           setClientData(prev => ({ ...prev, ...data }));
         }
       } catch (err) {
-        // 404 means no profile record yet — keep the user-seeded shell
-        if (err?.status === 404 || err?.response?.status === 404 || (typeof err === 'string' && err.includes('404'))) {
+        const is404 = err?.status === 404 || err?.response?.status === 404 || (typeof err === 'string' && err.includes('404'));
+        if (is404) {
           console.warn("No backend profile record found — using auth user data as fallback.");
-          if (user.role === 'jobseeker') {
-            setJobSeekerData(emptyJobSeekerFromUser(user));
-          }
+          if (user.role === 'jobseeker') setJobSeekerData(emptyJobSeekerFromUser(user));
         } else {
           console.error("Failed to load live profile data in context:", err);
         }
@@ -472,11 +516,22 @@ export function ProfileProvider({ children }) {
   };
 
   /**
-   * Updates company profile data with new values using shallow merge.
+   * Updates company profile data — normalizes backend PascalCase if detected.
    * @param {Object} newData - Partial company data to merge with existing data.
    */
   const updateCompanyData = (newData) => {
-    setCompanyData((prev) => ({ ...prev, ...newData }));
+    const normalized = newData.companyName ? {
+      ...newData,
+      name: newData.companyName,
+      websiteUrl: newData.website || newData.websiteUrl || "",
+      verificationStatus: newData.isVerified != null
+        ? (newData.isVerified ? "Verified" : "Unverified")
+        : newData.verificationStatus,
+      location: newData.city
+        ? [newData.city, newData.country].filter(Boolean).join(", ")
+        : newData.location,
+    } : newData;
+    setCompanyData((prev) => ({ ...prev, ...normalized }));
   };
 
   const contextValue = {

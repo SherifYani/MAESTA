@@ -78,7 +78,7 @@ const gigService = {
             const response = await ApiService.get('/api/gigs/proposals/my');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -88,20 +88,21 @@ const gigService = {
             const response = await ApiService.get(`/api/gigs/${gigId}/proposals`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Update proposal
+    // Update proposal status
     updateProposal: async (proposalId, proposalData) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("updateProposal is mocked");
-            return { success: true, id: proposalId, ...proposalData };
-            // const response = await ApiService.put(`/api/proposals/${proposalId}`, proposalData);
-            // return response.data;
+            const status = proposalData?.status || proposalData;
+            const response = await ApiService.put(`/api/gigs/proposals/${proposalId}/status`,
+                JSON.stringify(status),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -111,7 +112,7 @@ const gigService = {
             const response = await ApiService.delete(`/api/gigs/proposals/${proposalId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -124,7 +125,7 @@ const gigService = {
             );
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -137,7 +138,7 @@ const gigService = {
             );
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -149,7 +150,7 @@ const gigService = {
             const response = await ApiService.post(`/api/contracts`, { proposalId, ...contractData });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -159,7 +160,7 @@ const gigService = {
             const response = await ApiService.get('/api/contracts/my-contracts');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -169,75 +170,69 @@ const gigService = {
             const response = await ApiService.get(`/api/contracts/${contractId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Update contract status
+    // Update contract status — maps to milestone status update
     updateContractStatus: async (contractId, status) => {
         try {
-            // MOCKED: Not implemented in backend yet. Use milestone/delivery status instead.
-            console.warn("updateContractStatus is mocked");
-            return { success: true, id: contractId, status };
-            // const response = await ApiService.put(`/api/contracts/${contractId}/status`, { status });
-            // return response.data;
+            const response = await ApiService.put(`/api/contracts/milestones/${contractId}/status`,
+                JSON.stringify(status),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
     // ==================== Milestones ====================
 
-    // Add milestone to contract
+    // Add milestone to contract — maps to submit delivery
     addMilestone: async (contractId, milestoneData) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("addMilestone is mocked");
-            return { success: true, id: Math.floor(Math.random() * 1000), ...milestoneData };
-            // const response = await ApiService.post(`/api/contracts/${contractId}/milestones`, milestoneData);
-            // return response.data;
+            const response = await ApiService.post(`/api/contracts/${contractId}/deliver`, milestoneData);
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Update milestone
+    // Update milestone status
     updateMilestone: async (milestoneId, milestoneData) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("updateMilestone is mocked");
-            return { success: true, id: milestoneId, ...milestoneData };
-            // const response = await ApiService.put(`/api/milestones/${milestoneId}`, milestoneData);
-            // return response.data;
+            const status = milestoneData?.status || milestoneData;
+            const response = await ApiService.put(`/api/contracts/milestones/${milestoneId}/status`,
+                JSON.stringify(status),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Complete milestone
+    // Complete milestone — maps to submit delivery
     completeMilestone: async (milestoneId) => {
         try {
-            // MOCKED: Not implemented in backend yet. 
-            // In the future this might map to submitDelivery or updateMilestoneStatus
-            console.warn("completeMilestone is mocked");
-            return { success: true, id: milestoneId, status: 'completed' };
-            // const response = await ApiService.post(`/api/milestones/${milestoneId}/complete`);
-            // return response.data;
+            const response = await ApiService.post(`/api/contracts/${milestoneId}/deliver`,
+                JSON.stringify("completed"),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Approve milestone (client)
+    // Approve milestone (client) — maps to approve delivery
     approveMilestone: async (milestoneId) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("approveMilestone is mocked");
-            return { success: true, id: milestoneId, status: 'approved' };
-            // const response = await ApiService.post(`/api/milestones/${milestoneId}/approve`);
-            // return response.data;
+            const response = await ApiService.put(`/api/contracts/deliveries/${milestoneId}/approve`);
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -249,20 +244,26 @@ const gigService = {
             const response = await ApiService.get('/api/gigs/my-gigs');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
     // Get gig statistics
     getGigStatistics: async (gigId) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("getGigStatistics is mocked");
-            return { views: 0, proposals: 0, active: true };
-            // const response = await ApiService.get(`/api/gigs/${gigId}/statistics`);
-            // return response.data;
+            const [gigRes, proposalsRes] = await Promise.all([
+                ApiService.get(`/api/gigs/${gigId}`),
+                ApiService.get(`/api/gigs/${gigId}/proposals`)
+            ]);
+            const gig = gigRes.data;
+            const proposals = proposalsRes.data;
+            return {
+                views: 0,
+                proposals: proposals?.length || 0,
+                active: gig?.isActive ?? true
+            };
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -349,7 +350,7 @@ const gigService = {
             const response = await ApiService.get(endpoint, { params: { status } });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     }
 };

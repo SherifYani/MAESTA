@@ -1,161 +1,166 @@
-/**
- * @file SubscriptionContext.jsx
- * @description Context provider for subscription and payment state management
- * @author Sherif Talaat
- * @date 2026-02-06
- */
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import paymentService from '../services/paymentService';
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import {
-    SUBSCRIPTION_PLANS,
-    MOCK_USER_SUBSCRIPTION,
-    MOCK_ESCROW_BALANCE,
-    MOCK_TRANSACTIONS,
-    processPayment,
-    processWithdrawal
-} from '../mocks/subscriptionData';
-
-// Create Context
 const SubscriptionContext = createContext();
 
-// Action Types
 const ACTIONS = {
-    SET_CURRENT_PLAN: 'SET_CURRENT_PLAN',
-    SET_BILLING_PERIOD: 'SET_BILLING_PERIOD',
+    SET_PLANS: 'SET_PLANS',
+    SET_CURRENT_SUBSCRIPTION: 'SET_CURRENT_SUBSCRIPTION',
     SET_ESCROW_BALANCE: 'SET_ESCROW_BALANCE',
+    SET_TRANSACTIONS: 'SET_TRANSACTIONS',
     ADD_TRANSACTION: 'ADD_TRANSACTION',
+    SET_BILLING_PERIOD: 'SET_BILLING_PERIOD',
     SET_LOADING: 'SET_LOADING',
     SET_ERROR: 'SET_ERROR',
     TOGGLE_AUTO_RENEW: 'TOGGLE_AUTO_RENEW',
     UPDATE_SUBSCRIPTION: 'UPDATE_SUBSCRIPTION'
 };
 
-// Initial State
+const defaultPlans = [
+    { id: 'free', name: 'Free', monthlyPrice: 0, yearlyPrice: 0, features: ['Basic search', '3 applications/month'] },
+    { id: 'basic', name: 'Basic', monthlyPrice: 9.99, yearlyPrice: 99.99, features: ['Advanced search', 'Unlimited applications', 'Profile badge'] },
+    { id: 'pro', name: 'Professional', monthlyPrice: 29.99, yearlyPrice: 299.99, features: ['All Basic features', 'AI recommendations', 'Priority support', 'Analytics'] },
+    { id: 'enterprise', name: 'Enterprise', monthlyPrice: 99.99, yearlyPrice: 999.99, features: ['All Pro features', 'Dedicated manager', 'Custom integrations', 'API access'] }
+];
+
 const initialState = {
-    plans: SUBSCRIPTION_PLANS,
-    currentSubscription: MOCK_USER_SUBSCRIPTION,
-    escrowBalance: MOCK_ESCROW_BALANCE,
-    transactions: MOCK_TRANSACTIONS,
+    plans: defaultPlans,
+    currentSubscription: null,
+    escrowBalance: { total: 0, available: 0, pending: 0, totalWithdrawn: 0 },
+    transactions: [],
     billingPeriod: 'monthly',
     loading: false,
     error: null
 };
 
-// Reducer
 function subscriptionReducer(state, action) {
     switch (action.type) {
-        case ACTIONS.SET_CURRENT_PLAN:
-            return {
-                ...state,
-                currentSubscription: {
-                    ...state.currentSubscription,
-                    planId: action.payload
-                }
-            };
-
-        case ACTIONS.SET_BILLING_PERIOD:
-            return {
-                ...state,
-                billingPeriod: action.payload
-            };
-
+        case ACTIONS.SET_PLANS:
+            return { ...state, plans: action.payload };
+        case ACTIONS.SET_CURRENT_SUBSCRIPTION:
+            return { ...state, currentSubscription: action.payload };
         case ACTIONS.SET_ESCROW_BALANCE:
-            return {
-                ...state,
-                escrowBalance: action.payload
-            };
-
+            return { ...state, escrowBalance: action.payload };
+        case ACTIONS.SET_TRANSACTIONS:
+            return { ...state, transactions: action.payload };
         case ACTIONS.ADD_TRANSACTION:
-            return {
-                ...state,
-                transactions: [action.payload, ...state.transactions]
-            };
-
+            return { ...state, transactions: [action.payload, ...state.transactions] };
+        case ACTIONS.SET_BILLING_PERIOD:
+            return { ...state, billingPeriod: action.payload };
         case ACTIONS.SET_LOADING:
-            return {
-                ...state,
-                loading: action.payload
-            };
-
+            return { ...state, loading: action.payload };
         case ACTIONS.SET_ERROR:
-            return {
-                ...state,
-                error: action.payload
-            };
-
+            return { ...state, error: action.payload };
         case ACTIONS.TOGGLE_AUTO_RENEW:
             return {
                 ...state,
-                currentSubscription: {
-                    ...state.currentSubscription,
-                    autoRenew: !state.currentSubscription.autoRenew
-                }
+                currentSubscription: state.currentSubscription
+                    ? { ...state.currentSubscription, autoRenew: !state.currentSubscription.autoRenew }
+                    : state.currentSubscription
             };
-
         case ACTIONS.UPDATE_SUBSCRIPTION:
             return {
                 ...state,
-                currentSubscription: {
-                    ...state.currentSubscription,
-                    ...action.payload
-                }
+                currentSubscription: state.currentSubscription
+                    ? { ...state.currentSubscription, ...action.payload }
+                    : action.payload
             };
-
         default:
             return state;
     }
 }
 
-// Provider Component
 export function SubscriptionProvider({ children }) {
     const [state, dispatch] = useReducer(subscriptionReducer, initialState);
 
-    // Subscribe to a plan
+    useEffect(() => {
+        loadSubscriptionData();
+        loadBalance();
+        loadTransactions();
+    }, []);
+
+    const loadSubscriptionData = async () => {
+        try {
+            const data = await paymentService.getCurrentSubscription();
+            if (data) {
+                dispatch({ type: ACTIONS.SET_CURRENT_SUBSCRIPTION, payload: data });
+            }
+        } catch (err) {
+            console.warn('No active subscription found');
+        }
+    };
+
+    const loadBalance = async () => {
+        try {
+            const data = await paymentService.getBalance();
+            if (data) {
+                dispatch({ type: ACTIONS.SET_ESCROW_BALANCE, payload: {
+                    total: data.total || data.balance || 0,
+                    available: data.available || data.balance || 0,
+                    pending: data.pending || 0,
+                    totalWithdrawn: data.totalWithdrawn || 0
+                }});
+            }
+        } catch (err) {
+            console.warn('Failed to load balance');
+        }
+    };
+
+    const loadTransactions = async () => {
+        try {
+            const data = await paymentService.getTransactions();
+            const transactions = data?.items || data || [];
+            dispatch({ type: ACTIONS.SET_TRANSACTIONS, payload: transactions });
+        } catch (err) {
+            console.warn('Failed to load transactions');
+        }
+    };
+
     const subscribeToPlan = async (planId, billingPeriod, paymentDetails) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         dispatch({ type: ACTIONS.SET_ERROR, payload: null });
 
         try {
-            // Process payment
-            const result = await processPayment(paymentDetails);
+            const plan = state.plans.find(p => p.id === planId);
+            const amount = billingPeriod === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
 
-            if (result.success) {
-                // Update subscription
-                const plan = state.plans.find(p => p.id === planId);
-                const amount = billingPeriod === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
+            const result = await paymentService.subscribeToPlan({
+                planId,
+                billingPeriod,
+                amount,
+                paymentDetails
+            });
 
+            if (result) {
                 dispatch({
                     type: ACTIONS.UPDATE_SUBSCRIPTION,
                     payload: {
                         planId,
                         billingPeriod,
                         status: 'active',
-                        currentPeriodStart: new Date(),
-                        currentPeriodEnd: new Date(Date.now() + (billingPeriod === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000),
+                        currentPeriodStart: new Date().toISOString(),
+                        currentPeriodEnd: new Date(Date.now() + (billingPeriod === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString(),
                         nextBillingAmount: amount,
-                        nextBillingDate: new Date(Date.now() + (billingPeriod === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000)
+                        nextBillingDate: new Date(Date.now() + (billingPeriod === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString()
                     }
                 });
 
-                // Add transaction
                 dispatch({
                     type: ACTIONS.ADD_TRANSACTION,
                     payload: {
-                        id: result.transactionId,
-                        date: new Date(),
+                        id: result.transactionId || Date.now(),
+                        date: new Date().toISOString(),
                         type: 'payment',
                         amount,
                         status: 'completed',
-                        description: `${plan.name} Plan - ${billingPeriod === 'monthly' ? 'Monthly' : 'Yearly'} Subscription`,
-                        invoiceUrl: `/invoices/${result.transactionId}.pdf`,
-                        metadata: { planId, period: billingPeriod }
+                        description: `${plan.name} Plan - ${billingPeriod === 'monthly' ? 'Monthly' : 'Yearly'} Subscription`
                     }
                 });
 
                 dispatch({ type: ACTIONS.SET_LOADING, payload: false });
                 return { success: true, message: 'Subscription activated successfully!' };
             } else {
-                throw new Error(result.message);
+                throw new Error('Subscription failed');
             }
         } catch (error) {
             dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
@@ -164,41 +169,36 @@ export function SubscriptionProvider({ children }) {
         }
     };
 
-    // Cancel subscription
     const cancelSubscription = async () => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        dispatch({
-            type: ACTIONS.UPDATE_SUBSCRIPTION,
-            payload: {
-                status: 'canceled',
-                autoRenew: false
-            }
-        });
-
-        dispatch({ type: ACTIONS.SET_LOADING, payload: false });
-        return { success: true, message: 'Subscription canceled successfully' };
+        try {
+            await paymentService.subscribeToPlan({ planId: 'free', billingPeriod: 'monthly', amount: 0 });
+            dispatch({
+                type: ACTIONS.UPDATE_SUBSCRIPTION,
+                payload: { status: 'canceled', autoRenew: false }
+            });
+            dispatch({ type: ACTIONS.SET_LOADING, payload: false });
+            return { success: true, message: 'Subscription canceled successfully' };
+        } catch (error) {
+            dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
+            dispatch({ type: ACTIONS.SET_LOADING, payload: false });
+            return { success: false, message: error.message };
+        }
     };
 
-    // Toggle auto-renew
     const toggleAutoRenew = () => {
         dispatch({ type: ACTIONS.TOGGLE_AUTO_RENEW });
     };
 
-    // Withdraw earnings
     const withdrawEarnings = async (amount, method, accountDetails) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         dispatch({ type: ACTIONS.SET_ERROR, payload: null });
 
         try {
-            const result = await processWithdrawal({ amount, method, accountDetails });
+            const result = await paymentService.requestWithdrawal(amount, method);
 
-            if (result.success) {
-                // Update escrow balance
-                const fee = method === 'bank' ? amount * 0.01 : amount * 0.02; // 1% for bank, 2% for others
+            if (result) {
+                const fee = method === 'bank' ? amount * 0.01 : amount * 0.02;
                 dispatch({
                     type: ACTIONS.SET_ESCROW_BALANCE,
                     payload: {
@@ -208,25 +208,22 @@ export function SubscriptionProvider({ children }) {
                     }
                 });
 
-                // Add transaction
                 dispatch({
                     type: ACTIONS.ADD_TRANSACTION,
                     payload: {
-                        id: result.transactionId,
-                        date: new Date(),
+                        id: result.transactionId || Date.now(),
+                        date: new Date().toISOString(),
                         type: 'withdrawal',
                         amount: -(amount + fee),
                         status: 'pending',
-                        description: `Withdrawal to ${method}`,
-                        invoiceUrl: null,
-                        metadata: { method, fee, estimatedArrival: result.estimatedArrival }
+                        description: `Withdrawal to ${method}`
                     }
                 });
 
                 dispatch({ type: ACTIONS.SET_LOADING, payload: false });
-                return { success: true, message: result.message };
+                return { success: true, message: result.message || 'Withdrawal initiated' };
             } else {
-                throw new Error(result.message);
+                throw new Error('Withdrawal failed');
             }
         } catch (error) {
             dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
@@ -241,6 +238,8 @@ export function SubscriptionProvider({ children }) {
         cancelSubscription,
         toggleAutoRenew,
         withdrawEarnings,
+        loadBalance,
+        loadTransactions,
         dispatch
     };
 
@@ -251,7 +250,6 @@ export function SubscriptionProvider({ children }) {
     );
 }
 
-// Custom Hook
 export function useSubscription() {
     const context = useContext(SubscriptionContext);
     if (!context) {

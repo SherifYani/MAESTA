@@ -8,7 +8,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     LineChart,
     Line,
@@ -24,7 +24,7 @@ import { Calendar, TrendingUp, Users, Briefcase, DollarSign } from 'lucide-react
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { userGrowthData, revenueData, jobPostingsData } from '../../config/adminMockData';
+import { getUserGrowthData, getRevenueData, getJobPostingsData } from '../../config/adminMockData';
 import styles from './StatisticsDashboard.module.css';
 
 /**
@@ -34,10 +34,24 @@ import styles from './StatisticsDashboard.module.css';
  */
 const StatisticsDashboard = () => {
     const [timeRange, setTimeRange] = useState('6m');
+    const [userGrowth, setUserGrowth] = useState([]);
+    const [revenue, setRevenue] = useState([]);
+    const [jobPostings, setJobPostings] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    /**
-     * Filters data based on selected time range.
-     */
+    useEffect(() => {
+        Promise.all([
+            getUserGrowthData(),
+            getRevenueData(),
+            getJobPostingsData()
+        ]).then(([u, r, j]) => {
+            setUserGrowth(u);
+            setRevenue(r);
+            setJobPostings(j);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, []);
+
     const filterDataByTimeRange = (data) => {
         switch (timeRange) {
             case '3m':
@@ -51,9 +65,9 @@ const StatisticsDashboard = () => {
         }
     };
 
-    const filteredUserData = useMemo(() => filterDataByTimeRange(userGrowthData), [timeRange]);
-    const filteredRevenueData = useMemo(() => filterDataByTimeRange(revenueData), [timeRange]);
-    const filteredJobData = useMemo(() => filterDataByTimeRange(jobPostingsData), [timeRange]);
+    const filteredUserData = useMemo(() => filterDataByTimeRange(userGrowth), [timeRange, userGrowth]);
+    const filteredRevenueData = useMemo(() => filterDataByTimeRange(revenue), [timeRange, revenue]);
+    const filteredJobData = useMemo(() => filterDataByTimeRange(jobPostings), [timeRange, jobPostings]);
 
     /**
      * Custom tooltip component for charts.
