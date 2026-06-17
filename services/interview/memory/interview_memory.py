@@ -44,7 +44,7 @@ class InterviewMemory:
         }
 
     def _create_trust_event(self, skill: str, evaluation: Dict[str, Any],
-                              claims: List[Dict], contradictions: List[Dict]) -> Dict:
+                              claims: List[Dict], contradictions: List[Dict]) -> Dict | None:
         score = evaluation.get("score", 0)
         confidence = evaluation.get("confidence", 0.5)
         trust_delta = 0

@@ -16,6 +16,7 @@ class StartInterviewRequest(BaseModel):
 class SubmitAnswerRequest(BaseModel):
     session_id: str
     answer: str
+    question_id: str = ""
 
 
 class InterviewStatusResponse(BaseModel):

@@ -32,12 +32,28 @@ for s in GENERAL_SKILLS:
 
 
 def _extract_skills_from_text(text: str) -> Dict[str, float]:
+    """
+    Returns skill scores on a meaningful 0.0–1.0 scale.
+    Score reflects how strongly the skill appears in the text, not raw keyword density.
+    """
     text_lower = text.lower()
     skills = {}
     for skill_name, keywords in TECH_DOMAINS.items():
         matches = sum(1 for kw in keywords if re.search(r'\b' + re.escape(kw) + r'\b', text_lower))
         if matches > 0:
-            skills[skill_name] = min(matches / len(keywords), 1.0)
+            # Sigmoid-like scoring: 1 match=40%, 2=55%, 3=65%, 4=75%, 5+=85%
+            # This produces human-readable percentages instead of tiny fractions
+            if matches == 1:
+                score = 0.40
+            elif matches == 2:
+                score = 0.55
+            elif matches == 3:
+                score = 0.65
+            elif matches == 4:
+                score = 0.75
+            else:
+                score = min(0.85 + (matches - 5) * 0.02, 0.98)
+            skills[skill_name] = score
     for skill in GENERAL_SKILLS:
         if re.search(r'\b' + re.escape(skill) + r'\b', text_lower):
             skills[skill] = 0.5
@@ -88,11 +104,16 @@ def extract_and_prioritize_skills(state: dict) -> dict:
 
     logger.info(f"Extracted {len(matched)} matched skills, {len(missing)} missing")
 
+    # Only reset index if this is a fresh start (no skills assessed yet)
+    existing_index = state.get("current_skill_index", 0)
+    existing_skills = state.get("prioritized_skills", [])
+    reset_index = 0 if not existing_skills else existing_index
+
     return {
         "matched_skills": matched,
         "missing_skills": missing,
         "prioritized_skills": matched,
-        "current_skill_index": 0,
+        "current_skill_index": reset_index,
         "message": f"Found {len(matched)} relevant skills to assess",
     }
 
@@ -100,17 +121,28 @@ def extract_and_prioritize_skills(state: dict) -> dict:
 def select_skill(state: dict) -> dict:
     prioritized = state.get("prioritized_skills", [])
     idx = state.get("current_skill_index", 0)
+    if idx is None:
+        idx = 0
 
     if idx >= len(prioritized):
         return {"interview_status": "ready_for_consistency", "message": "All skills assessed"}
 
     skill_entry = prioritized[idx]
-    logger.info(f"Selecting skill #{idx + 1}: {skill_entry['name']}")
+    new_skill = skill_entry["name"]
+    current_skill = state.get("current_skill", "")
 
-    return {
-        "current_skill": skill_entry["name"],
-        "current_skill_index": idx,
-        "skill_questions_asked": 0,
-        "skill_followup_count": 0,
-        "message": f"Assessing skill: {skill_entry['name']}",
+    logger.info(f"Selecting skill #{idx + 1}: {new_skill}")
+
+    result = {
+        "current_skill": new_skill,
+        "message": f"Assessing skill: {new_skill}",
     }
+
+    # Reset counters ONLY when switching to a genuinely new skill
+    # If same skill → keep existing followup_count so routing works correctly
+    if new_skill != current_skill:
+        result["skill_questions_asked"] = 0
+        result["skill_followup_count"] = 0
+        logger.info(f"Switched to new skill '{new_skill}', resetting counters.")
+
+    return result

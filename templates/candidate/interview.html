@@ -55,14 +55,11 @@
         .ai-bubble {
             background: rgba(59, 130, 246, 0.2);
             border: 1px solid rgba(59, 130, 246, 0.3);
-            align-self: flex-start;
             border-bottom-right-radius: 4px;
         }
         .candidate-bubble {
             background: #3b82f6;
             color: white;
-            align-self: flex-end;
-            margin-right: auto;
             border-bottom-left-radius: 4px;
         }
         .consent-box {
@@ -104,10 +101,32 @@
 <div class="interview-card">
     <div class="chat-header">
         <h4 class="mb-0">مقابلة MAESTA الذكية</h4>
-        <p class="text-muted small mb-0">نظام توظيف ذكي وآمن</p>
+        <p class="text-muted small mb-0">نظام توظيف ذكي وآمن (مع تتبع الوقت وتخطي الأسئلة)</p>
     </div>
 
-    <div class="chat-body d-flex flex-column" id="chat-body">
+            <div class="chat-body" id="chat-body">
+        <!-- Status Bar -->
+        <div id="status-bar" class="d-flex flex-column p-3" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; flex-shrink: 0;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span id="skill-display" class="fw-bold">...</span>
+                    <span class="text-muted ms-2">(<span id="progress-counter">0</span>/0 أسئلة)</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div id="time-display" class="me-3 d-none">
+                        <span class="text-muted">الوقت المتبقي:</span>
+                        <span id="time-remaining" class="fw-bold ms-1">--:--</span>
+                        <span class="text-warning ms-1" id="time-warning-indicator" style="display: none;">⚠️</span>
+                    </div>
+                    <div id="security-badge" class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-success ms-2" title="محمي ضد الغش"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="skills-row" class="mt-2 d-flex gap-2 flex-wrap" style="display: none !important;">
+            </div>
+        </div>
+
         <!-- Consent View -->
         <div id="consent-view" class="text-center mt-5">
             <div class="consent-box">
@@ -120,40 +139,80 @@
             </div>
         </div>
 
-        <!-- Chat Log -->
-        <div id="chat-log" style="display: none;">
-            <!-- Messages will appear here -->
+        <!-- Chat Log - Flex column to align bubbles properly -->
+        <div id="chat-log" class="d-flex flex-column" style="display: none;">
         </div>
         
         <div id="typing" class="typing-indicator" style="display: none;">الذكاء الاصطناعي يكتب الآن...</div>
+        <div id="warning-banner" class="alert alert-warning mx-3 mt-2 p-2" style="display: none; font-size: 0.85rem;">
+            <i class="fas fa-exclamation-triangle ms-2"></i>
+            <span id="warning-text">سيكون لديك 5 دقائق متبقية قبل انتهاء المقابلة</span>
+        </div>
     </div>
 
     <div class="chat-footer" id="chat-footer" style="display: none;">
-        <div class="input-group">
-            <input type="text" id="answer-input" class="form-control" placeholder="اكتب إجابتك هنا..." onkeypress="if(event.key === 'Enter') sendAnswer()">
+        <div class="d-flex gap-2">
+            <div class="flex-grow-1">
+                <input type="text" id="answer-input" class="form-control" placeholder="اكتب إجابتك هنا..." onkeypress="if(event.key === 'Enter') sendAnswer()">
+            </div>
+            <button class="btn btn-outline-secondary" onclick="skipQuestion()" title="تخطي هذا السؤال">
+                <i class="fas fa-forward"></i>
+            </button>
             <button class="btn btn-primary" onclick="sendAnswer()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        <div class="text-center mt-2">
+            <small class="text-muted">ESC للخروج | Tab للانتقال إلى الحقل</small>
         </div>
     </div>
 </div>
 
 <script>
     const interviewId = "{{ interview.id }}";
+    let timeInterval = null;
+    let warningInterval = null;
+    let currentQuestionCount = 0;
+    let currentSkill = '';
+    let currentQId = null;
     
     async function handleConsent(choice) {
-        const res = await fetch(`/candidate/interview/${interviewId}/consent`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({choice})
-        });
-        const data = await res.json();
-        
-        if (choice === 'accepted') {
-            document.getElementById('consent-view').style.display = 'none';
-            document.getElementById('chat-log').style.display = 'block';
-            document.getElementById('chat-footer').style.display = 'block';
-            loadNextQuestion();
-        } else {
-            document.getElementById('consent-view').innerHTML = '<h4>تم إلغاء المقابلة. شكراً لك.</h4>';
+        console.log('handleConsent called with:', choice);
+        try {
+            const url = `/candidate/interview/${interviewId}/consent`;
+            console.log('Fetching:', url);
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({choice})
+            });
+            console.log('Response status:', res.status);
+            const text = await res.text();
+            console.log('Response text:', text);
+            
+            if (!res.ok) {
+                console.error('Server error:', text);
+                alert('خطأ من الخادم: ' + text);
+                return;
+            }
+            
+            let data;
+            try { data = JSON.parse(text); } catch (e) {
+                console.error('JSON parse failed:', text);
+                alert('خطأ في تحليل الرد: ' + text.substring(0, 200));
+                return;
+            }
+            
+            if (choice === 'accepted' && data.status === 'success') {
+                document.getElementById('consent-view').style.display = 'none';
+                document.getElementById('chat-log').style.display = 'flex';
+                document.getElementById('chat-footer').style.display = 'block';
+                startTimeTracking();
+                loadNextQuestion();
+            } else if (choice !== 'accepted') {
+                document.getElementById('consent-view').innerHTML = '<h4>تم إلغاء المقابلة. شكراً لك.</h4>';
+            }
+        } catch (err) {
+            console.error('Fetch failed:', err);
+            alert('فشل الاتصال بالخادم: ' + err.message);
         }
     }
 
@@ -164,9 +223,13 @@
         document.getElementById('typing').style.display = 'none';
 
         if (data.status === 'question') {
-            addMessage(data.text, 'ai');
+            addMessage(data.text, 'ai', 'question');
+            currentQuestionCount++;
+            currentQId = data.q_id || null;
+            updateStatusBar();
         } else if (data.status === 'completed') {
             addMessage(data.message, 'ai');
+            stopTimeTracking();
             document.getElementById('chat-footer').style.display = 'none';
         }
     }
@@ -179,25 +242,230 @@
         addMessage(text, 'candidate');
         input.value = '';
 
-        await fetch(`/candidate/interview/${interviewId}/answer`, {
+        const body = {answer: text};
+        if (currentQId) body.q_id = currentQId;
+
+        const res = await fetch(`/candidate/interview/${interviewId}/answer`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({answer: text})
+            body: JSON.stringify(body)
         });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            console.error('Answer save failed:', err);
+        }
 
         loadNextQuestion();
     }
 
-    function addMessage(text, sender) {
-        const log = document.getElementById('chat-log');
-        const div = document.createElement('div');
-        div.className = `bubble ${sender}-bubble`;
-        div.innerText = text;
-        log.appendChild(div);
+    async function skipQuestion() {
+        const input = document.getElementById('answer-input');
+        const text = input.value.trim();
         
+        if (text) {
+            addMessage(`[تخطي: ${text}]`, 'candidate');
+            input.value = '';
+        }
+        
+        const reason = 'dont_know';
+        const res = await fetch(`/candidate/interview/${interviewId}/skip`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({reason, reason_text: 'تم تخطي السؤال'})
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === 'question') {
+            addMessage(data.text, 'ai', 'question');
+            currentQuestionCount++;
+            updateStatusBar();
+            addMessage('❗ تم تخطي السؤال السابق. السؤال التالي يرتبط بمهارتك.', 'ai');
+        } else if (data.status === 'completed') {
+            addMessage(data.message, 'ai');
+            stopTimeTracking();
+            document.getElementById('chat-footer').style.display = 'none';
+        }
+    }
+
+    function addMessage(text, sender, type) {
+        const log = document.getElementById('chat-log');
+        const wrapper = document.createElement('div');
+        wrapper.className = `d-flex mb-3 ${sender === 'ai' ? '' : 'flex-row-reverse'}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = `d-flex align-items-start ${sender === 'ai' ? 'ms-2' : 'me-2'}`;
+        avatar.innerHTML = sender === 'ai'
+            ? '<div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-size:14px;"><i class="fas fa-robot text-white"></i></div>'
+            : '<div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-size:14px;"><i class="fas fa-user text-white"></i></div>';
+
+        const bubbleWrap = document.createElement('div');
+        bubbleWrap.className = `${sender}-bubble bubble`;
+        bubbleWrap.style.maxWidth = '80%';
+
+        const label = document.createElement('div');
+        label.className = 'small fw-bold mb-1';
+        if (type === 'question') {
+            label.style.color = '#fbbf24';
+            label.innerHTML = '<i class="fas fa-question-circle ms-1"></i>السؤال:';
+        } else {
+            label.style.color = sender === 'ai' ? '#60a5fa' : '#94a3b8';
+            label.innerText = sender === 'ai' ? 'المقابلة الذكية' : 'أنت';
+        }
+        bubbleWrap.appendChild(label);
+
+        const msg = document.createElement('div');
+        msg.innerText = text;
+        bubbleWrap.appendChild(msg);
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubbleWrap);
+        log.appendChild(wrapper);
+
         const body = document.getElementById('chat-body');
         body.scrollTop = body.scrollHeight;
     }
+
+    async function startTimeTracking() {
+        timeInterval = setInterval(async () => {
+            const res = await fetch(`/candidate/interview/${interviewId}/time`);
+            const data = await res.json();
+            
+            if (data.time_expired) {
+                stopTimeTracking();
+                addMessage('⏰ تم انتهاء الوقت المحدد للمقابلة. الاختبار مكتمل.', 'ai');
+                document.getElementById('chat-footer').style.display = 'none';
+            } else {
+                document.getElementById('time-display').classList.remove('d-none');
+                const minutes = Math.floor(data.remaining_seconds / 60);
+                const seconds = data.remaining_seconds % 60;
+                document.getElementById('time-remaining').innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (data.warning) {
+                    showWarning(data.warning_minutes);
+                } else {
+                    hideWarning();
+                }
+            }
+        }, 1000);
+        
+        warningInterval = setInterval(async () => {
+            const res = await fetch(`/candidate/interview/${interviewId}/time`);
+            const data = await res.json();
+            if (data.warning) {
+                showWarning(data.warning_minutes);
+            }
+        }, 30000);
+    }
+
+    function stopTimeTracking() {
+        if (timeInterval) {
+            clearInterval(timeInterval);
+            timeInterval = null;
+        }
+        if (warningInterval) {
+            clearInterval(warningInterval);
+            warningInterval = null;
+        }
+        document.getElementById('time-display').classList.add('d-none');
+        hideWarning();
+    }
+
+    function showWarning(minutes) {
+        const banner = document.getElementById('warning-banner');
+        const text = document.getElementById('warning-text');
+        text.innerText = `⚠️ تذكير: لديك ${minutes} دقائق متبقية قبل انتهاء المقابلة`;
+        banner.style.display = 'block';
+        document.getElementById('time-warning-indicator').style.display = 'inline';
+        
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 5000);
+    }
+
+    function hideWarning() {
+        document.getElementById('warning-banner').style.display = 'none';
+        document.getElementById('time-warning-indicator').style.display = 'none';
+    }
+
+    async function updateStatusBar() {
+        const res = await fetch(`/candidate/interview/${interviewId}/status`);
+        const data = await res.json();
+        
+        // Update skill display
+        if (data.current_skill) {
+            document.getElementById('skill-display').innerText = data.current_skill;
+        }
+        
+        // Update progress
+        document.getElementById('progress-counter').innerText = data.questions_answered;
+        const container = document.getElementById('progress-counter').parentElement;
+        container.innerHTML = `<span>${data.questions_answered}</span>/<span>${data.questions_asked}</span> أسئلة`;
+        
+        if (data.questions_asked > 0) {
+            const percent = Math.round((data.questions_answered / data.questions_asked) * 100);
+            document.getElementById('skill-display').innerHTML = `${data.current_skill} <span class="text-muted">(${percent}%)</span>`;
+        }
+        
+        // Show skills row
+        if (data.skills && data.skills.length > 0) {
+            const row = document.getElementById('skills-row');
+            row.style.display = 'flex';
+            row.innerHTML = data.skills.map(s => 
+                `<span class="badge" style="background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);padding:4px 10px;border-radius:8px;font-size:0.75rem;">
+                    ${s.name} ${s.priority}%
+                </span>`
+            ).join('');
+        }
+    }
+
+    // Keyboard shortcuts for interview navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (document.getElementById('answer-input').style.display !== 'none') {
+                document.getElementById('answer-input').blur();
+            }
+        }
+        if (e.key === 'Tab' && document.activeElement.id === 'answer-input') {
+            e.preventDefault();
+            document.getElementById('answer-input').blur();
+        }
+    });
+    
+    // Load existing messages for in-progress/completed sessions
+    async function loadChatHistory() {
+        try {
+            const res = await fetch(`/candidate/interview/${interviewId}/messages`);
+            if (!res.ok) return;
+            const msgs = await res.json();
+            if (!msgs || msgs.length === 0) return;
+            document.getElementById('consent-view').style.display = 'none';
+            document.getElementById('chat-log').style.display = 'flex';
+            document.getElementById('chat-footer').style.display = 'block';
+            for (const m of msgs) {
+                const isQuestion = m.message_type === 'question' && m.sender === 'ai';
+                addMessage(m.message, m.sender, isQuestion ? 'question' : undefined);
+                if (m.sender === 'ai' && m.message_type === 'question') currentQuestionCount++;
+            }
+            updateStatusBar();
+            startTimeTracking();
+            document.getElementById('typing').style.display = 'none';
+        } catch (e) {
+            console.warn('Failed to load chat history:', e);
+        }
+    }
+
+    // Initialize interview interface
+    document.addEventListener('DOMContentLoaded', () => {
+        // Force the input to be focusable for mobile
+        const input = document.getElementById('answer-input');
+        if (input) {
+            input.focus();
+        }
+        // Check if session already started and load history
+        loadChatHistory();
+    });
 </script>
 
 </body>

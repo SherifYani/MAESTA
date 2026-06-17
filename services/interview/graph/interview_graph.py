@@ -85,7 +85,7 @@ def _route_after_followup(state: InterviewState) -> Literal["evaluate_answer", "
     return "wait_human"
 
 
-def _wait_human(state: InterviewState) -> InterviewState:
+def _wait_human(state: InterviewState) -> dict:
     """Pause point for human input. Sets needs_human_input flag and returns state."""
     return {"needs_human_input": True, "message": "Waiting for candidate answer..."}
 
@@ -139,8 +139,10 @@ def _build_interview_graph() -> StateGraph:
 
     graph.add_edge("evaluate_answer", "save_answer")
 
+    graph.add_edge("save_answer", "anti_cheat_analysis")
+
     graph.add_conditional_edges(
-        "save_answer",
+        "anti_cheat_analysis",
         _route_after_evaluate,
         {
             "generate_followup": "generate_followup",
@@ -161,9 +163,8 @@ def _build_interview_graph() -> StateGraph:
         {"select_skill": "select_skill", "consistency_analysis": "consistency_analysis"},
     )
 
-    # New pipeline: consistency → anti-cheat → challenge → report
-    graph.add_edge("consistency_analysis", "anti_cheat_analysis")
-    graph.add_edge("anti_cheat_analysis", "generate_challenge")
+    # New pipeline: consistency → challenge → benchmark → report
+    graph.add_edge("consistency_analysis", "generate_challenge")
     graph.add_edge("generate_challenge", "evaluate_challenge")
     graph.add_edge("evaluate_challenge", "benchmark_analysis")
     graph.add_edge("benchmark_analysis", "generate_report")

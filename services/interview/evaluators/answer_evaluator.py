@@ -22,13 +22,13 @@ class AnswerEvaluator:
 
     def evaluate(self, question_text: str, answer_text: str, skill: str,
                  difficulty_level: int = 1, jd_text: str = "",
-                 cv_text: str = "") -> Dict[str, Any]:
-        cache_key = f"eval:{skill}:{hash(answer_text)}:{difficulty_level}"
+                 cv_text: str = "", is_followup: bool = False) -> Dict[str, Any]:
+        cache_key = f"eval:{skill}:{hash(answer_text)}:{difficulty_level}:{is_followup}"
         cached = redis_cache.get(cache_key)
         if cached:
             return cached
 
-        # Upgrade 1: Concept matching from knowledge base
+        # Concept matching from knowledge base
         concept_result = concept_matcher.match(answer_text, skill, difficulty_level)
         concept_coverage = concept_result.get("concept_coverage", 50)
         knowledge_score = concept_result.get("knowledge_score", 50)
@@ -38,19 +38,32 @@ class AnswerEvaluator:
         structure_score = self._structure_score(answer_text)
 
         llm_score = self._llm_evaluation(
-            question_text, answer_text, skill, difficulty_level, jd_text
+            question_text, answer_text, skill, difficulty_level, jd_text,
+            is_followup=is_followup,
         )
 
-        # New scoring: concept 25%, LLM 35%, keyword 15%, length 10%, structure 15%
-        score = int(round(
-            concept_coverage * 0.25
-            + llm_score.get("accuracy_score", 50) * 0.20
-            + llm_score.get("coverage_score", 50) * 0.15
-            + keyword_score * 0.15
-            + knowledge_score * 0.10
-            + length_score * 0.05
-            + structure_score * 0.10
-        ))
+        if is_followup:
+            # Follow-up: penalize low concept coverage less — reward depth and accuracy instead
+            # Weights: accuracy 40%, LLM coverage 20%, keyword 20%, knowledge depth 15%, structure 5%
+            score = int(round(
+                llm_score.get("accuracy_score", 50) * 0.40
+                + llm_score.get("coverage_score", 50) * 0.20
+                + keyword_score * 0.20
+                + knowledge_score * 0.15
+                + structure_score * 0.05
+            ))
+        else:
+            # Main question: concept breadth matters more
+            # Weights: concept 25%, LLM accuracy 20%, LLM coverage 15%, keyword 15%, knowledge 10%, length 5%, structure 10%
+            score = int(round(
+                concept_coverage * 0.25
+                + llm_score.get("accuracy_score", 50) * 0.20
+                + llm_score.get("coverage_score", 50) * 0.15
+                + keyword_score * 0.15
+                + knowledge_score * 0.10
+                + length_score * 0.05
+                + structure_score * 0.10
+            ))
 
         # Merge missing concepts from both sources
         llm_missing = llm_score.get("missing_concepts", [])
@@ -71,6 +84,7 @@ class AnswerEvaluator:
             "missing_concepts": all_missing,
             "matched_concepts": concept_result.get("matched_concepts", []),
             "explanation": llm_score.get("explanation", ""),
+            "is_followup": is_followup,
         }
 
         redis_cache.set(cache_key, result, ttl=600)
@@ -112,10 +126,12 @@ class AnswerEvaluator:
         return float(score)
 
     def _llm_evaluation(self, question: str, answer: str, skill: str,
-                        difficulty: int, jd_context: str) -> Dict:
+                        difficulty: int, jd_context: str,
+                        is_followup: bool = False) -> Dict:
         prompt = InterviewPromptTemplates.answer_evaluation(
             question=question, answer=answer, skill=skill,
             difficulty=difficulty, jd_context=jd_context,
+            is_followup=is_followup,
         )
         try:
             resp = self.ollama.generate(

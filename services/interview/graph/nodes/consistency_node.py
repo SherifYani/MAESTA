@@ -27,7 +27,7 @@ def run_consistency_analysis(state: dict) -> dict:
     logger.info(f"Consistency analysis: score={analysis.get('consistency_score', 0):.1f}, flags={risk_flags}")
 
     return {
-        "consistency_analysis": analysis,
+        "consistency_result": analysis,
         "trust_gaps": trust_gaps,
         "risk_flags": risk_flags,
         "risk_flags_detailed": risk_flags_detailed,

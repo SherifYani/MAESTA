@@ -63,6 +63,7 @@ class InterviewRunner:
             
         session.status = "in_progress"
         session.started_at = datetime.now()
+
         ai_storage.interviews.save_session(session)
         
         ai_storage.audit.append_event(AIAuditEvent(

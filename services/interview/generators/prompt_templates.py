@@ -8,7 +8,7 @@ class InterviewPromptTemplates:
     @staticmethod
     def question_generation(skill: str, difficulty: int, question_type: str,
                             context: str, previous_answers: list,
-                            target_topic: str = None, asked_topics: list = None) -> str:
+                            target_topic: str | None = None, asked_topics: list | None = None) -> str:
         prev = ""
         if previous_answers:
             prev = "\nPrevious answers by candidate:\n" + "\n".join(
@@ -61,38 +61,69 @@ Return ONLY the question text. Do NOT add labels or explanations."""
         if missing:
             weakness_hint += f"\nConcepts not covered: {', '.join(missing[:2])}"
 
-        return f"""You are a technical interviewer. You asked about {skill}.
+        return f"""You are a technical interviewer assessing the candidate's **{skill}** skills.
 
-The candidate answered. Based on their answer (score: {score}/100), you need to ask a follow-up question.
+You asked a {skill} question. The candidate answered. Generate follow-up #{followup_count} to dig deeper.
 
-FOLLOW-UP #{followup_count}
-DIRECTION: {direction} difficulty
-PURPOSE: {"Push deeper into their expertise" if direction == "increase" else "Clarify their basic understanding"}
-
-Their last answer: {last_answer[:500]}
+CRITICAL RULES:
+- The follow-up MUST stay focused on **{skill}** ONLY
+- Do NOT ask about other technologies, deployment, cloud, or general topics
+- Ask about a specific {skill} concept, API, pattern, or real scenario
+- DIRECTION: {"increase" if score > 70 else "decrease"} difficulty (current score: {score}/100)
 {weakness_hint}
 
-Generate a single concise follow-up question that builds on their last answer. Return ONLY the question text."""
+Their last answer (focus on gaps in this): {last_answer[:400]}
+
+Return ONLY the question text, nothing else."""
 
     @staticmethod
     def answer_evaluation(question: str, answer: str, skill: str,
-                          difficulty: int, jd_context: str) -> str:
-        return f"""Evaluate this candidate's answer for a {skill} interview question.
+                          difficulty: int, jd_context: str,
+                          is_followup: bool = False) -> str:
+        followup_context = ""
+        if is_followup:
+            followup_context = """
+IMPORTANT: This is a FOLLOW-UP question requiring DEEP technical depth on a specific sub-topic.
+- DO NOT penalize the candidate for not covering unrelated aspects of the skill
+- Focus evaluation on: technical precision, depth of understanding, and correctness
+- A focused, accurate answer to the specific question should score 65-85%
+- Only score below 50% if the answer is technically incorrect or completely off-topic"""
+        else:
+            followup_context = """
+This is a MAIN question assessing broad skill coverage.
+- Evaluate how well the answer demonstrates overall knowledge of the skill
+- Good breadth with some depth should score 55-75%
+- Exceptional coverage with examples should score 75-90%"""
+
+        difficulty_calibration = {
+            1: "Entry level — basic understanding expected. Score 60+ if concepts are correct.",
+            2: "Junior level — practical examples expected. Score 65+ if shows real experience.",
+            3: "Mid level — architectural understanding expected. Score 70+ if covers trade-offs.",
+            4: "Senior level — deep expertise expected. Score 75+ if shows advanced patterns.",
+            5: "Expert level — mastery expected. Score 80+ if covers edge cases and internals.",
+        }.get(difficulty, "Mid level evaluation expected.")
+
+        return f"""You are a senior technical interviewer evaluating a candidate's answer for a {skill} interview question.
 
 Question: {question}
 Candidate Answer: {answer}
-Job Context: {jd_context[:500]}
+Job Context: {jd_context[:400]}
+
+Difficulty Level: {difficulty}/5 — {difficulty_calibration}
+{followup_context}
 
 Evaluate on these dimensions (0-100):
-1. Technical Accuracy: Is the answer technically correct?
-2. Skill Coverage: Does it demonstrate knowledge of {skill}?
-3. Completeness: Does it fully address the question?
-4. Clarity: Is it well-structured and clear?
+1. accuracy_score: Is the answer technically correct? (most important)
+2. coverage_score: Does it cover the key concepts asked in THIS question?
+3. semantic_score: Does it demonstrate real understanding vs surface knowledge?
+4. completeness_score: Is it sufficiently detailed for this difficulty level?
 
-Also identify:
-- Strengths (specific things done well)
-- Weaknesses (specific gaps or errors)
-- Missing concepts (important concepts not mentioned)
+CALIBRATION GUIDE:
+- 80-100: Excellent — detailed, accurate, demonstrates deep understanding
+- 65-79: Good — correct answer with sufficient depth
+- 50-64: Adequate — mostly correct but missing key details
+- 35-49: Weak — partially correct, significant gaps
+- 0-34: Poor — incorrect or completely off-topic
 
 Return JSON only, no other text:
 {{
@@ -101,11 +132,11 @@ Return JSON only, no other text:
     "coverage_score": <0-100>,
     "accuracy_score": <0-100>,
     "completeness_score": <0-100>,
-    "confidence": <0.0-1.0>,
-    "strengths": ["..."],
-    "weaknesses": ["..."],
-    "missing_concepts": ["..."],
-    "explanation": "brief why this score"
+    "confidence": <0.0-1.0, your confidence in this evaluation>,
+    "strengths": ["specific strength 1", "specific strength 2"],
+    "weaknesses": ["specific gap 1", "specific gap 2"],
+    "missing_concepts": ["concept not mentioned but expected"],
+    "explanation": "2-3 sentences explaining the score"
 }}"""
 
     @staticmethod

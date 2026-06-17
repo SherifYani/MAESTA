@@ -270,7 +270,7 @@
 
             <div class="score-bar-wrap">
                 <div class="score-bar-bg">
-                    <div class="score-bar-fill" style="width: {{ c.overall_score }}%;"></div>
+                    <div class="score-bar-fill" style="--width: {{ c.overall_score }}%; width: var(--width);"></div>
                 </div>
             </div>
 
@@ -279,28 +279,28 @@
                 <div class="breakdown-row">
                     <span class="breakdown-label">المهارات (50%)</span>
                     <div class="breakdown-bar-bg">
-                        <div class="breakdown-bar-fill bar-skills" style="width: {{ c.skill_match|default(0) }}%;"></div>
+                        <div class="breakdown-bar-fill bar-skills" style="--width: {{ c.skill_match|default(0) }}%; width: var(--width);"></div>
                     </div>
                     <span class="breakdown-score">{{ c.skill_match|default(0)|int }}</span>
                 </div>
                 <div class="breakdown-row">
                     <span class="breakdown-label">الخبرة (20%)</span>
                     <div class="breakdown-bar-bg">
-                        <div class="breakdown-bar-fill bar-exp" style="width: {{ c.experience_match|default(0) }}%;"></div>
+                        <div class="breakdown-bar-fill bar-exp" style="--width: {{ c.experience_match|default(0) }}%; width: var(--width);"></div>
                     </div>
                     <span class="breakdown-score">{{ c.experience_match|default(0)|int }}</span>
                 </div>
                 <div class="breakdown-row">
                     <span class="breakdown-label">التعليم (10%)</span>
                     <div class="breakdown-bar-bg">
-                        <div class="breakdown-bar-fill bar-edu" style="width: {{ c.education_match|default(0) }}%;"></div>
+                        <div class="breakdown-bar-fill bar-edu" style="--width: {{ c.education_match|default(0) }}%; width: var(--width);"></div>
                     </div>
                     <span class="breakdown-score">{{ c.education_match|default(0)|int }}</span>
                 </div>
                 <div class="breakdown-row">
                     <span class="breakdown-label">التشابه (20%)</span>
                     <div class="breakdown-bar-bg">
-                        <div class="breakdown-bar-fill bar-sem" style="width: {{ c.semantic_match|default(0) }}%;"></div>
+                        <div class="breakdown-bar-fill bar-sem" style="--width: {{ c.semantic_match|default(0) }}%; width: var(--width);"></div>
                     </div>
                     <span class="breakdown-score">{{ c.semantic_match|default(0)|int }}</span>
                 </div>

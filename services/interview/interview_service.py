@@ -9,7 +9,7 @@ from datetime import datetime
 from core.logger import get_logger
 from models import database
 from services.interview.graph.interview_graph import interview_graph, InterviewWorkflow
-from services.interview.graph.interview_state import create_initial_state
+from services.interview.graph.interview_state import InterviewState, create_initial_state
 from services.interview.schemas.dto import (
     StartInterviewRequest, SubmitAnswerRequest,
     InterviewStatusResponse, InterviewReportResponse, InterviewHistoryItem,
@@ -34,6 +34,9 @@ class InterviewService:
             session_id, status="in_progress", started_at=datetime.now(),
         )
 
+        # Create time tracking record
+        database.create_time_tracking(session_id, req.time_limit_minutes if hasattr(req, 'time_limit_minutes') else 60)
+
         initial = create_initial_state(
             session_id=session_id,
             candidate_id=req.candidate_id,
@@ -41,6 +44,7 @@ class InterviewService:
             tenant_id=req.tenant_id,
             company_id=req.company_id,
             company_name=req.company_name,
+            time_limit_minutes=req.time_limit_minutes if hasattr(req, 'time_limit_minutes') else 60,
         )
 
         try:
@@ -70,6 +74,10 @@ class InterviewService:
         state = self._reconstruct_state(session)
         state["current_answer"] = req.answer
 
+        # The question_id tracking logic continues to be passed to state.
+        if req.question_id:
+            state["current_question_id"] = req.question_id
+
         try:
             result = interview_graph.invoke(state, config={"recursion_limit": 150})
             self._persist_state(req.session_id, result)
@@ -97,23 +105,8 @@ class InterviewService:
         last_q = questions[-1] if questions else None
         last_q_dict = dict(last_q) if last_q else None
         if last_q_dict and last_q_dict.get("question"):
-            import re
-            q_text = last_q_dict["question"]
-            if '</think>' in q_text:
-                parts = q_text.split('</think>', 1)
-                cleaned = parts[1].strip()
-                if cleaned:
-                    q_text = cleaned
-            elif '</thinking>' in q_text:
-                parts = q_text.split('</thinking>', 1)
-                cleaned = parts[1].strip()
-                if cleaned:
-                    q_text = cleaned
-            q_text = re.sub(r'<think>', '', q_text, flags=re.IGNORECASE)
-            q_text = re.sub(r'</think>', '', q_text, flags=re.IGNORECASE)
-            q_text = re.sub(r'<thinking>', '', q_text, flags=re.IGNORECASE)
-            q_text = re.sub(r'</thinking>', '', q_text, flags=re.IGNORECASE)
-            last_q_dict["question"] = q_text.strip()
+            # Question is now cleaned directly by the generators before it's saved.
+            pass
 
         return InterviewStatusResponse(
             session_id=session_id,
@@ -151,33 +144,39 @@ class InterviewService:
         risk_flags = state.get("risk_flags", [])
         risk_flags_detailed = state.get("risk_flags_detailed", [])
 
+        # Fetch all existing question IDs once
+        existing_qids_db = {q.get("id", q.get("q_id")) for q in database.get_interview_questions(session_id)}
+        
         # Persist questions
         for q in q_asked:
             q_id = q.get("id", "")
-            if q_id:
-                # Check if question already exists by ID
-                existing = database.get_interview_question(q_id)
-                if not existing:
-                    database.create_interview_question(
-                        session_id=session_id,
-                        skill=q.get("skill", ""),
-                        question=q.get("question", ""),
-                        question_type=q.get("question_type", "technical"),
-                        difficulty_level=q.get("difficulty_level", 1),
-                        is_followup=q.get("is_followup", False),
-                        followup_count=q.get("followup_count", 0),
-                        skill_index=0,
-                        q_id=q_id,
-                    )
+            if q_id and q_id not in existing_qids_db:
+                database.create_interview_question(
+                    session_id=session_id,
+                    skill=q.get("skill", ""),
+                    question=q.get("question", ""),
+                    question_type=q.get("question_type", "technical"),
+                    difficulty_level=q.get("difficulty_level", 1),
+                    is_followup=q.get("is_followup", False),
+                    followup_count=q.get("followup_count", 0),
+                    skill_index=0,
+                    q_id=q_id,
+                )
+                existing_qids_db.add(q_id)
 
-        # Persist answers
+        # Persist answers (avoid duplicates by question_id)
+        existing_qids = {a.get("question_id") for a in database.get_interview_answers(session_id)}
         for a in answers:
+            qid = a.get("question_id", "")
+            if qid in existing_qids:
+                continue
             evaluation = a.get("evaluation", {})
             database.create_interview_answer(
-                question_id=a.get("question_id", ""),
+                question_id=qid,
                 session_id=session_id,
                 candidate_answer=a.get("candidate_answer", ""),
                 score=a.get("score", 0),
+                skill=a.get("skill", ""),
                 strengths=json.dumps(evaluation.get("strengths", []), ensure_ascii=False),
                 weaknesses=json.dumps(evaluation.get("weaknesses", []), ensure_ascii=False),
                 missing_concepts=json.dumps(evaluation.get("missing_concepts", []), ensure_ascii=False),
@@ -187,14 +186,18 @@ class InterviewService:
                 completeness_score=evaluation.get("completeness_score", 0),
                 confidence=evaluation.get("confidence", 0),
             )
+            existing_qids.add(qid)
 
         # Persist skill assessments
+        existing_assessments = database.get_skill_assessments(session_id)
+        existing_skills = {e.get("skill") for e in existing_assessments}
+        
         for sa in skill_assessments:
-            existing = database.get_skill_assessments(session_id)
-            if not any(e.get("skill") == sa.get("skill") for e in existing):
+            skill_name = sa.get("skill", "")
+            if skill_name and skill_name not in existing_skills:
                 database.create_skill_assessment(
                     session_id=session_id,
-                    skill=sa.get("skill", ""),
+                    skill=skill_name,
                     claimed_level=sa.get("claimed_level", 0),
                     verified_level=sa.get("verified_level", 0),
                     confidence=sa.get("confidence", 0),
@@ -202,11 +205,12 @@ class InterviewService:
                     average_score=sa.get("average_score", 0),
                     evidence=json.dumps(sa.get("evidence", []), ensure_ascii=False),
                 )
+                existing_skills.add(skill_name)
 
         # Persist consistency analysis
         existing_ca = database.get_consistency_analysis(session_id)
-        if not existing_ca and state.get("consistency_analysis"):
-            ca = state["consistency_analysis"]
+        if not existing_ca and state.get("consistency_result"):
+            ca = state["consistency_result"]
             database.create_consistency_analysis(
                 session_id=session_id,
                 trust_gaps=json.dumps(trust_gaps, ensure_ascii=False),
@@ -262,6 +266,7 @@ class InterviewService:
                 session_id,
                 status=state.get("interview_status", "completed"),
                 current_skill=state.get("current_skill", ""),
+                current_skill_index=state.get("current_skill_index", 0),
                 matched_skills=json.dumps(state.get("matched_skills", []), ensure_ascii=False),
                 missing_skills=json.dumps(state.get("missing_skills", []), ensure_ascii=False),
                 skill_scores=json.dumps(state.get("skill_scores", {}), ensure_ascii=False),
@@ -278,8 +283,21 @@ class InterviewService:
                 report_json=json.dumps(state.get("report", {}), ensure_ascii=False),
                 completed_at=datetime.now(),
             )
+        else:
+            # Save progress state (skill_scores, current_skill) after every answer
+            skill_scores = state.get("skill_scores", {})
+            if skill_scores or state.get("current_skill"):
+                database.update_interview_session(
+                    session_id,
+                    status=state.get("interview_status", "in_progress"),
+                    current_skill=state.get("current_skill", ""),
+                    current_skill_index=state.get("current_skill_index", 0),
+                    matched_skills=json.dumps(state.get("matched_skills", []), ensure_ascii=False),
+                    missing_skills=json.dumps(state.get("missing_skills", []), ensure_ascii=False),
+                    skill_scores=json.dumps(skill_scores, ensure_ascii=False) if skill_scores else "{}",
+                )
 
-    def _reconstruct_state(self, session: dict) -> dict:
+    def _reconstruct_state(self, session: dict) -> InterviewState:
         state = create_initial_state(
             session_id=session["id"],
             candidate_id=session.get("candidate_id", ""),
@@ -288,11 +306,12 @@ class InterviewService:
             company_id=session.get("company_id", ""),
         )
         state["interview_status"] = session.get("status", "in_progress")
-        state["current_skill"] = session.get("current_skill", "")
 
         if session.get("matched_skills"):
             try:
-                state["matched_skills"] = json.loads(session["matched_skills"])
+                matched = json.loads(session["matched_skills"])
+                state["matched_skills"] = matched
+                state["prioritized_skills"] = matched  # ← restore for routing
             except (json.JSONDecodeError, TypeError):
                 pass
 
@@ -303,6 +322,19 @@ class InterviewService:
         assessments = database.get_skill_assessments(session["id"])
         state["skill_assessments"] = [dict(a) for a in assessments]
 
+        # Derive current_skill from last unanswered question (or last asked question)
+        qs = state["asked_questions"]
+        ans = state["candidate_answers"]
+        answered_qids = {a.get("question_id") for a in ans}
+        unanswered = [q for q in qs if q.get("id") not in answered_qids]
+        if unanswered:
+            current_skill = unanswered[-1].get("skill", "")
+        elif qs:
+            current_skill = qs[-1].get("skill", "")
+        else:
+            current_skill = ""
+        state["current_skill"] = current_skill
+
         skill_scores = None
         if session.get("skill_scores"):
             try:
@@ -311,6 +343,20 @@ class InterviewService:
                 pass
         if skill_scores:
             state["skill_scores"] = skill_scores
+        
+        db_idx = session.get("current_skill_index")
+        state["current_skill_index"] = db_idx if db_idx is not None else (len(skill_scores) if skill_scores else 0)
+
+        # Count GENERATED follow-up questions for this skill (answered or pending)
+        # This is the correct metric for routing (MAX_FOLLOWUPS check)
+        followup_qs_for_skill = [
+            q for q in qs
+            if q.get("skill") == current_skill and q.get("is_followup")
+        ]
+        state["skill_followup_count"] = len(followup_qs_for_skill)
+        state["skill_questions_asked"] = len([
+            q for q in qs if q.get("skill") == current_skill
+        ])
 
         return state
 

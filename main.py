@@ -19,8 +19,10 @@ import builtins
 
 # Force UTF-8 encoding on stdout/stderr to support emoji and special box characters in Windows console (e.g. cp1256)
 try:
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    if hasattr(sys.stdout, 'reconfigure'):
+        getattr(sys.stdout, 'reconfigure')(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        getattr(sys.stderr, 'reconfigure')(encoding='utf-8')
 except Exception:
     pass
 os.environ['PYTHONIOENCODING'] = 'utf-8'

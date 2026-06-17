@@ -13,7 +13,7 @@ Company System Prompt Builder — agent/agents/company_prompt.py
 """
 
 
-def get_company_profile(company_id: str = None) -> dict:
+def get_company_profile(company_id: str | None = None) -> dict:
     """Load company profile from database. Falls back to DEFAULT_COMPANY_PROFILE."""
     if company_id:
         try:
@@ -35,7 +35,7 @@ def get_company_profile(company_id: str = None) -> dict:
     return DEFAULT_COMPANY_PROFILE.copy()
 
 
-def build_company_system_prompt(company_id: str = None, detected_language: str = None) -> str:
+def build_company_system_prompt(company_id: str | None = None, detected_language: str | None = None) -> str:
     """
     Return the company assistant system prompt.
     If company has a custom system_prompt, use it. Otherwise use default.

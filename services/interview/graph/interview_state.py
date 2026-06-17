@@ -2,13 +2,29 @@
 Interview LangGraph State Definition
 Uses TypedDict pattern consistent with existing MAESTA LangGraph infrastructure.
 """
-from typing import TypedDict, List, Dict, Any, Optional, Annotated
+from typing import TypedDict, List, Dict, Any, Optional, Annotated, Literal
+from datetime import datetime
+from enum import Enum
 import operator
 
 
 def _last_value(old: str, new: str) -> str:
     """Reducer that keeps the last value (for concurrent-safe message updates)."""
     return new
+
+
+class QuestionType(Enum):
+    MAIN = "main"
+    FOLLOWUP = "followup"
+    CHAT_CLARIFICATION = "chat"
+    SKIP_CHECK = "skip_check"
+
+
+class SkipReason(Enum):
+    DONT_KNOW = "dont_know"
+    NOT_RELEVANT = "not_relevant"
+    TIME_PRESSURE = "time_pressure"
+    OTHER = "other"
 
 
 class InterviewState(TypedDict):
@@ -64,7 +80,7 @@ class InterviewState(TypedDict):
     trust_gaps: Annotated[List[Dict[str, Any]], operator.add]
     risk_flags: Annotated[List[str], operator.add]
     risk_flags_detailed: Annotated[List[Dict[str, Any]], operator.add]
-    consistency_analysis: Dict[str, Any]
+    consistency_result: Dict[str, Any]
 
     # --- Memory / Claims ---
     claims_history: Annotated[List[Dict[str, Any]], operator.add]
@@ -95,6 +111,20 @@ class InterviewState(TypedDict):
     needs_human_input: bool
     message: Annotated[str, _last_value]
 
+    # --- Time & Skip Tracking (NEW) ---
+    started_at: str
+    time_limit_minutes: int
+    time_warnings_sent: List[int]
+    main_questions_count: int
+    followup_count_per_skill: Dict[str, int]
+    chat_messages_count: int
+    skipped_questions: List[Dict]
+    last_skipped_question_id: Optional[str]
+    skip_used_for_skill: Dict[str, bool]
+    skip_reason: Optional[str]
+    current_question_type: str
+    current_question_topic: Optional[str]
+
 
 def create_initial_state(
     session_id: str,
@@ -103,7 +133,9 @@ def create_initial_state(
     tenant_id: str = "default_tenant",
     company_id: str = "",
     company_name: str = "",
+    time_limit_minutes: int = 60,
 ) -> InterviewState:
+    now = datetime.now().isoformat()
     return {
         "session_id": session_id,
         "candidate_id": candidate_id,
@@ -142,7 +174,7 @@ def create_initial_state(
         "trust_gaps": [],
         "risk_flags": [],
         "risk_flags_detailed": [],
-        "consistency_analysis": {},
+        "consistency_result": {},
         "claims_history": [],
         "contradictions": [],
         "trust_events": [],
@@ -160,4 +192,17 @@ def create_initial_state(
         "error": "",
         "needs_human_input": False,
         "message": "",
+        # --- NEW FIELDS ---
+        "started_at": datetime.now().isoformat(),
+        "time_limit_minutes": time_limit_minutes,
+        "time_warnings_sent": [],
+        "main_questions_count": 0,
+        "followup_count_per_skill": {},
+        "chat_messages_count": 0,
+        "skipped_questions": [],
+        "last_skipped_question_id": None,
+        "skip_used_for_skill": {},
+        "skip_reason": None,
+        "current_question_type": QuestionType.MAIN.value,
+        "current_question_topic": None,
     }

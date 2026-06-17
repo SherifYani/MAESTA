@@ -1,0 +1,80 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+htmlcov/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+maesta.db
+
+# Models (large files)
+models/weights/
+*.gguf
+*.bin
+
+# Uploads (runtime)
+uploads/
+
+# Test
+tests/
+*.cover
+coverage.xml
+
+# Documentation
+*.md
+!README.md
+
+# Config local
+.env
+.env.local
+configs/
+
+# Docker
+docker-compose.override.yml
+Dockerfile.local
+
+# Misc
+*.tmp
+*.temp
+scratchpad.md

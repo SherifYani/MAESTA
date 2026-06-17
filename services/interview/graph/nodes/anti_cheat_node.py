@@ -10,14 +10,9 @@ def run_anti_cheat_analysis(state: dict) -> dict:
         return {"anti_cheat_report": {}, "suspicion_score": 0.0}
 
     answers = state.get("candidate_answers", [])
-
-    for a in answers:
-        anti_cheat_engine.analyze_answer(
-            answer_text=a.get("answer", ""),
-            score=a.get("score", 0),
-            skill=a.get("skill", ""),
-        )
-    report = anti_cheat_engine.get_full_report()
+    
+    # Stateless analysis of all answers collected so far
+    report = anti_cheat_engine.analyze_answers(answers)
 
     return {
         "anti_cheat_report": report,

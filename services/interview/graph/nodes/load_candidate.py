@@ -41,7 +41,7 @@ def load_candidate_data(state: dict) -> dict:
     cv_text = candidate_data.get("summary", "") or candidate_data.get("why_selected", "")
 
     if not cv_text:
-        cv_text = job.get("description", "")[:500]
+        cv_text = job.get("description", "")[:500] if job else ""
 
     # Populate ATS results summary
     ats_summary = {

@@ -93,6 +93,11 @@
                         <span class="icon">🤖</span>
                         <span>مقابلات AI</span>
                     </a>
+                    <a href="{{ url_for('admin_ai.interviews') }}" 
+                       class="nav-link {% if request.endpoint == 'admin_ai.interviews' %}active{% endif %}" style="padding-right: 40px; font-size: 13px;">
+                        <span class="icon">🎙️</span>
+                        <span>جلسات المقابلات</span>
+                    </a>
                     <a href="{{ url_for('interview.interview_analytics') }}" 
                        class="nav-link {% if request.endpoint == 'interview.interview_analytics' %}active{% endif %}" style="padding-right: 40px; font-size: 13px;">
                         <span class="icon">📊</span>

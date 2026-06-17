@@ -5,7 +5,7 @@ import os
 import json
 import time
 import base64
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from werkzeug.utils import secure_filename
 from controllers.auth import admin_required
 from models import database

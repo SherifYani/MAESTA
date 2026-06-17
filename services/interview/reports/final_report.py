@@ -24,7 +24,8 @@ class InterviewReportGenerator:
                  anti_cheat_report: Dict[str, Any],
                  challenge_evaluation: Dict[str, Any],
                 benchmark: Dict[str, Any],
-                 recruiter_notes: str = "") -> Dict[str, Any]:
+                 recruiter_notes: str = "",
+                 skipped_count: int = 0, total_questions: int = 0) -> Dict[str, Any]:
         recommendation = self._get_recommendation(final_score)
         recommendation_text = HIRING_THRESHOLDS.get(recommendation, ("", ""))[1]
 
@@ -45,6 +46,7 @@ class InterviewReportGenerator:
             "flags": anti_cheat_report.get("flags", []),
         } if anti_cheat_report else {"status": "not_available", "suspicion_score": 0, "flags": []}
 
+        answered = total_questions - skipped_count
         return {
             "final_score": round(final_score, 1),
             "recommendation": recommendation,
@@ -57,6 +59,12 @@ class InterviewReportGenerator:
                 "consistency": round(consistency, 1),
                 "trust": round(trust, 1),
                 "cv_match": round(cv_match, 1),
+            },
+            "skipped": {
+                "count": skipped_count,
+                "total": total_questions,
+                "answered": answered,
+                "skip_rate": round(skipped_count / total_questions * 100, 1) if total_questions else 0,
             },
             "risks": risks[:10],
             "trust_analysis": trust_analysis,

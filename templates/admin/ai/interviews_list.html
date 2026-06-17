@@ -46,6 +46,9 @@
                         <td>{{ interview.created_at }}</td>
                         <td>
                             <div class="btn-group">
+                                <a href="{{ url_for('candidate_interview.interview_page', id=interview.id) }}" class="btn btn-sm btn-outline-primary" target="_blank" title="فتح مقابلة المرشح">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
                                 <a href="{{ url_for('admin_ai.interview_detail', id=interview.id) }}" class="btn btn-sm btn-outline-info">
                                     <i class="fas fa-eye"></i>
                                 </a>

@@ -16,6 +16,7 @@ def evaluate_answer(state: dict) -> dict:
     skill = state.get("current_skill", "")
     jd_text = state.get("jd_text", "")
     cv_text = state.get("cv_text", "")
+    is_followup = question.get("is_followup", False)
 
     if not answer.strip():
         return {
@@ -33,12 +34,22 @@ def evaluate_answer(state: dict) -> dict:
         difficulty_level=question.get("difficulty_level", 1),
         jd_text=jd_text,
         cv_text=cv_text,
+        is_followup=is_followup,
     )
 
-    logger.info(f"Evaluated answer for '{skill}': score={evaluation['score']:.1f}, confidence={evaluation['confidence']:.2f}")
+    logger.info(
+        f"Evaluated {'follow-up' if is_followup else 'main'} answer for '{skill}': "
+        f"score={evaluation['score']:.1f}, confidence={evaluation['confidence']:.2f}"
+    )
+
+    # Populate skill_scores immediately so _persist_state captures progress
+    skill_scores = dict(state.get("skill_scores", {}))
+    if skill:
+        skill_scores[skill] = evaluation.get("score", 0)
 
     return {
         "current_answer_evaluation": evaluation,
+        "skill_scores": skill_scores,
         "message": f"Answer evaluated: score {evaluation['score']:.1f}%",
     }
 

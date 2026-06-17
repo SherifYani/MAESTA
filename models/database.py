@@ -5,6 +5,7 @@ Uses SQLite with raw SQL for simplicity
 import sqlite3
 import uuid
 import hashlib
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any
@@ -1215,9 +1216,21 @@ def _create_interview_tables(conn):
     except sqlite3.OperationalError:
         pass
 
+    # Migration: Add current_skill_index to interview_sessions
+    try:
+        cursor.execute("ALTER TABLE interview_sessions ADD COLUMN current_skill_index INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
     # Migration: Add practical_score to interview_reports
     try:
         cursor.execute("ALTER TABLE interview_reports ADD COLUMN practical_score REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
+    # Migration: Add skill column to interview_answers
+    try:
+        cursor.execute("ALTER TABLE interview_answers ADD COLUMN skill TEXT DEFAULT ''")
     except sqlite3.OperationalError:
         pass
 
@@ -1236,6 +1249,77 @@ def _create_interview_tables(conn):
             FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
         )
     ''')
+
+    # ===== NEW TABLES FOR CHAT INTERVIEW SYSTEM =====
+
+    # Table: interview_chat_messages - All chat messages
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_chat_messages (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            role TEXT NOT NULL,  -- 'assistant' | 'user' | 'system'
+            content TEXT NOT NULL,
+            question_id TEXT,
+            skill TEXT,
+            difficulty_level INTEGER,
+            topic TEXT,
+            meta_json TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON interview_chat_messages(session_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_messages_question ON interview_chat_messages(question_id)')
+
+    # Table: interview_skips - Skip records
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_skips (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            question_id TEXT NOT NULL,
+            skill TEXT NOT NULL,
+            reason TEXT NOT NULL,  -- 'dont_know', 'not_relevant', 'time_pressure', 'other'
+            reason_text TEXT,      -- free text for 'other'
+            topic TEXT,
+            followup_given BOOLEAN DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_skips_session ON interview_skips(session_id)')
+
+    # Table: interview_time_tracking - Time tracking per session
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_time_tracking (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            started_at TIMESTAMP NOT NULL,
+            time_limit_minutes INTEGER DEFAULT 60,
+            ended_at TIMESTAMP,
+            ended_reason TEXT,  -- 'completed', 'time_expired', 'manual_end', 'error'
+            total_duration_seconds INTEGER,
+            warnings_sent_json TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES interview_sessions (id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Migration: Add new columns to interview_sessions if not exist
+    for col, col_type in [
+        ('time_limit_minutes', 'INTEGER DEFAULT 60'),
+        ('practical_score', 'REAL DEFAULT 0'),
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE interview_sessions ADD COLUMN {col} {col_type}")
+        except sqlite3.OperationalError:
+            pass
+
+    # Migration: Add practical_score to interview_reports
+    try:
+        cursor.execute("ALTER TABLE interview_reports ADD COLUMN practical_score REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
 
     conn.commit()
 
@@ -1267,8 +1351,8 @@ def get_interview_session(session_id: str) -> Optional[Dict]:
 
 def update_interview_session(session_id: str, **kwargs) -> bool:
     allowed = [
-        'status', 'current_skill', 'matched_skills', 'missing_skills',
-        'skill_scores', 'confidence_scores', 'technical_score', 'experience_score',
+        'status', 'current_skill', 'current_skill_index', 'matched_skills', 'missing_skills',
+        'skill_scores', 'confidence_scores', 'technical_score', 'practical_score', 'experience_score',
         'communication_score', 'consistency_score', 'trust_score', 'final_score',
         'cv_match', 'recommendation', 'report_json', 'started_at', 'completed_at'
     ]
@@ -1301,11 +1385,20 @@ def get_all_interview_sessions(company_id: str | None = None, limit: int = 50) -
 
 
 def delete_interview_session(session_id: str) -> bool:
-    conn = get_db_connection()
-    conn.execute('DELETE FROM interview_sessions WHERE id = ?', (session_id,))
-    conn.commit()
-    conn.close()
-    return True
+    import time
+    for attempt in range(5):
+        try:
+            conn = get_db_connection()
+            conn.execute('DELETE FROM interview_sessions WHERE id = ?', (session_id,))
+            conn.commit()
+            conn.close()
+            return True
+        except sqlite3.OperationalError as e:
+            if "locked" in str(e) and attempt < 4:
+                time.sleep(0.5)
+                continue
+            raise
+    return False
 
 
 # ----- Interview Questions CRUD -----
@@ -1357,7 +1450,8 @@ def create_interview_answer(
     score: float = 0.0, strengths: str = '[]', weaknesses: str = '[]',
     missing_concepts: str = '[]', semantic_score: float = 0.0,
     coverage_score: float = 0.0, accuracy_score: float = 0.0,
-    completeness_score: float = 0.0, confidence: float = 0.0
+    completeness_score: float = 0.0, confidence: float = 0.0,
+    skill: str = ''
 ) -> str:
     ans_id = str(uuid.uuid4())
     conn = get_db_connection()
@@ -1365,11 +1459,13 @@ def create_interview_answer(
         INSERT INTO interview_answers
             (id, question_id, session_id, candidate_answer, score,
              strengths, weaknesses, missing_concepts,
-             semantic_score, coverage_score, accuracy_score, completeness_score, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             semantic_score, coverage_score, accuracy_score, completeness_score, confidence,
+             skill)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (ans_id, question_id, session_id, candidate_answer, score,
           strengths, weaknesses, missing_concepts,
-          semantic_score, coverage_score, accuracy_score, completeness_score, confidence))
+          semantic_score, coverage_score, accuracy_score, completeness_score, confidence,
+          skill))
     conn.commit()
     conn.close()
     return ans_id
@@ -1593,3 +1689,148 @@ def get_interview_stats(company_id: str | None = None) -> Dict:
         'average_final_score': round(avg_score, 1),
         'strong_hires': strong_hire,
     }
+
+
+# ==================================================================== #
+#  Chat Interview System — Database Models (NEW)
+# ==================================================================== #
+
+# ===== Chat Messages CRUD =====
+
+def create_chat_message(
+    session_id: str, role: str, content: str,
+    question_id: str | None = None, skill: str | None = None,
+    difficulty_level: int | None = None, topic: str | None = None,
+    meta_json: str | None = None
+) -> str:
+    """Save a chat message"""
+    msg_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO interview_chat_messages
+        (id, session_id, role, content, question_id, skill, difficulty_level, topic, meta_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (msg_id, session_id, role, content, question_id, skill, difficulty_level, topic, meta_json))
+    conn.commit()
+    conn.close()
+    return msg_id
+
+
+def get_chat_messages(session_id: str) -> List[Dict]:
+    """Get all chat messages for a session"""
+    conn = get_db_connection()
+    rows = conn.execute('''
+        SELECT * FROM interview_chat_messages 
+        WHERE session_id = ? ORDER BY created_at ASC
+    ''', (session_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# ===== Skip Records CRUD =====
+
+def create_skip_record(
+    session_id: str, question_id: str, skill: str,
+    reason: str, reason_text: str | None = None, topic: str | None = None
+) -> str:
+    """Save a skip record"""
+    skip_id = str(uuid.uuid4())
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO interview_skips
+        (id, session_id, question_id, skill, reason, reason_text, topic)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (skip_id, session_id, question_id, skill, reason, reason_text, topic))
+    conn.commit()
+    conn.close()
+    return skip_id
+
+
+def update_skip_followup(skip_id: str, followup_given: bool = True):
+    """Mark that a follow-up was given after skip"""
+    conn = get_db_connection()
+    conn.execute('UPDATE interview_skips SET followup_given = ? WHERE id = ?', (int(followup_given), skip_id))
+    conn.commit()
+    conn.close()
+
+
+def get_skips_for_session(session_id: str) -> List[Dict]:
+    """Get all skip records for a session"""
+    conn = get_db_connection()
+    rows = conn.execute('SELECT * FROM interview_skips WHERE session_id = ? ORDER BY created_at', (session_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def skip_exists(question_id: str) -> bool:
+    """Check if a question was already skipped"""
+    conn = get_db_connection()
+    row = conn.execute('SELECT 1 FROM interview_skips WHERE question_id = ?', (question_id,)).fetchone()
+    conn.close()
+    return row is not None
+
+
+# ===== Time Tracking CRUD =====
+
+def create_time_tracking(session_id: str, time_limit_minutes: int = 60) -> str:
+    """Create time tracking record for a session with retry on lock"""
+    import time
+    tracking_id = str(uuid.uuid4())
+    now = datetime.now()
+    for attempt in range(5):
+        try:
+            conn = get_db_connection()
+            conn.execute('''
+                INSERT INTO interview_time_tracking
+                (id, session_id, started_at, time_limit_minutes, warnings_sent_json)
+                VALUES (?, ?, ?, ?, '[]')
+            ''', (tracking_id, session_id, now, time_limit_minutes))
+            conn.commit()
+            conn.close()
+            return tracking_id
+        except sqlite3.OperationalError as e:
+            if "locked" in str(e) and attempt < 4:
+                time.sleep(0.5)
+                continue
+            raise
+    return tracking_id
+
+
+def update_time_tracking_end(session_id: str, ended_reason: str):
+    """Update time tracking when interview ends"""
+    now = datetime.now()
+    conn = get_db_connection()
+    # Calculate duration
+    row = conn.execute('SELECT started_at FROM interview_time_tracking WHERE session_id = ?', (session_id,)).fetchone()
+    duration = 0
+    if row:
+        started = datetime.fromisoformat(row['started_at'])
+        duration = int((now - started).total_seconds())
+    conn.execute('''
+        UPDATE interview_time_tracking 
+        SET ended_at = ?, ended_reason = ?, total_duration_seconds = ?, updated_at = ?
+        WHERE session_id = ?
+    ''', (now, ended_reason, duration, now, session_id))
+    conn.commit()
+    conn.close()
+
+
+def add_time_warning(session_id: str, warning_min: int):
+    """Record that a time warning was sent"""
+    conn = get_db_connection()
+    row = conn.execute('SELECT warnings_sent_json FROM interview_time_tracking WHERE session_id = ?', (session_id,)).fetchone()
+    warnings = json.loads(row['warnings_sent_json']) if row and row['warnings_sent_json'] else []
+    if warning_min not in warnings:
+        warnings.append(warning_min)
+        conn.execute('UPDATE interview_time_tracking SET warnings_sent_json = ?, updated_at = ? WHERE session_id = ?', 
+                     (json.dumps(warnings), datetime.now(), session_id))
+        conn.commit()
+    conn.close()
+
+
+def get_time_tracking(session_id: str) -> Optional[Dict]:
+    """Get time tracking info for a session"""
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM interview_time_tracking WHERE session_id = ?', (session_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None

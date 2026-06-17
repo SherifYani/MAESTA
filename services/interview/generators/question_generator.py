@@ -20,9 +20,13 @@ class QuestionGenerator:
     def generate(self, skill: str, difficulty_level: int = 1,
                  question_type: str = "technical", context: str = "",
                  previous_answers: Optional[List[str]] = None,
+                 target_topic: str | None = None,
+                 asked_topics: Optional[List[str]] = None,
                  language: str = "ar") -> dict:
         if previous_answers is None:
             previous_answers = []
+        if asked_topics is None:
+            asked_topics = []
 
         prompt = InterviewPromptTemplates.question_generation(
             skill=skill,
@@ -30,6 +34,8 @@ class QuestionGenerator:
             question_type=question_type,
             context=context,
             previous_answers=previous_answers,
+            target_topic=target_topic,
+            asked_topics=asked_topics,
         )
 
         try:

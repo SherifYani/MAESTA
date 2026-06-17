@@ -15,6 +15,9 @@
 .qa-question { font-weight: 600; margin-bottom: 8px; }
 .qa-answer { color: var(--text-muted); margin-bottom: 8px; padding: 12px; background: var(--bg-color); border-radius: 8px; }
 .qa-score { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+.score-high { background: #d4edda; color: #155724; }
+.score-medium { background: #fff3cd; color: #856404; }
+.score-low { background: #f8d7da; color: #721c24; }
 .skill-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .skill-name { width: 120px; font-size: 14px; font-weight: 500; }
 .skill-bar-track { flex: 1; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
@@ -61,6 +64,14 @@
 </div>
 
 <p><strong>Candidate:</strong> <code>{{ session.candidate_id }}</code> &nbsp;|&nbsp; <strong>Job:</strong> <code>{{ session.job_id }}</code></p>
+
+<div style="margin-bottom: 16px; padding: 12px 16px; background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 10px; display: flex; align-items: center; gap: 12px;">
+    <i class="fas fa-comment-dots" style="color: #60a5fa; font-size: 20px;"></i>
+    <span style="flex: 1; color: #e0f2fe;">عايز تشوف واجهة المرشح؟ اضغط على الزرار عشان تفتح الشات المباشر:</span>
+    <a href="{{ url_for('candidate_interview.interview_page', id=session.id) }}" class="btn" style="background: #3b82f6; color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; text-decoration: none;" target="_blank">
+        <i class="fas fa-external-link-alt"></i> بدء محادثة المرشح
+    </a>
+</div>
 
 {% if report %}
 <div class="score-grid">
@@ -193,7 +204,12 @@
 {% set unanswered = questions | rejectattr('id', 'in', answered_ids) | list %}
 {% if unanswered and session.status == 'in_progress' %}
 <div class="section" style="border-color: #374151; background: var(--bg-secondary);">
-    <h3 style="color: #f59e0b;">❓ السؤال الحالي — مطلوب إجابة</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color: #f59e0b; margin: 0;">❓ السؤال الحالي — مطلوب إجابة</h3>
+        <a href="{{ url_for('candidate_interview.interview_page', id=session.id) }}" class="btn" style="background: #3b82f6; color: #fff; display: inline-flex; align-items: center; gap: 6px;" target="_blank">
+            <i class="fas fa-comment-dots"></i> بدء محادثة المرشح
+        </a>
+    </div>
     {% for q in unanswered %}
     <div class="qa-item" style="background: var(--bg-color); border-left: 4px solid #f59e0b;">
         <div class="qa-question">
@@ -226,7 +242,7 @@
         {% if answer %}
         <div class="qa-answer">{{ answer.candidate_answer }}</div>
         <div>
-            <span class="qa-score" style="background: {% if answer.score >= 70 %}#d4edda; color: #155724{% elif answer.score >= 40 %}#fff3cd; color: #856404{% else %}#f8d7da; color: #721c24{% endif %}">
+            <span class="qa-score {% if answer.score >= 70 %}score-high{% elif answer.score >= 40 %}score-medium{% else %}score-low{% endif %}">
                 {{ "%.0f"|format(answer.score) }}%
             </span>
             <span style="color: var(--text-muted); font-size: 12px;">ثقة: {{ "%.2f"|format(answer.confidence) }}</span>
@@ -253,7 +269,7 @@
         <div class="skill-name">{{ sa.skill }}</div>
         <div class="skill-bar-track">
             {% set pct = sa.verified_level|round %}
-            <div class="skill-bar-fill" style="width: {{ pct }}%; background: {% if pct >= 70 %}#28a745{% elif pct >= 40 %}#ffc107{% else %}#dc3545{% endif %};"></div>
+            <div class="skill-bar-fill" style="--width: {{ pct }}%; --bg: {% if pct >= 70 %}#28a745{% elif pct >= 40 %}#ffc107{% else %}#dc3545{% endif %}; width: var(--width); background: var(--bg);"></div>
         </div>
         <div class="skill-value">{{ "%.1f"|format(sa.verified_level) }}%</div>
         {% if sa.claimed_level > 0 %}
@@ -317,6 +333,9 @@
 {% endif %}
 
 <div style="margin-top: 24px; display: flex; gap: 12px;">
+    <a href="{{ url_for('candidate_interview.interview_page', id=session.id) }}" class="btn" style="background: #0f3460; color: #fff;" target="_blank">
+        <i class="fas fa-external-link-alt"></i> فتح مقابلة المرشح
+    </a>
     <form method="POST" action="{{ url_for('interview.delete_session', session_id=session.id) }}">
         <button type="submit" class="btn btn-danger" onclick="return confirm('حذف هذه الجلسة وجميع بياناتها؟')">🗑 حذف الجلسة</button>
     </form>

@@ -4,5 +4,6 @@
   "include": ["."],
   "exclude": ["venv", "__pycache__", ".agent"],
   "reportMissingImports": "warning",
-  "reportMissingModuleSource": "none"
+  "reportMissingModuleSource": "none",
+  "pythonPath": "C:\\Users\\aboam\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
 }

@@ -106,7 +106,7 @@ def submit_answer_web(session_id):
         return redirect(url_for('interview.interview_session', session_id=session_id))
 
     from services.interview.schemas.dto import SubmitAnswerRequest
-    req = SubmitAnswerRequest(session_id=session_id, answer=answer)
+    req = SubmitAnswerRequest(session_id=session_id, answer=answer, question_id=question_id)
     result = interview_service.submit_answer(req)
 
     if result.get('status') == 'error':
