@@ -11,7 +11,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
 import PropTypes from "prop-types";
 import jobService from "../../services/jobService";
 import { PageContainer } from "../../components/layout";
@@ -23,7 +22,6 @@ import styles from "./SavedJobsPage.module.css";
  * @returns {JSX.Element} Rendered saved jobs page
  */
 const SavedJobsPage = () => {
-    const { t } = useTranslation(['jobs', 'common']);
     const navigate = useNavigate();
     const [savedJobs, setSavedJobs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -47,7 +45,7 @@ const SavedJobsPage = () => {
             const data = await jobService.getSavedJobs();
             setSavedJobs(data);
         } catch (err) {
-            setError(err.message || t('jobs:saved.errorLoad', "Failed to load saved jobs"));
+            setError(err.message || "Failed to load saved jobs");
         } finally {
             setLoading(false);
         }
@@ -104,7 +102,7 @@ const SavedJobsPage = () => {
         return (
             <PageContainer size="xl" data-testid="loading-container" className={styles.loadingContainer}>
                 <div className={styles.spinner}></div>
-                <p>{t('jobs:saved.loading', 'Loading saved jobs...')}</p>
+                <p>Loading saved jobs...</p>
             </PageContainer>
         );
     }
@@ -112,8 +110,8 @@ const SavedJobsPage = () => {
     return (
         <PageContainer size="xl">
             <header className={styles.header}>
-                <h1>{t('jobs:saved.title', 'Saved Jobs')}</h1>
-                <p>{t('jobs:saved.count', '{{count}} saved', { count: savedJobs.length })}</p>
+                <h1>Saved Jobs</h1>
+                <p>{savedJobs.length} {savedJobs.length === 1 ? "job" : "jobs"} saved</p>
             </header>
 
             {error && (
@@ -125,19 +123,19 @@ const SavedJobsPage = () => {
             {savedJobs.length === 0 ? (
                 <div className={styles.emptyState}>
                     <div className={styles.emptyIcon} aria-hidden="true">☆</div>
-                    <h2>{t('jobs:saved.noJobsTitle', 'No saved jobs yet')}</h2>
-                    <p>{t('jobs:saved.noJobsDesc', 'Jobs you save will appear here for easy access')}</p>
+                    <h2>No saved jobs yet</h2>
+                    <p>Jobs you save will appear here for easy access</p>
                     <button
                         className={styles.browseButton}
                         onClick={() => navigate("/jobs")}
-                        aria-label={t('jobs:saved.browseAria', 'Browse available jobs')}
+                        aria-label="Browse available jobs"
                     >
-                        {t('jobs:saved.browseButton', 'Browse Jobs')}
+                        Browse Jobs
                     </button>
                 </div>
             ) : (
                 <>
-                <ul className={styles.jobsList} aria-label={t('jobs:saved.listAria', 'Saved jobs list')}>
+                <ul className={styles.jobsList} aria-label="Saved jobs list">
                     {paginatedJobs.map((job) => (
                         <li
                             key={job._id || job.id}
@@ -146,7 +144,7 @@ const SavedJobsPage = () => {
                             role="button"
                             tabIndex={0}
                             onKeyPress={(e) => e.key === "Enter" && handleJobClick(job._id || job.id)}
-                            aria-label={t('jobs:saved.viewDetailsAria', 'View details for {{title}} at {{company}}', { title: job.title, company: job.company?.name })}
+                            aria-label={`View details for ${job.title} at ${job.company?.name}`}
                         >
                             <div className={styles.jobLogo}>
                                 {job.company?.logo ? (
@@ -171,8 +169,8 @@ const SavedJobsPage = () => {
                                             e.stopPropagation();
                                             handleUnsaveJob(job._id || job.id);
                                         }}
-                                        title={t('jobs:search.removeSaved', 'Remove from saved jobs')}
-                                        aria-label={t('jobs:saved.unsaveAria', 'Unsave {{title}}', { title: job.title })}
+                                        title="Remove from saved"
+                                        aria-label={`Unsave ${job.title}`}
                                     >
                                         ★
                                     </button>
@@ -188,7 +186,7 @@ const SavedJobsPage = () => {
 
                                 {job.savedAt && (
                                     <p className={styles.savedDate}>
-                                        {t('jobs:saved.savedOn', 'Saved on {{date}}', { date: formatDate(job.savedAt) })}
+                                        Saved on {formatDate(job.savedAt)}
                                     </p>
                                 )}
                             </div>
@@ -197,16 +195,16 @@ const SavedJobsPage = () => {
                                 <button
                                     className={styles.applyButton}
                                     onClick={(e) => handleApply(job._id || job.id, e)}
-                                    aria-label={t('jobs:saved.applyAria', 'Apply for {{title}}', { title: job.title })}
+                                    aria-label={`Apply for ${job.title}`}
                                 >
-                                    {t('jobs:details.applyNow', 'Apply Now')}
+                                    Apply Now
                                 </button>
                                 <button
                                     className={styles.viewButton}
                                     onClick={() => handleJobClick(job._id || job.id)}
-                                    aria-label={t('jobs:saved.viewAria', 'View details for {{title}}', { title: job.title })}
+                                    aria-label={`View details for ${job.title}`}
                                 >
-                                    {t('jobs:saved.viewDetails', 'View Details')}
+                                    View Details
                                 </button>
                             </div>
                         </li>

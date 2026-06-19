@@ -10,7 +10,6 @@
  */
 
 import { useContext, useCallback, memo } from "react";
-import { useTranslation } from "react-i18next";
 import {
   Briefcase,
   Users,
@@ -38,7 +37,6 @@ import { useAuth } from "../../../context/AuthContext";
  * @returns {JSX.Element} The rendered sidebar
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
-  const { t } = useTranslation(['dashboard', 'sidebar']);
   const { currentRole, setCurrentRole } = useContext(DashboardContext);
   const { user } = useAuth();
   const location = useLocation();
@@ -114,14 +112,14 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <div className={styles.sidebarHeader}>
         <Link to="/" className={styles.brand} onClick={handleNavClick}>
           <h1 className={styles.brandTitle}>MAESTA</h1>
-          <span className={styles.brandSubtitle}>{t('dashboard:title', 'Dashboard')}</span>
+          <span className={styles.brandSubtitle}>Dashboard</span>
         </Link>
 
         {/* Mobile: X button to close, Desktop: Chevron to collapse */}
         <button
           className={styles.toggleButton}
           onClick={handleToggleClick}
-          aria-label={isOpen ? t('sidebar:closeSidebar', 'Close sidebar') : t('sidebar:openSidebar', 'Open sidebar')}
+          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
           type="button">
           {isMobile ?
             <X className={styles.toggleIcon} size={20} />
@@ -134,7 +132,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <nav className={styles.navigation}>
         {/* Main Navigation */}
         <div className={styles.navSection}>
-          <h3 className={styles.navSectionTitle}>{t('sidebar:main', 'Main')}</h3>
+          <h3 className={styles.navSectionTitle}>Main</h3>
           <ul className={styles.navList}>
             {roleNavigation.map((item) => {
               const IconComponent = item.icon;
@@ -147,7 +145,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
                       }`}
                     onClick={handleNavClick}>
                     <IconComponent className={styles.navIcon} size={20} />
-                    <span className={styles.navLabel}>{t(`sidebar:${item.id}`, item.label)}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
                   </Link>
                 </li>
               );
@@ -165,7 +163,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
           <div className={styles.userInfo}>
             <span className={styles.userName}>{userName}</span>
             <span className={styles.userRole}>
-              {t(`dashboard:roles.${currentRole}`, ROLE_DISPLAY_NAMES[currentRole] || "Client")}
+              {ROLE_DISPLAY_NAMES[currentRole] || "Client"}
             </span>
           </div>
         </div>

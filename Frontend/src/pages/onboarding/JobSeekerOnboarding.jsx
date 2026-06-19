@@ -13,7 +13,6 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import FormTextarea from "../../components/forms/FormTextarea";
 import FormSelect from "../../components/forms/FormSelect";
@@ -29,7 +28,6 @@ import { useAuth } from "../../context/AuthContext"; // AuthContext named export
  * @returns {JSX.Element} The rendered job seeker onboarding component
  */
 function JobSeekerOnboarding() {
-  const { t } = useTranslation(['auth', 'validation']);
   const navigate = useNavigate();
   const { checkAuth } = useAuth();
 
@@ -80,28 +78,29 @@ function JobSeekerOnboarding() {
       !formData.professionalTitle ||
       formData.professionalTitle.trim() === ""
     ) {
-      errors.professionalTitle = t('validation:profTitleRequired', "Professional title is required");
+      errors.professionalTitle = "Professional title is required";
     } else if (formData.professionalTitle.length > 100) {
-      errors.professionalTitle = t('validation:profTitleLength', "Professional title must be less than 100 characters");
+      errors.professionalTitle =
+        "Professional title must be less than 100 characters";
     }
 
     // ExperienceYears validation (0-50)
     if (!formData.experienceYears && formData.experienceYears !== 0) {
-      errors.experienceYears = t('validation:expRequired', "Years of experience is required");
+      errors.experienceYears = "Years of experience is required";
     } else {
       const years = parseInt(formData.experienceYears);
       if (isNaN(years) || years < 0 || years > 50) {
-        errors.experienceYears = t('validation:expRange', "Experience must be between 0 and 50 years");
+        errors.experienceYears = "Experience must be between 0 and 50 years";
       }
     }
 
     // Bio validation (10-2000 characters)
     if (!formData.bio || formData.bio.trim() === "") {
-      errors.bio = t('validation:bioRequired', "Bio is required");
+      errors.bio = "Bio is required";
     } else if (formData.bio.length < 10) {
-      errors.bio = t('validation:bioMinLength', "Bio must be at least 10 characters");
+      errors.bio = "Bio must be at least 10 characters";
     } else if (formData.bio.length > 2000) {
-      errors.bio = t('validation:bioMaxLength', "Bio must be less than 2000 characters");
+      errors.bio = "Bio must be less than 2000 characters";
     }
 
     // CVUrl validation (URL format)
@@ -109,13 +108,13 @@ function JobSeekerOnboarding() {
       try {
         new URL(formData.cvUrl);
       } catch {
-        errors.cvUrl = t('validation:invalidCvUrl', "Please enter a valid URL for your CV");
+        errors.cvUrl = "Please enter a valid URL for your CV";
       }
     }
 
     // PreferredJobType validation
     if (!formData.preferredJobType || formData.preferredJobType.trim() === "") {
-      errors.preferredJobType = t('validation:prefJobTypeRequired', "Preferred job type is required");
+      errors.preferredJobType = "Preferred job type is required";
     }
 
     setFormErrors(errors);
@@ -199,10 +198,10 @@ function JobSeekerOnboarding() {
         formData,
       };
       localStorage.setItem("jobSeekerDraft", JSON.stringify(draftData));
-      alert(t('auth:draftSaved', "Draft saved successfully!"));
+      alert("Draft saved successfully!");
     } catch (error) {
       console.error("Failed to save draft", error);
-      alert(t('auth:draftFailed', "Failed to save draft. Please try again."));
+      alert("Failed to save draft. Please try again.");
     }
   };
 
@@ -248,7 +247,7 @@ function JobSeekerOnboarding() {
       localStorage.removeItem("userRole");
       navigate("/dashboard");
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || t('auth:completeProfileFailed', "Failed to complete profile. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Failed to complete profile. Please try again.";
       setApiError(msg);
     } finally {
       setIsLoading(false);
@@ -260,10 +259,10 @@ function JobSeekerOnboarding() {
       <div className="onboarding-phase-2__container">
         <div className="onboarding-phase-2__header">
           <h1 className="onboarding-phase-2__title">
-            {t('auth:onboarding.jobseeker.title', "Complete Your Job Seeker Profile")}
+            Complete Your Job Seeker Profile
           </h1>
           <p className="onboarding-phase-2__subtitle">
-            {t('auth:onboarding.jobseeker.subtitle', "Showcase your professional information to attract employers")}
+            Showcase your professional information to attract employers
           </p>
         </div>
 
@@ -278,7 +277,7 @@ function JobSeekerOnboarding() {
         {/* Progress Section */}
         <div className="onboarding-phase-2__progress-section">
           <div className="onboarding-phase-2__progress-header">
-            <h3>{t('auth:onboarding.jobseeker.formCompletion', "Form Completion")}</h3>
+            <h3>Form Completion</h3>
             <span className="onboarding-phase-2__progress-percentage">
               {overallProgress}%
             </span>
@@ -290,8 +289,8 @@ function JobSeekerOnboarding() {
           </div>
           <p className="onboarding-phase-2__progress-hint">
             {overallProgress === 100
-              ? t('auth:onboarding.jobseeker.readyToSubmit', "You're ready to submit your profile!")
-              : t('auth:onboarding.jobseeker.completeRequired', "Complete required sections to submit your profile")}
+              ? "You're ready to submit your profile!"
+              : "Complete required sections to submit your profile"}
           </p>
         </div>
 
@@ -302,16 +301,17 @@ function JobSeekerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.jobseeker.professionalInfo', "Professional Information")}
+                    Professional Information
                   </h2>
                   {completionStatus.professionalInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
-                      {t('auth:onboarding.jobseeker.completed', "Completed")}
+                      Completed
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.jobseeker.profInfoDesc', "Enter your professional details as specified in the registration guide")}
+                  Enter your professional details as specified in the
+                  registration guide
                 </p>
               </div>
 
@@ -322,7 +322,7 @@ function JobSeekerOnboarding() {
                     icon="fa-solid fa-heading"
                     type="text"
                     name="professionalTitle"
-                    placeholder={t('auth:onboarding.jobseeker.profTitlePlaceholder', "Professional Title (e.g., Civil Engineer)")}
+                    placeholder="Professional Title (e.g., Civil Engineer)"
                     value={formData.professionalTitle}
                     onChange={handleInputChange}
                     hasError={!!formErrors.professionalTitle}
@@ -330,7 +330,7 @@ function JobSeekerOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    {t('auth:onboarding.jobseeker.profTitleHint', "Your main professional title as it appears in the guide")}
+                    Your main professional title as it appears in the guide
                   </p>
                 </div>
 
@@ -340,7 +340,7 @@ function JobSeekerOnboarding() {
                     icon="fa-solid fa-calendar-alt"
                     type="number"
                     name="experienceYears"
-                    placeholder={t('auth:onboarding.jobseeker.expYearsPlaceholder', "Years of Experience (0-50)")}
+                    placeholder="Years of Experience (0-50)"
                     value={formData.experienceYears}
                     onChange={handleInputChange}
                     min="0"
@@ -350,7 +350,7 @@ function JobSeekerOnboarding() {
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    {t('auth:onboarding.jobseeker.expYearsHint', "Number of years of professional experience")}
+                    Number of years of professional experience
                   </p>
                 </div>
 
@@ -362,20 +362,20 @@ function JobSeekerOnboarding() {
                     value={formData.preferredJobType}
                     onChange={handleInputChange}
                     options={[
-                      { value: "", label: t('auth:onboarding.jobseeker.preferredJobType', "Select Preferred Job Type") },
-                      { value: "FullTime", label: t('auth:onboarding.jobseeker.fullTime', "Full Time") },
-                      { value: "PartTime", label: t('auth:onboarding.jobseeker.partTime', "Part Time") },
-                      { value: "Contract", label: t('auth:onboarding.jobseeker.contract', "Contract") },
-                      { value: "Internship", label: t('auth:onboarding.jobseeker.internship', "Internship") },
-                      { value: "Remote", label: t('auth:onboarding.jobseeker.remote', "Remote") },
-                      { value: "Hybrid", label: t('auth:onboarding.jobseeker.hybrid', "Hybrid") },
+                      { value: "", label: "Select Preferred Job Type" },
+                      { value: "FullTime", label: "Full Time" },
+                      { value: "PartTime", label: "Part Time" },
+                      { value: "Contract", label: "Contract" },
+                      { value: "Internship", label: "Internship" },
+                      { value: "Remote", label: "Remote" },
+                      { value: "Hybrid", label: "Hybrid" },
                     ]}
                     hasError={!!formErrors.preferredJobType}
                     errorMessage={formErrors.preferredJobType}
                     required
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    {t('auth:onboarding.jobseeker.prefJobHint', "Select your preferred work arrangement")}
+                    Select your preferred work arrangement
                   </p>
                 </div>
 
@@ -385,7 +385,7 @@ function JobSeekerOnboarding() {
                     <FormTextarea
                       icon="fa-solid fa-align-left"
                       name="bio"
-                      placeholder={t('auth:onboarding.jobseeker.bioPlaceholder', "Professional bio (10-2000 characters). Describe your background, skills, and career objectives.")}
+                      placeholder="Professional bio (10-2000 characters). Describe your background, skills, and career objectives."
                       value={formData.bio}
                       onChange={handleInputChange}
                       rows={6}
@@ -395,16 +395,16 @@ function JobSeekerOnboarding() {
                       required
                     />
                     <div className="onboarding-phase-2__character-counter">
-                      {formData.bio.length} / 2000 {t('auth:onboarding.jobseeker.characters', "characters")}
+                      {formData.bio.length} / 2000 characters
                       {formData.bio.length > 0 && formData.bio.length < 10 && (
                         <span className="onboarding-phase-2__character-error">
                           <i className="fa-solid fa-exclamation-triangle" />
-                          {t('auth:onboarding.jobseeker.needMoreChars', { count: 10 - formData.bio.length, defaultValue: `Need ${10 - formData.bio.length} more characters` })}
+                          Need {10 - formData.bio.length} more characters
                         </span>
                       )}
                     </div>
                     <p className="onboarding-phase-2__field-hint">
-                      {t('auth:onboarding.jobseeker.bioHint', "Your professional introduction (minimum 10 characters)")}
+                      Your professional introduction (minimum 10 characters)
                     </p>
                   </div>
                 </div>
@@ -415,14 +415,14 @@ function JobSeekerOnboarding() {
                     icon="fa-solid fa-link"
                     type="url"
                     name="cvUrl"
-                    placeholder={t('auth:onboarding.jobseeker.cvUrlPlaceholder', "CV/Resume URL (Optional)")}
+                    placeholder="CV/Resume URL (Optional)"
                     value={formData.cvUrl}
                     onChange={handleInputChange}
                     hasError={!!formErrors.cvUrl}
                     errorMessage={formErrors.cvUrl}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    {t('auth:onboarding.jobseeker.cvUrlHint', "Link to your online CV or resume (optional)")}
+                    Link to your online CV or resume (optional)
                   </p>
                 </div>
               </div>
@@ -433,14 +433,15 @@ function JobSeekerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.jobseeker.additionalInfo', "Additional Information")}
+                    Additional Information
                   </h2>
                   <span className="onboarding-phase-2__section-badge optional">
-                    {t('auth:onboarding.jobseeker.optional', "Optional")}
+                    Optional
                   </span>
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.jobseeker.addInfoDesc', "Additional fields for enhanced profile (not in registration guide)")}
+                  Additional fields for enhanced profile (not in registration
+                  guide)
                 </p>
               </div>
 
@@ -451,12 +452,12 @@ function JobSeekerOnboarding() {
                     icon="fa-solid fa-location-dot"
                     type="text"
                     name="location"
-                    placeholder={t('auth:onboarding.jobseeker.locationPlaceholder', "Current Location (Optional)")}
+                    placeholder="Current Location (Optional)"
                     value={extraFields.location}
                     onChange={handleExtraFieldChange}
                   />
                   <p className="onboarding-phase-2__field-hint">
-                    {t('auth:onboarding.jobseeker.locationHint', "Your current city and country")}
+                    Your current city and country
                   </p>
                 </div>
 
@@ -466,13 +467,13 @@ function JobSeekerOnboarding() {
                     <FormTextarea
                       icon="fa-solid fa-code"
                       name="skills"
-                      placeholder={t('auth:onboarding.jobseeker.skillsPlaceholder', "Key skills and technologies (Optional)")}
+                      placeholder="Key skills and technologies (Optional)"
                       value={extraFields.skills}
                       onChange={handleExtraFieldChange}
                       rows={3}
                     />
                     <p className="onboarding-phase-2__field-hint">
-                      {t('auth:onboarding.jobseeker.skillsHint', "List your skills separated by commas")}
+                      List your skills separated by commas
                     </p>
                   </div>
                 </div>
@@ -484,16 +485,16 @@ function JobSeekerOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.jobseeker.documents', "Documents")}
+                    Documents
                   </h2>
                   {completionStatus.documents && (
                     <span className="onboarding-phase-2__section-badge completed">
-                      {t('auth:onboarding.jobseeker.completed', "Completed")}
+                      Completed
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.jobseeker.documentsDesc', "Upload your resume and professional photo")}
+                  Upload your resume and professional photo
                 </p>
               </div>
 
@@ -502,21 +503,22 @@ function JobSeekerOnboarding() {
                 <div className="onboarding-phase-2__full-width">
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
-                      {t('auth:onboarding.jobseeker.resumeFile', "Resume/CV File")}
+                      Resume/CV File
                       <span className="onboarding-phase-2__required-asterisk">
                         *
                       </span>
                     </h3>
                     <FileUpload
-                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
+                      label="Click to upload or drag and drop"
                       accept=".pdf,.doc,.docx"
                       onChange={setResume}
                       icon="fa-solid fa-file-pdf"
-                      supportedFormats={t('auth:onboarding.jobseeker.supportedPdfDoc', "PDF, DOC, DOCX (Max. 10MB)")}
+                      supportedFormats="PDF, DOC, DOCX (Max. 10MB)"
                       fileType="document"
                     />
                     <p className="onboarding-phase-2__field-hint">
-                      {t('auth:onboarding.jobseeker.resumeHint', "Upload your resume or CV (required in current form, but guide uses URL)")}
+                      Upload your resume or CV (required in current form, but
+                      guide uses URL)
                     </p>
                   </div>
                 </div>
@@ -525,21 +527,21 @@ function JobSeekerOnboarding() {
                 <div className="onboarding-phase-2__full-width">
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
-                      {t('auth:onboarding.jobseeker.profilePicture', "Profile Picture")}
+                      Profile Picture
                       <span className="onboarding-phase-2__required-asterisk">
                         *
                       </span>
                     </h3>
                     <FileUpload
-                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
+                      label="Click to upload or drag and drop"
                       accept="image/*"
                       onChange={setProfilePicture}
                       icon="fa-solid fa-camera"
-                      supportedFormats={t('auth:onboarding.jobseeker.supportedImages', "PNG, JPG, SVG (Max. 5MB)")}
+                      supportedFormats="PNG, JPG, SVG (Max. 5MB)"
                       fileType="image"
                     />
                     <p className="onboarding-phase-2__field-hint">
-                      {t('auth:onboarding.jobseeker.profPicHint', "A professional headshot")}
+                      A professional headshot
                     </p>
                   </div>
                 </div>
@@ -553,7 +555,7 @@ function JobSeekerOnboarding() {
                 className="onboarding-phase-2__draft-button"
                 onClick={handleSaveDraft}>
                 <i className="fa-solid fa-save" />
-                {t('auth:onboarding.jobseeker.saveDraft', "Save as Draft")}
+                Save as Draft
               </button>
               <button
                 type="submit"
@@ -564,12 +566,12 @@ function JobSeekerOnboarding() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
-                    {t('auth:onboarding.jobseeker.submitting', "Submitting...")}
+                    Submitting...
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
-                    {t('auth:onboarding.jobseeker.completeProfile', "Complete Profile")}
+                    Complete Profile
                   </>
                 )}
               </button>
@@ -578,13 +580,13 @@ function JobSeekerOnboarding() {
             {/* Terms Notice */}
             <div className="onboarding-phase-2__terms-notice">
               <p>
-                {t('auth:onboarding.jobseeker.termsNotice', "By completing this profile, you agree to our")}{" "}
+                By completing this profile, you agree to our{" "}
                 <a href="/terms" className="onboarding-phase-2__terms-link">
-                  {t('auth:terms', "Terms of Service")}
+                  Terms of Service
                 </a>{" "}
-                {t('auth:and', "and")}{" "}
+                and{" "}
                 <a href="/privacy" className="onboarding-phase-2__terms-link">
-                  {t('auth:privacy', "Privacy Policy")}
+                  Privacy Policy
                 </a>
                 .
               </p>

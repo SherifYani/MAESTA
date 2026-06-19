@@ -7,7 +7,6 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useGig } from '../../context/GigContext';
 import GigPostForm from '../../components/gigs/GigPostForm';
 import { Button, Alert } from '../../components/common';
@@ -15,7 +14,6 @@ import { PageContainer } from '../../components/layout';
 import styles from './GigPostingPage.module.css';
 
 const GigPostingPage = () => {
-    const { t } = useTranslation(['gigs', 'common']);
     const navigate = useNavigate();
     const { createGig, error } = useGig();
 
@@ -32,7 +30,7 @@ const GigPostingPage = () => {
         try {
             // Add draft logic here if supported by backend, or just local storage
             console.log('Draft saved:', gigData);
-            alert(t('gigs:posting.draftSaved', 'Draft saved successfully!'));
+            alert('Draft saved successfully!');
         } catch (err) {
             console.error('Failed to save draft:', err);
         }
@@ -43,11 +41,12 @@ const GigPostingPage = () => {
             <header className={styles.header}>
                 <PageContainer className={styles.headerContent}>
                     <Button variant="ghost" onClick={() => navigate('/gigs')} className={styles.backButton}>
-                        ← {t('gigs:details.backToGigs', 'Back to Gigs')}
+                        ← Back to Gigs
                     </Button>
-                    <h1 className={styles.title}>{t('gigs:posting.title', 'Post a New Gig')}</h1>
+                    <h1 className={styles.title}>Post a New Gig</h1>
                     <p className={styles.subtitle}>
-                        {t('gigs:posting.subtitle', 'Find the perfect talent for your next project. Provide as much detail as possible to attract the best freelancers.')}
+                        Find the perfect talent for your next project.
+                        Provide as much detail as possible to attract the best freelancers.
                     </p>
                 </PageContainer>
             </header>

@@ -20,12 +20,52 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
-import { useTranslation } from 'react-i18next';
 import ThemeToggle from './ThemeToggle';
-import LanguageSwitcher from './LanguageSwitcher';
 import styles from './Header.module.css';
 
-// Navigation configuration moved inside the component to use the translation hook.
+/* ─── Navigation Configurations ─────────────────────────────────────────── */
+
+/** Guest (unauthenticated) navigation links. */
+const NAV_GUEST = [
+  { name: 'Jobs',         path: '/jobs' },
+  { name: 'Gigs',         path: '/gigs' },
+  { name: 'AI Assistant', path: '/ai-assistant' },
+];
+
+/**
+ * Authenticated navigation links per user role.
+ * Common links (Dashboard, Messages) are included in each role.
+ */
+const NAV_AUTHENTICATED = {
+  jobseeker: [
+    { name: 'Dashboard',    path: '/dashboard' },
+    { name: 'Jobs',         path: '/jobs' },
+    { name: 'Applications', path: '/applications' },
+    { name: 'Gigs',         path: '/gigs' },
+    { name: 'Messages',     path: '/messages' },
+  ],
+  freelancer: [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Find Gigs', path: '/gigs' },
+    { name: 'My Gigs',   path: '/gigs/manage' },
+    { name: 'Proposals', path: '/proposals' },
+    { name: 'Messages',  path: '/messages' },
+  ],
+  company: [
+    { name: 'Dashboard',       path: '/dashboard' },
+    { name: 'Post Job',        path: '/jobs/post' },
+    { name: 'My Jobs',         path: '/jobs/manage' },
+    { name: 'Candidates',      path: '/candidates' },
+    { name: 'Messages',        path: '/messages' },
+  ],
+};
+
+/** Avatar dropdown menu items. */
+const DROPDOWN_ITEMS = [
+  { icon: <LayoutDashboard size={15} />, label: 'Dashboard', to: '/dashboard' },
+  { icon: <User size={15} />,          label: 'Profile',   to: '/dashboard/profile' },
+  { icon: <Settings size={15} />,      label: 'Settings',  to: '/settings' },
+];
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
@@ -39,43 +79,6 @@ const Header = () => {
   const location  = useLocation();
   const { user, isAuthenticated, logout, userAvatar } = useAuth();
   const { unreadCount } = useNotifications();
-  const { t } = useTranslation(['common', 'dashboard', 'jobs', 'gigs']);
-
-  const NAV_GUEST = [
-    { name: t('jobs:jobs', 'Jobs'),         path: '/jobs' },
-    { name: t('gigs:gigs', 'Gigs'),         path: '/gigs' },
-    { name: t('common:aiAssistant', 'AI Assistant'), path: '/ai/cv-builder' },
-  ];
-
-  const NAV_AUTHENTICATED = {
-    jobseeker: [
-      { name: t('common:dashboard', 'Dashboard'),    path: '/dashboard' },
-      { name: t('jobs:jobs', 'Jobs'),         path: '/jobs' },
-      { name: t('jobs:applications', 'Applications'), path: '/dashboard/applications' },
-      { name: t('gigs:gigs', 'Gigs'),         path: '/gigs' },
-      { name: t('common:messages', 'Messages'),     path: '/chat' },
-    ],
-    freelancer: [
-      { name: t('common:dashboard', 'Dashboard'), path: '/dashboard' },
-      { name: t('gigs:findGigs', 'Find Gigs'), path: '/gigs' },
-      { name: t('gigs:myGigs', 'My Gigs'),   path: '/gigs/manage' },
-      { name: t('gigs:proposals', 'Proposals'), path: '/gigs/manage' },
-      { name: t('common:messages', 'Messages'),  path: '/chat' },
-    ],
-    company: [
-      { name: t('common:dashboard', 'Dashboard'),       path: '/dashboard' },
-      { name: t('jobs:postJob', 'Post Job'),        path: '/jobs/post' },
-      { name: t('dashboard:company.myJobs', 'My Jobs'),         path: '/dashboard/published-jobs' },
-      { name: t('dashboard:company.candidates', 'Candidates'),      path: '/dashboard/applicants' },
-      { name: t('common:messages', 'Messages'),        path: '/chat' },
-    ],
-  };
-
-  const DROPDOWN_ITEMS = [
-    { icon: <LayoutDashboard size={15} />, label: t('common:dashboard', 'Dashboard'), to: '/dashboard' },
-    { icon: <User size={15} />,          label: t('common:profile', 'Profile'),   to: '/dashboard/profile' },
-    { icon: <Settings size={15} />,      label: t('common:settings', 'Settings'),  to: '/dashboard/profile/edit' },
-  ];
 
   const [scrolled,    setScrolled]    = useState(false);
   const [mobileOpen,  setMobileOpen]  = useState(false);
@@ -201,7 +204,6 @@ const Header = () => {
           {/* Desktop Actions */}
           <div className={styles.header__actions}>
 
-            <LanguageSwitcher />
             <ThemeToggle />
 
             {isAuthenticated ? (
@@ -283,7 +285,7 @@ const Header = () => {
                         onClick={handleLogout}
                       >
                         <LogOut size={15} aria-hidden="true" />
-                        {t('common:logout', 'Log Out')}
+                        Log Out
                       </button>
                     </div>
                   )}
@@ -292,8 +294,8 @@ const Header = () => {
             ) : (
               /* Guest Auth Buttons */
               <div className={styles['header__auth-group']}>
-                <Link to="/login"    className={styles['header__login-btn']}>{t('common:login', 'Log In')}</Link>
-                <Link to="/register" className={styles['header__signup-btn']}>{t('common:register', 'Sign Up')}</Link>
+                <Link to="/login"    className={styles['header__login-btn']}>Log In</Link>
+                <Link to="/register" className={styles['header__signup-btn']}>Sign Up</Link>
               </div>
             )}
           </div>
@@ -402,10 +404,6 @@ const Header = () => {
           {/* Drawer Footer */}
           <footer className={styles['header__mobile-footer']}>
             <div className={styles['header__mobile-theme']}>
-              <span className={styles['header__mobile-theme-label']}>Language</span>
-              <LanguageSwitcher />
-            </div>
-            <div className={styles['header__mobile-theme']}>
               <span className={styles['header__mobile-theme-label']}>Theme</span>
               <ThemeToggle />
             </div>
@@ -417,12 +415,12 @@ const Header = () => {
                 onClick={handleLogout}
               >
                 <LogOut size={16} aria-hidden="true" />
-                {t('common:logout', 'Log Out')}
+                Log Out
               </button>
             ) : (
               <div className={styles['header__mobile-auth']}>
-                <Link to="/login"    className={styles['header__mobile-login-btn']}>{t('common:login', 'Log In')}</Link>
-                <Link to="/register" className={styles['header__mobile-signup-btn']}>{t('common:register', 'Sign Up')}</Link>
+                <Link to="/login"    className={styles['header__mobile-login-btn']}>Log In</Link>
+                <Link to="/register" className={styles['header__mobile-signup-btn']}>Sign Up</Link>
               </div>
             )}
           </footer>

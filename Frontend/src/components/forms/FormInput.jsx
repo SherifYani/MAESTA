@@ -7,7 +7,6 @@
  */
 
 import PropTypes from "prop-types";
-import { useTranslation } from "react-i18next";
 import "../../styles/components/forms/FormInput.css";
 import "../../styles/shared/_form-base.css";
 
@@ -43,7 +42,6 @@ function FormInput({
   className = "",
   hasError = false,
 }) {
-  const { t } = useTranslation(['common']);
   const containerClass = `form-input__container ${className} ${
     hasError ? "form-input--error" : ""
   }`.trim();
@@ -66,7 +64,7 @@ function FormInput({
             type="button"
             onClick={onTogglePassword}
             className="form-input__password-toggle"
-            aria-label={showPassword ? t('common:actions.hidePassword', "Hide password") : t('common:actions.showPassword', "Show password")}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
           </button>
