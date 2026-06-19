@@ -140,7 +140,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
               const IconComponent = item.icon;
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.id} className={styles.navItem}>
+                <li key={item.path || item.label} className={styles.navItem}>
                   <Link
                     to={item.path}
                     className={`${styles.navLink} ${isActive ? styles.active : ""

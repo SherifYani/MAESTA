@@ -76,7 +76,8 @@ export const ChatProvider = ({ children }) => {
 
     // Connect hub when user logs in, disconnect on logout
     useEffect(() => {
-        if (user) {
+        const isApproved = user?.registrationStatus === 'Approved' || user?.registrationStatus === 'Completed';
+        if (user && isApproved) {
             loadConversations();
             connectHub();
         } else {
@@ -87,7 +88,7 @@ export const ChatProvider = ({ children }) => {
             setTypingUsers({});
         }
         return () => { disconnectHub(); };
-    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user, user?.registrationStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ── REST API Methods ──────────────────────────────────────────────────────
 

@@ -22,9 +22,10 @@ export const NotificationProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Load notifications when user is authenticated
+    // Load notifications when user is authenticated and fully approved/completed
     useEffect(() => {
-        if (user) {
+        const isApproved = user?.registrationStatus === 'Approved' || user?.registrationStatus === 'Completed';
+        if (user?.id && isApproved) {
             loadNotifications();
             loadUnreadCount();
             loadPreferences();
@@ -33,18 +34,19 @@ export const NotificationProvider = ({ children }) => {
             setUnreadCount(0);
             setPreferences({});
         }
-    }, [user]);
+    }, [user, user?.registrationStatus]);
 
     // Poll for new notifications every 30 seconds
     useEffect(() => {
-        if (!user) return;
+        const isApproved = user?.registrationStatus === 'Approved' || user?.registrationStatus === 'Completed';
+        if (!user || !isApproved) return;
 
         const interval = setInterval(() => {
             loadUnreadCount();
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [user]);
+    }, [user, user?.registrationStatus]);
 
     const loadNotifications = async (page = 1) => {
         try {

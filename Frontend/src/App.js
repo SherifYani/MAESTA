@@ -36,6 +36,22 @@ const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => 
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
 
+// Profile Pages (Phase 4)
+const JobSeekerProfile = lazy(() => import("./pages/profiles/JobSeekerProfile"));
+const CompanyProfile = lazy(() => import("./pages/profiles/CompanyProfile"));
+const FreelancerProfile = lazy(() => import("./pages/profiles/FreelancerProfile"));
+const ClientProfile = lazy(() => import("./pages/profiles/ClientProfile"));
+const EditJobSeekerProfile = lazy(() => import("./pages/profiles/EditJobSeekerProfile"));
+const EditCompanyProfile = lazy(() => import("./pages/profiles/EditCompanyProfile"));
+const EditClientProfile = lazy(() => import("./pages/profiles/EditClientProfile"));
+const EditFreelancerProfile = lazy(() => import("./pages/profiles/EditFreelancerProfile"));
+
+// Onboarding Pages (Phase 5)
+const JobSeekerOnboarding = lazy(() => import("./pages/onboarding/JobSeekerOnboarding"));
+const CompanyOnBoarding = lazy(() => import("./pages/onboarding/CompanyOnBoarding"));
+const FreelancerOnboarding = lazy(() => import("./pages/onboarding/FreelancerOnboarding"));
+const CompanyMemberOnBoarding = lazy(() => import("./pages/onboarding/CompanyMemberOnBoarding"));
+
 // Loading Fallback
 const PageLoader = () => (
   <div style={{ 
@@ -110,6 +126,22 @@ function App() {
         <Route path="/chat/*" element={<ProtectedRoute><ChatRoutes /></ProtectedRoute>} />
         <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
         <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
+
+        {/* Profile Routes (Phase 4) */}
+        <Route path="/profiles/jobseeker/:userId" element={<JobSeekerProfile />} />
+        <Route path="/profiles/company/:userId" element={<CompanyProfile />} />
+        <Route path="/profiles/freelancer/:userId" element={<FreelancerProfile />} />
+        <Route path="/profiles/client/:userId" element={<ClientProfile />} />
+        <Route path="/profiles/edit/jobseeker" element={<ProtectedRoute><EditJobSeekerProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/company" element={<ProtectedRoute><EditCompanyProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/client" element={<ProtectedRoute><EditClientProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/freelancer" element={<ProtectedRoute><EditFreelancerProfile /></ProtectedRoute>} />
+
+        {/* Onboarding Routes (Phase 5) */}
+        <Route path="/onboarding/jobseeker" element={<ProtectedRoute><JobSeekerOnboarding /></ProtectedRoute>} />
+        <Route path="/onboarding/company" element={<ProtectedRoute><CompanyOnBoarding /></ProtectedRoute>} />
+        <Route path="/onboarding/freelancer" element={<ProtectedRoute><FreelancerOnboarding /></ProtectedRoute>} />
+        <Route path="/onboarding/company-member" element={<ProtectedRoute><CompanyMemberOnBoarding /></ProtectedRoute>} />
 
         {/* 404 & Redirects */}
         <Route path="/404" element={<ErrorPage />} />
