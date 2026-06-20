@@ -31,30 +31,27 @@ const Footer = () => {
             title: 'For Job Seekers',
             links: [
                 { label: 'Browse Jobs', href: '/jobs' },
-                { label: 'Pricing', href: '/pricing' },
-                { label: 'Career Guide', href: '/career-guide' },
-                { label: 'Resume Builder', href: '/resume-builder' },
-                { label: 'Interview Prep', href: '/interview-prep' },
+                { label: 'Pricing', href: '/subscription/plans' },
+                { label: 'Resume Builder', href: '/ai/cv-builder' },
+                { label: 'Browse Gigs', href: '/gigs' },
             ],
         },
         {
             title: 'For Companies',
             links: [
-                { label: 'Start Hiring', href: '/hiring' },
-                { label: 'Pricing', href: '/pricing/employers' },
-                { label: 'Features', href: '/features' },
-                { label: 'Post a Job', href: '/post-job' },
-                { label: 'Contact Sales', href: '/contact-sales' },
+                { label: 'Post a Job', href: '/jobs/post' },
+                { label: 'Pricing', href: '/subscription/plans' },
+                { label: 'Find Candidates', href: '/dashboard/applicants' },
+                { label: 'AI Hiring Tools', href: '/ai/candidate-analysis' },
             ],
         },
         {
-            title: 'Company',
+            title: 'Platform',
             links: [
-                { label: 'About Us', href: '/about' },
-                { label: 'Blog', href: '/blog' },
-                { label: 'Careers', href: '/careers' },
-                { label: 'Press Kit', href: '/press' },
-                { label: 'Brand Guidelines', href: '/brand' },
+                { label: 'Find Gigs', href: '/gigs' },
+                { label: 'AI Tools', href: '/ai/cv-builder' },
+                { label: 'Smart Search', href: '/ai/smart-search' },
+                { label: 'Help & Support', href: '/dashboard/help' },
             ],
         },
         {
@@ -62,9 +59,8 @@ const Footer = () => {
             links: [
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
-                { label: 'Security', href: '/security' },
                 { label: 'Cookie Policy', href: '/cookies' },
-                { label: 'Contact Support', href: '/contact' },
+                { label: 'Contact Support', href: '/dashboard/help' },
             ],
         },
     ];
@@ -220,33 +216,33 @@ const Footer = () => {
                     <div className={styles.legalSection}>
                         <nav className={styles.legalLinks} aria-label="Legal links">
                             <a
-                                href="/privacy"
+                                href="/dashboard/help"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Privacy Policy', '/privacy')}
+                                onClick={() => handleLinkClick('Privacy Policy', '/dashboard/help')}
                             >
                                 Privacy Policy
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
-                                href="/terms"
+                                href="/dashboard/help"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Terms of Service', '/terms')}
+                                onClick={() => handleLinkClick('Terms of Service', '/dashboard/help')}
                             >
                                 Terms of Service
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
-                                href="/cookies"
+                                href="/dashboard/help"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Cookie Policy', '/cookies')}
+                                onClick={() => handleLinkClick('Cookie Policy', '/dashboard/help')}
                             >
                                 Cookie Policy
                             </a>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
                             <a
-                                href="/accessibility"
+                                href="/dashboard/help"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Accessibility', '/accessibility')}
+                                onClick={() => handleLinkClick('Accessibility', '/dashboard/help')}
                             >
                                 Accessibility
                             </a>
