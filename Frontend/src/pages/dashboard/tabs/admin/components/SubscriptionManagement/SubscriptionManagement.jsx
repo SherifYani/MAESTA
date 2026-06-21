@@ -23,7 +23,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getSubscriptionsData } from '../../config/adminMockData';
+import { getSubscriptionsData } from '../../config/adminDataService';
 import styles from './SubscriptionManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -34,7 +34,7 @@ const PAGE_SIZE = 10;
  */
 const SubscriptionManagement = () => {
     const [subscriptions, setSubscriptions] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     useEffect(() => {
         getSubscriptionsData().then(data => {

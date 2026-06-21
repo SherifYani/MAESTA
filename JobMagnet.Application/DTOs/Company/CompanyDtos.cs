@@ -12,6 +12,8 @@ namespace JobMagnet.Application.DTOs.Company
         public string? Address { get; set; }
         public string? Website { get; set; }
         public string? LogoUrl { get; set; }
+        public List<CompanyMemberDto> Members { get; set; } = new();
+        public List<CompanyJobDto> Jobs { get; set; } = new();
     }
 
     public class CompanyDto
@@ -62,5 +64,35 @@ namespace JobMagnet.Application.DTOs.Company
         public int ActiveJobs { get; set; }
         public int TotalHires { get; set; }
         public int AvgTimeToHire { get; set; }
+    }
+
+    public class CompanyMemberOnboardingRequest
+    {
+        public int CompanyId { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public string Position { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public string? ProfilePictureUrl { get; set; }
+    }
+
+    public class CompanyMemberOnboardingDraftRequest
+    {
+        public int? CompanyId { get; set; }
+        public string? Role { get; set; }
+        public string? Position { get; set; }
+        public string? Department { get; set; }
+        public string? ProfilePictureUrl { get; set; }
+    }
+
+    public class CompanyMemberOnboardingResponse
+    {
+        public int UserId { get; set; }
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string Position { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }

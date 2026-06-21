@@ -12,6 +12,7 @@ import {
 } from '../../../../components/common';
 import GeneralSelect from '../../../../components/common/GeneralSelect';
 import * as interviewService from '../../../../services/interviewService';
+import jobService from '../../../../services/jobService';
 import { format } from 'date-fns';
 import styles from './InterviewScheduling.module.css';
 
@@ -19,7 +20,7 @@ const EmptyIcon = () => null;
 
 const InterviewScheduling = () => {
     const [searchParams] = useSearchParams();
-    const applicantId = searchParams.get('applicantId');
+    const applicationId = searchParams.get('applicationId') || searchParams.get('applicantId');
     const navigate = useNavigate();
 
     // State
@@ -41,43 +42,45 @@ const InterviewScheduling = () => {
     const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
-        if (!applicantId) {
-            setErrorMsg("No applicant specified.");
-            setIsLoading(false);
-            return;
-        }
-        loadApplicantData();
-    }, [applicantId]);
-
-    const loadApplicantData = async () => {
-        try {
-            const res = await interviewService.getApplicant(applicantId);
-            if (res.success && res.data) {
-                setApplicant(res.data);
-                const appliedJobs = res.data.appliedJobs || [];
-                setJobs(appliedJobs);
-                if (appliedJobs.length > 0) {
-                    handleJobSelect(appliedJobs[0].jobId);
-                }
-            } else {
-                setErrorMsg("Failed to load applicant.");
+        const loadApplicantData = async () => {
+            if (!applicationId) {
+                setErrorMsg("No application specified.");
+                setIsLoading(false);
+                return;
             }
-        } catch (error) {
-            setErrorMsg("Error loading applicant data.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
-    const handleJobSelect = async (jobId) => {
-        setSelectedJob(jobId);
-        try {
-            const res = await interviewService.getJob(jobId);
-            // Can use job details like duration if needed
-        } catch (error) {
-            console.error("Failed to load job details");
-        }
-    };
+            try {
+                const data = await jobService.getCompanyApplicants();
+                const applicants = Array.isArray(data) ? data : (data?.items || data?.data || []);
+                const selectedApplication = applicants.find((item) => String(item.applicationId || item.id) === String(applicationId));
+
+                if (!selectedApplication) {
+                    setErrorMsg("Application not found.");
+                    return;
+                }
+
+                setApplicant({
+                    id: selectedApplication.applicationId,
+                    name: selectedApplication.applicantName || 'Applicant',
+                    email: selectedApplication.applicantEmail || 'N/A',
+                    phone: selectedApplication.applicantPhone || 'N/A',
+                    appliedJobs: [{
+                        jobId: selectedApplication.jobId,
+                        jobTitle: selectedApplication.jobTitle,
+                        status: selectedApplication.status,
+                    }],
+                });
+                setJobs([{ jobId: selectedApplication.jobId, jobTitle: selectedApplication.jobTitle, status: selectedApplication.status }]);
+                setSelectedJob(selectedApplication.jobId);
+            } catch (error) {
+                setErrorMsg("Error loading applicant data.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadApplicantData();
+    }, [applicationId]);
 
     const handleDateChange = async (date) => {
         setSelectedDate(date);
@@ -110,15 +113,15 @@ const InterviewScheduling = () => {
         setIsScheduling(true);
         try {
             const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+            const scheduledAt = new Date(`${formattedDate}T${selectedTime}`).toISOString();
             const res = await interviewService.scheduleInterview({
-                applicantId,
-                jobId: selectedJob,
-                scheduledDate: formattedDate,
-                scheduledTime: selectedTime,
-                interviewType,
-                duration: 60,
-                location,
-                notes
+                jobApplicationId: Number(applicationId),
+                title: jobs.find(j => j.jobId === selectedJob)?.jobTitle || 'Interview',
+                description: notes,
+                scheduledAt,
+                durationMinutes: 60,
+                meetingLink: interviewType === 'video' ? location : null,
+                location: interviewType === 'video' ? null : location,
             });
 
             if (res.success) {

@@ -21,8 +21,6 @@ import {
   BookmarkCheck,
   Filter,
   X,
-  ChevronLeft,
-  ChevronRight,
   NotepadText,
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
@@ -230,15 +228,14 @@ const RecommendedJobs = ({
   const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedJobs = filteredJobs.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-  const startDisplay = filteredJobs.length > 0 ? startIdx + 1 : 0;
-  const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredJobs.length);
+
   const winSize = Math.min(5, totalPages);
   let startPageNum;
   if (totalPages <= 5) startPageNum = 1;
   else if (currentPage <= 3) startPageNum = 1;
   else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
   else startPageNum = currentPage - 2;
-  const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
+
 
   // If no jobs available
   if (jobs.length === 0) {

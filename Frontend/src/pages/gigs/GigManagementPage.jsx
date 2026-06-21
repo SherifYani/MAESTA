@@ -19,7 +19,7 @@ import styles from './GigManagementPage.module.css';
 const GigManagementPage = () => {
     const navigate = useNavigate();
     const { userGigs, isLoading, error, fetchUserGigs } = useGig();
-    const { isClient, isFreelancer } = useRole();
+    const { isClient } = useRole();
     const [activeTab, setActiveTab] = useState('active');
     const [manageBidsGigId, setManageBidsGigId] = useState(null);
 

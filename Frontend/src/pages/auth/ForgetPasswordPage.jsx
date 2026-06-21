@@ -60,7 +60,7 @@ function ForgetPasswordPage() {
       const error = validateField(name, value);
       setErrors((prev) => ({ ...prev, [name]: error }));
     }, 500),
-    [validateField]
+    [validateField, debounceValidation]
   );
 
   // Handle input changes

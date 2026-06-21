@@ -9,9 +9,9 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, CheckCircle, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { Search, CheckCircle, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import { groupNotificationsByDate, filterNotificationsByCategory, filterNotificationsByReadStatus } from '../../utils/notificationHelpers';
 import { NOTIFICATION_CATEGORIES } from '../../utils/notificationTypes';

@@ -23,6 +23,8 @@ import GeneralSelect from "../../components/common/GeneralSelect";
 import "../../styles/profile.css";
 import "../../styles/edit-profile.css";
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
  * EditCompanyProfile Component
  * @description Form component for editing company profile information, team members, and job listings.
@@ -48,10 +50,15 @@ export default function EditCompanyProfile() {
   });
 
   // Team members state management
-  const [members, setMembers] = useState(companyData?.members || []);
+  const [members, setMembers] = useState(
+    (companyData?.members || []).map((member) => ({
+      ...member,
+      email: member.email || "",
+      isNew: false,
+    }))
+  );
 
-  // Job listings state management
-  const [jobs, setJobs] = useState(companyData?.jobs || []);
+
 
   /**
    * Handles changes to form input fields.
@@ -82,15 +89,16 @@ export default function EditCompanyProfile() {
    */
   const addMember = () => {
     const newMemberId = Date.now();
-    const placeholderAvatar = "/placeholder.svg?height=48&width=48";
 
     setMembers([
       ...members,
       {
         id: newMemberId,
         name: "",
+        email: "",
         role: "Member",
-        avatar: placeholderAvatar,
+        avatar: "",
+        isNew: true,
       },
     ]);
   };
@@ -99,57 +107,25 @@ export default function EditCompanyProfile() {
    * Removes a team member from the list.
    * @param {number} memberIndex - The index of the team member to remove.
    */
-  const removeMember = (memberIndex) => {
+  const removeMember = async (memberIndex) => {
+    const member = members[memberIndex];
+    if (!member?.isNew && member?.id) {
+      try {
+        setLoading(true);
+        await profileService.removeTeamMember(member.id);
+      } catch (err) {
+        setError(err.message || "Failed to remove team member.");
+        return;
+      } finally {
+        setLoading(false);
+      }
+    }
+
     const updatedMembers = members.filter((_, index) => index !== memberIndex);
     setMembers(updatedMembers);
   };
 
-  /**
-   * Handles changes to job listing fields.
-   * @param {number} jobIndex - The index of the job listing to update.
-   * @param {string} field - The field name to update.
-   * @param {string} value - The new value for the field.
-   */
-  const handleJobChange = (jobIndex, field, value) => {
-    const updatedJobs = [...jobs];
-    updatedJobs[jobIndex] = {
-      ...updatedJobs[jobIndex],
-      [field]: value,
-    };
-    setJobs(updatedJobs);
-  };
 
-  /**
-   * Adds a new empty job listing to the list.
-   */
-  const addJob = () => {
-    const newJobId = Date.now();
-    const newJobUuid = `job${newJobId}`;
-    const currentDate = new Date().toISOString().split("T")[0];
-
-    setJobs([
-      ...jobs,
-      {
-        id: newJobId,
-        uuid: newJobUuid,
-        title: "",
-        location: "",
-        jobType: "Full-time",
-        status: "Open",
-        postedAt: currentDate,
-        applicationsCount: 0,
-      },
-    ]);
-  };
-
-  /**
-   * Removes a job listing from the list.
-   * @param {number} jobIndex - The index of the job listing to remove.
-   */
-  const removeJob = (jobIndex) => {
-    const updatedJobs = jobs.filter((_, index) => index !== jobIndex);
-    setJobs(updatedJobs);
-  };
 
   /**
    * Validates form data before submission.
@@ -173,21 +149,13 @@ export default function EditCompanyProfile() {
 
     // Validate team members
     for (const member of (members || [])) {
-      if (!member?.name?.trim()) {
-        alert("All team members must have a name");
-        return false;
-      }
-    }
-
-    // Validate job listings
-    for (const job of (jobs || [])) {
-      if (!job?.title?.trim()) {
-        alert("All job listings must have a title");
+      if (member?.isNew && !member?.email?.trim()) {
+        alert("New team members must have an email");
         return false;
       }
 
-      if (!job?.location?.trim()) {
-        alert("All job listings must have a location");
+      if (member.email && !emailRegex.test(member.email)) {
+        alert("Please enter a valid team member email");
         return false;
       }
     }
@@ -206,26 +174,54 @@ export default function EditCompanyProfile() {
       return;
     }
 
-    // Map frontend field names to backend expected names
+    const [city = "", country = ""] = (formData.location || "")
+      .split(",")
+      .map((part) => part.trim());
+
+    const existingMembers = members.filter((m) => !m.isNew);
+    const sanitizedMembers = existingMembers
+      .filter((m) => m.name?.trim())
+      .map((m) => ({
+        id: Number.isInteger(m.id) && m.id < 1000000000000 ? m.id : 0,
+        name: m.name.trim(),
+        role: m.role || "Member",
+        avatar: m.avatar || "",
+      }));
+
     const updatedCompanyData = {
-      ...formData,
-      companyName: formData.name,
-      website: formData.websiteUrl,
-      members,
-      jobs,
+      companyName: formData.name?.trim() || "",
+      website: formData.websiteUrl?.trim() || "",
+      industry: formData.industry?.trim() || "",
+      companySize: formData.companySize?.trim() || "",
+      description: formData.description?.trim() || "",
+      country,
+      city,
+      address: formData.location?.trim() || "",
+      foundedYear: formData.foundedYear ? parseInt(formData.foundedYear) : null,
+      logoUrl: formData.logoUrl?.trim() || "",
+      members: sanitizedMembers,
+      jobs: [],
     };
-    delete updatedCompanyData.name;
-    delete updatedCompanyData.websiteUrl;
+
+    if (!updatedCompanyData.companyName) {
+      setError("Company name is required");
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
-      // Call the API via profileService and use the response to update context
       const savedProfile = await profileService.updateCompanyProfile(updatedCompanyData);
-      updateCompanyData(savedProfile || updatedCompanyData);
+      const newMembers = members.filter((member) => member.isNew && member.email?.trim());
+      await Promise.all(
+        newMembers.map((member) => profileService.addTeamMember({ email: member.email.trim() }))
+      );
+      const refreshedProfile = await profileService.getCompanyProfile();
+      updateCompanyData({ ...updatedCompanyData, ...savedProfile, ...refreshedProfile });
       navigate("/dashboard/profile");
     } catch (err) {
-      setError(err.message || "Failed to update company profile. Please try again.");
+      const errorMessage = err.response?.data?.message || err.message || "Failed to update company profile. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -460,6 +456,26 @@ export default function EditCompanyProfile() {
 
                     <div className="edit__field">
                       <label
+                        htmlFor={`member-email-${index}`}
+                        className="edit__label">
+                        Email {member.isNew && <span className="edit__required">*</span>}
+                      </label>
+                      <input
+                        type="email"
+                        id={`member-email-${index}`}
+                        value={member.email || ""}
+                        onChange={(event) =>
+                          handleMemberChange(index, "email", event.target.value)
+                        }
+                        disabled={!member.isNew}
+                        className="edit__input"
+                        aria-label={`Team member ${index + 1} email`}
+                        placeholder="member@example.com"
+                      />
+                    </div>
+
+                    <div className="edit__field">
+                      <label
                         htmlFor={`member-role-${index}`}
                         className="edit__label">
                         Role
@@ -485,17 +501,17 @@ export default function EditCompanyProfile() {
                         className="edit__label">
                         Avatar URL
                       </label>
-                      <input
-                        type="url"
-                        id={`member-avatar-${index}`}
-                        value={member.avatar}
-                        onChange={(event) =>
-                          handleMemberChange(
-                            index,
-                            "avatar",
-                            event.target.value
-                          )
-                        }
+                        <input
+                          type="url"
+                          id={`member-avatar-${index}`}
+                          value={member.avatar || ""}
+                          onChange={(event) =>
+                            handleMemberChange(
+                              index,
+                              "avatar",
+                              event.target.value
+                            )
+                          }
                         className="edit__input"
                         aria-label={`Team member ${index + 1} avatar URL`}
                         placeholder="https://example.com/avatar.jpg"
@@ -515,129 +531,7 @@ export default function EditCompanyProfile() {
             )}
           </section>
 
-          {/* Job Listings Section */}
-          <section
-            className="edit__section"
-            aria-label="Job listings management">
-            <div className="edit__section-header">
-              <h2 className="edit__section-title">Job Listings</h2>
-              <button
-                type="button"
-                className="edit__add-btn"
-                onClick={addJob}
-                aria-label="Add new job listing">
-                + Add Job
-              </button>
-            </div>
 
-            {(jobs || []).length === 0 ? (
-              <div className="edit__empty-state">
-                <p>No job listings added yet. Click "Add Job" to create one.</p>
-              </div>
-            ) : (
-              (jobs || []).map((job, index) => (
-                <article
-                  key={job.id || index}
-                  className="edit__item-card"
-                  aria-label={`Job listing ${index + 1}`}>
-                  <div className="edit__item-header">
-                    <h3 className="edit__item-title">Job {index + 1}</h3>
-                    <button
-                      type="button"
-                      className="edit__remove-btn"
-                      onClick={() => removeJob(index)}
-                      aria-label={`Remove job listing ${index + 1}`}>
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="edit__grid">
-                    <div className="edit__field">
-                      <label
-                        htmlFor={`job-title-${index}`}
-                        className="edit__label">
-                        Job Title <span className="edit__required">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id={`job-title-${index}`}
-                        value={job.title}
-                        onChange={(event) =>
-                          handleJobChange(index, "title", event.target.value)
-                        }
-                        required
-                        className="edit__input"
-                        aria-required="true"
-                        aria-label={`Job ${index + 1} title`}
-                      />
-                    </div>
-
-                    <div className="edit__field">
-                      <label
-                        htmlFor={`job-location-${index}`}
-                        className="edit__label">
-                        Location <span className="edit__required">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id={`job-location-${index}`}
-                        value={job.location}
-                        onChange={(event) =>
-                          handleJobChange(index, "location", event.target.value)
-                        }
-                        required
-                        className="edit__input"
-                        aria-required="true"
-                        aria-label={`Job ${index + 1} location`}
-                      />
-                    </div>
-
-                    <div className="edit__field">
-                      <label
-                        htmlFor={`job-type-${index}`}
-                        className="edit__label">
-                        Job Type
-                      </label>
-                      <GeneralSelect
-                        value={job.jobType || "Full-time"}
-                        onChange={(selectedValue) =>
-                          handleJobChange(index, "jobType", selectedValue)
-                        }
-                        options={[
-                          { value: "Full-time", label: "Full-time" },
-                          { value: "Part-time", label: "Part-time" },
-                          { value: "Contract", label: "Contract" },
-                          { value: "Internship", label: "Internship" }
-                        ]}
-                        className="edit__select"
-                        aria-label={`Job ${index + 1} type`}
-                      />
-                    </div>
-
-                    <div className="edit__field">
-                      <label
-                        htmlFor={`job-status-${index}`}
-                        className="edit__label">
-                        Status
-                      </label>
-                      <GeneralSelect
-                        value={job.status || "Open"}
-                        onChange={(selectedValue) =>
-                          handleJobChange(index, "status", selectedValue)
-                        }
-                        options={[
-                          { value: "Open", label: "Open" },
-                          { value: "Closed", label: "Closed" }
-                        ]}
-                        className="edit__select"
-                        aria-label={`Job ${index + 1} status`}
-                      />
-                    </div>
-                  </div>
-                </article>
-              ))
-            )}
-          </section>
 
           {/* Error Message */}
           {error && (

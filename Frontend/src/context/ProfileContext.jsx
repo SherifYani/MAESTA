@@ -442,7 +442,10 @@ export function ProfileProvider({ children }) {
           const normalizedData = {
             ...data,
             name: data.companyName,
-            websiteUrl: data.website || "",
+            websiteUrl: data.website || data.websiteUrl || "",
+            location: data.location || (data.city
+              ? [data.city, data.country].filter(Boolean).join(", ")
+              : data.address || ""),
             verificationStatus: data.isVerified ? "Verified" : "Unverified",
             // If backend returns PascalCase lists, normalize them
             members: (data.members || []).map(m => ({
@@ -527,9 +530,9 @@ export function ProfileProvider({ children }) {
       verificationStatus: newData.isVerified != null
         ? (newData.isVerified ? "Verified" : "Unverified")
         : newData.verificationStatus,
-      location: newData.city
+      location: newData.location || (newData.city
         ? [newData.city, newData.country].filter(Boolean).join(", ")
-        : newData.location,
+        : undefined),
     } : newData;
     setCompanyData((prev) => ({ ...prev, ...normalized }));
   };

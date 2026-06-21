@@ -11,7 +11,6 @@
 
 import {
     Search,
-    Filter,
     UserCheck,
     UserX,
     Calendar,
@@ -20,15 +19,11 @@ import {
     MapPin,
     Download,
     Eye,
-    CheckCircle,
-    XCircle,
     Clock,
     TrendingUp,
     Users,
     FileText,
     MoreVertical,
-    Star,
-    MessageSquare,
     ChevronDown,
     ChevronUp
 } from "lucide-react";
@@ -178,15 +173,6 @@ const NewApplicants = ({
         });
     };
 
-    // Format time
-    const formatTime = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    };
-
     // Handle applicant selection
     const toggleApplicantSelection = (applicantId) => {
         setSelectedApplicants(prev => {
@@ -239,14 +225,16 @@ const NewApplicants = ({
 
     const handleViewResume = (applicantId, resumeUrl, e) => {
         e.stopPropagation();
-        console.log(`Viewing resume for applicant ${applicantId}: ${resumeUrl}`);
-        // In a real app, this would open the resume
+        if (resumeUrl) {
+            window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+        }
     };
 
     const handleViewProfile = (applicantId, profileUrl, e) => {
         e.stopPropagation();
-        console.log(`Viewing profile for applicant ${applicantId}: ${profileUrl}`);
-        // In a real app, this would open the profile
+        if (profileUrl) {
+            window.open(profileUrl, '_blank', 'noopener,noreferrer');
+        }
     };
 
     // Bulk action menu
@@ -301,7 +289,6 @@ const NewApplicants = ({
     // Applicant card component for grid view
     const ApplicantGridCard = ({ applicant }) => {
         const statusConfig = getStatusConfig(applicant.status);
-        const StatusIcon = statusConfig.icon;
 
         return (
             <Card
@@ -419,7 +406,6 @@ const NewApplicants = ({
                 <div className={styles.gridCardFooter}>
                     <div className={styles.footerStatus}>
                         <Badge variant={statusConfig.variant}>
-                            {/* <StatusIcon size={12} /> */}
                             {statusConfig.label}
                         </Badge>
                     </div>
@@ -464,7 +450,6 @@ const NewApplicants = ({
     // Applicant row component for list view
     const ApplicantListRow = ({ applicant }) => {
         const statusConfig = getStatusConfig(applicant.status);
-        const StatusIcon = statusConfig.icon;
 
         return (
             <tr
@@ -556,7 +541,7 @@ const NewApplicants = ({
                             className={styles.rowMoreButton}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log("More actions for", applicant.id);
+                                toggleApplicantDetails(applicant.id);
                             }}
                             title="More actions"
                         >

@@ -13,7 +13,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-    MoreVertical, Edit, Trash, CheckCircle, Ban,
+    MoreVertical, Trash, CheckCircle, Ban,
     UserPlus, Users, UserCheck, UserX, Shield,
 } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
@@ -21,14 +21,14 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getUsersData } from '../../config/adminMockData';
+import { getUsersData } from '../../config/adminDataService';
 import styles from './UserManagement.module.css';
 
 const PAGE_SIZE = 10;
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     useEffect(() => {
         getUsersData().then(data => {

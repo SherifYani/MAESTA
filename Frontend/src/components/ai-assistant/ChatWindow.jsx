@@ -113,7 +113,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
      */
     const handleSuggestionClick = useCallback((suggestion) => {
         handleSendMessage(suggestion);
-    }, []);
+    }, [handleSendMessage]);
 
     /**
      * Clears the chat conversation

@@ -19,7 +19,7 @@ import StatsGrid from '../../components/StatsGrid';
 import RecentActivity from './components/Overview/RecentActivity';
 import PendingActions from './components/Overview/PendingActions';
 import SystemHealth from './components/Overview/SystemHealth';
-import { getAdminStats, getActivitiesData, getPendingActionsData, getHealthData } from './config/adminMockData';
+import { getAdminStats, getActivitiesData, getPendingActionsData, getHealthData } from './config/adminDataService';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -70,17 +70,17 @@ const AdminDashboard = () => {
     {
       title: "Active Jobs",
       value: adminStats.activeJobs,
-      change: "+5", // Mock change
+      change: adminStats.activeJobsChange || "0",
       icon: FileText,
-      trendType: "up",
+      trendType: adminStats.activeJobsChange?.includes('-') ? "down" : "up",
       description: "Currently active"
     },
     {
       title: "Pending Moderation",
       value: adminStats.pendingModeration,
-      change: adminStats.pendingModeration > 10 ? "+5" : "-2",
+      change: adminStats.pendingModerationChange || "0",
       icon: ShieldAlert,
-      trendType: "down", // Assuming fewer is better or neutral
+      trendType: adminStats.pendingModerationChange?.includes('-') ? "down" : "up",
       description: "Items to review"
     }
   ];

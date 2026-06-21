@@ -83,7 +83,28 @@ const jobService = {
 
     // Apply to job
     applyToJob: async (jobId, applicationData) => {
-        const response = await ApiService.post(`/api/jobs/${jobId}/apply`, applicationData);
+        let payload = applicationData;
+
+        if (applicationData instanceof FormData) {
+            let cvUrl = '';
+            const resume = applicationData.get('resume');
+
+            if (resume) {
+                const resumeData = new FormData();
+                resumeData.append('file', resume);
+                resumeData.append('bucketName', 'resumes');
+
+                const uploadResponse = await ApiService.upload('/api/Files/upload', resumeData);
+                cvUrl = uploadResponse.data?.url || uploadResponse.data?.Url || '';
+            }
+
+            payload = {
+                coverLetter: applicationData.get('coverLetter') || '',
+                cvUrl,
+            };
+        }
+
+        const response = await ApiService.post(`/api/jobs/${jobId}/apply`, payload);
         return response.data;
     },
 
@@ -106,7 +127,12 @@ const jobService = {
     },
 
     updateApplicationStatus: async (applicationId, status) => {
-        const response = await ApiService.put(`/api/jobs/applications/${applicationId}/status`, { status });
+        const normalizedStatus = typeof status === 'string' ? status.toLowerCase() : status;
+        const response = await ApiService.put(
+            `/api/jobs/applications/${applicationId}/status`,
+            JSON.stringify(normalizedStatus),
+            { headers: { 'Content-Type': 'application/json' } }
+        );
         return response.data;
     },
 

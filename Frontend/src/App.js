@@ -21,7 +21,6 @@ const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage.jsx"
 const VerificationEmailPage = lazy(() => import("./pages/auth/VerificationEmailPage.jsx"));
 const LoginForm = lazy(() => import("./pages/Login.jsx"));
 const OnboardingPage = lazy(() => import("./pages/onboarding/OnboardingPage.jsx"));
-const MockLoginPage = lazy(() => import("./pages/auth/MockLoginPage.jsx"));
 
 const DashboardRoutes = lazy(() => import("./routes/DashboardRoutes"));
 const JobRoutes = lazy(() => import("./routes/JobRoutes"));
@@ -66,9 +65,6 @@ function App() {
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-        {process.env.NODE_ENV === 'development' && (
-          <Route path="/mock-login" element={<MockLoginPage />} />
-        )}
 
         {/* Job Module - Handles /jobs */}
         <Route path="/jobs/*" element={

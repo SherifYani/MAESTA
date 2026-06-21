@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, MapPin, DollarSign, TrendingUp, ArrowRight } from 'lucide-react';
+import { Briefcase, MapPin, DollarSign, TrendingUp } from 'lucide-react';
 import styles from './RecommendedJobsWidget.module.css';
 
 /**

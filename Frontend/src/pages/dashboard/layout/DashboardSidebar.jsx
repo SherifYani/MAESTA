@@ -11,12 +11,8 @@
 
 import { useContext, useCallback, memo } from "react";
 import {
-  Briefcase,
-  Users,
-  UserPlus,
   ChevronLeft,
   ChevronRight,
-  Shield,
   X,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
@@ -38,10 +34,10 @@ import { useAuth } from "../../../context/AuthContext";
  * @returns {JSX.Element} The rendered sidebar
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
-  const { currentRole, setCurrentRole } = useContext(DashboardContext);
+  const { currentRole } = useContext(DashboardContext);
   const { user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Calculate user initials
   const getUserInitials = (name) => {
@@ -58,23 +54,6 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
 
   // Get navigation for current role - memoize this if needed
   const roleNavigation = (ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation ?? [];
-
-  /**
-   * Handle role change
-   * @param {string} role - New role to switch to
-   */
-  const handleRoleChange = useCallback(
-    (role) => {
-      setCurrentRole(role);
-      // After changing role, you might want to navigate to the dashboard home
-      // or the first item in the new role's navigation
-      const newRoleNav = (ROLE_NAVIGATION[role] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation ?? [];
-      if (newRoleNav.length > 0) {
-        navigate(newRoleNav[0].path);
-      }
-    },
-    [setCurrentRole, navigate],
-  );
 
   /*
    * Handle navigation link click

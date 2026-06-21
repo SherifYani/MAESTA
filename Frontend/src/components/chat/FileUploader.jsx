@@ -12,6 +12,7 @@
 import React, { useRef, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Paperclip } from "lucide-react";
+import ApiService from "../../services/ApiService";
 import styles from "./FileUploader.module.css";
 
 /**
@@ -70,7 +71,6 @@ const FileUploader = ({ onUpload, disabled }) => {
 
             setIsUploading(true);
 
-            // Simulate upload progress
             const interval = setInterval(() => {
                 setProgress((prev) => {
                     if (prev >= 90) {
@@ -82,15 +82,24 @@ const FileUploader = ({ onUpload, disabled }) => {
             }, 200);
 
             try {
-                // Simulate API call - replace with actual upload service
-                // const url = await uploadService.upload(file);
-                await new Promise((resolve) => setTimeout(resolve, 1500));
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('bucketName', 'documents');
+
+                const response = await ApiService.upload('/api/Files/upload', formData);
+                const uploadedFile = {
+                    file,
+                    name: file.name,
+                    url: response.data?.url || response.data?.Url,
+                    fileName: response.data?.fileName || response.data?.FileName,
+                    bucketName: response.data?.bucketName || response.data?.BucketName,
+                };
 
                 clearInterval(interval);
                 setProgress(100);
 
                 if (onUpload) {
-                    onUpload(file);
+                    onUpload(uploadedFile);
                 }
             } catch (error) {
                 console.error("Upload failed:", error);

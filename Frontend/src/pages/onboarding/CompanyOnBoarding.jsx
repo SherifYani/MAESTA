@@ -102,17 +102,71 @@ function CompanyOnboarding() {
   useEffect(() => {
     const errors = {};
 
-    // ... (existing validation code remains the same) ...
+    // Company Name validation
+    if (!companyData.companyName || companyData.companyName.trim() === "") {
+      errors.companyName = "Company name is required";
+    } else if (companyData.companyName.length > 200) {
+      errors.companyName = "Company name must be less than 200 characters";
+    }
+
+    // Industry validation
+    if (!companyData.industry || companyData.industry.trim() === "") {
+      errors.industry = "Industry is required";
+    }
+
+    // Company Size validation
+    if (!companyData.companySize || companyData.companySize.trim() === "") {
+      errors.companySize = "Company size is required";
+    }
+
+    // Description validation
+    if (companyData.description && companyData.description.length > 2000) {
+      errors.description = "Description must be less than 2000 characters";
+    }
+
+    // Founded Year validation
+    if (companyData.foundedYear) {
+      const year = parseInt(companyData.foundedYear);
+      const currentYear = new Date().getFullYear();
+      if (isNaN(year) || year < 1800 || year > currentYear) {
+        errors.foundedYear = "Please enter a valid year";
+      }
+    }
+
+    // Website validation
+    if (companyData.website && companyData.website.trim() !== "") {
+      try {
+        new URL(companyData.website);
+      } catch {
+        errors.website = "Please enter a valid URL";
+      }
+    }
+
+    // Logo URL validation
+    if (companyData.logoUrl && companyData.logoUrl.trim() !== "") {
+      try {
+        new URL(companyData.logoUrl);
+      } catch {
+        errors.logoUrl = "Please enter a valid URL";
+      }
+    }
+
+    // Business Email validation
+    if (employerData.businessEmail && employerData.businessEmail.trim() !== "") {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(employerData.businessEmail)) {
+        errors.businessEmail = "Please enter a valid email";
+      }
+    }
 
     setFormErrors(errors);
 
     // File validation for current implementation (not in guide)
-    const logoFileError = validateFile(logoFile, {
+    validateFile(logoFile, {
       fieldName: "Company logo",
       maxSizeMB: 5,
     });
 
-    const registrationDocumentError = validateFile(registrationDocumentFile, {
+    validateFile(registrationDocumentFile, {
       fieldName: "Registration certificate",
       maxSizeMB: 10,
     });
@@ -611,7 +665,6 @@ function CompanyOnboarding() {
                     onChange={handleCompanyDataChange}
                     hasError={!!formErrors.commercialRegistrationNumber}
                     errorMessage={formErrors.commercialRegistrationNumber}
-                    required
                   />
                   <p className="onboarding-phase-2__field-hint">
                     Your company's official registration number

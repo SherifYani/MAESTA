@@ -214,12 +214,11 @@ const PlanCard = ({
                 {plan.features && plan.features.length > 0 && (
                     <section className={styles.featuresSection}>
                         <h4 className={styles.featuresTitle}>Includes:</h4>
-                        <ul className={styles.features} role="list">
+                        <ul className={styles.features}>
                             {plan.features.map((feature, index) => (
                                 <li
                                     key={`feature-${plan.id}-${index}`}
                                     className={styles.featureItem}
-                                    role="listitem"
                                 >
                                     <Check
                                         size={16}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Clock, TrendingUp, Shell } from 'lucide-react';
+import { FileText, Clock, TrendingUp } from 'lucide-react';
 import styles from './ApplicationsWidget.module.css';
 
 /**

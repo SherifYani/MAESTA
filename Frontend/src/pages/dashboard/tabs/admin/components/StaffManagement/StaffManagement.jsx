@@ -15,7 +15,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getStaffData } from '../../config/adminMockData';
+import { getStaffData } from '../../config/adminDataService';
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -26,7 +26,7 @@ const PAGE_SIZE = 10;
  */
 const StaffManagement = () => {
     const [staffData, setStaffData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     useEffect(() => {
         getStaffData().then(data => {

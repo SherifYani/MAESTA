@@ -118,7 +118,7 @@ const DashboardLayout = ({ children }) => {
         clearTimeout(resizeTimeoutRef.current);
       }
     };
-  }, []);
+  }, [handleResize, sidebarOpen]);
 
   // Memoize context value to prevent unnecessary re-renders
   const contextValue = useMemo(

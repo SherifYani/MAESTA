@@ -49,6 +49,14 @@ namespace JobMagnet.API.Controllers
             catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
         }
 
+        [AllowAnonymous]
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCompaniesAsync([FromQuery] string query)
+        {
+            var result = await _companyService.SearchCompaniesAsync(query);
+            return Ok(result);
+        }
+
         [HttpPut("me")]
         public async Task<IActionResult> UpdateCompanyAsync([FromBody] UpdateCompanyRequest request)
         {
@@ -110,6 +118,32 @@ namespace JobMagnet.API.Controllers
                 return NoContent();
             }
             catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [HttpPost("member-onboarding")]
+        public async Task<IActionResult> SubmitMemberOnboardingAsync([FromBody] CompanyMemberOnboardingRequest request)
+        {
+            try
+            {
+                var result = await _companyService.SubmitMemberOnboardingAsync(GetUserId(), request);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [HttpGet("member-onboarding/draft")]
+        public async Task<IActionResult> GetMemberOnboardingDraftAsync()
+        {
+            var result = await _companyService.GetMemberOnboardingDraftAsync(GetUserId());
+            return Ok(result);
+        }
+
+        [HttpPut("member-onboarding/draft")]
+        public async Task<IActionResult> SaveMemberOnboardingDraftAsync([FromBody] CompanyMemberOnboardingDraftRequest request)
+        {
+            await _companyService.SaveMemberOnboardingDraftAsync(GetUserId(), request);
+            return Ok(new { message = "Draft saved" });
         }
     }
 

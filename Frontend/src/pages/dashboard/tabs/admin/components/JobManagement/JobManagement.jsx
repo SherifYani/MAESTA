@@ -14,14 +14,14 @@ import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getJobsData } from '../../config/adminMockData';
+import { getJobsData } from '../../config/adminDataService';
 import styles from './JobManagement.module.css';
 
 const PAGE_SIZE = 10;
 
 const JobManagement = () => {
     const [jobs, setJobs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     useEffect(() => {
         getJobsData().then(data => {

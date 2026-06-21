@@ -12,7 +12,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import generalService from '../../services/generalService';
+import companyMemberOnboardingService from '../../services/companyMemberOnboardingService';
 import FormInput from "../../components/forms/FormInput";
 import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
@@ -42,8 +42,42 @@ function CompanyMemberOnboarding() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [formErrors, setFormErrors] = useState({});
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Completion status aligned with database requirements
+  useEffect(() => {
+    const loadDraft = async () => {
+      try {
+        const draft = await companyMemberOnboardingService.getCompanyMemberOnboardingDraft();
+        if (!draft) return;
+
+        setFormData({
+          role: draft.role || "",
+          position: draft.position || "",
+          department: draft.department || "",
+        });
+
+        if (draft.companyId) {
+          const company = await companyMemberOnboardingService.getCompanyById(draft.companyId);
+          handleCompanySelect({
+            ...company,
+            Id: company.companyId,
+            Name: company.companyName,
+            Industry: company.industry,
+            Location: [company.city, company.country].filter(Boolean).join(', '),
+            VerificationStatus: company.isVerified ? 'Verified' : 'Pending',
+          });
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data?.message || "Failed to load saved draft.");
+      }
+    };
+
+    loadDraft();
+  }, []);
   const [completionStatus, setCompletionStatus] = useState({
     companySelection: false,
     roleSelection: false,
@@ -64,8 +98,15 @@ function CompanyMemberOnboarding() {
     if (query.length > 2) {
       setIsSearching(true);
       try {
-        const results = await generalService.searchCompanies(query);
-        setSearchResults(results);
+        const results = await companyMemberOnboardingService.searchCompanies(query);
+        setSearchResults(results.map((company) => ({
+          ...company,
+          Id: company.companyId,
+          Name: company.companyName,
+          Industry: company.industry,
+          Location: [company.city, company.country].filter(Boolean).join(', '),
+          VerificationStatus: company.isVerified ? 'Verified' : 'Pending',
+        })));
       } catch {
         setSearchResults([]);
       } finally {
@@ -140,39 +181,13 @@ function CompanyMemberOnboarding() {
    * Prepares data for database insertion
    * @returns {Object} Data structured for database tables
    */
-  const prepareSubmissionData = () => {
-    // Data for CompanyMembers table
-    const companyMemberData = {
-      UserId: null, // Will be set from current user session
-      CompanyId: selectedCompany.Id,
-      Role: formData.role,
-      IsVerifiedMember: false, // Default until verified
-      VerificationSource: "Manual", // Options: Manual, CompanyInvite, GovernmentAPI
-      AddedAt: new Date().toISOString(),
-    };
-
-    // Data for Experiences table (current position)
-    const experienceData = {
-      UserId: null, // Will be set from current user session
-      JobTitle: formData.position,
-      CompanyName: selectedCompany.Name,
-      Description: `Working as ${formData.position} in ${formData.department} department`,
-      StartDate: new Date().toISOString().split("T")[0], // Current date
-      EndDate: null, // Current position
-    };
-
-    // Data for Users table (profile picture update)
-    const userUpdateData = {
-      ProfilePictureUrl: null, // Will be set after file upload to CDN
-    };
-
-    return {
-      companyMember: companyMemberData,
-      experience: experienceData,
-      user: userUpdateData,
-      profilePicture: profilePicture,
-    };
-  };
+  const prepareSubmissionData = (profilePictureUrl = null) => ({
+    companyId: selectedCompany.Id,
+    role: formData.role,
+    position: formData.position,
+    department: formData.department,
+    profilePictureUrl,
+  });
 
   /**
    * Handles form submission
@@ -199,17 +214,18 @@ function CompanyMemberOnboarding() {
     }
 
     setIsLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
-      const submissionData = prepareSubmissionData();
-      console.log("Submitting company member data:", submissionData);
+      const profilePictureUrl = await companyMemberOnboardingService.uploadCompanyMemberProfilePhoto(profilePicture);
+      const submissionData = prepareSubmissionData(profilePictureUrl);
+      const response = await companyMemberOnboardingService.submitCompanyMemberOnboarding(submissionData);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Company member profile submitted successfully!");
+      setSuccessMessage(response.message || "Company member profile submitted successfully!");
       navigate("/dashboard");
     } catch (error) {
-      console.error("Error submitting company member data:", error);
-      alert("Error submitting profile. Please try again.");
+      setErrorMessage(error.response?.data?.message || error.message || "Error submitting profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -220,16 +236,25 @@ function CompanyMemberOnboarding() {
    */
   const handleSaveDraft = async () => {
     setIsLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
     try {
-      const draftData = prepareSubmissionData();
-      console.log("Saving draft to database:", draftData);
-      // Simulate API call
-      setTimeout(() => {
-        alert("Draft saved successfully!");
-      }, 1000);
+      const profilePictureUrl = profilePicture
+        ? await companyMemberOnboardingService.uploadCompanyMemberProfilePhoto(profilePicture)
+        : null;
+
+      await companyMemberOnboardingService.saveCompanyMemberOnboardingDraft({
+        companyId: selectedCompany?.Id || null,
+        role: formData.role || null,
+        position: formData.position || null,
+        department: formData.department || null,
+        profilePictureUrl,
+      });
+
+      setSuccessMessage("Draft saved successfully!");
     } catch (error) {
-      console.error("Error saving draft:", error);
-      alert("Error saving draft. Please try again.");
+      setErrorMessage(error.response?.data?.message || error.message || "Error saving draft. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -268,6 +293,18 @@ function CompanyMemberOnboarding() {
         </div>
 
         <div className="onboarding-phase-2__card">
+          {errorMessage && (
+            <div className="register-form__error-message" role="alert">
+              <i className="fa-solid fa-exclamation-triangle" />
+              {errorMessage}
+            </div>
+          )}
+          {successMessage && (
+            <div className="register-form__success-message" role="status">
+              <i className="fa-solid fa-check-circle" />
+              {successMessage}
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             {/* Section 1: Company Selection */}
             <div className="onboarding-phase-2__section">

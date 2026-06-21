@@ -102,8 +102,7 @@ const notificationService = {
      * Unsubscribe from push notifications.
      */
     unsubscribeFromPush: async () => {
-        const response = await ApiService.delete('/api/notifications/push/subscribe');
-        return response.data;
+        throw new Error('Unsubscribing from push notifications is not supported by the current backend API.');
     },
 
     /**
@@ -111,8 +110,9 @@ const notificationService = {
      * @param {string} type - e.g. 'application', 'message', 'system'
      */
     getByType: async (type) => {
-        const response = await ApiService.get('/api/notifications', { params: { type, page: 1, limit: 50 } });
-        return response.data;
+        const response = await ApiService.get('/api/notifications', { params: { page: 1, limit: 50 } });
+        const notifications = response.data?.items || response.data || [];
+        return notifications.filter(notification => notification.type === type || notification.category === type);
     },
 };
 

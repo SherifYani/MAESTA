@@ -174,29 +174,16 @@ const gigService = {
         }
     },
 
-    // Update contract status — maps to milestone status update
-    updateContractStatus: async (contractId, status) => {
-        try {
-            const response = await ApiService.put(`/api/contracts/milestones/${contractId}/status`,
-                JSON.stringify(status),
-                { headers: { 'Content-Type': 'application/json' } }
-            );
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
+    // Update contract status is not supported by the current backend API.
+    updateContractStatus: async () => {
+        throw new Error('Updating contract status is not supported by the current backend API.');
     },
 
     // ==================== Milestones ====================
 
-    // Add milestone to contract — maps to submit delivery
-    addMilestone: async (contractId, milestoneData) => {
-        try {
-            const response = await ApiService.post(`/api/contracts/${contractId}/deliver`, milestoneData);
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
+    // Add milestone is not supported after contract creation by the current backend API.
+    addMilestone: async () => {
+        throw new Error('Adding milestones after contract creation is not supported by the current backend API.');
     },
 
     // Update milestone status
@@ -213,13 +200,13 @@ const gigService = {
         }
     },
 
-    // Complete milestone — maps to submit delivery
-    completeMilestone: async (milestoneId) => {
+    // Complete contract delivery
+    completeMilestone: async (contractId, deliveryData = {}) => {
         try {
-            const response = await ApiService.post(`/api/contracts/${milestoneId}/deliver`,
-                JSON.stringify("completed"),
-                { headers: { 'Content-Type': 'application/json' } }
-            );
+            const response = await ApiService.post(`/api/contracts/${contractId}/deliver`, {
+                fileUrl: deliveryData.fileUrl || deliveryData.url || '',
+                message: deliveryData.message || deliveryData.description || 'Delivery submitted'
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -314,26 +301,35 @@ const gigService = {
         throw new Error('Invalid decision status');
     },
 
-    // Get workspace data (gig + active contract + milestones + chat)
+    // Get workspace data (gig + related contract details when available)
     getWorkspace: async (gigId) => {
         try {
-            // In a real app, this might be a specific endpoint aggregating data
-            const response = await ApiService.get(`/api/gigs/${gigId}/workspace`);
-            return response.data;
-        } catch (error) {
-            // Fallback mock if endpoint missing during dev
-            console.warn("Fetching mock workspace data");
+            const [gigResponse, contractsResponse] = await Promise.all([
+                ApiService.get(`/api/gigs/${gigId}`),
+                ApiService.get('/api/contracts/my-contracts')
+            ]);
+
+            const gig = gigResponse.data;
+            const contracts = contractsResponse.data?.items || contractsResponse.data || [];
+            const contract = contracts.find(c => String(c.projectId || c.gigId) === String(gigId));
+
             return {
                 data: {
+                    ...(gig?.data || gig),
                     id: gigId,
-                    title: "Mock Workspace Gig",
-                    milestones: [],
+                    title: gig?.title || gig?.projectTitle || contract?.projectTitle || 'Workspace',
+                    contract,
+                    milestones: contract?.milestones || [],
                     messages: [],
                     files: [],
-                    participants: []
+                    participants: [
+                        contract?.clientName && { name: contract.clientName, role: 'client' },
+                        contract?.freelancerName && { name: contract.freelancerName, role: 'freelancer' }
+                    ].filter(Boolean)
                 }
             };
-            // throw error.response?.data || error.message;
+        } catch (error) {
+            throw error;
         }
     },
 

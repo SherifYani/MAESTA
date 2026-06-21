@@ -14,14 +14,14 @@ import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getReportsData } from '../../config/adminMockData';
+import { getReportsData } from '../../config/adminDataService';
 import styles from './ContentModeration.module.css';
 
 const PAGE_SIZE = 10;
 
 const ContentModeration = () => {
     const [reports, setReports] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     useEffect(() => {
         getReportsData().then(data => {

@@ -340,7 +340,7 @@ namespace JobMagnet.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserSkill>()
-                .HasOne<Skill>()
+                .HasOne(us => us.Skill)
                 .WithMany()
                 .HasForeignKey(us => us.SkillId)
                 .OnDelete(DeleteBehavior.Cascade);

@@ -21,6 +21,7 @@ import {
   validateMultipleFiles,
 } from "../../utils/form-validation";
 import authService from "../../services/authService";
+import draftService from "../../services/draftService";
 
 /**
  * FreelancerOnboarding Component
@@ -70,6 +71,22 @@ function FreelancerOnboarding() {
   });
 
   const [overallProgress, setOverallProgress] = useState(0);
+
+  useEffect(() => {
+    const loadDraft = async () => {
+      try {
+        const draft = await draftService.getDraft('freelancerOnboardingDraft');
+        if (!draft) return;
+
+        setFormData(prev => ({ ...prev, ...(draft.formData || {}) }));
+        setExtraFields(prev => ({ ...prev, ...(draft.extraFields || {}) }));
+      } catch (error) {
+        setApiError(error?.response?.data?.message || "Failed to load saved draft.");
+      }
+    };
+
+    loadDraft();
+  }, []);
 
   /**
    * Calculate completion status for each section
@@ -321,21 +338,22 @@ function FreelancerOnboarding() {
    */
   const handleSaveDraft = async () => {
     setIsLoading(true);
+    setApiError("");
+
     try {
-      const draftData = {
-        ...formData,
-        ...extraFields,
-        profilePicture,
-      };
-
-      console.log("Saving draft:", draftData);
-
-      setTimeout(() => {
-        alert("Draft saved successfully!");
-      }, 1000);
+      await draftService.saveDraft('freelancerOnboardingDraft', {
+        formData,
+        extraFields: {
+          ...extraFields,
+          portfolioImages: extraFields.portfolioImages.map(file => ({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+          })),
+        },
+      });
     } catch (error) {
-      console.error("Error saving draft:", error);
-      alert("Error saving draft. Please try again.");
+      setApiError(error?.response?.data?.message || "Error saving draft. Please try again.");
     } finally {
       setIsLoading(false);
     }

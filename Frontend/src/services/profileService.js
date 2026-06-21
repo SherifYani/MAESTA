@@ -343,10 +343,8 @@ const profileService = {
     // Get client profile
     getClientProfile: async (clientId = null) => {
         try {
-            const endpoint = clientId
-                ? `/api/clients/${clientId}`
-                : '/api/clients/me';
-            const response = await ApiService.get(endpoint);
+            if (clientId) throw new Error('Fetching clients by id is not supported by the current backend API.');
+            const response = await ApiService.get('/api/clients/me');
             return response.data;
         } catch (error) {
             throw error;

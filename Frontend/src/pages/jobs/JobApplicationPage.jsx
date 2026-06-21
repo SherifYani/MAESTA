@@ -40,25 +40,20 @@ const JobApplicationPage = () => {
     });
 
     useEffect(() => {
+        const fetchJobDetails = async () => {
+            try {
+                setLoading(true);
+                const jobData = await jobService.getJobById(jobId);
+                setJob(jobData);
+            } catch (err) {
+                setError('Failed to load job details');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchJobDetails();
     }, [jobId]);
-
-    /**
-     * Fetches job details from the API
-     * @async
-     * @returns {Promise<void>}
-     */
-    const fetchJobDetails = async () => {
-        try {
-            setLoading(true);
-            const jobData = await jobService.getJobById(jobId);
-            setJob(jobData);
-        } catch (err) {
-            setError('Failed to load job details');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     /**
      * Handles text input changes

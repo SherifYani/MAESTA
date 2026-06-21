@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Bookmark, MapPin, Clock } from 'lucide-react';
 import styles from './SavedJobsWidget.module.css';
 
 /**

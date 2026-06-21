@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, TrendingUp, Award, ArrowUpRight } from 'lucide-react';
+import { Target, Award } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import styles from '../JobseekerDashboard.module.css';
 

@@ -6,7 +6,7 @@ import { MessageSquare, Heart, Plus, Search } from 'lucide-react';
 
 const CommunityFeedPage = () => {
     const navigate = useNavigate();
-    const { posts, isLoading, error, fetchFeed, toggleLike, page, totalPages } = useCommunity();
+    const { posts, isLoading, error, fetchFeed, page, totalPages } = useCommunity();
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {

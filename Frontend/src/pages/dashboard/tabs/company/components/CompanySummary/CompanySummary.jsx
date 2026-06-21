@@ -15,18 +15,10 @@ import {
   Building,
   MapPin,
   Users,
-  Globe,
-  Mail,
-  Phone,
   Calendar,
   CheckCircle,
-  ExternalLink,
-  Briefcase,
-  Target,
-  Clock,
 } from "lucide-react";
 import Button from "../../../../components/ui/Button";
-import Badge from "../../../../components/ui/Badge";
 import styles from "./CompanySummary.module.css";
 import { useNavigate } from "react-router-dom";
 
@@ -56,11 +48,6 @@ const CompanySummary = ({ profile, onEditProfile, onViewAnalytics }) => {
 
   const handleViewAnalytics = () => {
     navigate("/dashboard/performance-analytics");
-  };
-
-  const handleSocialClick = (platform, url) => {
-    console.log(`Opening ${platform}: ${url}`);
-    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (

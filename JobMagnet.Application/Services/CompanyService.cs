@@ -2,6 +2,7 @@ using JobMagnet.Application.DTOs.Company;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace JobMagnet.Application.Services
 {
@@ -48,8 +49,8 @@ namespace JobMagnet.Application.Services
                 {
                     Id = j.JobId,
                     Title = j.Title,
-                    Location = j.Location,
-                    JobType = j.Type,
+                    Location = j.Location ?? string.Empty,
+                    JobType = j.Type ?? string.Empty,
                     Status = j.IsActive ? "Open" : "Closed",
                     PostedAt = j.CreatedAt,
                     ApplicationsCount = _context.JobApplications.Count(a => a.JobId == j.JobId && !a.IsDeleted)
@@ -78,6 +79,27 @@ namespace JobMagnet.Application.Services
             return MapCompany(company);
         }
 
+        public async Task<IEnumerable<CompanyDto>> SearchCompaniesAsync(string query)
+        {
+            query = (query ?? string.Empty).Trim();
+
+            if (query.Length < 2)
+                return Enumerable.Empty<CompanyDto>();
+
+            var companies = await _context.Companies
+                .AsNoTracking()
+                .Where(c => !c.IsDeleted &&
+                    ((c.CompanyName != null && c.CompanyName.Contains(query)) ||
+                     (c.Industry != null && c.Industry.Contains(query)) ||
+                     (c.City != null && c.City.Contains(query)) ||
+                     (c.Country != null && c.Country.Contains(query))))
+                .OrderBy(c => c.CompanyName)
+                .Take(20)
+                .ToListAsync();
+
+            return companies.Select(MapCompany);
+        }
+
         public async Task<CompanyDto> UpdateCompanyAsync(int employerUserId, UpdateCompanyRequest request)
         {
             var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == employerUserId && !e.IsDeleted);
@@ -97,6 +119,44 @@ namespace JobMagnet.Application.Services
             company.Website = request.Website ?? company.Website;
             company.LogoUrl = request.LogoUrl ?? company.LogoUrl;
             company.UpdatedAt = DateTimeOffset.UtcNow;
+
+            // Sync Members
+            if (request.Members != null)
+            {
+                var existingMembers = await _context.Employers
+                    .Where(e => e.CompanyId == company.CompanyId && !e.IsDeleted)
+                    .ToListAsync();
+
+                var submittedMemberIds = new HashSet<int>();
+                foreach (var memberDto in request.Members)
+                {
+                    if (memberDto.Id > 0)
+                    {
+                        // Update existing member
+                        var existing = existingMembers.FirstOrDefault(e => e.UserId == memberDto.Id);
+                        if (existing != null)
+                        {
+                            // Member exists, could update role if needed
+                            submittedMemberIds.Add(memberDto.Id);
+                        }
+                    }
+                    else
+                    {
+                        // New member - but we can't add by name only, need email
+                        // For now, skip - use separate /team endpoint
+                    }
+                }
+
+                // Remove members not in submitted list
+                foreach (var existing in existingMembers)
+                {
+                    if (!submittedMemberIds.Contains(existing.UserId) && existing.EmployerId != company.EmployerId)
+                    {
+                        existing.CompanyId = null;
+                        existing.IsDeleted = true;
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
 
@@ -206,7 +266,120 @@ namespace JobMagnet.Application.Services
             company.UpdatedAt = DateTimeOffset.UtcNow;
 
             employer.VerificationRequestedAt = DateTimeOffset.UtcNow;
-            
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<CompanyMemberOnboardingResponse> SubmitMemberOnboardingAsync(int userId, CompanyMemberOnboardingRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId && !u.IsDeleted);
+            if (user == null) throw new KeyNotFoundException("User not found");
+
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId && !c.IsDeleted);
+            if (company == null) throw new KeyNotFoundException("Company not found");
+
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employer == null)
+            {
+                employer = new Domain.Entities.Employer
+                {
+                    UserId = userId,
+                    CompanyId = company.CompanyId,
+                    ContactPerson = request.Position,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = userId
+                };
+                _context.Employers.Add(employer);
+            }
+            else
+            {
+                employer.CompanyId = company.CompanyId;
+                employer.ContactPerson = request.Position;
+                employer.IsDeleted = false;
+                employer.UpdatedAt = DateTimeOffset.UtcNow;
+                employer.UpdatedBy = userId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.ProfilePictureUrl))
+                user.ProfilePictureUrl = request.ProfilePictureUrl;
+
+            user.UserType = "Employer";
+            user.RegistrationStatus = "PendingApproval";
+            user.UpdatedAt = DateTimeOffset.UtcNow;
+            user.UpdatedBy = userId;
+
+            await SaveMemberOnboardingDraftAsync(userId, new CompanyMemberOnboardingDraftRequest
+            {
+                CompanyId = request.CompanyId,
+                Role = request.Role,
+                Position = request.Position,
+                Department = request.Department,
+                ProfilePictureUrl = request.ProfilePictureUrl
+            });
+
+            await _context.SaveChangesAsync();
+
+            return new CompanyMemberOnboardingResponse
+            {
+                UserId = userId,
+                CompanyId = company.CompanyId,
+                CompanyName = company.CompanyName,
+                Role = request.Role,
+                Position = request.Position,
+                Department = request.Department,
+                Status = user.RegistrationStatus,
+                UpdatedAt = user.UpdatedAt ?? DateTimeOffset.UtcNow
+            };
+        }
+
+        public async Task<CompanyMemberOnboardingDraftRequest?> GetMemberOnboardingDraftAsync(int userId)
+        {
+            var settings = await _context.UserSettings.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == userId && !s.IsDeleted);
+            if (settings?.Preferences == null) return null;
+
+            using var document = JsonDocument.Parse(settings.Preferences);
+            if (!document.RootElement.TryGetProperty("companyMemberOnboardingDraft", out var draft)) return null;
+
+            return draft.Deserialize<CompanyMemberOnboardingDraftRequest>();
+        }
+
+        public async Task SaveMemberOnboardingDraftAsync(int userId, CompanyMemberOnboardingDraftRequest request)
+        {
+            var settings = await _context.UserSettings.FirstOrDefaultAsync(s => s.UserId == userId);
+            var preferences = new Dictionary<string, object?>();
+
+            if (!string.IsNullOrWhiteSpace(settings?.Preferences))
+            {
+                preferences = JsonSerializer.Deserialize<Dictionary<string, object?>>(settings.Preferences) ?? new Dictionary<string, object?>();
+            }
+
+            preferences["companyMemberOnboardingDraft"] = request;
+            var serializedPreferences = JsonSerializer.Serialize(preferences);
+
+            if (settings == null)
+            {
+                settings = new Domain.Entities.UserSettings
+                {
+                    UserId = userId,
+                    Language = "en",
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true,
+                    DarkMode = false,
+                    Preferences = serializedPreferences,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = userId
+                };
+                _context.UserSettings.Add(settings);
+            }
+            else
+            {
+                settings.Preferences = serializedPreferences;
+                settings.UpdatedAt = DateTimeOffset.UtcNow;
+                settings.UpdatedBy = userId;
+                settings.IsDeleted = false;
+            }
+
             await _context.SaveChangesAsync();
         }
 

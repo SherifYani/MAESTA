@@ -182,7 +182,7 @@ const Footer = () => {
                                 aria-label={`${section.title} navigation`}
                             >
                                 <h3 className={styles.sectionTitle}>{section.title}</h3>
-                                <ul className={styles.sectionList} role="list">
+                                <ul className={styles.sectionList}>
                                     {section.links.map((link, linkIndex) => (
                                         <li key={`link-${index}-${linkIndex}`} className={styles.sectionItem}>
                                             <a

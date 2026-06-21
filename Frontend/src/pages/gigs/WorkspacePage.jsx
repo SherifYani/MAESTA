@@ -9,24 +9,23 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGig } from '../../context/GigContext';
 import { useRole } from '../../hooks/useRole';
-import { Button, LoadingSpinner, Alert } from '../../components/common';
+import { Button, LoadingSpinner } from '../../components/common';
 import WorkspaceChat from '../../components/gigs/WorkspaceChat';
 import MilestoneTracker from '../../components/gigs/MilestoneTracker';
 import FileUpload from '../../components/gigs/FileUpload';
 import VideoCallUI from '../../components/video/VideoCallUI';
-import { Video, Calendar, Paperclip, MessageSquare } from 'lucide-react';
+import { Video } from 'lucide-react';
 import { PageContainer } from '../../components/layout';
 import styles from './WorkspacePage.module.css';
 
 const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { workspace, fetchWorkspace, isLoading, error } = useGig();
+    const { workspace, fetchWorkspace, isLoading } = useGig();
     const { user } = useRole(); // Need actual user object for chat
-    const { isClient, isFreelancer } = useRole();
+    const { isClient } = useRole();
 
     const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('overview'); // overview, files, milestones
 
     useEffect(() => {
         if (id) {
