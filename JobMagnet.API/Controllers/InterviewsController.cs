@@ -94,5 +94,12 @@ namespace JobMagnet.API.Controllers
             }
             catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
         }
+
+        [HttpGet("available-slots")]
+        public async Task<IActionResult> GetAvailableSlotsAsync([FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
+        {
+            var slots = await _interviewService.GetAvailableSlotsAsync(GetUserId(), from, to);
+            return Ok(slots);
+        }
     }
 }

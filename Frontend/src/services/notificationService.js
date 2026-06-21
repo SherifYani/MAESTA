@@ -21,6 +21,20 @@
 
 import ApiService from './ApiService';
 
+/**
+ * Normalize a single notification from the backend DTO shape
+ * to the shape used by the frontend context and components.
+ * Backend: { notificationId, title, message, type, isRead, actionUrl, createdAt }
+ * Frontend expects: { id, title, message, type, read, actionUrl, created_at }
+ */
+const normalizeNotification = (n) => ({
+    ...n,
+    id: n.notificationId ?? n.id,
+    read: n.isRead ?? n.read ?? false,
+    actionUrl: n.actionUrl ?? null,
+    created_at: n.createdAt ?? n.created_at,
+});
+
 const notificationService = {
 
     /**
@@ -30,7 +44,8 @@ const notificationService = {
      */
     getNotifications: async (page = 1, limit = 20) => {
         const response = await ApiService.get('/api/notifications', { params: { page, limit } });
-        return response.data;
+        const raw = response.data?.items || response.data || [];
+        return Array.isArray(raw) ? raw.map(normalizeNotification) : [];
     },
 
     /**

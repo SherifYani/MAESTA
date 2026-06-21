@@ -148,6 +148,7 @@ export const ROLE_NAVIGATION = {
       { id: "js-overview", label: "Overview", path: "/dashboard", icon: Home },
       { id: "js-find-jobs", label: "Find Jobs", path: "/jobs", icon: Briefcase },
       { id: "js-applications", label: "Applications", path: "/dashboard/applications", icon: Send },
+      { id: "js-interviews", label: "My Interviews", path: "/dashboard/my-interviews", icon: Calendar },
       { id: "js-saved-jobs", label: "Saved Jobs", path: "/dashboard/saved-jobs", icon: Bookmark },
       { id: "js-recommended", label: "Recommended", path: "/dashboard/recommended-jobs", icon: Star },
       { id: "js-messages", label: "Messages", path: "/chat", icon: MessageSquare },

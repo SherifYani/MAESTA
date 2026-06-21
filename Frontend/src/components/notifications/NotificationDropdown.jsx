@@ -18,6 +18,23 @@ import EmptyNotifications from './EmptyNotifications';
 import NotificationSkeleton from './NotificationSkeleton';
 
 /**
+ * Returns the best navigation URL for a notification,
+ * using actionUrl first, then falling back to type-based routing.
+ */
+export const getNotificationRoute = (notification) => {
+    if (notification.actionUrl) return notification.actionUrl;
+    const type = (notification.type || notification.Type || '').toLowerCase();
+    switch (type) {
+        case 'interview':   return '/dashboard/my-interviews';
+        case 'application': return '/dashboard/new-applications';
+        case 'job':         return '/jobs';
+        case 'message':     return '/chat';
+        case 'system':      return '/notifications';
+        default:            return '/notifications';
+    }
+};
+
+/**
  * NotificationDropdown component - Displays notification list in dropdown
  * @param {Object} props - Component props
  * @param {Function} props.onClose - Callback when dropdown is closed
@@ -75,16 +92,11 @@ const NotificationDropdown = ({ onClose }) => {
      * Handles notification item click
      */
     const handleNotificationClick = (notification) => {
-        // Navigate based on notification type/data
-        if (notification.data?.conversationId) {
-            navigate(`/chat/${notification.data.conversationId}`);
-        } else if (notification.data?.jobId) {
-            navigate(`/jobs/${notification.data.jobId}`);
-        } else if (notification.data?.projectId) {
-            navigate(`/gigs/${notification.data.projectId}`);
-        }
+        const route = getNotificationRoute(notification);
+        navigate(route);
         onClose();
     };
+
 
     return (
         <div className={styles.dropdown}>

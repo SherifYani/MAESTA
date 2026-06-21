@@ -37,6 +37,7 @@ const InterviewScheduling = lazy(() => import("../pages/dashboard/tabs/company/I
 const RecommendedJobs = lazy(() => import("../pages/dashboard/tabs/jobseeker/components/RecommendedJobs/RecommendedJobs.jsx"));
 const SavedJobs = lazy(() => import("../pages/dashboard/tabs/jobseeker/components/SavedJobs/SavedJobs.jsx"));
 const DetailedApplications = lazy(() => import("../pages/dashboard/tabs/jobseeker/components/DetailedApplications/DetailedApplications.jsx"));
+const MyInterviewsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/MyInterviewsPage"));
 const normalizeCompanyJob = (job) => {
     const id = job.id || job.jobId;
     const isPublished = job.isPublished ?? job.status === 'active' ?? true;
@@ -319,6 +320,7 @@ const DashboardRoutes = () => {
                     <Route path="recommended-jobs" element={<ProtectedRoute allowedRoles={['jobseeker', 'freelancer']}><RecommendedJobsWithData /></ProtectedRoute>} />
                     <Route path="saved-jobs" element={<ProtectedRoute allowedRoles={['jobseeker', 'freelancer']}><SavedJobsWithData /></ProtectedRoute>} />
                     <Route path="applications" element={<ProtectedRoute allowedRoles={['jobseeker', 'freelancer']}><DetailedApplicationsWithData /></ProtectedRoute>} />
+                    <Route path="my-interviews" element={<ProtectedRoute allowedRoles={['jobseeker', 'freelancer']}><MyInterviewsPage /></ProtectedRoute>} />
 
                     {/* Admin Dashboard Routes */}
                     <Route path="users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsersManagement /></ProtectedRoute>} />

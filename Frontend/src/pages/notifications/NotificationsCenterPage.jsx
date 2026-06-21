@@ -18,6 +18,7 @@ import { NOTIFICATION_CATEGORIES } from '../../utils/notificationTypes';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import NotificationSkeleton from '../../components/notifications/NotificationSkeleton';
 import EmptyNotifications from '../../components/notifications/EmptyNotifications';
+import { getNotificationRoute } from '../../components/notifications/NotificationDropdown';
 import { PageContainer } from '../../components/layout';
 import styles from './NotificationsCenterPage.module.css';
 
@@ -126,15 +127,9 @@ const NotificationsCenterPage = () => {
      * @param {Object} notification - Notification object
      */
     const handleNotificationClick = (notification) => {
-        // Navigate based on notification type/data
-        if (notification.data?.jobId) {
-            navigate(`/jobs/${notification.data.jobId}`);
-        } else if (notification.data?.projectId) {
-            navigate(`/gigs/${notification.data.projectId}`);
-        } else if (notification.data?.conversationId) {
-            navigate(`/chat/${notification.data.conversationId}`);
-        }
+        navigate(getNotificationRoute(notification));
     };
+
 
     /**
      * Handle category filter toggle
