@@ -184,7 +184,7 @@ export const useJobseekerLogic = (initialData) => {
                 navigate('/dashboard/applications');
                 break;
             case 'set-alerts':
-                navigate('/dashboard/profile/edit'); // Job alerts managed in profile settings
+                navigate('/dashboard/account');
                 break;
             case 'download-resume':
                 navigate('/dashboard/profile');

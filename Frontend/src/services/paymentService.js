@@ -190,6 +190,16 @@ const paymentService = {
         }
     },
 
+    // Get linked bank accounts
+    getBankAccounts: async () => {
+        try {
+            const response = await ApiService.get('/api/payments/bank-accounts');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     // Calculate service fee
     calculateFee: async (amount, type) => {
         try {

@@ -1,9 +1,9 @@
 import {
   Briefcase, DollarSign, Building, Users, Clock, Send, Bookmark,
-  TrendingUp, Activity, Calendar, Target, Shield,
-  UserPlus, Home, Settings, LogOut,
-  Award, BarChart, FileText, CheckCircle,
-  AlertCircle, Star, MessageSquare, ArrowUp, ArrowDown, Eye
+  TrendingUp, Activity, PieChart, Calendar, Target, Shield,
+  ThumbsUp, UserPlus, Home, Settings, Bell, HelpCircle, LogOut,
+  Award, BarChart, Mail, FolderOpen, FileText, CheckCircle,
+  AlertCircle, Star, MessageSquare, Zap, ArrowUp, ArrowDown, Eye, XCircle
 } from "lucide-react";
 
 export const ROLES = {
@@ -110,7 +110,9 @@ export const ROLE_NAVIGATION = {
     navigation: [
       { id: "client-dashboard", label: "Dashboard", path: "/dashboard", icon: Home },
       { id: "client-my-gigs", label: "My Gigs", path: "/gigs/manage", icon: Briefcase },
+      { id: "client-my-projects", label: "My Projects", path: "/gigs/projects", icon: Briefcase },
       { id: "client-post-gig", label: "Post a Gig", path: "/gigs/new", icon: FileText },
+      { id: "client-talent-pool", label: "Talent Pool", path: "/dashboard/talent", icon: Users },
       { id: "client-contracts", label: "Contracts", path: "/dashboard/escrow", icon: FileText },
       { id: "client-messages", label: "Messages", path: "/chat", icon: MessageSquare },
       { id: "client-profile", label: "Profile", path: "/dashboard/profile", icon: Settings },
@@ -122,6 +124,8 @@ export const ROLE_NAVIGATION = {
       { id: "fl-dashboard", label: "Dashboard", path: "/dashboard", icon: Home },
       { id: "fl-find-gigs", label: "Find Gigs", path: "/gigs", icon: Briefcase },
       { id: "fl-proposals", label: "My Proposals", path: "/gigs/manage", icon: Send },
+      { id: "fl-my-projects", label: "My Projects", path: "/gigs/projects", icon: Briefcase },
+      { id: "fl-earnings", label: "Earnings", path: "/dashboard/earnings", icon: DollarSign },
       { id: "fl-contracts", label: "Contracts", path: "/dashboard/escrow", icon: FileText },
       { id: "fl-messages", label: "Messages", path: "/chat", icon: MessageSquare },
       { id: "fl-profile", label: "Profile", path: "/dashboard/profile", icon: Settings },
@@ -139,7 +143,7 @@ export const ROLE_NAVIGATION = {
       { id: "co-analytics", label: "Analytics", path: "/dashboard/performance-analytics", icon: TrendingUp },
       { id: "co-messages", label: "Messages", path: "/chat", icon: MessageSquare },
       { id: "co-profile", label: "Company Profile", path: "/dashboard/profile", icon: Building },
-      { id: "co-settings", label: "Settings", path: "/dashboard/profile/edit", icon: Settings },
+      { id: "co-settings", label: "Settings", path: "/dashboard/account", icon: Settings },
     ]
   },
   [ROLES.JOBSEEKER]: {
@@ -167,7 +171,7 @@ export const ROLE_NAVIGATION = {
       { id: "ad-statistics", label: "Statistics", path: "/dashboard/statistics", icon: BarChart },
       { id: "ad-staff", label: "Staff", path: "/dashboard/staff", icon: UserPlus },
       { id: "ad-subscriptions", label: "Subscriptions", path: "/dashboard/subscriptions", icon: DollarSign },
-      { id: "ad-settings", label: "Settings", path: "/dashboard/profile/edit", icon: Settings },
+      { id: "ad-settings", label: "Settings", path: "/dashboard/account", icon: Settings },
     ]
   }
 };

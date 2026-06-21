@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "Votre prochaine opportunité vous attend",
+    "title": "Trouvez l'emploi de vos rêves",
+    "subtitle": "Découvrez des opportunités dans les meilleures entreprises technologiques. Match intelligent, postulation rapide et salaires réels. Votre prochaine grande étape de carrière n'est qu'à quelques clics.",
+    "startSearching": "Commencer la recherche",
+    "learnMore": "En savoir plus",
+    "activeJobs": "Emplois actifs",
+    "companies": "Entreprises",
+    "successRate": "Taux de réussite"
+  },
+  "jobs": {
+    "heading": "Opportunités à la une",
+    "viewDetails": "Voir les détails",
+    "seniorReact": "Développeur React Senior",
+    "uxDesigner": "Designer UX/UI",
+    "productManager": "Chef de produit",
+    "devopsEngineer": "Ingénieur DevOps",
+    "sanFrancisco": "San Francisco, CA",
+    "newYork": "New York, NY",
+    "austin": "Austin, TX",
+    "remote": "À distance",
+    "fullTime": "Temps plein",
+    "contract": "Contrat"
+  },
+  "features": {
+    "heading": "Pourquoi choisir MAESTA",
+    "smartMatchingTitle": "Match intelligent",
+    "smartMatchingDesc": "L'algorithme alimenté par l'IA trouve des emplois qui correspondent parfaitement à vos compétences et objectifs",
+    "quickApplyTitle": "Postulation rapide",
+    "quickApplyDesc": "Postulez aux emplois en un clic en utilisant vos informations de profil",
+    "salaryInsightsTitle": "Aperçu des salaires",
+    "salaryInsightsDesc": "Consultez les données salariales réelles et les packages de compensation à l'avance"
+  },
+  "impact": {
+    "heading": "Notre impact",
+    "stat1Title": "Recrutement TechFlow",
+    "stat1Result": "Plus de 500 recrutements",
+    "stat1Desc": "Trouvé des talents d'ingénierie de premier plan en quelques semaines, pas en mois",
+    "stat2Title": "Satisfaction des talents",
+    "stat2Result": "95% heureux",
+    "stat2Desc": "95% des chercheurs d'emploi trouvent un rôle en moins de 30 jours"
+  },
+  "pricing": {
+    "heading": "Tarification simple",
+    "freeName": "Chercheur d'emploi gratuit",
+    "freePrice": "Gratuit",
+    "freeDesc": "Parfait pour explorer les opportunités",
+    "freeFeat1": "Recherche d'emploi illimitée",
+    "freeFeat2": "5 candidatures par jour",
+    "freeFeat3": "Téléversement de CV",
+    "freeCta": "Commencer",
+    "premiumName": "Premium",
+    "premiumDesc": "Pour les chasseurs d'emploi sérieux",
+    "premiumFeat1": "Candidatures illimitées",
+    "premiumFeat2": "Alertes d'emploi avancées",
+    "premiumFeat3": "Guide de négociation salariale",
+    "premiumCta": "Commencer l'essai gratuit"
+  },
+  "testimonials": {
+    "heading": "Histoires de réussite de nos utilisateurs",
+    "alexRole": "A trouvé un emploi en 2 semaines",
+    "alexCompany": "Développeur Senior chez Google",
+    "alexContent": "MAESTA a rendu ma recherche d'emploi incroyablement facile. J'ai trouvé mon rôle de rêve sans aucun problème !",
+    "sarahRole": "Changement de carrière",
+    "sarahCompany": "Designer UX chez Adobe",
+    "sarahContent": "La plateforme est intuitive et les correspondances d'emploi sont parfaites. Recommande fortement !"
+  },
+  "cta": {
+    "heading": "Prêt à trouver votre rôle idéal ?",
+    "subtitle": "Rejoignez des milliers de professionnels qui ont trouvé leur emploi de rêve sur MAESTA",
+    "button": "Commencer votre recherche"
+  }
+}

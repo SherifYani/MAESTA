@@ -83,15 +83,14 @@ const DashboardHeader = ({
   // Default user menu items
   const defaultUserMenuItems = useMemo(() => [
     {
-      id: "profile",
-      label: "Profile Settings",
-      icon: "User",
-      href: "/profile",
+      id: "settings",
+      label: "Settings",
+      icon: "Settings",
+      href: "/dashboard/account",
     },
-    { id: "account", label: "Account", icon: "Settings", href: "/account" },
-    { id: "billing", label: "Billing", icon: "CreditCard", href: "/billing" },
+    { id: "billing", label: "Billing", icon: "CreditCard", href: "/dashboard/billing" },
     { id: "divider", type: "divider" },
-    { id: "help", label: "Help & Support", icon: "HelpCircle", href: "/help" },
+    { id: "help", label: "Help & Support", icon: "HelpCircle", href: "/dashboard/help" },
     {
       id: "logout",
       label: "Logout",
@@ -124,9 +123,16 @@ const DashboardHeader = ({
     if (item.isLogout) {
       logout();
       navigate('/login', { replace: true });
+      setShowUserMenu(false);
+      return;
+    }
+
+    if (item.href) {
+      navigate(item.href);
     } else if (onProfileClick) {
       onProfileClick(item);
     }
+
     setShowUserMenu(false);
   };
 
@@ -279,20 +285,15 @@ const DashboardHeader = ({
                     : null;
 
                   return (
-                    <a
+                    <button
                       key={item.id}
-                      href={item.href}
+                      type="button"
                       className={`${styles.menuItem} ${item.isLogout ? styles.logout : ""
                         }`}
-                      onClick={(e) => {
-                        if (item.isLogout) {
-                          e.preventDefault();
-                          handleMenuItemClick(item);
-                        }
-                      }}>
+                      onClick={() => handleMenuItemClick(item)}>
                       {IconComponent && <IconComponent size={18} />}
                       {item.label}
-                    </a>
+                    </button>
                   );
                 })}
               </div>

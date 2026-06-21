@@ -34,10 +34,10 @@ import { useAuth } from "../../../context/AuthContext";
  * @returns {JSX.Element} The rendered sidebar
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
-  const { currentRole } = useContext(DashboardContext);
+  const { currentRole, setCurrentRole } = useContext(DashboardContext);
   const { user } = useAuth();
   const location = useLocation();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // Calculate user initials
   const getUserInitials = (name) => {
@@ -52,8 +52,23 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
   const userName = user?.name || user?.fullName || "User";
   const userInitials = getUserInitials(userName);
 
-  // Get navigation for current role - memoize this if needed
-  const roleNavigation = (ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation ?? [];
+  // Get navigation for current role - each entry is { displayName, icon, navigation: [...] }
+  const roleNavigation = (ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
+
+  /**
+   * Handle role change
+   * @param {string} role - New role to switch to
+   */
+  const handleRoleChange = useCallback(
+    (role) => {
+      if (setCurrentRole) setCurrentRole(role);
+      const newRoleNav = (ROLE_NAVIGATION[role] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
+      if (newRoleNav.length > 0) {
+        navigate(newRoleNav[0].path);
+      }
+    },
+    [setCurrentRole, navigate]
+  );
 
   /*
    * Handle navigation link click
@@ -118,7 +133,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
               const IconComponent = item.icon;
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.id} className={styles.navItem}>
+                <li key={item.path || item.label} className={styles.navItem}>
                   <Link
                     to={item.path}
                     className={`${styles.navLink} ${isActive ? styles.active : ""

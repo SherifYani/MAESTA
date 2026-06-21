@@ -11,6 +11,7 @@
 
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Heart } from 'lucide-react';
 import styles from './Footer.module.css';
@@ -31,20 +32,18 @@ const Footer = () => {
             title: 'For Job Seekers',
             links: [
                 { label: 'Browse Jobs', href: '/jobs' },
-                { label: 'Pricing', href: '/pricing' },
-                { label: 'Career Guide', href: '/career-guide' },
-                { label: 'Resume Builder', href: '/resume-builder' },
-                { label: 'Interview Prep', href: '/interview-prep' },
+                { label: 'Pricing', href: '/subscription/plans' },
+                { label: 'Resume Builder', href: '/ai/cv-builder' },
+                { label: 'Browse Gigs', href: '/gigs' },
             ],
         },
         {
             title: 'For Companies',
             links: [
-                { label: 'Start Hiring', href: '/hiring' },
-                { label: 'Pricing', href: '/pricing/employers' },
-                { label: 'Features', href: '/features' },
-                { label: 'Post a Job', href: '/post-job' },
-                { label: 'Contact Sales', href: '/contact-sales' },
+                { label: 'Post a Job', href: '/jobs/post' },
+                { label: 'Pricing', href: '/subscription/plans' },
+                { label: 'Find Candidates', href: '/dashboard/applicants' },
+                { label: 'AI Hiring Tools', href: '/ai/candidate-analysis' },
             ],
         },
         {
@@ -53,8 +52,6 @@ const Footer = () => {
                 { label: 'About Us', href: '/about' },
                 { label: 'Blog', href: '/blog' },
                 { label: 'Careers', href: '/careers' },
-                { label: 'Press Kit', href: '/press' },
-                { label: 'Brand Guidelines', href: '/brand' },
             ],
         },
         {
@@ -63,7 +60,6 @@ const Footer = () => {
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
                 { label: 'Security', href: '/security' },
-                { label: 'Cookie Policy', href: '/cookies' },
                 { label: 'Contact Support', href: '/contact' },
             ],
         },
@@ -185,14 +181,14 @@ const Footer = () => {
                                 <ul className={styles.sectionList}>
                                     {section.links.map((link, linkIndex) => (
                                         <li key={`link-${index}-${linkIndex}`} className={styles.sectionItem}>
-                                            <a
-                                                href={link.href}
+                                            <Link
+                                                to={link.href}
                                                 className={styles.sectionLink}
                                                 onClick={() => handleLinkClick(link.label, link.href)}
                                                 aria-label={link.label}
                                             >
                                                 {link.label}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -219,37 +215,37 @@ const Footer = () => {
                     {/* Legal Links */}
                     <div className={styles.legalSection}>
                         <nav className={styles.legalLinks} aria-label="Legal links">
-                            <a
-                                href="/privacy"
+                            <Link
+                                to="/privacy"
                                 className={styles.legalLink}
                                 onClick={() => handleLinkClick('Privacy Policy', '/privacy')}
                             >
                                 Privacy Policy
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/terms"
+                            <Link
+                                to="/terms"
                                 className={styles.legalLink}
                                 onClick={() => handleLinkClick('Terms of Service', '/terms')}
                             >
                                 Terms of Service
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/cookies"
+                            <Link
+                                to="/cookies"
                                 className={styles.legalLink}
                                 onClick={() => handleLinkClick('Cookie Policy', '/cookies')}
                             >
                                 Cookie Policy
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/accessibility"
+                            <Link
+                                to="/accessibility"
                                 className={styles.legalLink}
                                 onClick={() => handleLinkClick('Accessibility', '/accessibility')}
                             >
                                 Accessibility
-                            </a>
+                            </Link>
                         </nav>
                     </div>
 

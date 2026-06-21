@@ -27,9 +27,9 @@ import styles from './Header.module.css';
 
 /** Guest (unauthenticated) navigation links. */
 const NAV_GUEST = [
-  { name: 'Jobs',         path: '/jobs' },
-  { name: 'Gigs',         path: '/gigs' },
-  { name: 'AI Assistant', path: '/ai-assistant' },
+  { name: 'Jobs',     path: '/jobs' },
+  { name: 'Gigs',     path: '/gigs' },
+  { name: 'AI Tools', path: '/ai' },
 ];
 
 /**
@@ -40,31 +40,51 @@ const NAV_AUTHENTICATED = {
   jobseeker: [
     { name: 'Dashboard',    path: '/dashboard' },
     { name: 'Jobs',         path: '/jobs' },
-    { name: 'Applications', path: '/applications' },
+    { name: 'Applications', path: '/dashboard/applications' },
     { name: 'Gigs',         path: '/gigs' },
-    { name: 'Messages',     path: '/messages' },
+    { name: 'Messages',     path: '/chat' },
   ],
   freelancer: [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Find Gigs', path: '/gigs' },
     { name: 'My Gigs',   path: '/gigs/manage' },
-    { name: 'Proposals', path: '/proposals' },
-    { name: 'Messages',  path: '/messages' },
+    { name: 'Proposals', path: '/gigs/proposals' },
+    { name: 'Messages',  path: '/chat' },
   ],
   company: [
-    { name: 'Dashboard',       path: '/dashboard' },
-    { name: 'Post Job',        path: '/jobs/post' },
-    { name: 'My Jobs',         path: '/jobs/manage' },
-    { name: 'Candidates',      path: '/candidates' },
-    { name: 'Messages',        path: '/messages' },
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Post Job',   path: '/jobs/post' },
+    { name: 'My Jobs',    path: '/dashboard/published-jobs' },
+    { name: 'Candidates', path: '/dashboard/applicants' },
+    { name: 'Messages',   path: '/chat' },
+  ],
+  employer: [
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Post Job',   path: '/jobs/post' },
+    { name: 'My Jobs',    path: '/dashboard/published-jobs' },
+    { name: 'Candidates', path: '/dashboard/applicants' },
+    { name: 'Messages',   path: '/chat' },
+  ],
+  client: [
+    { name: 'Dashboard',   path: '/dashboard' },
+    { name: 'Gigs',        path: '/gigs' },
+    { name: 'My Projects', path: '/gigs/projects' },
+    { name: 'Talent',      path: '/dashboard/talent' },
+    { name: 'Messages',    path: '/chat' },
+  ],
+  admin: [
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Users',      path: '/dashboard/users' },
+    { name: 'Jobs',       path: '/dashboard/jobs' },
+    { name: 'Moderation', path: '/dashboard/moderation' },
   ],
 };
 
 /** Avatar dropdown menu items. */
 const DROPDOWN_ITEMS = [
   { icon: <LayoutDashboard size={15} />, label: 'Dashboard', to: '/dashboard' },
-  { icon: <User size={15} />,          label: 'Profile',   to: '/dashboard/profile' },
-  { icon: <Settings size={15} />,      label: 'Settings',  to: '/settings' },
+  { icon: <User size={15} />,            label: 'Profile',   to: '/dashboard/profile' },
+  { icon: <Settings size={15} />,        label: 'Settings',  to: '/dashboard/account' },
 ];
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -136,7 +156,7 @@ const Header = () => {
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/jobs?search=${encodeURIComponent(searchQuery.trim())}`);
       setMobileOpen(false);
     }
   }, [searchQuery, navigate]);

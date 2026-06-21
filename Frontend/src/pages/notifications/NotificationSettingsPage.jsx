@@ -11,7 +11,7 @@
  * @requires ../../utils/notificationTypes
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, RotateCcw, Bell, Mail, Smartphone } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
@@ -65,9 +65,15 @@ const NotificationSettingsPage = () => {
     const [hasChanges, setHasChanges] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
+    // Use a ref to track initialization so we only sync from context ONCE.
+    // This prevents infinite re-render loops caused by context returning a new
+    // object reference for `preferences` on every render cycle.
+    const hasInitialized = useRef(false);
+
     // Load preferences from context
     useEffect(() => {
-        if (preferences) {
+        if (!hasInitialized.current && preferences && Object.keys(preferences).length > 0) {
+            hasInitialized.current = true;
             setLocalPreferences(mergePreferences(preferences));
         }
     }, [preferences]);

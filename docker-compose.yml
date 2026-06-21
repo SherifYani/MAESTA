@@ -17,11 +17,7 @@ services:
     networks:
       - jobmagnet_network
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'JobMagnet@2026!' -Q 'SELECT 1' -No",
-        ]
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'JobMagnet@2026!' -Q 'SELECT 1' -No" ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -44,7 +40,7 @@ services:
     networks:
       - jobmagnet_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -74,7 +70,6 @@ services:
       "
     networks:
       - jobmagnet_network
-
 
   # ─── Database UI Manager (Adminer) ──────────────────────────────────────────
   db-manager:
