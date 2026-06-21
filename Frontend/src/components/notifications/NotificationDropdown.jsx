@@ -22,16 +22,18 @@ import NotificationSkeleton from './NotificationSkeleton';
  * using actionUrl first, then falling back to type-based routing.
  */
 export const getNotificationRoute = (notification) => {
-    if (notification.actionUrl) return notification.actionUrl;
-    const type = (notification.type || notification.Type || '').toLowerCase();
-    switch (type) {
-        case 'interview':   return '/dashboard/my-interviews';
-        case 'application': return '/dashboard/new-applications';
-        case 'job':         return '/jobs';
-        case 'message':     return '/chat';
-        case 'system':      return '/notifications';
-        default:            return '/notifications';
+    if (notification.actionUrl && !notification.actionUrl.startsWith('/interviews/')) {
+        return notification.actionUrl;
     }
+    const typeStr = (notification.type || notification.Type || '').toLowerCase();
+    const titleStr = (notification.title || notification.Title || '').toLowerCase();
+    
+    if (typeStr.includes('interview') || titleStr.includes('interview')) return '/dashboard/my-interviews';
+    if (typeStr.includes('application') || titleStr.includes('application')) return '/dashboard/new-applications';
+    if (typeStr.includes('job') || titleStr.includes('job')) return '/jobs';
+    if (typeStr.includes('message') || titleStr.includes('message')) return '/chat';
+    
+    return '/notifications';
 };
 
 /**
