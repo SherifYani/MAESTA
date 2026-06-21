@@ -12,9 +12,10 @@
  * - Profile, analytics, pendingActions retain mock fallback (no API yet)
  */
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useAuth } from "../../../../context/AuthContext";
 import jobService from '../../../../services/jobService';
+import dashboardService from '../../../../services/dashboardService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
@@ -33,15 +34,6 @@ import NewApplicantsWidget from "./components/NewApplicants/NewApplicantsWidget"
 
 import {
   ROLES,
-  getCompanyDashboardData,
-  COMPANY_PROFILE,
-  COMPANY_PUBLISHED_JOBS,
-  COMPANY_NEW_APPLICANTS,
-  COMPANY_PERFORMANCE_ANALYTICS,
-  COMPANY_RECENT_ACTIVITY,
-  COMPANY_PENDING_ACTIONS,
-  getCompanyStatistics,
-  getJobPerformanceSummary,
 } from "../../config/dashboard.config";
 import {
   Plus,
@@ -72,8 +64,10 @@ import {
 import styles from "./CompanyDashboard.module.css";
 
 const CompanyDashboard = () => {
-  const { t } = useTranslation(['dashboards', 'common']);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const employerProfile = user?.employerProfile || {};
+  const companyProfile = employerProfile.company || {};
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [loading, setLoading] = useState(true);
@@ -84,26 +78,46 @@ const CompanyDashboard = () => {
   // Live API data
   const [publishedJobs,  setPublishedJobs]  = useState([]);
   const [newApplicants,  setNewApplicants]  = useState([]);
+  const [stats, setStats] = useState({
+    totalJobsPosted: 0,
+    openPositions: 0,
+    totalApplications: 0,
+    hireRate: 0,
+    avgTimeToHire: '0 days'
+  });
 
-  // Mock-backed data (no API endpoints yet)
-  const mockSnapshot = getCompanyDashboardData(ROLES.COMPANY);
-  const [dashboardData] = useState(() => ({
-    profile:              COMPANY_PROFILE,
-    performanceAnalytics: COMPANY_PERFORMANCE_ANALYTICS,
-    recentActivity:       COMPANY_RECENT_ACTIVITY,
-    pendingActions:       COMPANY_PENDING_ACTIONS,
-  }));
+  // ── Derived Data ──────────────────────────────────────────────────────────
+  const dashboardData = useMemo(() => ({
+    profile: {
+      name:        user?.name || '',
+      description: companyProfile.description || '',
+      industry:    companyProfile.industry || '',
+      location:    companyProfile.city ? `${companyProfile.city}, ${companyProfile.country}` : '',
+      size:        companyProfile.companySize || '',
+      stats: stats
+    },
+    performanceAnalytics: {
+      overview: { 
+        hireRate: stats.hireRate, 
+        totalHires: Math.round((stats.totalApplications * stats.hireRate) / 100), 
+        avgTimeToHire: stats.avgTimeToHire 
+      }
+    },
+    recentActivity:       [],
+    pendingActions:       [],
+    hiringTeam:           [],
+  }), [user, publishedJobs, newApplicants, companyProfile]);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [jobsResult, applicantsResult] = await Promise.allSettled([
+      const [dbResult, jobsResult, applicantsResult] = await Promise.allSettled([
+        dashboardService.getCompanyDashboard(),
         jobService.getCompanyJobs(),
-        // Fetch applications for all company jobs by getting all applications
+        // Fetch applications logic...
         jobService.getCompanyJobs().then(async (jobs) => {
           const raw = Array.isArray(jobs) ? jobs : (jobs?.items ?? jobs?.data ?? []);
-          // Get applications for the first 3 active jobs (overview only)
           const activeJobs = raw.filter(j => j.status === 'active' || !j.status).slice(0, 3);
           const appPromises = activeJobs.map(j => jobService.getJobApplications(j.id || j.jobId));
           const results = await Promise.allSettled(appPromises);
@@ -113,24 +127,29 @@ const CompanyDashboard = () => {
         }),
       ]);
 
+      if (dbResult.status === 'fulfilled') {
+        const data = dbResult.value;
+        setStats({
+          totalJobsPosted: data.totalJobsPosted || 0,
+          openPositions: data.openPositions || 0,
+          totalApplications: data.totalApplications || 0,
+          hireRate: data.hireRate || 0,
+          avgTimeToHire: data.avgTimeToHire || '0 days'
+        });
+      }
+
       if (jobsResult.status === 'fulfilled') {
-        const raw = jobsResult.value;
-        const items = Array.isArray(raw) ? raw : (raw?.items ?? raw?.data ?? []);
+        const items = Array.isArray(jobsResult.value) ? jobsResult.value : (jobsResult.value?.items ?? jobsResult.value?.data ?? []);
         setPublishedJobs(items);
-      } else {
-        // Fall back to mock jobs
-        setPublishedJobs(COMPANY_PUBLISHED_JOBS);
       }
 
       if (applicantsResult.status === 'fulfilled') {
         setNewApplicants(applicantsResult.value);
-      } else {
-        setNewApplicants(COMPANY_NEW_APPLICANTS);
       }
     } catch (err) {
       console.error('[CompanyDashboard] Unexpected fetch error:', err);
-      setPublishedJobs(COMPANY_PUBLISHED_JOBS);
-      setNewApplicants(COMPANY_NEW_APPLICANTS);
+      setPublishedJobs([]);
+      setNewApplicants([]);
     } finally {
       setLoading(false);
     }
@@ -165,42 +184,41 @@ const CompanyDashboard = () => {
 
   // Calculate quick stats — blend live data with mock analytics
   const calculateQuickInsights = () => {
-    const stats     = getCompanyStatistics();
     const analytics = dashboardData.performanceAnalytics;
     const activeCount = publishedJobs.filter(j => j.status === 'active' || !j.status).length;
 
     return [
       {
-        title: t('dashboards:company.stats.activeJobs', 'Active Jobs'),
-        value: activeCount || stats.activeJobs,
-        change: t('dashboards:company.stats.totalPosted', '{{count}} total posted', { count: publishedJobs.length || 0 }),
+        title: "Active Jobs",
+        value: activeCount,
+        change: `${publishedJobs.length || 0} total posted`,
         icon: Briefcase,
         trendType: "positive",
-        description: t('dashboards:company.stats.activeJobsDesc', 'Currently hiring positions'),
+        description: "Currently hiring positions",
       },
       {
-        title: t('dashboards:company.stats.totalApplications', 'Total Applications'),
-        value: newApplicants.length || stats.totalApplications,
-        change: t('dashboards:company.stats.newThisMonth', '{{count}} new this month', { count: stats.newApplications }),
+        title: "Total Applications",
+        value: newApplicants.length,
+        change: `0 new this month`,
         icon: Users,
         trendType: "positive",
-        description: t('dashboards:company.stats.totalApplicationsDesc', 'All-time applications'),
+        description: "All-time applications",
       },
       {
-        title: t('dashboards:company.stats.hireRate', 'Hire Rate'),
+        title: "Hire Rate",
         value: `${analytics?.overview?.hireRate || 0}%`,
-        change: t('dashboards:company.stats.totalHires', '{{count}} total hires', { count: analytics?.overview?.totalHires || 0 }),
+        change: `${analytics?.overview?.totalHires || 0} total hires`,
         icon: Target,
         trendType: "positive",
-        description: t('dashboards:company.stats.hireRateDesc', 'Successful hire percentage'),
+        description: "Successful hire percentage",
       },
       {
-        title: t('dashboards:company.stats.avgTimeToHire', 'Avg Time to Hire'),
-        value: analytics?.overview?.avgTimeToHire || t('dashboards:company.stats.avgTimeToHireDefault', '24 days'),
-        change: t('dashboards:company.stats.improvedBy', 'Improved by 2 days'),
+        title: "Avg Time to Hire",
+        value: analytics?.overview?.avgTimeToHire || "0 days",
+        change: "No data yet",
         icon: Clock,
         trendType: "positive",
-        description: t('dashboards:company.stats.avgTimeToHireDesc', 'Average hiring duration'),
+        description: "Average hiring duration",
       },
     ];
   };
@@ -219,23 +237,24 @@ const CompanyDashboard = () => {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingSpinner}></div>
-        <p>{t('dashboards:common.loading', 'Loading your dashboard...')}</p>
+        <p>Loading company dashboard...</p>
       </div>
     );
   }
 
   const activeJobs =
     dashboardData.publishedJobs?.filter((job) => job.status === "active") || [];
-  const jobPerformance = getJobPerformanceSummary();
+  const jobPerformance = { labels: [], datasets: [] };
 
   return (
     <div className={styles.companyDashboard}>
       {/* Header Section with Actions */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>{t('dashboards:company.title', 'Company Dashboard')}</h1>
+          <h1 className={styles.title}>Company Dashboard</h1>
           <p className={styles.subtitle}>
-            {t('dashboards:company.welcome', 'Welcome back, {{name}}! Here\'s your hiring overview.', { name: dashboardData.profile.name })}
+            Welcome back, {dashboardData.profile.name}! Here's your hiring
+            overview.
           </p>
         </div>
 
@@ -245,11 +264,11 @@ const CompanyDashboard = () => {
             icon={RefreshCw}
             onClick={handleRefreshDashboard}
             size="medium">
-            {t('common:actions.refresh', 'Refresh')}
+            Refresh
           </Button>
           <Link to="/dashboard/published-jobs?new=true">
             <Button variant="primary" icon={Plus} size="medium">
-              {t('dashboards:company.createJob', 'Create Job')}
+              Create Job
             </Button>
           </Link>
         </div>
@@ -258,14 +277,14 @@ const CompanyDashboard = () => {
       {/* Quick Insights Section */}
       <section className={styles.quickInsightsSection}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>{t('dashboards:company.quickInsights', 'Quick Insights')}</h2>
+          <h2 className={styles.sectionTitle}>Quick Insights</h2>
           <div className={styles.sectionActions}>
             <Button
               variant="ghost"
               size="small"
               onClick={() => handleExportData("stats")}
               icon={Download}>
-              {t('common:actions.export', 'Export')}
+              Export
             </Button>
           </div>
         </div>
@@ -288,13 +307,13 @@ const CompanyDashboard = () => {
         <div className={styles.fullWidthRow}>
           <div className={styles.widget}>
             <Card
-              title={t('dashboards:company.newApplicants.title', 'New Applicants')}
-              subtitle={t('dashboards:company.newApplicants.subtitle', 'Recent applications')}
+              title="New Applicants"
+              subtitle="Recent applications"
               className={styles.activityCard}
               action={
                 <Link to="/dashboard/applicants">
                   <Button variant="ghost" size="small">
-                    {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
+                    View All <ArrowUpRight size={14} />
                   </Button>
                 </Link>
               }>
@@ -310,13 +329,13 @@ const CompanyDashboard = () => {
         <div className={styles.twoColumnRow}>
           <div className={styles.widget}>
             <Card
-              title={t('dashboards:company.activeJobs.title', 'Active Jobs')}
-              subtitle={t('dashboards:company.activeJobs.subtitle', 'Recent & active postings')}
+              title="Active Jobs"
+              subtitle="Recent & active postings"
               className={styles.activityCard}
               action={
                 <Link to="/dashboard/published-jobs">
                   <Button variant="ghost" size="small">
-                    {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
+                    View All <ArrowUpRight size={14} />
                   </Button>
                 </Link>
               }>
@@ -329,8 +348,8 @@ const CompanyDashboard = () => {
 
           <div className={styles.widget}>
             <Card
-              title={t('dashboards:company.aboutCompany.title', 'About Company')}
-              subtitle={t('dashboards:company.aboutCompany.subtitle', 'Company information')}
+              title="About Company"
+              subtitle="Company information"
               className={styles.activityCard}>
               <div className={styles.aboutCompanyContent}>
                 <p className={styles.companyDescription}>
@@ -359,8 +378,8 @@ const CompanyDashboard = () => {
         <div className={styles.twoColumnRow}>
           <div className={styles.widget}>
             <Card
-              title={t('dashboards:company.hiringTeam.title', 'Hiring Team')}
-              subtitle={t('dashboards:company.hiringTeam.subtitle', 'Primary contacts for recruitment')}
+              title="Hiring Team"
+              subtitle="Primary contacts for recruitment"
               className={styles.activityCard}>
               <div className={styles.teamList}>
                 {dashboardData.profile?.hiringTeam?.slice(0, 3).map((member) => (
@@ -385,32 +404,32 @@ const CompanyDashboard = () => {
 
           <div className={styles.widget}>
             <Card
-              title={t('dashboards:company.quickStats.title', 'Quick Stats')}
-              subtitle={t('dashboards:company.quickStats.subtitle', 'Key performance metrics')}
+              title="Quick Stats"
+              subtitle="Key performance metrics"
               className={styles.activityCard}>
               <div className={styles.statsList}>
                 <div className={styles.statItem}>
-                  <span className={styles.statKey}>{t('dashboards:company.quickStats.totalJobsPosted', 'Total Jobs Posted')}</span>
+                  <span className={styles.statKey}>Total Jobs Posted</span>
                   <span className={styles.statValue}>
                     {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
                   </span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statKey}>{t('dashboards:company.quickStats.openPositions', 'Open Positions')}</span>
+                  <span className={styles.statKey}>Open Positions</span>
                   <span className={styles.statValue}>
                     {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
                   </span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statKey}>{t('dashboards:company.quickStats.interviewRate', 'Interview Rate')}</span>
+                  <span className={styles.statKey}>Interview Rate</span>
                   <span className={styles.statValue}>
                     {dashboardData.profile?.stats?.interviewRate || 0}%
                   </span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statKey}>{t('dashboards:company.quickStats.totalHires', 'Total Hires')}</span>
+                  <span className={styles.statKey}>Total Hires</span>
                   <Badge variant="success">
-                    {t('dashboards:company.quickStats.successRate', '{{rate}}% success', { rate: dashboardData.profile?.stats?.hireRate || 0 })}
+                    {dashboardData.profile?.stats?.hireRate || 0}% success
                   </Badge>
                 </div>
               </div>
@@ -422,12 +441,12 @@ const CompanyDashboard = () => {
       {/* Pending Actions Footer */}
       <div className={styles.pendingActionsSection}>
         <Card
-          title={t('dashboards:common.pendingActions.title', 'Pending Actions')}
-          subtitle={t('dashboards:company.pendingActions.subtitle', '{{count}} HR and management tasks', { count: dashboardData.pendingActions?.length || 0 })}
+          title="Pending Actions"
+          subtitle={`${dashboardData.pendingActions?.length || 0} HR and management tasks`}
           className={styles.pendingActionsCard}
           action={
             <Badge variant="warning">
-              {t('dashboards:common.pendingActions.badge', '{{count}} pending', { count: dashboardData.pendingActions?.length || 0 })}
+              {dashboardData.pendingActions?.length || 0} pending
             </Badge>
           }>
           <PendingActions
@@ -443,31 +462,31 @@ const CompanyDashboard = () => {
       <div className={styles.performanceFooter}>
         <div className={styles.footerStats}>
           <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>{t('dashboards:company.quickStats.totalJobsPosted', 'Total Jobs Posted')}</span>
+            <span className={styles.footerStatLabel}>Total Jobs Posted</span>
             <span className={styles.footerStatValue}>
               {publishedJobs.length || dashboardData.profile?.stats?.totalJobsPosted || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>{t('dashboards:company.quickStats.openPositions', 'Open Positions')}</span>
+            <span className={styles.footerStatLabel}>Open Positions</span>
             <span className={styles.footerStatValue}>
               {publishedJobs.filter(j => j.status === 'active' || !j.status).length || dashboardData.profile?.stats?.openPositions || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>{t('dashboards:company.quickStats.totalApplications', 'Total Applications')}</span>
+            <span className={styles.footerStatLabel}>Total Applications</span>
             <span className={styles.footerStatValue}>
               {newApplicants.length || dashboardData.profile?.stats?.totalApplications?.toLocaleString() || 0}
             </span>
           </div>
           <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>{t('dashboards:company.quickStats.interviewRate', 'Interview Rate')}</span>
+            <span className={styles.footerStatLabel}>Interview Rate</span>
             <span className={styles.footerStatValue}>
               {dashboardData.profile?.stats?.interviewRate || 0}%
             </span>
           </div>
           <div className={styles.footerStat}>
-            <span className={styles.footerStatLabel}>{t('dashboards:company.quickStats.successRate', 'Success Rate')}</span>
+            <span className={styles.footerStatLabel}>Success Rate</span>
             <span className={styles.footerStatValue}>
               {dashboardData.profile?.stats?.hireRate || 0}%
             </span>

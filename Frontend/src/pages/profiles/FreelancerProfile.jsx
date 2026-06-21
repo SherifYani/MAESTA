@@ -85,7 +85,7 @@ export default function FreelancerProfile() {
           <div className="profile__avatar">
             <img
               src={freelancerData.profilePictureUrl || "/placeholder.svg"}
-              alt={`Profile picture of ${freelancerData.fullName}`}
+              alt={freelancerData.fullName}
               className="profile__avatar-image"
               width={120}
               height={120}
@@ -251,7 +251,7 @@ export default function FreelancerProfile() {
                 aria-label={`Portfolio item: ${item.title}`}>
                 <img
                   src={item.itemUrl || "/placeholder.svg"}
-                  alt={`Screenshot of ${item.title}`}
+                  alt={item.title}
                   className="profile__portfolio-img"
                   loading="lazy"
                   width={400}

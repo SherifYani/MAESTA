@@ -77,7 +77,7 @@ export default function CompanyProfile() {
           <div className="profile__avatar profile__avatar--company">
             <img
               src={companyData.logoUrl || "/placeholder.svg"}
-              alt={`${companyData.name} company logo`}
+              alt={companyData.name}
               className="profile__avatar-image"
               width={120}
               height={120}
@@ -212,7 +212,7 @@ export default function CompanyProfile() {
                 )}`}>
                 <img
                   src={member.avatar || "/placeholder.svg"}
-                  alt={`${member.name} profile picture`}
+                  alt={member.name}
                   className="profile__member-avatar"
                   width={64}
                   height={64}

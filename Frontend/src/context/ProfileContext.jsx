@@ -392,7 +392,36 @@ export function ProfileProvider({ children }) {
           setFreelancerData(prev => ({ ...prev, ...data }));
         } else if (user.role === 'company' || user.role === 'employer') {
           const data = await profileService.getCompanyProfile();
-          setCompanyData(prev => ({ ...prev, ...data }));
+          // Normalize backend PascalCase properties to frontend camelCase expectations
+          const normalizedData = {
+            ...data,
+            name: data.companyName,
+            websiteUrl: data.website || "",
+            verificationStatus: data.isVerified ? "Verified" : "Unverified",
+            // If backend returns PascalCase lists, normalize them
+            members: (data.members || []).map(m => ({
+              id: m.id,
+              name: m.name,
+              role: m.role,
+              avatar: m.avatar
+            })),
+            jobs: (data.jobs || []).map(j => ({
+              id: j.id,
+              title: j.title,
+              location: j.location,
+              jobType: j.jobType,
+              status: j.status,
+              postedAt: j.postedAt,
+              applicationsCount: j.applicationsCount
+            })),
+            stats: {
+              totalJobs: data.stats?.totalJobs || 0,
+              activeJobs: data.stats?.activeJobs || 0,
+              totalHires: data.stats?.totalHires || 0,
+              avgTimeToHire: data.stats?.avgTimeToHire || 0
+            }
+          };
+          setCompanyData(prev => ({ ...prev, ...normalizedData }));
         } else if (user.role === 'client') {
           const data = await profileService.getClientProfile();
           setClientData(prev => ({ ...prev, ...data }));

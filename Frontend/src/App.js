@@ -10,7 +10,6 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { FloatingAssistantIcon, ChatWindow } from "./components/ai-assistant";
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import LanguageAnnouncer from "./components/common/LanguageAnnouncer";
 import TableSkeleton from "./components/common/Skeleton/TableSkeleton";
 import "./styles/globals.css";
 import "./styles/App.css";
@@ -35,6 +34,23 @@ const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => 
 // Static Pages
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
+const MarketingInfoPage = lazy(() => import("./pages/MarketingInfoPage.jsx"));
+
+// Profile Pages (Phase 4)
+const JobSeekerProfile = lazy(() => import("./pages/profiles/JobSeekerProfile"));
+const CompanyProfile = lazy(() => import("./pages/profiles/CompanyProfile"));
+const FreelancerProfile = lazy(() => import("./pages/profiles/FreelancerProfile"));
+const ClientProfile = lazy(() => import("./pages/profiles/ClientProfile"));
+const EditJobSeekerProfile = lazy(() => import("./pages/profiles/EditJobSeekerProfile"));
+const EditCompanyProfile = lazy(() => import("./pages/profiles/EditCompanyProfile"));
+const EditClientProfile = lazy(() => import("./pages/profiles/EditClientProfile"));
+const EditFreelancerProfile = lazy(() => import("./pages/profiles/EditFreelancerProfile"));
+
+// Onboarding Pages (Phase 5)
+const JobSeekerOnboarding = lazy(() => import("./pages/onboarding/JobSeekerOnboarding"));
+const CompanyOnBoarding = lazy(() => import("./pages/onboarding/CompanyOnBoarding"));
+const FreelancerOnboarding = lazy(() => import("./pages/onboarding/FreelancerOnboarding"));
+const CompanyMemberOnBoarding = lazy(() => import("./pages/onboarding/CompanyMemberOnBoarding"));
 
 // Loading Fallback
 const PageLoader = () => (
@@ -58,6 +74,15 @@ function App() {
       <Routes>
         {/* Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<MarketingInfoPage pageKey="about" />} />
+        <Route path="/blog" element={<MarketingInfoPage pageKey="blog" />} />
+        <Route path="/careers" element={<MarketingInfoPage pageKey="careers" />} />
+        <Route path="/privacy" element={<MarketingInfoPage pageKey="privacy" />} />
+        <Route path="/terms" element={<MarketingInfoPage pageKey="terms" />} />
+        <Route path="/security" element={<MarketingInfoPage pageKey="security" />} />
+        <Route path="/cookies" element={<MarketingInfoPage pageKey="cookies" />} />
+        <Route path="/accessibility" element={<MarketingInfoPage pageKey="accessibility" />} />
+        <Route path="/contact" element={<MarketingInfoPage pageKey="contact" />} />
 
         {/* Auth Pages - Managed individually for simplicity and layout-specific skeletons */}
         <Route path="/login" element={<LoginForm />} />
@@ -111,12 +136,26 @@ function App() {
         <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
         <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
 
+        {/* Profile Routes (Phase 4) */}
+        <Route path="/profiles/jobseeker/:userId" element={<JobSeekerProfile />} />
+        <Route path="/profiles/company/:userId" element={<CompanyProfile />} />
+        <Route path="/profiles/freelancer/:userId" element={<FreelancerProfile />} />
+        <Route path="/profiles/client/:userId" element={<ClientProfile />} />
+        <Route path="/profiles/edit/jobseeker" element={<ProtectedRoute><EditJobSeekerProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/company" element={<ProtectedRoute><EditCompanyProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/client" element={<ProtectedRoute><EditClientProfile /></ProtectedRoute>} />
+        <Route path="/profiles/edit/freelancer" element={<ProtectedRoute><EditFreelancerProfile /></ProtectedRoute>} />
+
+        {/* Onboarding Routes (Phase 5) */}
+        <Route path="/onboarding/jobseeker" element={<ProtectedRoute><JobSeekerOnboarding /></ProtectedRoute>} />
+        <Route path="/onboarding/company" element={<ProtectedRoute><CompanyOnBoarding /></ProtectedRoute>} />
+        <Route path="/onboarding/freelancer" element={<ProtectedRoute><FreelancerOnboarding /></ProtectedRoute>} />
+        <Route path="/onboarding/company-member" element={<ProtectedRoute><CompanyMemberOnBoarding /></ProtectedRoute>} />
+
         {/* 404 & Redirects */}
         <Route path="/404" element={<ErrorPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
-
-      <LanguageAnnouncer />
 
       {/* Global AI Assistant */}
       <FloatingAssistantIcon

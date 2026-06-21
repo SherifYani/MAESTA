@@ -12,7 +12,6 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import gigService from '../../../../services/gigService';
 import StatsGrid from "../../components/StatsGrid";
 import RecentActivity from "../../components/RecentActivity";
@@ -46,7 +45,6 @@ import styles from "./ClientDashboard.module.css";
  * Enhanced ClientDashboard - Clean, No Nested Cards
  */
 const ClientDashboard = ({ data }) => {
-  const { t } = useTranslation(['dashboards', 'common']);
   // Live API data
   const [jobPosts,  setJobPosts]  = useState([]);
   const [apiLoading, setApiLoading] = useState(true);
@@ -106,36 +104,36 @@ const ClientDashboard = ({ data }) => {
   // Quick Insights Metrics for StatsGrid
   const quickInsightsMetrics = [
     {
-      title: t('dashboards:client.stats.totalBudgetSaved', 'Total Budget Saved'),
+      title: "Total Budget Saved",
       value: totalSavedValue,
-      change: t('dashboards:client.stats.vsInitialEstimates', 'vs. initial estimates'),
+      change: "vs. initial estimates",
       icon: DollarSign,
       trendType: "positive",
-      description: t('dashboards:client.stats.costSavings', 'Cost savings across projects'),
+      description: "Cost savings across projects",
     },
     {
-      title: t('dashboards:client.stats.onTimeDelivery', 'On-Time Delivery'),
+      title: "On-Time Delivery",
       value: `${onTimeDeliveryValue}%`,
-      change: t('dashboards:client.stats.acrossAllProjects', 'across all projects'),
+      change: "across all projects",
       icon: Calendar,
       trendType: "positive",
-      description: t('dashboards:client.stats.onSchedule', 'Projects delivered on schedule'),
+      description: "Projects delivered on schedule",
     },
     {
-      title: t('dashboards:client.stats.completionRate', 'Completion Rate'),
+      title: "Completion Rate",
       value: `${performanceMetrics?.projectCompletionRate || 92}%`,
-      change: t('dashboards:client.stats.projectSuccessRate', 'project success rate'),
+      change: "project success rate",
       icon: Target,
       trendType: "positive",
-      description: t('dashboards:client.stats.completedProjects', 'Successfully completed projects'),
+      description: "Successfully completed projects",
     },
     {
-      title: t('dashboards:client.stats.satisfactionScore', 'Satisfaction Score'),
+      title: "Satisfaction Score",
       value: `${performanceMetrics?.clientSatisfaction || 4.6}/5`,
-      change: t('dashboards:client.stats.fromFreelancerFeedback', 'from freelancer feedback'),
+      change: "from freelancer feedback",
       icon: Award,
       trendType: "positive",
-      description: t('dashboards:client.stats.avgRating', 'Average rating from talent'),
+      description: "Average rating from talent",
     },
   ];
 
@@ -159,9 +157,9 @@ const ClientDashboard = ({ data }) => {
       {/* Header Section */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>{t('dashboards:client.title', 'Client Dashboard')}</h1>
+          <h1 className={styles.title}>Client Dashboard</h1>
           <p className={styles.subtitle}>
-            {t('dashboards:client.subtitle', 'Manage your projects, talent, and hiring pipeline')}
+            Manage your projects, talent, and hiring pipeline
           </p>
         </div>
 
@@ -170,13 +168,13 @@ const ClientDashboard = ({ data }) => {
             variant="primary"
             icon={Plus}
             onClick={() => handleQuickAction("create-job")}>
-            {t('dashboards:client.postNewJob', 'Post New Job')}
+            Post New Job
           </Button>
           <Button
             variant="outline"
             icon={Users}
             onClick={() => handleQuickAction("hire-talent")}>
-            {t('dashboards:client.hireTalent', 'Hire Talent')}
+            Hire Talent
           </Button>
         </div>
       </header>
@@ -192,13 +190,13 @@ const ClientDashboard = ({ data }) => {
         <div className={styles.leftColumn}>
           {/* Recent Activity with Card Wrapper */}
           <Card
-            title={t('dashboards:common.recentActivity.title', 'Recent Activity')}
-            subtitle={t('dashboards:client.recentActivity.subtitle', 'Latest project updates and notifications')}
+            title="Recent Activity"
+            subtitle="Latest project updates and notifications"
             className={styles.activityCard}
             variant="glass"
             action={
               <Button variant="ghost" size="small">
-                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
+                View All <ArrowUpRight size={14} />
               </Button>
             }>
             <RecentActivity activities={activities} limit={5} />
@@ -206,8 +204,8 @@ const ClientDashboard = ({ data }) => {
 
           {/* Budget Overview */}
           <Card
-            title={t('dashboards:client.budgetOverview.title', 'Budget Overview')}
-            subtitle={t('dashboards:client.budgetOverview.subtitle', 'Monthly spending • {{pct}}% used', { pct: progressPercentage })}
+            title="Budget Overview"
+            subtitle={`Monthly spending • ${progressPercentage}% used`}
             className={styles.budgetCard}
             variant="glass">
             <BudgetOverviewWidget
@@ -222,13 +220,13 @@ const ClientDashboard = ({ data }) => {
 
           {/* Compact Job Posts */}
           <Card
-            title={t('dashboards:client.activeJobPosts.title', 'Active Job Posts')}
-            subtitle={t('dashboards:client.activeJobPosts.subtitle', '{{count}} open positions', { count: jobPosts.length })}
+            title="Active Job Posts"
+            subtitle={`${jobPosts.length} open positions`}
             className={styles.jobsCard}
             variant="glass"
             action={
               <Button variant="ghost" size="small">
-                {t('common:actions.viewAll', 'View All')} <ArrowUpRight size={14} />
+                View All <ArrowUpRight size={14} />
               </Button>
             }>
             <div className={styles.compactJobsList}>
@@ -247,12 +245,12 @@ const ClientDashboard = ({ data }) => {
         <div className={styles.rightColumn}>
           {/* Pending Actions with Card Wrapper */}
           <Card
-            title={t('dashboards:common.pendingActions.title', 'Pending Actions')}
-            subtitle={t('dashboards:common.pendingActions.subtitle', '{{count}} tasks to complete', { count: pendingActions.length })}
+            title="Pending Actions"
+            subtitle={`${pendingActions.length} tasks need your attention`}
             className={styles.actionsCard}
             variant="glass"
             action={
-              <Badge variant="warning">{t('dashboards:common.pendingActions.badge', '{{count}} pending', { count: pendingActions.length })}</Badge>
+              <Badge variant="warning">{pendingActions.length} pending</Badge>
             }>
             <PendingActions
               actions={pendingActions}
@@ -262,8 +260,8 @@ const ClientDashboard = ({ data }) => {
 
           {/* Performance Metrics - Compact View */}
           <Card
-            title={t('dashboards:client.kpi.title', 'Key Performance Indicators')}
-            subtitle={t('dashboards:client.kpi.subtitle', 'Your project success metrics')}
+            title="Key Performance Indicators"
+            subtitle="Your project success metrics"
             className={styles.metricsCard}
             variant="glass">
             <div className={styles.kpiGrid}>
@@ -271,22 +269,22 @@ const ClientDashboard = ({ data }) => {
                 Object.entries(performanceMetrics).map(([key, value]) => {
                   const kpiConfig = {
                     projectCompletionRate: {
-                      label: t('dashboards:client.kpi.completion', 'Completion'),
+                      label: "Completion",
                       icon: CheckCircle,
                       color: "success",
                     },
                     clientSatisfaction: {
-                      label: t('dashboards:client.kpi.satisfaction', 'Satisfaction'),
+                      label: "Satisfaction",
                       icon: Award,
                       color: "info",
                     },
                     onTimeDelivery: {
-                      label: t('dashboards:client.kpi.onTime', 'On-Time'),
+                      label: "On-Time",
                       icon: Clock,
                       color: "success",
                     },
                     budgetAdherence: {
-                      label: t('dashboards:client.kpi.budget', 'Budget'),
+                      label: "Budget",
                       icon: Target,
                       color: "warning",
                     },
@@ -319,8 +317,8 @@ const ClientDashboard = ({ data }) => {
 
           {/* Quick Actions Panel */}
           <Card
-            title={t('dashboards:client.quickActions.title', 'Quick Actions')}
-            subtitle={t('dashboards:client.quickActions.subtitle', 'Common tasks & shortcuts')}
+            title="Quick Actions"
+            subtitle="Common tasks & shortcuts"
             className={styles.quickActionsCard}
             variant="glass">
             <div className={styles.quickActionsList}>
@@ -329,9 +327,9 @@ const ClientDashboard = ({ data }) => {
                 onClick={() => handleQuickAction("post-job")}>
                 <Briefcase size={20} />
                 <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>{t('dashboards:client.quickActions.postJob', 'Post New Job')}</span>
+                  <span className={styles.quickActionTitle}>Post New Job</span>
                   <span className={styles.quickActionDesc}>
-                    {t('dashboards:client.quickActions.postJobDesc', 'Create a job listing')}
+                    Create a job listing
                   </span>
                 </div>
               </button>
@@ -341,9 +339,9 @@ const ClientDashboard = ({ data }) => {
                 onClick={() => handleQuickAction("browse-talent")}>
                 <Users size={20} />
                 <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>{t('dashboards:client.quickActions.browseTalent', 'Browse Talent')}</span>
+                  <span className={styles.quickActionTitle}>Browse Talent</span>
                   <span className={styles.quickActionDesc}>
-                    {t('dashboards:client.quickActions.browseTalentDesc', 'Find freelancers')}
+                    Find freelancers
                   </span>
                 </div>
               </button>
@@ -353,9 +351,9 @@ const ClientDashboard = ({ data }) => {
                 onClick={() => handleQuickAction("view-reports")}>
                 <BarChart3 size={20} />
                 <div className={styles.quickActionContent}>
-                  <span className={styles.quickActionTitle}>{t('dashboards:client.quickActions.viewReports', 'View Reports')}</span>
+                  <span className={styles.quickActionTitle}>View Reports</span>
                   <span className={styles.quickActionDesc}>
-                    {t('dashboards:client.quickActions.viewReportsDesc', 'Analytics & insights')}
+                    Analytics & insights
                   </span>
                 </div>
               </button>

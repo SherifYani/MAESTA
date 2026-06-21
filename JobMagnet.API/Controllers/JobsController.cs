@@ -138,6 +138,17 @@ namespace JobMagnet.API.Controllers
             catch (UnauthorizedAccessException ex) { return Forbid(ex.Message); }
         }
 
+        [HttpGet("applications/company")]
+        public async Task<IActionResult> GetCompanyApplicationsAsync()
+        {
+            try
+            {
+                var result = await _jobService.GetCompanyApplicationsAsync(GetUserId());
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex) { return Forbid(ex.Message); }
+        }
+
         [HttpPut("applications/{applicationId:int}/status")]
         public async Task<IActionResult> UpdateApplicationStatusAsync(int applicationId, [FromBody] string status)
         {

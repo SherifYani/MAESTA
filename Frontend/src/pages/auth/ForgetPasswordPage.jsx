@@ -11,7 +11,6 @@
 
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import {
   validateRequired,
@@ -28,7 +27,6 @@ import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
 function ForgetPasswordPage() {
-  const { t } = useTranslation(['auth', 'validation']);
   // Form state
   const [formData, setFormData] = useState({
     email: "",
@@ -117,7 +115,7 @@ function ForgetPasswordPage() {
       } catch (error) {
         setErrors((prev) => ({
           ...prev,
-          form: t('auth:resetSendFailed', "Failed to send reset link. Please try again."),
+          form: "Failed to send reset link. Please try again.",
         }));
       } finally {
         setIsLoading(false);
@@ -136,9 +134,9 @@ function ForgetPasswordPage() {
             <div className="form-icon">
               <i className="fa-solid fa-envelope-circle-check"></i>
             </div>
-            <h1 className="form-title">{t('auth:checkEmail', 'Check Your Email')}</h1>
+            <h1 className="form-title">Check Your Email</h1>
             <p className="form-subtitle">
-              {t('auth:sentResetLink', "We've sent a password reset link to")}{" "}
+              We've sent a password reset link to{" "}
               <strong>{formData.email}</strong>
             </p>
           </div>
@@ -149,13 +147,14 @@ function ForgetPasswordPage() {
                 <i className="fa-solid fa-circle-check"></i>
               </div>
               <p>
-                {t('auth:ifAccountExists', "If an account exists with this email, you'll receive reset instructions shortly.")}
+                If an account exists with this email, you'll receive reset
+                instructions shortly.
               </p>
             </div>
 
             <div className="verification-info" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
               <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
-                {t('auth:receivedCodePrompt', 'Received the code? Click below to set your new password.')}
+                Received the code? Click below to set your new password.
               </p>
               <Link 
                 to="/resetpassword" 
@@ -163,23 +162,23 @@ function ForgetPasswordPage() {
                 style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
               >
                 <i className="fa-solid fa-key" style={{ marginRight: '0.5rem' }}></i>
-                {t('auth:enterResetCode', 'Enter Reset Code')}
+                Enter Reset Code
               </Link>
             </div>
 
             <div className="form-footer">
               <Link to="/login" className="form-link">
                 <i className="fa-solid fa-arrow-left"></i>
-                {t('auth:backToLogin', 'Back to Login')}
+                Back to Login
               </Link>
 
               <p className="form-help">
-                {t('auth:didntReceiveEmail', "Didn't receive the email?")}{" "}
+                Didn't receive the email?{" "}
                 <button
                   type="button"
                   className="form-link inline"
                   onClick={() => setIsSubmitted(false)}>
-                  {t('auth:tryAnotherEmail', 'Try another email')}
+                  Try another email
                 </button>
               </p>
             </div>
@@ -200,9 +199,9 @@ function ForgetPasswordPage() {
           <div className="form-icon">
             <i className="fa-solid fa-key"></i>
           </div>
-          <h1 className="form-title">{t('auth:forgotPasswordTitle', 'Forgot Password')}</h1>
+          <h1 className="form-title">Forgot Password</h1>
           <p className="form-subtitle">
-            {t('auth:forgotPasswordSubtitle', "We'll send you a password reset link to your email address")}
+            We'll send you a password reset link to your email address
           </p>
         </div>
 
@@ -218,7 +217,7 @@ function ForgetPasswordPage() {
             icon="fa-solid fa-envelope"
             type="email"
             name="email"
-            placeholder={t('auth:emailPlaceholder', 'Email Address')}
+            placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -243,12 +242,12 @@ function ForgetPasswordPage() {
             {isLoading ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin"></i>
-                {t('auth:sending', 'Sending...')}
+                Sending...
               </>
             ) : (
               <>
                 <i className="fa-solid fa-paper-plane"></i>
-                {t('auth:sendResetLink', 'Send Reset Link')}
+                Send Reset Link
               </>
             )}
           </button>
@@ -256,7 +255,7 @@ function ForgetPasswordPage() {
           <div className="form-footer">
             <Link to="/login" className="form-link">
               <i className="fa-solid fa-arrow-left"></i>
-              {t('auth:backToLogin', 'Back to Login')}
+              Back to Login
             </Link>
           </div>
         </form>

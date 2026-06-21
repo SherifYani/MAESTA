@@ -18,7 +18,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useTranslation } from "react-i18next";
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
 import "../styles/login.css";
 import Header from "../components/common/Header";
@@ -34,7 +33,6 @@ import Footer from "../components/common/Footer";
 export default function LoginForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { t } = useTranslation(['auth', 'common', 'validation']);
 
   // State for password visibility toggle
   const [showPassword, setShowPassword] = useState(false);
@@ -103,23 +101,23 @@ export default function LoginForm() {
    */
   const validateForm = () => {
     if (!formData.email.trim()) {
-      setError(t('validation:emailRequired', "Email address is required"));
+      setError("Email address is required");
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError(t('validation:emailInvalid', "Please enter a valid email address"));
+      setError("Please enter a valid email address");
       return false;
     }
 
     if (!formData.password.trim()) {
-      setError(t('validation:passwordRequired', "Password is required"));
+      setError("Password is required");
       return false;
     }
 
     if (formData.password.length < 6) {
-      setError(t('validation:passwordLength', "Password must be at least 6 characters long"));
+      setError("Password must be at least 6 characters long");
       return false;
     }
 
@@ -152,7 +150,7 @@ export default function LoginForm() {
       navigate(redirectTo);
     } catch (error) {
       setError(
-        error.message || t('auth:loginError', "An error occurred during login. Please try again.")
+        error.message || "An error occurred during login. Please try again."
       );
     } finally {
       setLoading(false);
@@ -173,7 +171,7 @@ export default function LoginForm() {
   const handleSocialLogin = (provider) => {
     console.log(`Social login with ${provider}`);
     // Implementation for social login would go here
-    setError(t('auth:socialNotImplemented', "{{provider}} login is not yet implemented", { provider }));
+    setError(`${provider} login is not yet implemented`);
   };
 
   /**
@@ -247,9 +245,9 @@ export default function LoginForm() {
           {/* Login Card */}
           <section className="auth-login__card">
             <header className="auth-login__header">
-              <h2 className="auth-login__title">{t('auth:signIn', 'Sign In')}</h2>
+              <h2 className="auth-login__title">Sign In</h2>
               <p className="auth-login__subtitle">
-                {t('auth:accessDashboard', 'Access your professional dashboard')}
+                Access your professional dashboard
               </p>
             </header>
 
@@ -280,13 +278,13 @@ export default function LoginForm() {
                   type="email"
                   id="login-email"
                   name="email"
-                  placeholder={t('auth:emailPlaceholder', 'Email Address')}
+                  placeholder="Email Address"
                   value={formData.email}
                   onChange={handleInputChange}
                   required
                   disabled={loading}
                   className="auth-login__input"
-                  aria-label={t('auth:emailPlaceholder', 'Email Address')}
+                  aria-label="Email address"
                   aria-required="true"
                   autoComplete="email"
                   maxLength={100}
@@ -304,13 +302,13 @@ export default function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   id="login-password"
                   name="password"
-                  placeholder={t('auth:passwordPlaceholder', 'Password')}
+                  placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
                   required
                   disabled={loading}
                   className="auth-login__input"
-                  aria-label={t('auth:passwordPlaceholder', 'Password')}
+                  aria-label="Password"
                   aria-required="true"
                   autoComplete="current-password"
                   minLength={6}
@@ -320,7 +318,7 @@ export default function LoginForm() {
                   type="button"
                   className="auth-login__toggle-password"
                   onClick={togglePasswordVisibility}
-                  aria-label={showPassword ? t('auth:hidePassword', 'Hide password') : t('auth:showPassword', 'Show password')}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   aria-controls="login-password"
                   disabled={loading}>
                   {showPassword ? (
@@ -337,16 +335,16 @@ export default function LoginForm() {
                   <input
                     type="checkbox"
                     name="rememberMe"
-                    aria-label={t('auth:rememberMe', 'Remember me on this device')}
+                    aria-label="Remember me on this device"
                     disabled={loading}
                   />
-                  <span>{t('auth:rememberMe', 'Remember me')}</span>
+                  <span>Remember me</span>
                 </label>
                 <a
                   href="/forgotpassword"
                   className="auth-login__forgot"
-                  aria-label={t('auth:forgotPasswordAria', 'Forgot password? Reset it here')}>
-                  {t('auth:forgotPassword', 'Forgot password?')}
+                  aria-label="Forgot password? Reset it here">
+                  Forgot password?
                 </a>
               </div>
 
@@ -355,23 +353,23 @@ export default function LoginForm() {
                 type="submit"
                 className="auth-login__submit"
                 disabled={loading}
-                aria-label={loading ? t('auth:signingIn', 'Signing in...') : t('auth:signInBtnAria', 'Sign in to account')}>
+                aria-label={loading ? "Signing in..." : "Sign in to account"}>
                 <Sparkles size={20} aria-hidden="true" />
-                {loading ? t('auth:signingIn', 'Signing in...') : t('auth:signIn', 'Sign In')}
+                {loading ? "Signing in..." : "Sign In"}
               </button>
             </form>
 
             {/* Sign Up Link */}
             <div className="auth-login__signup-link">
-              <p>{t('auth:noAccount', "Don't have an account?")}</p>
-              <a href="/register" aria-label={t('auth:createAccountAria', 'Create a new account')}>
-                {t('auth:createAccount', 'Create one now')}
+              <p>{"Don't have an account?"}</p>
+              <a href="/register" aria-label="Create a new account">
+                Create one now
               </a>
             </div>
 
             {/* Social Login Divider */}
             <div className="auth-login__divider">
-              <span>{t('auth:orContinueWith', 'Or continue with')}</span>
+              <span>Or continue with</span>
             </div>
 
             {/* Social Login Buttons */}
@@ -405,7 +403,7 @@ export default function LoginForm() {
                     fill="#EA4335"
                   />
                 </svg>
-                {t('auth:google', 'Google')}
+                Google
               </button>
 
               <button
@@ -422,23 +420,23 @@ export default function LoginForm() {
                   aria-hidden="true">
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                 </svg>
-                {t('auth:linkedIn', 'LinkedIn')}
+                LinkedIn
               </button>
             </div>
 
             {/* Terms and Conditions */}
             <p className="auth-login__terms">
-              {t('auth:agreeTermsStart', 'By signing in, you agree to our')}
+              By signing in, you agree to our
               <a
                 href="#terms-of-service"
-                aria-label={t('auth:termsAria', 'Read our Terms of Service')}>
+                aria-label="Read our Terms of Service">
                 {" "}
-                {t('auth:terms', 'Terms of Service')}
+                Terms of Service
               </a>{" "}
-              {t('auth:and', 'and')}
-              <a href="#privacy-policy" aria-label={t('auth:privacyAria', 'Read our Privacy Policy')}>
+              and
+              <a href="#privacy-policy" aria-label="Read our Privacy Policy">
                 {" "}
-                {t('auth:privacy', 'Privacy Policy')}
+                Privacy Policy
               </a>
             </p>
           </section>

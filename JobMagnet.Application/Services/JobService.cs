@@ -215,8 +215,24 @@ namespace JobMagnet.Application.Services
             return await _context.JobApplications
                 .AsNoTracking()
                 .Include(a => a.JobSeeker)
+                .ThenInclude(js => js!.User)
                 .Where(a => a.JobId == jobId && !a.IsDeleted)
                 .Select(a => MapApplication(a, job.Title, a.JobSeeker != null && a.JobSeeker.User != null ? $"{a.JobSeeker.User.FirstName} {a.JobSeeker.User.LastName}".Trim() : ""))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<JobApplicationDto>> GetCompanyApplicationsAsync(int employerUserId)
+        {
+            var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == employerUserId && !e.IsDeleted);
+            if (employer == null) throw new UnauthorizedAccessException("Not an employer");
+
+            return await _context.JobApplications
+                .AsNoTracking()
+                .Include(a => a.Job)
+                .Include(a => a.JobSeeker)
+                .ThenInclude(js => js!.User)
+                .Where(a => a.Job != null && a.Job.PostedByUserId == employerUserId && !a.IsDeleted)
+                .Select(a => MapApplication(a, a.Job!.Title, a.JobSeeker != null && a.JobSeeker.User != null ? $"{a.JobSeeker.User.FirstName} {a.JobSeeker.User.LastName}".Trim() : ""))
                 .ToListAsync();
         }
 

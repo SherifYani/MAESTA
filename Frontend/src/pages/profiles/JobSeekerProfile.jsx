@@ -106,7 +106,7 @@ export default function JobSeekerProfile() {
           <div className="profile__avatar">
             <img
               src={jobSeekerData.profilePictureUrl || "/placeholder.svg"}
-              alt={`Profile picture of ${jobSeekerData.fullName}`}
+              alt={jobSeekerData.fullName}
               className="profile__avatar-image"
               width={120}
               height={120}

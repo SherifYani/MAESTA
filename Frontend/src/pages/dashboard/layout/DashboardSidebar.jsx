@@ -10,7 +10,6 @@
  */
 
 import { useContext, useCallback, memo } from "react";
-import { useTranslation } from "react-i18next";
 import {
   Briefcase,
   Users,
@@ -24,6 +23,7 @@ import { DashboardContext } from "./DashboardLayout";
 import {
   ROLE_NAVIGATION,
   ROLE_DISPLAY_NAMES,
+  ROLES,
 } from "../config/dashboard.config";
 import styles from "./DashboardSidebar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -38,7 +38,6 @@ import { useAuth } from "../../../context/AuthContext";
  * @returns {JSX.Element} The rendered sidebar
  */
 const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
-  const { t } = useTranslation(['dashboard', 'sidebar']);
   const { currentRole, setCurrentRole } = useContext(DashboardContext);
   const { user } = useAuth();
   const location = useLocation();
@@ -57,8 +56,8 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
   const userName = user?.name || user?.fullName || "User";
   const userInitials = getUserInitials(userName);
 
-  // Get navigation for current role - memoize this if needed
-  const roleNavigation = ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION.client;
+  // Get navigation for current role - each entry is { displayName, icon, navigation: [...] }
+  const roleNavigation = (ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
 
   /**
    * Handle role change
@@ -69,7 +68,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       setCurrentRole(role);
       // After changing role, you might want to navigate to the dashboard home
       // or the first item in the new role's navigation
-      const newRoleNav = ROLE_NAVIGATION[role] || ROLE_NAVIGATION.client;
+      const newRoleNav = (ROLE_NAVIGATION[role] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
       if (newRoleNav.length > 0) {
         navigate(newRoleNav[0].path);
       }
@@ -114,14 +113,14 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <div className={styles.sidebarHeader}>
         <Link to="/" className={styles.brand} onClick={handleNavClick}>
           <h1 className={styles.brandTitle}>MAESTA</h1>
-          <span className={styles.brandSubtitle}>{t('dashboard:title', 'Dashboard')}</span>
+          <span className={styles.brandSubtitle}>Dashboard</span>
         </Link>
 
         {/* Mobile: X button to close, Desktop: Chevron to collapse */}
         <button
           className={styles.toggleButton}
           onClick={handleToggleClick}
-          aria-label={isOpen ? t('sidebar:closeSidebar', 'Close sidebar') : t('sidebar:openSidebar', 'Open sidebar')}
+          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
           type="button">
           {isMobile ?
             <X className={styles.toggleIcon} size={20} />
@@ -134,20 +133,20 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       <nav className={styles.navigation}>
         {/* Main Navigation */}
         <div className={styles.navSection}>
-          <h3 className={styles.navSectionTitle}>{t('sidebar:main', 'Main')}</h3>
+          <h3 className={styles.navSectionTitle}>Main</h3>
           <ul className={styles.navList}>
             {roleNavigation.map((item) => {
               const IconComponent = item.icon;
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.id} className={styles.navItem}>
+                <li key={item.path || item.label} className={styles.navItem}>
                   <Link
                     to={item.path}
                     className={`${styles.navLink} ${isActive ? styles.active : ""
                       }`}
                     onClick={handleNavClick}>
                     <IconComponent className={styles.navIcon} size={20} />
-                    <span className={styles.navLabel}>{t(`sidebar:${item.id}`, item.label)}</span>
+                    <span className={styles.navLabel}>{item.label}</span>
                   </Link>
                 </li>
               );
@@ -165,7 +164,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
           <div className={styles.userInfo}>
             <span className={styles.userName}>{userName}</span>
             <span className={styles.userRole}>
-              {t(`dashboard:roles.${currentRole}`, ROLE_DISPLAY_NAMES[currentRole] || "Client")}
+              {ROLE_DISPLAY_NAMES[currentRole] || "Client"}
             </span>
           </div>
         </div>

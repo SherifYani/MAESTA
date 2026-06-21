@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
+
         try {
             setLoading(true);
             const data = await authService.getCurrentUser();
@@ -71,9 +72,13 @@ export const AuthProvider = ({ children }) => {
      * Handles both AuthResponse (from login) and CurrentUserResponse (from /me).
      */
     const normalizeUser = (data) => {
-        let normalizedRole = (data.userType || 'jobseeker').toLowerCase();
-        if (normalizedRole === 'employer') {
-            normalizedRole = 'company';
+        // Only set role if userType is provided by backend
+        let normalizedRole = null;
+        if (data.userType) {
+            normalizedRole = data.userType.toLowerCase();
+            if (normalizedRole === 'employer') {
+                normalizedRole = 'company';
+            }
         }
 
         return {

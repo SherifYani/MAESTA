@@ -98,8 +98,16 @@ const jobService = {
         return response.data;
     },
 
+    // Get all applicants for the company's jobs
+    getCompanyApplicants: async () => {
+        const response = await ApiService.get('/api/jobs/applications/company');
+        return response.data;
+    },
+
     updateApplicationStatus: async (applicationId, status) => {
-        const response = await ApiService.put(`/api/jobs/applications/${applicationId}/status`, { status });
+        const response = await ApiService.put(`/api/jobs/applications/${applicationId}/status`, JSON.stringify(status), {
+            headers: { 'Content-Type': 'application/json' }
+        });
         return response.data;
     },
 

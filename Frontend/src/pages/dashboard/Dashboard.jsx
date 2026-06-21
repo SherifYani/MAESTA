@@ -14,7 +14,6 @@
 
 import { useContext } from "react";
 import { DashboardContext } from "./layout/DashboardLayout";
-import { getCompleteDashboardData, getJobSeekerDashboardData, getCompanyDashboardData } from "./config/dashboard.config";
 
 // Import all role-specific dashboards
 import ClientDashboard from "./tabs/client/ClientDashboard";
@@ -32,21 +31,6 @@ import styles from "./dashboard.module.css";
 const Dashboard = () => {
   const { currentRole } = useContext(DashboardContext);
 
-  /**
-   * Get dashboard data based on current role
-   */
-  const getDashboardData = () => {
-    switch (currentRole) {
-      case "jobseeker":
-        return getJobSeekerDashboardData();
-      case "company":
-        return getCompanyDashboardData();
-      default:
-        return getCompleteDashboardData(currentRole);
-    }
-  };
-
-  const dashboardData = getDashboardData();
 
   /**
    * Render dashboard content based on current role
@@ -55,15 +39,15 @@ const Dashboard = () => {
   const renderDashboardContent = () => {
     switch (currentRole) {
       case "client":
-        return <ClientDashboard data={dashboardData} />;
+        return <ClientDashboard />;
       case "company":
-        return <CompanyDashboard data={dashboardData} />;
+        return <CompanyDashboard />;
       case "freelancer":
-        return <FreelancerDashboard data={dashboardData} />;
+        return <FreelancerDashboard />;
       case "jobseeker":
-        return <JobseekerDashboard data={dashboardData} />;
+        return <JobseekerDashboard />;
       case "admin":
-        return <AdminDashboard data={dashboardData} />;
+        return <AdminDashboard />;
       default:
         return <div className={styles.roleNotFound}>Role not found</div>;
     }

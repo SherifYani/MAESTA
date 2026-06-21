@@ -43,7 +43,7 @@ function RoleCard({ icon, title, isSelected, onClick, className = "" }) {
 RoleCard.propTypes = {
   icon: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   isSelected: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   className: PropTypes.string,

@@ -12,7 +12,6 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import FormSelect from "../../components/forms/FormSelect";
 import FileUpload from "../../components/forms/FileUpload";
@@ -29,7 +28,6 @@ import {
  * @returns {JSX.Element} The rendered company member onboarding component
  */
 function CompanyMemberOnboarding() {
-  const { t } = useTranslation(['auth', 'validation']);
   const navigate = useNavigate();
 
   // Form state aligned with CompanyMembers table and related tables
@@ -232,7 +230,7 @@ function CompanyMemberOnboarding() {
     };
 
     if (!isFormValid(allErrors)) {
-      alert(t('auth:onboarding.companyMember.completeAllSections', "Please complete all required sections before submitting."));
+      alert("Please complete all required sections before submitting.");
       setFormErrors(errors);
       return;
     }
@@ -244,11 +242,11 @@ function CompanyMemberOnboarding() {
       console.log("Submitting company member data:", submissionData);
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert(t('auth:profileSubmitted', "Company member profile submitted successfully!"));
+      alert("Company member profile submitted successfully!");
       navigate("/dashboard");
     } catch (error) {
       console.error("Error submitting company member data:", error);
-      alert(t('auth:completeProfileFailed', "Error submitting profile. Please try again."));
+      alert("Error submitting profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -264,11 +262,11 @@ function CompanyMemberOnboarding() {
       console.log("Saving draft to database:", draftData);
       // Simulate API call
       setTimeout(() => {
-        alert(t('auth:draftSaved', "Draft saved successfully!"));
+        alert("Draft saved successfully!");
       }, 1000);
     } catch (error) {
       console.error("Error saving draft:", error);
-      alert(t('auth:draftFailed', "Error saving draft. Please try again."));
+      alert("Error saving draft. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -279,17 +277,17 @@ function CompanyMemberOnboarding() {
       <div className="onboarding-phase-2__container">
         <div className="onboarding-phase-2__header">
           <h1 className="onboarding-phase-2__title">
-            {t('auth:onboarding.companyMember.title', "Join Your Company Network")}
+            Join Your Company Network
           </h1>
           <p className="onboarding-phase-2__subtitle">
-            {t('auth:onboarding.companyMember.subtitle', "Connect with your company and colleagues on our platform")}
+            Connect with your company and colleagues on our platform
           </p>
         </div>
 
         {/* Progress Section - Phase 1 style */}
         <div className="register-form__progress-section">
           <div className="register-form__progress-header">
-            <h3>{t('auth:onboarding.companyMember.joiningProgress', "Joining Progress")}</h3>
+            <h3>Joining Progress</h3>
             <span className="register-form__progress-percentage">
               {overallProgress}%
             </span>
@@ -301,8 +299,8 @@ function CompanyMemberOnboarding() {
           </div>
           <p className="register-form__progress-hint">
             {overallProgress === 100
-              ? t('auth:onboarding.companyMember.readyToJoin', "✅ Ready to join company network!")
-              : t('auth:onboarding.companyMember.completeToRequest', "Complete all sections to request access")}
+              ? "✅ Ready to join company network!"
+              : "Complete all sections to request access"}
           </p>
         </div>
 
@@ -313,17 +311,17 @@ function CompanyMemberOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.companyMember.companySelection', "Company Selection")}
+                    Company Selection
                   </h2>
                   {completionStatus.companySelection && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      {t('auth:onboarding.jobseeker.selected', "Selected")}
+                      Selected
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.companyMember.companySelectionDesc', "Search and select your company from our verified partners")}
+                  Search and select your company from our verified partners
                 </p>
               </div>
 
@@ -335,7 +333,7 @@ function CompanyMemberOnboarding() {
                       <input
                         type="text"
                         name="companySearch"
-                        placeholder={t('auth:onboarding.companyMember.searchCompanyPlaceholder', "Search for your company by name, industry, or location...")}
+                        placeholder="Search for your company by name, industry, or location..."
                         value={companySearch}
                         onChange={handleCompanySearch}
                         className={`register-form__input ${
@@ -350,7 +348,7 @@ function CompanyMemberOnboarding() {
                           type="button"
                           onClick={handleClearCompany}
                           className="company-search__clear-button register-form__clear-button"
-                          title={t('auth:onboarding.companyMember.clearSelection', "Clear selection")}>
+                          title="Clear selection">
                           <i className="fa-solid fa-times" />
                         </button>
                       )}
@@ -361,7 +359,7 @@ function CompanyMemberOnboarding() {
                       companySearch.length < 3 && (
                         <p className="register-form__error-message">
                           <i className="fa-solid fa-exclamation-triangle" />
-                          {t('auth:onboarding.companyMember.typeAtLeast3Chars', "Type at least 3 characters to search")}
+                          Type at least 3 characters to search
                         </p>
                       )}
 
@@ -369,9 +367,9 @@ function CompanyMemberOnboarding() {
                     {searchResults.length > 0 && (
                       <div className="company-search__results register-form__dropdown">
                         <div className="company-search__results-header">
-                          <span>{t('auth:onboarding.companyMember.searchResults', "Search Results")}</span>
+                          <span>Search Results</span>
                           <span className="company-search__results-count">
-                            {t('auth:onboarding.companyMember.companiesFound', { count: searchResults.length, defaultValue: `${searchResults.length} company(s) found` })}
+                            {searchResults.length} company(s) found
                           </span>
                         </div>
                         {searchResults.map((company) => (
@@ -385,7 +383,7 @@ function CompanyMemberOnboarding() {
                                 {company.VerificationStatus === "Verified" && (
                                   <span className="company-search__verified-badge">
                                     <i className="fa-solid fa-check-circle" />
-                                    {t('auth:onboarding.companyMember.verified', "Verified")}
+                                    Verified
                                   </span>
                                 )}
                               </h4>
@@ -410,7 +408,7 @@ function CompanyMemberOnboarding() {
                     {isSearching && (
                       <div className="company-search__loading register-form__loading">
                         <i className="fa-solid fa-spinner fa-spin" />
-                        {t('auth:onboarding.companyMember.searchingCompanies', "Searching companies...")}
+                        Searching companies...
                       </div>
                     )}
 
@@ -419,7 +417,7 @@ function CompanyMemberOnboarding() {
                       searchResults.length === 0 && (
                         <div className="company-search__no-results register-form__no-results">
                           <i className="fa-solid fa-building-circle-exclamation" />
-                          {t('auth:onboarding.companyMember.noCompaniesFound', "No companies found matching your search.")}
+                          No companies found matching your search.
                         </div>
                       )}
 
@@ -429,7 +427,7 @@ function CompanyMemberOnboarding() {
                         <div className="company-search__selected-header">
                           <h4>
                             <i className="fa-solid fa-check-circle" />
-                            {t('auth:onboarding.companyMember.selectedCompany', "Selected Company")}
+                            Selected Company
                           </h4>
                         </div>
                         <div className="company-search__selected-info">
@@ -439,7 +437,7 @@ function CompanyMemberOnboarding() {
                               "Verified" && (
                               <span className="company-search__verified-badge">
                                 <i className="fa-solid fa-shield-check" />
-                                {t('auth:onboarding.companyMember.verifiedCompany', "Verified Company")}
+                                Verified Company
                               </span>
                             )}
                           </h5>
@@ -471,7 +469,8 @@ function CompanyMemberOnboarding() {
 
                     <p className="onboarding-phase-2__field-hint register-form__hint">
                       <i className="fa-solid fa-info-circle" />
-                      {t('auth:onboarding.companyMember.startTypingHint', "Start typing your company name to search. Only verified companies are available for joining.")}
+                      Start typing your company name to search. Only verified
+                      companies are available for joining.
                     </p>
                   </div>
                 </div>
@@ -483,17 +482,17 @@ function CompanyMemberOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.companyMember.companyRole', "Company Role")}
+                    Company Role
                   </h2>
                   {completionStatus.roleSelection && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      {t('auth:onboarding.jobseeker.selected', "Selected")}
+                      Selected
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.companyMember.companyRoleDesc', "Select your role within the company")}
+                  Select your role within the company
                 </p>
               </div>
 
@@ -505,13 +504,13 @@ function CompanyMemberOnboarding() {
                     value={formData.role}
                     onChange={handleInputChange}
                     options={[
-                      { value: "", label: t('auth:onboarding.companyMember.selectRolePlaceholder', "Select Your Role") },
-                      { value: "Admin", label: t('auth:onboarding.companyMember.roleAdmin', "Company Admin") },
-                      { value: "HR_Manager", label: t('auth:onboarding.companyMember.roleHr', "HR Manager") },
-                      { value: "Member", label: t('auth:onboarding.companyMember.roleMember', "Team Member") },
+                      { value: "", label: "Select Your Role" },
+                      { value: "Admin", label: "Company Admin" },
+                      { value: "HR_Manager", label: "HR Manager" },
+                      { value: "Member", label: "Team Member" },
                     ]}
                     hasError={!formData.role && formData.role !== ""}
-                    errorMessage={t('auth:onboarding.companyMember.roleRequired', "Please select your role")}
+                    errorMessage="Please select your role"
                     required
                   />
                   {formData.role && (
@@ -519,11 +518,11 @@ function CompanyMemberOnboarding() {
                       <p className="register-form__hint">
                         <i className="fa-solid fa-info-circle" />
                         {formData.role === "Admin" &&
-                          t('auth:onboarding.companyMember.roleDescAdmin', "Full access to company settings and member management")}
+                          "Full access to company settings and member management"}
                         {formData.role === "HR_Manager" &&
-                          t('auth:onboarding.companyMember.roleDescHr', "Can post jobs and manage candidates")}
+                          "Can post jobs and manage candidates"}
                         {formData.role === "Member" &&
-                          t('auth:onboarding.companyMember.roleDescMember', "Access to company network and job postings")}
+                          "Access to company network and job postings"}
                       </p>
                     </div>
                   )}
@@ -536,17 +535,17 @@ function CompanyMemberOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.companyMember.profInfo', "Professional Information")}
+                    Professional Information
                   </h2>
                   {completionStatus.professionalInfo && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      {t('auth:onboarding.company.completed', "Completed")}
+                      Completed
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.companyMember.profInfoDesc', "Tell us about your position in the company")}
+                  Tell us about your position in the company
                 </p>
               </div>
 
@@ -556,11 +555,11 @@ function CompanyMemberOnboarding() {
                     icon="fa-solid fa-briefcase"
                     type="text"
                     name="position"
-                    placeholder={t('auth:onboarding.companyMember.jobTitlePlaceholder', "Your Job Title")}
+                    placeholder="Your Job Title"
                     value={formData.position}
                     onChange={handleInputChange}
                     hasError={!formData.position && formData.position !== ""}
-                    errorMessage={t('auth:onboarding.companyMember.jobTitleRequired', "Job title is required")}
+                    errorMessage="Job title is required"
                     required
                   />
                 </div>
@@ -570,13 +569,13 @@ function CompanyMemberOnboarding() {
                     icon="fa-solid fa-sitemap"
                     type="text"
                     name="department"
-                    placeholder={t('auth:onboarding.companyMember.departmentPlaceholder', "Department")}
+                    placeholder="Department"
                     value={formData.department}
                     onChange={handleInputChange}
                     hasError={
                       !formData.department && formData.department !== ""
                     }
-                    errorMessage={t('auth:onboarding.companyMember.departmentRequired', "Department is required")}
+                    errorMessage="Department is required"
                     required
                   />
                 </div>
@@ -588,17 +587,17 @@ function CompanyMemberOnboarding() {
               <div className="onboarding-phase-2__section-header">
                 <div className="onboarding-phase-2__section-title-wrapper">
                   <h2 className="onboarding-phase-2__section-title">
-                    {t('auth:onboarding.companyMember.profileSetup', "Profile Setup")}
+                    Profile Setup
                   </h2>
                   {completionStatus.profileSetup && (
                     <span className="onboarding-phase-2__section-badge completed">
                       <i className="fa-solid fa-check-circle" />
-                      {t('auth:onboarding.company.completed', "Completed")}
+                      Completed
                     </span>
                   )}
                 </div>
                 <p className="onboarding-phase-2__section-description">
-                  {t('auth:onboarding.companyMember.profileSetupDesc', "Upload your professional photo for identification")}
+                  Upload your professional photo for identification
                 </p>
               </div>
 
@@ -607,17 +606,17 @@ function CompanyMemberOnboarding() {
                   <div className="file-upload__container">
                     <h3 className="onboarding-phase-2__file-section-title">
                       <i className="fa-solid fa-camera" />
-                      {t('auth:onboarding.companyMember.profPhotoTitle', "Professional Photo")}
+                      Professional Photo
                       <span className="onboarding-phase-2__required-asterisk">
                         *
                       </span>
                     </h3>
                     <FileUpload
-                      label={t('auth:onboarding.jobseeker.clickToUpload', "Click to upload or drag and drop")}
+                      label="Click to upload or drag and drop"
                       accept="image/*"
                       onChange={(file) => {
                         if (file && file.size > 5 * 1024 * 1024) {
-                          alert(t('auth:onboarding.companyMember.photoSizeError', "Photo size must be less than 5MB"));
+                          alert("Photo size must be less than 5MB");
                           return;
                         }
                         setProfilePicture(file);
@@ -626,7 +625,7 @@ function CompanyMemberOnboarding() {
                       supportedFormats="PNG, JPG, SVG (Max. 5MB)"
                       fileType="image"
                       hasError={!profilePicture}
-                      errorMessage={t('auth:onboarding.companyMember.profPhotoRequired', "Profile photo is required")}
+                      errorMessage="Profile photo is required"
                     />
                     {profilePicture && (
                       <div className="register-form__file-preview">
@@ -642,7 +641,7 @@ function CompanyMemberOnboarding() {
                               onClick={() => setProfilePicture(null)}
                               className="register-form__remove-avatar">
                               <i className="fa-solid fa-trash" />
-                              {t('auth:onboarding.companyMember.changePhoto', "Change Photo")}
+                              Change Photo
                             </button>
                           </div>
                         </div>
@@ -657,7 +656,7 @@ function CompanyMemberOnboarding() {
             <div className="register-form__verification-steps">
               <h4 className="register-form__verification-title">
                 <i className="fa-solid fa-shield-alt" />
-                {t('auth:onboarding.companyMember.verificationProcessTitle', "Verification Process")}
+                Verification Process
               </h4>
               <div className="register-form__steps">
                 <div className="register-form__step">
@@ -665,8 +664,8 @@ function CompanyMemberOnboarding() {
                     <i className="fa-solid fa-user-check" />
                   </div>
                   <div className="register-form__step-content">
-                    <h5>{t('auth:onboarding.companyMember.submitRequest', "Submit Request")}</h5>
-                    <p>{t('auth:onboarding.companyMember.submitRequestDesc', "Your request will be sent to company administrators")}</p>
+                    <h5>Submit Request</h5>
+                    <p>Your request will be sent to company administrators</p>
                   </div>
                 </div>
                 <div className="register-form__step">
@@ -674,8 +673,8 @@ function CompanyMemberOnboarding() {
                     <i className="fa-solid fa-clock" />
                   </div>
                   <div className="register-form__step-content">
-                    <h5>{t('auth:onboarding.companyMember.adminReview', "Admin Review")}</h5>
-                    <p>{t('auth:onboarding.companyMember.adminReviewDesc', "Company admin will verify your employment")}</p>
+                    <h5>Admin Review</h5>
+                    <p>Company admin will verify your employment</p>
                   </div>
                 </div>
                 <div className="register-form__step">
@@ -683,8 +682,8 @@ function CompanyMemberOnboarding() {
                     <i className="fa-solid fa-envelope" />
                   </div>
                   <div className="register-form__step-content">
-                    <h5>{t('auth:onboarding.companyMember.confirmation', "Confirmation")}</h5>
-                    <p>{t('auth:onboarding.companyMember.confirmationDesc', "You'll receive email confirmation once approved")}</p>
+                    <h5>Confirmation</h5>
+                    <p>You'll receive email confirmation once approved</p>
                   </div>
                 </div>
               </div>
@@ -698,7 +697,7 @@ function CompanyMemberOnboarding() {
                 onClick={handleSaveDraft}
                 disabled={isLoading}>
                 <i className="fa-solid fa-save" />
-                {t('auth:onboarding.jobseeker.saveDraft', "Save as Draft")}
+                Save as Draft
               </button>
               <button
                 type="submit"
@@ -709,14 +708,14 @@ function CompanyMemberOnboarding() {
                 {isLoading ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin" />
-                    {t('auth:onboarding.jobseeker.submitting', "Submitting...")}
+                    Submitting...
                   </>
                 ) : (
                   <>
                     <i className="fa-solid fa-check" />
                     {overallProgress === 100
-                      ? t('auth:onboarding.companyMember.joinCompanyNetwork', "Join Company Network")
-                      : t('auth:onboarding.companyMember.joinProgressText', { progress: overallProgress, defaultValue: `Complete Profile (${overallProgress}%)` })}
+                      ? "Join Company Network"
+                      : `Complete Profile (${overallProgress}%)`}
                   </>
                 )}
               </button>
@@ -725,15 +724,15 @@ function CompanyMemberOnboarding() {
             {/* Terms Notice */}
             <div className="register-form__terms-notice">
               <p>
-                {t('auth:onboarding.companyMember.termsNoticeText', "By requesting access, you agree to our")}{" "}
+                By requesting access, you agree to our{" "}
                 <a href="/terms" className="register-form__terms-link">
-                  {t('auth:terms', "Terms of Service")}
+                  Terms of Service
                 </a>{" "}
-                {t('auth:and', "and")}{" "}
+                and{" "}
                 <a href="/privacy" className="register-form__terms-link">
-                  {t('auth:privacy', "Privacy Policy")}
+                  Privacy Policy
                 </a>
-                {t('auth:onboarding.companyMember.termsNoticeTextEnd', ". Your company administrator will verify your membership.")}
+                . Your company administrator will verify your membership.
               </p>
             </div>
           </form>

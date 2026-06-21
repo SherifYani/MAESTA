@@ -9,6 +9,7 @@ namespace JobMagnet.Application.Interfaces
         Task<JobSeekerDashboardDto> GetJobSeekerDashboardAsync(int userId);
         Task<FreelancerDashboardDto> GetFreelancerDashboardAsync(int userId);
         Task<CompanyDashboardDto> GetCompanyDashboardAsync(int userId);
+        Task<CompanyAnalyticsDto> GetCompanyAnalyticsAsync(int userId);
         Task<ClientDashboardDto> GetClientDashboardAsync(int userId);
     }
 }

@@ -1,0 +1,319 @@
+/**
+ * @file ProposalsPage.module.css
+ * @description Styles for ProposalsPage component, using glassmorphism and modern card layouts.
+ */
+
+.pageContainer {
+    position: relative;
+    padding-bottom: var(--space-12);
+}
+
+.pageContainer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: radial-gradient(ellipse at top,
+            var(--color-radial-pink-1) 0%,
+            transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.header {
+    position: relative;
+    z-index: 1;
+    margin-bottom: var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.titleSection {
+    flex: 1;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.filterBar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-2);
+}
+
+.filterTab {
+    background: none;
+    border: none;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.filterTab:hover {
+    color: var(--color-foreground);
+}
+
+.filterTab.active {
+    color: var(--color-accent-pink);
+}
+
+.filterTab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-pink), var(--color-vivid-pink));
+}
+
+.proposalsList {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.proposalCard {
+    background: var(--color-card);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.proposalCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius-xl);
+    padding: 2px;
+    background: linear-gradient(135deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink),
+            var(--color-accent-pink));
+    -webkit-mask: linear-gradient(white 0 0) content-box,
+            linear-gradient(white 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(white 0 0) content-box,
+            linear-gradient(white 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.proposalCard:hover::before {
+    opacity: 1;
+}
+
+.proposalCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px var(--color-shadow-pink);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+    gap: var(--space-4);
+}
+
+.gigTitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.gigTitle:hover {
+    color: var(--color-accent-pink);
+}
+
+.metaInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statusBadge.pending {
+    background: rgba(184, 148, 95, 0.1);
+    color: var(--color-accent-pink);
+    border: 1px solid var(--color-accent-pink);
+}
+
+.statusBadge.accepted {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid #22c55e;
+}
+
+.statusBadge.rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.coverLetter {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    background: var(--color-translucent-white-1);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+    line-height: var(--line-height-relaxed);
+    white-space: pre-line;
+}
+
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+    margin-top: var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.bidDetails {
+    display: flex;
+    gap: var(--space-6);
+}
+
+.bidValue {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+}
+
+.bidValue span {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-muted-foreground);
+    margin-bottom: 2px;
+}
+
+.withdrawButton {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    background: transparent;
+    border: 1px solid var(--color-destructive);
+    color: var(--color-destructive);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: all 0.3s ease;
+}
+
+.withdrawButton:hover {
+    background: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+    transform: translateY(-1px);
+}
+
+.withdrawButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.errorContainer {
+    text-align: center;
+    padding: var(--space-8);
+    background: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--color-border);
+    backdrop-filter: blur(10px);
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-16) var(--space-6);
+    background: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--color-border);
+    backdrop-filter: blur(10px);
+    color: var(--color-muted-foreground);
+}
+
+.emptyIcon {
+    color: var(--color-accent-pink);
+    margin-bottom: var(--space-4);
+    opacity: 0.8;
+}
+
+.emptyTitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.emptyText {
+    font-size: var(--font-size-sm);
+    max-width: 400px;
+    margin: 0 auto var(--space-6) auto;
+}

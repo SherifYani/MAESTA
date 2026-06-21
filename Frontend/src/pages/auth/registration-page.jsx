@@ -16,7 +16,6 @@ import RegisterForm from "../../components/forms/RegisterForm";
 import EnhancedBubble from "../../components/EnhancedBubble";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
-import { useTranslation } from "react-i18next";
 
 /**
  * RegistrationPage Component
@@ -24,12 +23,10 @@ import { useTranslation } from "react-i18next";
  * @returns {JSX.Element} The rendered registration page
  */
 function RegistrationPage() {
-  const { t } = useTranslation(['auth']);
-
   const features = [
-    { icon: Sparkles, text: t('auth:aiMatching', "AI-Powered Matching") },
-    { icon: TrendingUp, text: t('auth:careerGrowth', "Career Growth Tools") },
-    { icon: Users, text: t('auth:globalNetwork', "Global Network") },
+    { icon: Sparkles, text: "AI-Powered Matching" },
+    { icon: TrendingUp, text: "Career Growth Tools" },
+    { icon: Users, text: "Global Network" },
   ];
 
   /**
@@ -58,19 +55,20 @@ function RegistrationPage() {
           <div className="registration-page__welcome-content">
             <div className="registration-page__badge">
               <Sparkles size={14} className="registration-page__badge-icon" />
-              <span>{t('auth:trustedBadge', 'Trusted by 100K+ professionals')}</span>
+              <span>Trusted by 100K+ professionals</span>
             </div>
 
             <h1 className="registration-page__welcome-title">
-              {t('auth:transformYour', 'Transform Your')}
+              Transform Your
               <br />
               <span className="registration-page__gradient-text">
-                {t('auth:careerJourney', 'Career Journey')}
+                Career Journey
               </span>
             </h1>
 
             <p className="registration-page__welcome-description">
-              {t('auth:registerDescription', 'Join the next generation of professionals. Connect with opportunities, grow your network, and unlock your full potential.')}
+              Join the next generation of professionals. Connect with
+              opportunities, grow your network, and unlock your full potential.
             </p>
 
             <div className="registration-page__features-list">

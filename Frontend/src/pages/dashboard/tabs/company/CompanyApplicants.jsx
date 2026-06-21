@@ -18,47 +18,8 @@ import { Input } from '../../../../components/common/Input';
 import { SuccessMessage, ErrorMessage } from '../../../../components/common/Message';
 import AdminPageHeader from '../admin/components/shared/AdminPageHeader/AdminPageHeader';
 import AdminDataTable from '../admin/components/shared/AdminDataTable';
-import * as interviewService from '../../../../services/interviewService';
+import jobService from '../../../../services/jobService';
 import styles from './CompanyApplicants.module.css';
-
-// Mock service for applicants (since not in original services)
-const getApplicants = async (params) => {
-  // Mock data
-  return {
-    success: true,
-    data: {
-      applicants: [
-        {
-          id: 'app_1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          phone: '+1234567890',
-          profilePicture: null,
-          jobId: 'job_1',
-          jobTitle: 'Senior Developer',
-          appliedAt: '2026-05-01T10:00:00Z',
-          status: 'shortlisted',
-          rating: 4,
-          notes: 'Strong technical background',
-        },
-        {
-          id: 'app_2',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          phone: '+0987654321',
-          profilePicture: null,
-          jobId: 'job_2',
-          jobTitle: 'Product Manager',
-          appliedAt: '2026-05-02T14:00:00Z',
-          status: 'applied',
-          rating: 0,
-          notes: '',
-        },
-      ],
-      pagination: { currentPage: 1, totalPages: 1, totalItems: 2, itemsPerPage: 20 },
-    },
-  };
-};
 
 const updateApplicantStatus = async (applicantId, jobId, status) => {
   return { success: true, data: { applicantId, jobId, status } };
@@ -93,20 +54,25 @@ const CompanyApplicants = () => {
   const loadApplicants = useCallback(async () => {
     setIsLoading(true);
     try {
-      const params = {
-        page: currentPage,
-        limit: 20,
-        jobId: filters.jobId !== 'all' ? filters.jobId : undefined,
-        status: filters.status !== 'all' ? filters.status : undefined,
-        search: searchTerm,
-        sort: sortConfig.key,
-        order: sortConfig.direction,
-      };
-      const response = await getApplicants(params);
-      if (response.success) {
-        setApplicants(response.data.applicants || []);
-        setTotalPages(response.data.pagination?.totalPages || 1);
-        setTotalItems(response.data.pagination?.totalItems || 0);
+      const data = await jobService.getCompanyApplicants();
+      if (data) {
+        // Map backend fields to frontend component expectations
+        const mappedApplicants = data.map(app => ({
+            id: app.applicationId,
+            name: app.applicantName,
+            email: app.applicantEmail || 'N/A',
+            phone: app.applicantPhone || 'N/A',
+            jobId: app.jobId,
+            jobTitle: app.jobTitle,
+            appliedAt: app.appliedAt,
+            status: app.status?.toLowerCase() || 'pending',
+            rating: 0, // Not implemented in backend
+            notes: app.coverLetter || ''
+        }));
+
+        setApplicants(mappedApplicants);
+        setTotalPages(1); // No backend pagination yet
+        setTotalItems(mappedApplicants.length);
       } else {
         setError('Failed to load applicants');
       }
@@ -116,7 +82,7 @@ const CompanyApplicants = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, filters, searchTerm, sortConfig]);
+  }, []);
 
   useEffect(() => {
     loadApplicants();
@@ -163,13 +129,9 @@ const CompanyApplicants = () => {
   const confirmStatusUpdate = async () => {
     if (!selectedApplicant) return;
     try {
-      const response = await updateApplicantStatus(selectedApplicant.id, selectedApplicant.jobId, newStatus);
-      if (response.success) {
-        setSuccess(`Applicant status updated to ${newStatus}`);
-        loadApplicants();
-      } else {
-        setError('Failed to update status');
-      }
+      await jobService.updateApplicationStatus(selectedApplicant.id, newStatus);
+      setSuccess(`Applicant status updated to ${newStatus}`);
+      loadApplicants();
     } catch (err) {
       setError('Error updating status');
     } finally {

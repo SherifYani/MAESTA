@@ -59,6 +59,67 @@ namespace JobMagnet.Application.DTOs.Dashboard
         public double AvgTimeToHireDays { get; set; }
     }
 
+    public class CompanyAnalyticsDto
+    {
+        public MonthlyTrendsDto MonthlyTrends { get; set; } = new();
+        public List<ApplicationSourceDto> ApplicationSources { get; set; } = new();
+        public List<JobPerformanceDto> JobPerformance { get; set; } = new();
+        public RecruitmentFunnelDto RecruitmentFunnel { get; set; } = new();
+        public AnalyticsOverviewDto Overview { get; set; } = new();
+    }
+
+    public class MonthlyTrendsDto
+    {
+        public List<TrendItemDto> Applications { get; set; } = new();
+        public List<TrendItemDto> Hires { get; set; } = new();
+        public List<TrendItemDto> TimeToHire { get; set; } = new();
+    }
+
+    public class TrendItemDto
+    {
+        public string Month { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public double Days { get; set; }
+    }
+
+    public class ApplicationSourceDto
+    {
+        public string Source { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public double Percentage { get; set; }
+    }
+
+    public class JobPerformanceDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public int Applications { get; set; }
+        public int Shortlisted { get; set; }
+        public int Hired { get; set; }
+        public double CompletionRate { get; set; }
+    }
+
+    public class RecruitmentFunnelDto
+    {
+        public int Applications { get; set; }
+        public int Screened { get; set; }
+        public int Shortlisted { get; set; }
+        public int Interviewed { get; set; }
+        public int Offered { get; set; }
+        public int Hired { get; set; }
+    }
+
+    public class AnalyticsOverviewDto
+    {
+        public int TotalJobsPosted { get; set; }
+        public int ActiveJobs { get; set; }
+        public int TotalApplications { get; set; }
+        public int AvgApplicationsPerJob { get; set; }
+        public int TotalHires { get; set; }
+        public double HireRate { get; set; }
+        public string AvgTimeToHire { get; set; } = string.Empty;
+        public double ApplicationCompletionRate { get; set; }
+    }
+
     public class ClientDashboardDto
     {
         public int ActiveProjectsCount { get; set; }

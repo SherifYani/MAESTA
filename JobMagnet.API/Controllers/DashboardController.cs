@@ -56,6 +56,13 @@ namespace JobMagnet.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("company/analytics")]
+        public async Task<IActionResult> GetCompanyAnalytics()
+        {
+            var result = await _dashboardService.GetCompanyAnalyticsAsync(GetCurrentUserId());
+            return Ok(result);
+        }
+
         [HttpGet("client")]
         public async Task<IActionResult> GetClientDashboard()
         {

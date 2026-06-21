@@ -16,7 +16,7 @@
  */
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import profileService from "../../services/profileService";
 import GeneralSelect from "../../components/common/GeneralSelect";
@@ -37,21 +37,21 @@ export default function EditCompanyProfile() {
 
   // Form state management
   const [formData, setFormData] = useState({
-    name: companyData.name,
-    websiteUrl: companyData.websiteUrl,
-    logoUrl: companyData.logoUrl,
-    description: companyData.description,
-    industry: companyData.industry,
-    companySize: companyData.companySize,
-    location: companyData.location,
-    commercialRegistrationID: companyData.commercialRegistrationID,
+    name: companyData?.name || "",
+    websiteUrl: companyData?.websiteUrl || "",
+    logoUrl: companyData?.logoUrl || "",
+    description: companyData?.description || "",
+    industry: companyData?.industry || "",
+    companySize: companyData?.companySize || "",
+    location: companyData?.location || "",
+    commercialRegistrationID: companyData?.commercialRegistrationID || "",
   });
 
   // Team members state management
-  const [members, setMembers] = useState(companyData.members);
+  const [members, setMembers] = useState(companyData?.members || []);
 
   // Job listings state management
-  const [jobs, setJobs] = useState(companyData.jobs);
+  const [jobs, setJobs] = useState(companyData?.jobs || []);
 
   /**
    * Handles changes to form input fields.
@@ -156,7 +156,7 @@ export default function EditCompanyProfile() {
    * @returns {boolean} True if form is valid, false otherwise.
    */
   const validateForm = () => {
-    if (!formData.name.trim()) {
+    if (!formData?.name?.trim()) {
       alert("Company name is required");
       return false;
     }
@@ -172,21 +172,21 @@ export default function EditCompanyProfile() {
     }
 
     // Validate team members
-    for (const member of members) {
-      if (!member.name.trim()) {
+    for (const member of (members || [])) {
+      if (!member?.name?.trim()) {
         alert("All team members must have a name");
         return false;
       }
     }
 
     // Validate job listings
-    for (const job of jobs) {
-      if (!job.title.trim()) {
+    for (const job of (jobs || [])) {
+      if (!job?.title?.trim()) {
         alert("All job listings must have a title");
         return false;
       }
 
-      if (!job.location.trim()) {
+      if (!job?.location?.trim()) {
         alert("All job listings must have a location");
         return false;
       }
@@ -402,7 +402,7 @@ export default function EditCompanyProfile() {
                   maxLength={1000}
                 />
                 <div className="edit__character-count">
-                  {formData.description.length}/1000 characters
+                  {(formData.description || "").length}/1000 characters
                 </div>
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function EditCompanyProfile() {
               </button>
             </div>
 
-            {members.length === 0 ? (
+            {(members || []).length === 0 ? (
               <div className="edit__empty-state">
                 <p>
                   No team members added yet. Click "Add Member" to create one.
@@ -431,7 +431,7 @@ export default function EditCompanyProfile() {
               </div>
             ) : (
               <div className="edit__members-grid">
-                {members.map((member, index) => (
+                {(members || []).map((member, index) => (
                   <article
                     key={member.id || index}
                     className="edit__member-item"
@@ -528,12 +528,12 @@ export default function EditCompanyProfile() {
               </button>
             </div>
 
-            {jobs.length === 0 ? (
+            {(jobs || []).length === 0 ? (
               <div className="edit__empty-state">
                 <p>No job listings added yet. Click "Add Job" to create one.</p>
               </div>
             ) : (
-              jobs.map((job, index) => (
+              (jobs || []).map((job, index) => (
                 <article
                   key={job.id || index}
                   className="edit__item-card"

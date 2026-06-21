@@ -11,8 +11,7 @@
 **/
 
 import ApiService from './ApiService';
-// Mock data retained only for categories/skills until backend provides those endpoints
-import { gigCategories, gigSkills } from '../pages/gigs/config/gigsMockData';
+// Mock data removed - fetching from API
 
 const gigService = {
     // ==================== Gig CRUD Operations ====================
@@ -270,15 +269,25 @@ const gigService = {
     // ==================== Categories ====================
 
     // Get gig categories
-    // Get gig categories
     getCategories: async () => {
-        return gigCategories;
+        try {
+            const response = await ApiService.get('/api/categories');
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            return [];
+        }
     },
 
-    // Get skills list
-    // Get skills list
-    getSkills: async () => {
-        return gigSkills;
+    // Get skills list (using autocomplete with empty term as a fallback if needed)
+    getSkills: async (term = "") => {
+        try {
+            const response = await ApiService.get('/api/skills/autocomplete', { params: { term } });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching skills:", error);
+            return [];
+        }
     },
 
     // ==================== Context Compatibility Adapters ====================

@@ -9,6 +9,8 @@ const GigPostingPage = lazy(() => import("../pages/gigs/GigPostingPage"));
 const GigBiddingPage = lazy(() => import("../pages/gigs/GigBiddingPage"));
 const GigManagementPage = lazy(() => import("../pages/gigs/GigManagementPage"));
 const WorkspacePage = lazy(() => import("../pages/gigs/WorkspacePage"));
+const ProposalsPage = lazy(() => import("../pages/gigs/ProposalsPage"));
+const ProjectsPage = lazy(() => import("../pages/gigs/ProjectsPage"));
 
 const GigRoutes = () => (
   <Suspense fallback={<div>Loading Gigs...</div>}>
@@ -21,6 +23,8 @@ const GigRoutes = () => (
           <Route path=":id/bid" element={<GigBiddingPage />} />
           <Route path="manage" element={<GigManagementPage />} />
           <Route path=":id/workspace" element={<WorkspacePage />} />
+          <Route path="proposals" element={<ProposalsPage />} />
+          <Route path="projects" element={<ProjectsPage />} />
         </Route>
       </Routes>
     </GigProvider>

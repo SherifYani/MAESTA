@@ -42,9 +42,7 @@ module.exports = {
             }
         },
     },
-    plugins: [
-        require('tailwindcss-rtl')
-    ],
+    plugins: [],
     // Support for RTL (Right-to-Left) languages
     corePlugins: {
         textAlign: true,

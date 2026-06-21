@@ -66,7 +66,7 @@ export default function ClientProfile() {
           <div className="profile__avatar">
             <img
               src={clientData.profilePictureUrl || "/placeholder.svg"}
-              alt={`Profile picture of ${clientData.fullName}`}
+              alt={clientData.fullName}
               className="profile__avatar-image"
               width={120}
               height={120}

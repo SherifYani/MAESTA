@@ -11,7 +11,6 @@
  */
 import { useState, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import FormInput from "../../components/forms/FormInput";
 import {
   validatePassword,
@@ -30,7 +29,6 @@ import "../../styles/components/form-components.css";
 import "../../styles/shared/_form-animations.css";
 
 function ResetPasswordPage() {
-  const { t } = useTranslation(['auth', 'validation']);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
@@ -64,8 +62,8 @@ function ResetPasswordPage() {
 
       switch (name) {
         case "token":
-          if (!value) error = t('validation:resetCodeRequired', "Reset code is required");
-          else if (value.length < 4) error = t('validation:invalidResetCode', "Invalid reset code");
+          if (!value) error = "Reset code is required";
+          else if (value.length < 4) error = "Invalid reset code";
           break;
 
         case "newPassword":
@@ -75,7 +73,7 @@ function ResetPasswordPage() {
           // Check if all requirements met
           const allValid = Object.values(validation).every((v) => v);
           if (value && !allValid) {
-            error = t('validation:passwordRequirements', "Password does not meet requirements");
+            error = "Password does not meet requirements";
           }
           break;
 
@@ -166,12 +164,12 @@ function ResetPasswordPage() {
         console.log("New password set");
 
         // Show success and redirect
-        alert(t('auth:resetSuccess', "Password reset successfully! Redirecting to login..."));
+        alert("Password reset successfully! Redirecting to login...");
         setTimeout(() => {
           window.location.href = "/login";
         }, 1500);
       } catch (error) {
-        const msg = error?.response?.data?.message || t('auth:resetFailed', "Failed to reset password. Please try again or request a new link.");
+        const msg = error?.response?.data?.message || "Failed to reset password. Please try again or request a new link.";
         setErrors((prev) => ({
           ...prev,
           form: msg,
@@ -199,9 +197,9 @@ function ResetPasswordPage() {
             <div className="form-icon">
               <i className="fa-solid fa-window-restore"></i>
             </div>
-            <h1 className="form-title">{t('auth:resetPassword.title', "Reset Password")}</h1>
+            <h1 className="form-title">Reset Password</h1>
             <p className="form-subtitle">
-              {t('auth:resetPasswordSubtitle', "Create a new password for your account")}
+              Create a new password for your account
             </p>
           </div>
 
@@ -219,7 +217,7 @@ function ResetPasswordPage() {
                 icon="fa-solid fa-hashtag"
                 type="text"
                 name="token"
-                placeholder={t('auth:resetCodePlaceholder', "Reset Code (from your email)")}
+                placeholder="Reset Code (from your email)"
                 value={formData.token}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -242,7 +240,7 @@ function ResetPasswordPage() {
                 icon="fa-solid fa-lock"
                 type={showPassword ? "text" : "password"}
                 name="newPassword"
-                placeholder={t('auth:resetPassword.newPassword', "New Password")}
+                placeholder="New Password"
                 value={formData.newPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -277,7 +275,7 @@ function ResetPasswordPage() {
 
                   <div className="password-strength-info">
                     <span className="strength-text">
-                      {t('auth:strength', "Strength: ")} <strong>{strengthText}</strong>
+                      Strength: <strong>{strengthText}</strong>
                     </span>
                     <span className="strength-percentage">
                       {Math.round(passwordStrength)}%
@@ -286,7 +284,7 @@ function ResetPasswordPage() {
 
                   {/* Password Requirements */}
                   <div className="password-requirements">
-                    <p className="requirements-title">{t('auth:passwordContain', "Password must contain:")}</p>
+                    <p className="requirements-title">Password must contain:</p>
                     <ul className="requirements-list">
                       <li
                         className={
@@ -298,7 +296,7 @@ function ResetPasswordPage() {
                           className={`fa-solid ${passwordValidation.minLength ? "fa-check" : "fa-xmark"
                             } requirement-icon`}
                         />
-                        {t('auth:atLeast8', "At least 8 characters")}
+                        At least 8 characters
                       </li>
                       <li
                         className={
@@ -312,7 +310,7 @@ function ResetPasswordPage() {
                               : "fa-xmark"
                             } requirement-icon`}
                         />
-                        {t('auth:oneUppercase', "One uppercase letter")}
+                        One uppercase letter
                       </li>
                       <li
                         className={
@@ -326,7 +324,7 @@ function ResetPasswordPage() {
                               : "fa-xmark"
                             } requirement-icon`}
                         />
-                        {t('auth:oneLowercase', "One lowercase letter")}
+                        One lowercase letter
                       </li>
                       <li
                         className={
@@ -338,7 +336,7 @@ function ResetPasswordPage() {
                           className={`fa-solid ${passwordValidation.hasNumber ? "fa-check" : "fa-xmark"
                             } requirement-icon`}
                         />
-                        {t('auth:oneNumber', "One number")}
+                        One number
                       </li>
                       <li
                         className={
@@ -350,7 +348,7 @@ function ResetPasswordPage() {
                           className={`fa-solid ${passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"
                             } requirement-icon`}
                         />
-                        {t('auth:oneSpecialChar', "One special character")}
+                        One special character
                       </li>
                     </ul>
                   </div>
@@ -364,7 +362,7 @@ function ResetPasswordPage() {
                 icon="fa-solid fa-lock"
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
-                placeholder={t('auth:resetPassword.confirmPassword', "Confirm New Password")}
+                placeholder="Confirm New Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -389,7 +387,7 @@ function ResetPasswordPage() {
                 !errors.confirmPassword && (
                   <div className="password-match-indicator success">
                     <i className="fa-solid fa-check-circle"></i>
-                    <span>{t('auth:passwordsMatch', "Passwords match")}</span>
+                    <span>Passwords match</span>
                   </div>
                 )}
             </div>
@@ -402,12 +400,12 @@ function ResetPasswordPage() {
               {isLoading ? (
                 <>
                   <i className="fa-solid fa-spinner fa-spin"></i>
-                  {t('auth:updating', "Updating...")}
+                  Updating...
                 </>
               ) : (
                 <>
                   <i className="fa-solid fa-check-double"></i>
-                  {t('auth:resetPassword.submitButton', "Reset Password")}
+                  Reset Password
                 </>
               )}
             </button>
@@ -415,13 +413,13 @@ function ResetPasswordPage() {
             <div className="form-footer">
               <Link to="/login" className="form-link">
                 <i className="fa-solid fa-arrow-left"></i>
-                {t('auth:backToLogin', "Back to Login")}
+                Back to Login
               </Link>
 
               <p className="form-help">
-                {t('auth:rememberPassword', "Remember your password?")}{" "}
+                Remember your password?{" "}
                 <Link to="/login" className="form-link inline">
-                  {t('auth:signInHere', "Sign in here")}
+                  Sign in here
                 </Link>
               </p>
             </div>

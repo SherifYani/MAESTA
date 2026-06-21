@@ -16,7 +16,7 @@
  */
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import profileService from "../../services/profileService";
 import GeneralSelect from "../../components/common/GeneralSelect";

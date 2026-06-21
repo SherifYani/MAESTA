@@ -30,11 +30,11 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                 nullable: false,
                 defaultValue: false);
 
-            // migrationBuilder.AddColumn<int>(
-            //     name: "CompanyId",
-            //     table: "Employers",
-            //     type: "int",
-            //     nullable: true);
+            migrationBuilder.AddColumn<int>(
+                name: "CompanyId",
+                table: "Employers",
+                type: "int",
+                nullable: true);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsArchivedByUser1",
@@ -192,9 +192,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                 name: "IsAvailable",
                 table: "Freelancers");
 
-            // migrationBuilder.DropColumn(
-            //     name: "CompanyId",
-            //     table: "Employers");
+            migrationBuilder.DropColumn(
+                name: "CompanyId",
+                table: "Employers");
 
             migrationBuilder.DropColumn(
                 name: "IsArchivedByUser1",

@@ -15,7 +15,7 @@ import { tokenService } from '../lib/token-service';
 
 // ─── Base URL ─────────────────────────────────────────────────────────────────
 // NOTE: Base URL does NOT include /api — individual service calls prefix with /api/...
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5024';
 
 // ─── Axios Instance ───────────────────────────────────────────────────────────
 const apiClient = axios.create({
@@ -49,6 +49,12 @@ apiClient.interceptors.response.use(
   (error) => {
     // Auto-logout on 401 Unauthorized (expired or invalid token)
     if (error.response?.status === 401) {
+      const token = tokenService.getToken();
+      // Skip auto-logout if we are using a mock token for demo purposes
+      if (token === 'mock_jwt_token_for_demo_12345') {
+        return Promise.reject(error);
+      }
+
       tokenService.clearToken();
       localStorage.removeItem('token');
       // Only redirect if not already on an auth page to avoid redirect loops

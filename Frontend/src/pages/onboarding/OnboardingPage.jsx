@@ -14,12 +14,17 @@ import JobSeekerOnboarding from "./JobSeekerOnboarding";
 // import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
 import { ArrowLeft } from "lucide-react";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth hook
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 // import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 
 export default function OnboardingPage() {
-  const userRole = localStorage.getItem("userRole");
+  const { user } = useAuth();
+  
+  // Try localStorage first (from register flow), fall back to user object (if refreshed/logged in)
+  const storedRole = localStorage.getItem("userRole");
+  const userRole = storedRole || (user?.role === 'company' ? 'employer' : user?.role);
 
   const renderForm = () => {
     switch (userRole) {

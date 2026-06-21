@@ -30,5 +30,37 @@ namespace JobMagnet.Application.DTOs.Company
         public string? LogoUrl { get; set; }
         public bool IsVerified { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+
+        // Added for real data support
+        public List<CompanyMemberDto> Members { get; set; } = new();
+        public List<CompanyJobDto> Jobs { get; set; } = new();
+        public CompanyStatsDto Stats { get; set; } = new();
+    }
+
+    public class CompanyMemberDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string? Avatar { get; set; }
+    }
+
+    public class CompanyJobDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string JobType { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTimeOffset PostedAt { get; set; }
+        public int ApplicationsCount { get; set; }
+    }
+
+    public class CompanyStatsDto
+    {
+        public int TotalJobs { get; set; }
+        public int ActiveJobs { get; set; }
+        public int TotalHires { get; set; }
+        public int AvgTimeToHire { get; set; }
     }
 }

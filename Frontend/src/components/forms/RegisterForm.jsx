@@ -21,7 +21,6 @@ import "../../styles/components/form-components.css";
 import { useNavigate, Link } from "react-router-dom";
 import { validatePhoneNumber, validateURL } from "../../utils/form-validation";
 import { useAuth } from "../../context/AuthContext";
-import { useTranslation } from "react-i18next";
 /**
  * RegisterForm Component
  * @description Renders the complete registration form with role selection and validation
@@ -30,10 +29,9 @@ import { useTranslation } from "react-i18next";
 function RegisterForm() {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const { t } = useTranslation(['auth', 'validation']);
   const [apiError, setApiError] = useState("");
 
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState("jobseeker");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -131,19 +129,19 @@ function RegisterForm() {
 
       if (name === "email") {
         if (!value) {
-          error = t('validation:emailRequired', "Email is required");
+          error = "Email is required";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          error = t('validation:emailInvalid', "Please enter a valid email address");
+          error = "Please enter a valid email address";
         }
       } else if (name === "firstName" || name === "lastName") {
         if (!value) {
           error = `${
-            name === "firstName" ? t('validation:firstName', "First name") : t('validation:lastName', "Last name")
-          } ${t('validation:isRequired', "is required")}`;
+            name === "firstName" ? "First name" : "Last name"
+          } is required`;
         } else if (value.length > 50) {
           error = `${
-            name === "firstName" ? t('validation:firstName', "First name") : t('validation:lastName', "Last name")
-          } ${t('validation:maxLength50', "must be less than 50 characters")}`;
+            name === "firstName" ? "First name" : "Last name"
+          } must be less than 50 characters`;
         }
       } else if (name === "phone") {
         if (value && value.trim() !== "") {
@@ -177,18 +175,18 @@ function RegisterForm() {
         setPasswordValidation(passwordValidation);
 
         if (!value) {
-          error = t('validation:passwordRequired', "Password is required");
+          error = "Password is required";
         } else if (value.length < 8) {
-          error = t('validation:passwordMinLength8', "Password must be at least 8 characters");
+          error = "Password must be at least 8 characters";
         } else if (!Object.values(passwordValidation).every((v) => v)) {
-          error = t('validation:passwordRequirements', "Password does not meet all requirements");
+          error = "Password does not meet all requirements";
         }
 
         // Clear confirm password error when password changes
         if (formData.confirmPassword && formData.confirmPassword !== value) {
           setFormErrors((prev) => ({
             ...prev,
-            confirmPassword: t('validation:passwordMismatch', "Passwords do not match"),
+            confirmPassword: "Passwords do not match",
           }));
         } else if (
           formData.confirmPassword &&
@@ -201,7 +199,7 @@ function RegisterForm() {
         }
       } else if (name === "confirmPassword") {
         if (value && formData.password !== value) {
-          error = t('validation:passwordMismatch', "Passwords do not match");
+          error = "Passwords do not match";
         }
       } else if (name === "description") {
         // Handle employer description
@@ -265,6 +263,7 @@ function RegisterForm() {
       !formErrors.firstName &&
       formData.lastName &&
       !formErrors.lastName &&
+      selectedRole &&
       termsAccepted;
 
     return requiredFieldsValid;
@@ -332,7 +331,7 @@ function RegisterForm() {
       // Navigate to email verification — email passed in state for UI display
       navigate("/verify", { state: { email: formData.email } });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || t('auth:registerFailed', "Registration failed. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Registration failed. Please try again.";
       setApiError(msg);
     } finally {
       setIsLoading(false);
@@ -367,9 +366,9 @@ function RegisterForm() {
         )}
         {/* Header */}
         <div className="register-form__header">
-          <h2 className="register-form__title">{t('auth:createAccountTitle', 'Create Your Account')}</h2>
+          <h2 className="register-form__title">Create Your Account</h2>
           <p className="register-form__subtitle">
-            {t('auth:registerSubtitle', 'Register with details as specified in the guide')}
+            Register with details as specified in the guide
           </p>
         </div>
 
@@ -377,13 +376,13 @@ function RegisterForm() {
         <div className="register-form__role-selection">
           <RoleCard
             icon="fa-solid fa-bullseye"
-            title={t('auth:jobseeker', 'Job seeker')}
+            title="Job seeker"
             isSelected={selectedRole === "jobseeker"}
             onClick={() => setSelectedRole("jobseeker")}
           />
           <RoleCard
             icon="fa-solid fa-briefcase"
-            title={t('auth:hirer', 'Hirer')}
+            title="Hirer"
             isSelected={selectedRole === "employer"}
             onClick={() => setSelectedRole("employer")}
           />
@@ -408,10 +407,10 @@ function RegisterForm() {
           {/* Section: Required Basic Information */}
           <div className="register-form__section">
             <h3 className="register-form__section-title">
-              {t('auth:requiredInfo', 'Required Information')}
+              Required Information
             </h3>
             <p className="register-form__section-description">
-              {t('auth:basicDetails', 'Basic details required for all users')}
+              Basic details required for all users
             </p>
 
             <div className="register-form__form-grid">
@@ -420,7 +419,7 @@ function RegisterForm() {
                 icon="fa-solid fa-user"
                 type="text"
                 name="firstName"
-                placeholder={t('auth:firstName', 'First Name')}
+                placeholder="First Name"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 hasError={!!formErrors.firstName}
@@ -433,7 +432,7 @@ function RegisterForm() {
                 icon="fa-solid fa-user"
                 type="text"
                 name="lastName"
-                placeholder={t('auth:lastName', 'Last Name')}
+                placeholder="Last Name"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 hasError={!!formErrors.lastName}
@@ -446,7 +445,7 @@ function RegisterForm() {
                 icon="fa-solid fa-envelope"
                 type="email"
                 name="email"
-                placeholder={t('auth:emailAddress', 'Email Address')}
+                placeholder="Email Address"
                 value={formData.email}
                 onChange={handleInputChange}
                 hasError={!!formErrors.email}
@@ -459,7 +458,7 @@ function RegisterForm() {
                 icon="fa-solid fa-lock"
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder={t('auth:passwordMin8', 'Password (min 8 characters)')}
+                placeholder="Password (min 8 characters)"
                 value={formData.password}
                 onChange={handleInputChange}
                 showPasswordToggle
@@ -474,7 +473,7 @@ function RegisterForm() {
               {formData.password && (
                 <div className="register-form__password-requirements">
                   <p className="register-form__requirements-title">
-                    {t('auth:passwordContain', 'Password must contain:')}
+                    Password must contain:
                   </p>
                   <ul className="register-form__requirements-list">
                     <li
@@ -488,7 +487,7 @@ function RegisterForm() {
                           passwordValidation.minLength ? "fa-check" : "fa-xmark"
                         } register-form__requirement-icon`}
                       />
-                      {t('auth:atLeast8', 'At least 8 characters')}
+                      At least 8 characters
                     </li>
                     <li
                       className={
@@ -503,7 +502,7 @@ function RegisterForm() {
                             : "fa-xmark"
                         } register-form__requirement-icon`}
                       />
-                      {t('auth:oneUppercase', 'One uppercase letter')}
+                      One uppercase letter
                     </li>
                     <li
                       className={
@@ -518,7 +517,7 @@ function RegisterForm() {
                             : "fa-xmark"
                         } register-form__requirement-icon`}
                       />
-                      {t('auth:oneLowercase', 'One lowercase letter')}
+                      One lowercase letter
                     </li>
                     <li
                       className={
@@ -531,7 +530,7 @@ function RegisterForm() {
                           passwordValidation.hasNumber ? "fa-check" : "fa-xmark"
                         } register-form__requirement-icon`}
                       />
-                      {t('auth:oneNumber', 'One number')}
+                      One number
                     </li>
                     <li
                       className={
@@ -544,7 +543,7 @@ function RegisterForm() {
                           passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"
                         } register-form__requirement-icon`}
                       />
-                      {t('auth:oneSpecialChar', 'One special character')}
+                      One special character
                     </li>
                   </ul>
                 </div>
@@ -555,7 +554,7 @@ function RegisterForm() {
                 icon="fa-solid fa-lock"
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
-                placeholder={t('auth:confirmPassword', 'Confirm Password')}
+                placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 showPasswordToggle
@@ -572,7 +571,7 @@ function RegisterForm() {
               {hasPasswordError && (
                 <p className="register-form__error-message">
                   <i className="fa-solid fa-exclamation-triangle" />
-                  {t('validation:passwordMismatch', 'Passwords do not match')}
+                  Passwords do not match
                 </p>
               )}
             </div>
@@ -581,10 +580,10 @@ function RegisterForm() {
           {/* Section: Optional Basic Information */}
           <div className="register-form__section">
             <h3 className="register-form__section-title">
-              {t('auth:optionalInfo', 'Optional Information')}
+              Optional Information
             </h3>
             <p className="register-form__section-description">
-              {t('auth:additionalDetails', 'Additional details (all optional)')}
+              Additional details (all optional)
             </p>
 
             <div className="register-form__form-grid">
@@ -593,7 +592,7 @@ function RegisterForm() {
                 icon="fa-solid fa-phone"
                 type="tel"
                 name="phone"
-                placeholder={t('auth:phoneNumberOpt', 'Phone Number (Optional)')}
+                placeholder="Phone Number (Optional)"
                 value={formData.phone}
                 onChange={handleInputChange}
                 hasError={!!formErrors.phone}
@@ -607,9 +606,9 @@ function RegisterForm() {
                 value={formData.gender}
                 onChange={handleInputChange}
                 options={[
-                  { value: "", label: t('auth:genderOpt', 'Gender (Optional)') },
-                  { value: "Male", label: t('auth:male', 'Male') },
-                  { value: "Female", label: t('auth:female', 'Female') },
+                  { value: "", label: "Gender (Optional)" },
+                  { value: "Male", label: "Male" },
+                  { value: "Female", label: "Female" },
                 ]}
                 hasError={!!formErrors.gender}
                 errorMessage={formErrors.gender}
@@ -619,7 +618,7 @@ function RegisterForm() {
               <div className="register-form__date-input-wrapper">
                 <DateInput
                   name="dateOfBirth"
-                  label={t('auth:dobOpt', 'Date of Birth (Optional)')}
+                  label="Date of Birth (Optional)"
                   value={formData.dateOfBirth}
                   onChange={handleDateChange}
                   required={false}
@@ -636,7 +635,7 @@ function RegisterForm() {
                 icon="fa-solid fa-globe"
                 type="text"
                 name="country"
-                placeholder={t('auth:countryOpt', 'Country (Optional)')}
+                placeholder="Country (Optional)"
                 value={formData.country}
                 onChange={handleInputChange}
                 hasError={!!formErrors.country}
@@ -648,7 +647,7 @@ function RegisterForm() {
                 icon="fa-solid fa-city"
                 type="text"
                 name="city"
-                placeholder={t('auth:cityOpt', 'City (Optional)')}
+                placeholder="City (Optional)"
                 value={formData.city}
                 onChange={handleInputChange}
                 hasError={!!formErrors.city}
@@ -660,7 +659,7 @@ function RegisterForm() {
                 icon="fa-brands fa-linkedin"
                 type="url"
                 name="linkedInUrl"
-                placeholder={t('auth:linkedInUrlOpt', 'LinkedIn Profile URL (Optional)')}
+                placeholder="LinkedIn Profile URL (Optional)"
                 value={formData.linkedInUrl}
                 onChange={handleInputChange}
                 hasError={!!formErrors.linkedInUrl}
@@ -672,7 +671,7 @@ function RegisterForm() {
                 icon="fa-solid fa-image"
                 type="url"
                 name="profilePictureUrl"
-                placeholder={t('auth:profilePicUrlOpt', 'Profile Picture URL (Optional)')}
+                placeholder="Profile Picture URL (Optional)"
                 value={formData.profilePictureUrl}
                 onChange={handleInputChange}
                 hasError={!!formErrors.profilePictureUrl}
@@ -692,13 +691,13 @@ function RegisterForm() {
                 required
               />
               <span>
-                {t('auth:iAgreeToThe', 'I agree to the ')}
+                I agree to the
                 <a
                   href="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="register-form__terms-link">
-                  {t('auth:termsAndConditions', 'Terms and Conditions')}
+                  Terms and Conditions
                 </a>
               </span>
             </label>
@@ -714,25 +713,25 @@ function RegisterForm() {
             {isLoading ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin"></i>
-                {t('auth:creatingAccount', 'Creating Account...')}
+                Creating Account...
               </>
             ) : (
               <>
                 <i className="fa-solid fa-user-plus" />
-                {t('auth:createAccountBtn', 'Create Account')}
+                Create Account
               </>
             )}
           </button>
 
           <div className="register-form__sign-in-link">
             <p className="register-form__sign-in-text">
-              {t('auth:alreadyHaveAccount', 'Already have an account?')}
+              Already have an account?
             </p>
             <Link
               to="/login"
               className="register-form__sign-in-anchor"
-              aria-label={t('auth:loginAria', 'Login to your account')}>
-              {t('auth:signIn', 'Sign In')}
+              aria-label="Login to your account">
+              Sign In
             </Link>
           </div>
           <div className="register-form__social-login">
@@ -742,7 +741,7 @@ function RegisterForm() {
                 onClick={() => handleSocialLogin("Google")}
                 className="register-form__social-button">
                 <i className="fa-brands fa-google register-form__social-button-icon"></i>
-                {t('auth:google', 'Google')}
+                Google
               </button>
 
               <button
@@ -750,25 +749,25 @@ function RegisterForm() {
                 onClick={() => handleSocialLogin("LinkedIn")}
                 className="register-form__social-button">
                 <i className="fa-brands fa-linkedin register-form__social-button-icon"></i>
-                {t('auth:linkedIn', 'LinkedIn')}
+                LinkedIn
               </button>
             </div>
           </div>
 
           <p className="register-form__terms-text">
-            {t('auth:agreeTermsStartCreate', 'By creating an account, you agree to our ')}
+            By creating an account, you agree to our
             <Link
               to="/terms"
               target="_blank"
               className="register-form__terms-link">
-              {t('auth:terms', 'Terms of Service')}
+              Terms of Service
             </Link>
-            {t('auth:and', ' and ')}
+            and
             <Link
               to="/privacy"
               target="_blank"
               className="register-form__terms-link">
-              {t('auth:privacy', 'Privacy Policy')}
+              Privacy Policy
             </Link>
             .
           </p>

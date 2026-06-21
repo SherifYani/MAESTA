@@ -15,6 +15,7 @@ namespace JobMagnet.Application.Interfaces
         Task<JobApplicationDto> ApplyAsync(int userId, int jobId, ApplyToJobRequest request);
         Task<IEnumerable<JobApplicationDto>> GetMyApplicationsAsync(int userId);
         Task<IEnumerable<JobApplicationDto>> GetJobApplicationsAsync(int employerUserId, int jobId);
+        Task<IEnumerable<JobApplicationDto>> GetCompanyApplicationsAsync(int employerUserId);
         Task UpdateApplicationStatusAsync(int employerUserId, int applicationId, string status);
         Task WithdrawApplicationAsync(int userId, int applicationId);
 

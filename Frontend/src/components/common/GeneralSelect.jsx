@@ -12,7 +12,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Trophy } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import styles from "./GeneralSelect.module.css";
 
 /**
@@ -35,15 +34,13 @@ function GeneralSelect({
   options,
   label,
   icon: Icon = Trophy,
-  placeholder,
+  placeholder = "Select an option...",
   disabled = false,
 }) {
-  const { t } = useTranslation(['common']);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const selectRef = useRef(null);
   const dropdownRef = useRef(null);
-  const displayPlaceholder = placeholder || t('common:status.selectOption', "Select an option...");
 
   const selectedOption = options.find(opt => opt.value === value);
 
@@ -149,7 +146,7 @@ function GeneralSelect({
             <Icon className={styles["modern-select__icon"]} />
           )}
           <span className={styles["modern-select__text"]}>
-            {selectedOption ? selectedOption.label : displayPlaceholder}
+            {selectedOption ? selectedOption.label : placeholder}
           </span>
         </span>
         <ChevronDown
@@ -213,7 +210,7 @@ function GeneralSelect({
               ))
             ) : (
               <div className={styles["modern-select__empty"]}>
-                {t('common:status.noOptions', 'No options available')}
+                No options available
               </div>
             )}
           </div>

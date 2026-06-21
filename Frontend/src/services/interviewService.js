@@ -1,141 +1,103 @@
 /**
  * @file interviewService.js
- * @description Interview scheduling API service with mock data.
- * @author Sherif Talaat
- * @version 1.0.0
- * @date 2026-05-04
+ * @description Interview scheduling API service connected to InterviewsController.cs.
+ *              Uses named exports to match frontend component usage.
+ * @author Antigravity (AI)
+ * @date 2026-05-09
  */
 import ApiService from './ApiService';
 
-const USE_MOCK_DATA = true;
+/**
+ * Get my interviews (paginated).
+ * Backend: GET api/Interviews
+ */
+export const getMyInterviews = async (page = 1, limit = 20) => {
+    const response = await ApiService.get('/api/Interviews', { params: { page, limit } });
+    return response.data;
+};
 
-const mockApplicant = (id) => ({
-    id,
-    userId: `user_${id}`,
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+1234567890',
-    profilePicture: null,
-    appliedJobs: [
-        { jobId: 'job_1', jobTitle: 'Senior Developer', appliedAt: '2026-05-01T10:00:00Z', status: 'shortlisted' },
-    ],
-    interviewHistory: [],
-});
+/**
+ * Get interview by ID.
+ * Backend: GET api/Interviews/{id}
+ */
+export const getInterviewById = async (id) => {
+    const response = await ApiService.get(`/api/Interviews/${id}`);
+    return response.data;
+};
 
-const mockJob = (jobId) => ({
-    id: jobId,
-    title: 'Senior Developer',
-    company: 'Tech Corp',
-    location: 'Remote',
-    interviewDuration: 60,
-});
+/**
+ * Schedule a new interview.
+ * Backend: POST api/Interviews/schedule
+ * @param {Object} data - { applicationId, scheduledAt, location, notes, interviewType }
+ */
+export const scheduleInterview = async (data) => {
+    const response = await ApiService.post('/api/Interviews/schedule', data);
+    return response.data;
+};
 
-const mockAvailableSlots = (date) => ({
-    success: true,
-    data: {
-        date,
-        slots: [
-            { time: '09:00', available: true },
-            { time: '10:00', available: true },
-            { time: '11:00', available: false },
-            { time: '13:00', available: true },
-            { time: '14:00', available: true },
-            { time: '15:00', available: false },
-        ],
-    },
-});
+/**
+ * Update interview status.
+ * Backend: PUT api/Interviews/{id}/status
+ * @param {number} id
+ * @param {Object} request - { status, notes }
+ */
+export const updateStatus = async (id, request) => {
+    const response = await ApiService.put(`/api/Interviews/${id}/status`, request);
+    return response.data;
+};
+
+/**
+ * Reschedule interview.
+ * Backend: PUT api/Interviews/{id}/reschedule
+ * @param {number} id
+ * @param {Object} request - { newScheduledAt, reason }
+ */
+export const rescheduleInterview = async (id, request) => {
+    const response = await ApiService.put(`/api/Interviews/${id}/reschedule`, request);
+    return response.data;
+};
+
+/**
+ * Delete interview.
+ * Backend: DELETE api/Interviews/{id}
+ */
+export const deleteInterview = async (id) => {
+    const response = await ApiService.delete(`/api/Interviews/${id}`);
+    return response.data;
+};
+
+// ─── Aliases & Missing endpoints (Placeholders to avoid compilation errors) ───
+
+export const getCompanyInterviews = async (params) => getMyInterviews(params?.page, params?.limit);
+
+export const cancelInterview = async (id, reason) => {
+    return updateStatus(id, { status: 'cancelled', notes: reason });
+};
 
 export const getApplicant = async (applicantId) => {
-    if (USE_MOCK_DATA) return { success: true, data: mockApplicant(applicantId) };
-    const response = await ApiService.get(`/api/applicants/${applicantId}`);
+    const response = await ApiService.get(`/api/JobSeeker/${applicantId}`);
     return response.data;
 };
 
 export const getJob = async (jobId) => {
-    if (USE_MOCK_DATA) return { success: true, data: mockJob(jobId) };
     const response = await ApiService.get(`/api/jobs/${jobId}`);
     return response.data;
 };
 
-export const getAvailableSlots = async (date, duration) => {
-    if (USE_MOCK_DATA) return mockAvailableSlots(date);
-    const response = await ApiService.get('/api/interviews/available-slots', { params: { date, duration } });
-    return response.data;
+export const getAvailableSlots = async () => ({ success: true, data: { slots: [] } });
+
+const interviewService = {
+    getMyInterviews,
+    getInterviewById,
+    scheduleInterview,
+    updateStatus,
+    rescheduleInterview,
+    deleteInterview,
+    getCompanyInterviews,
+    cancelInterview,
+    getApplicant,
+    getJob,
+    getAvailableSlots
 };
 
-export const scheduleInterview = async (data) => {
-    if (USE_MOCK_DATA) {
-        return {
-            success: true,
-            data: {
-                interviewId: `interview_${Date.now()}`,
-                ...data,
-                status: 'scheduled',
-                createdAt: new Date().toISOString(),
-            },
-        };
-    }
-    const response = await ApiService.post('/api/interviews/schedule', data);
-    return response.data;
-};
-
-export const getCompanyInterviews = async (params) => {
-    if (USE_MOCK_DATA) {
-        return {
-            success: true,
-            data: {
-                interviews: [
-                    {
-                        id: 'interview_1',
-                        applicantId: 'app_1',
-                        applicantName: 'John Doe',
-                        jobId: 'job_1',
-                        jobTitle: 'Senior Developer',
-                        scheduledDate: '2026-05-10',
-                        scheduledTime: '10:00',
-                        interviewType: 'video',
-                        location: 'https://zoom.us/j/123456789',
-                        status: 'scheduled',
-                        notes: 'Technical interview',
-                        createdAt: '2026-05-04T10:00:00Z',
-                    },
-                ],
-                pagination: { currentPage: 1, totalPages: 1, totalItems: 1, itemsPerPage: 20 },
-            },
-        };
-    }
-    const response = await ApiService.get('/api/company/interviews', { params });
-    return response.data;
-};
-
-export const getInterviewDetails = async (interviewId) => {
-    if (USE_MOCK_DATA) {
-        return { success: true, data: {} };
-    }
-    const response = await ApiService.get(`/api/company/interviews/${interviewId}`);
-    return response.data;
-};
-
-export const rescheduleInterview = async (interviewId, newDate, newTime, reason) => {
-    if (USE_MOCK_DATA) {
-        return { success: true, data: { interviewId, scheduledDate: newDate, scheduledTime: newTime, status: 'rescheduled', updatedAt: new Date().toISOString() } };
-    }
-    const response = await ApiService.put(`/api/company/interviews/${interviewId}/reschedule`, { scheduledDate: newDate, scheduledTime: newTime, reason });
-    return response.data;
-};
-
-export const cancelInterview = async (interviewId, reason) => {
-    if (USE_MOCK_DATA) {
-        return { success: true, data: { interviewId, status: 'cancelled', cancelledAt: new Date().toISOString(), reason } };
-    }
-    const response = await ApiService.put(`/api/company/interviews/${interviewId}/cancel`, { reason });
-    return response.data;
-};
-
-export const completeInterview = async (interviewId, outcome, notes) => {
-    if (USE_MOCK_DATA) {
-        return { success: true, data: { interviewId, status: 'completed', outcome, completedAt: new Date().toISOString() } };
-    }
-    const response = await ApiService.put(`/api/company/interviews/${interviewId}/complete`, { outcome, notes });
-    return response.data;
-};
+export default interviewService;

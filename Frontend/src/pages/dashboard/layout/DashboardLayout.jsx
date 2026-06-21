@@ -36,9 +36,16 @@ export const DashboardContext = createContext();
  * @returns {JSX.Element} The rendered dashboard layout
  */
 const DashboardLayout = ({ children }) => {
-  // Seed role from the logged-in user; fall back to 'jobseeker' if not set
   const { user } = useAuth();
   const [currentRole, setCurrentRole] = useState(user?.role ?? 'jobseeker');
+
+  // Sync currentRole if user.role changes (e.g. after onboarding)
+  useEffect(() => {
+    if (user?.role && user.role !== currentRole) {
+      setCurrentRole(user.role);
+    }
+  }, [user?.role, currentRole]);
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const resizeTimeoutRef = useRef(null);

@@ -8,7 +8,6 @@
 
 import { useState, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
-import { useTranslation } from "react-i18next";
 import "../../styles/components/form-components.css";
 
 /**
@@ -39,7 +38,6 @@ function FileUpload({
     const [isDragOver, setIsDragOver] = useState(false);
     const [error, setError] = useState("");
     const fileInputRef = useRef(null);
-    const { t } = useTranslation(['validation', 'common']);
 
     // Determine file type restriction based on props
     const getFileTypeRestriction = () => {
@@ -67,7 +65,7 @@ function FileUpload({
         if (restriction === "image") {
             const isImage = file.type.startsWith('image/');
             if (!isImage) {
-                setError(t('validation:fileUpload.imageOnly', "Please upload an image file (PNG, JPG, SVG, etc.)"));
+                setError("Please upload an image file (PNG, JPG, SVG, etc.)");
                 return false;
             }
         } else if (restriction === "document") {
@@ -78,7 +76,7 @@ function FileUpload({
                 file.name.toLowerCase().endsWith('.doc') ||
                 file.name.toLowerCase().endsWith('.docx');
             if (!isDocument) {
-                setError(t('validation:fileUpload.documentOnly', "Please upload a document file (PDF, DOC, DOCX, etc.)"));
+                setError("Please upload a document file (PDF, DOC, DOCX, etc.)");
                 return false;
             }
         }
@@ -193,14 +191,9 @@ function FileUpload({
 
     // Format file size for display
     const formatFileSize = (bytes) => {
-        if (bytes === 0) return `0 ${t('common:fileSize.bytes', 'Bytes')}`;
+        if (bytes === 0) return '0 Bytes';
         const k = 1024;
-        const sizes = [
-            t('common:fileSize.bytes', 'Bytes'),
-            t('common:fileSize.kb', 'KB'),
-            t('common:fileSize.mb', 'MB'),
-            t('common:fileSize.gb', 'GB')
-        ];
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
@@ -258,14 +251,14 @@ function FileUpload({
                                 className="file-upload__preview-action"
                                 onClick={handleChangeFile}
                             >
-                                {t('common:actions.change', 'Change')}
+                                Change
                             </button>
                             <button
                                 type="button"
                                 className="file-upload__preview-action file-upload__preview-action--remove"
                                 onClick={handleClearFile}
                             >
-                                {t('common:actions.remove', 'Remove')}
+                                Remove
                             </button>
                         </div>
                     </div>
@@ -286,7 +279,7 @@ function FileUpload({
                             <i className={`${getUploadIcon()} file-upload__icon`} />
                         )}
                         <span className="file-upload__text">
-                            {isLoading ? t('common:status.uploading', 'Uploading...') : label}
+                            {isLoading ? 'Uploading...' : label}
                         </span>
                         <div className="file-upload__formats">
                             {supportedFormats}

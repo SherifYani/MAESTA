@@ -18,7 +18,6 @@ import {
     Briefcase,
     Users
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Button, Input } from '../common';
 import styles from './JobFilters.module.css';
 
@@ -26,7 +25,6 @@ import styles from './JobFilters.module.css';
  * Salary range filter component.
  */
 const SalaryFilter = ({ filters, onFilterChange }) => {
-    const { t } = useTranslation(['jobs', 'common']);
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
         const numericValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
@@ -45,7 +43,7 @@ const SalaryFilter = ({ filters, onFilterChange }) => {
             <div className={styles.salaryInputs}>
                 <div className={styles.inputGroup}>
                     <label htmlFor="salary-min" className={styles.visuallyHidden}>
-                        {t('jobs:filters.salaryMinAria', 'Minimum salary')}
+                        Minimum salary
                     </label>
                     <div className={styles.inputWrapper}>
                         <span className={styles.currencyPrefix}>$</span>
@@ -53,13 +51,13 @@ const SalaryFilter = ({ filters, onFilterChange }) => {
                             id="salary-min"
                             name="min"
                             type="number"
-                            placeholder={t('jobs:filters.salaryMin', 'Min')}
+                            placeholder="Min"
                             value={filters.salaryRange?.min || ''}
                             onChange={handleChange}
                             min="0"
                             step="1000"
                             className={styles.salaryInput}
-                            aria-label={t('jobs:filters.salaryMinAria', 'Minimum salary')}
+                            aria-label="Minimum salary"
                         />
                     </div>
                 </div>
@@ -68,7 +66,7 @@ const SalaryFilter = ({ filters, onFilterChange }) => {
 
                 <div className={styles.inputGroup}>
                     <label htmlFor="salary-max" className={styles.visuallyHidden}>
-                        {t('jobs:filters.salaryMaxAria', 'Maximum salary')}
+                        Maximum salary
                     </label>
                     <div className={styles.inputWrapper}>
                         <span className={styles.currencyPrefix}>$</span>
@@ -76,13 +74,13 @@ const SalaryFilter = ({ filters, onFilterChange }) => {
                             id="salary-max"
                             name="max"
                             type="number"
-                            placeholder={t('jobs:filters.salaryMax', 'Max')}
+                            placeholder="Max"
                             value={filters.salaryRange?.max || ''}
                             onChange={handleChange}
                             min="0"
                             step="1000"
                             className={styles.salaryInput}
-                            aria-label={t('jobs:filters.salaryMaxAria', 'Maximum salary')}
+                            aria-label="Maximum salary"
                         />
                     </div>
                 </div>
@@ -90,7 +88,7 @@ const SalaryFilter = ({ filters, onFilterChange }) => {
 
             {filters.salaryRange?.min > filters.salaryRange?.max && filters.salaryRange?.max !== '' && (
                 <div className={styles.validationError} role="alert">
-                    {t('jobs:filters.salaryError', 'Maximum must be greater than minimum')}
+                    Maximum must be greater than minimum
                 </div>
             )}
         </div>
@@ -111,7 +109,6 @@ const SkillsFilter = ({
     onSkillToggle,
     onClearSkills
 }) => {
-    const { t } = useTranslation(['jobs', 'common']);
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredSkills = skills.filter(skill =>
@@ -127,11 +124,11 @@ const SkillsFilter = ({
             <div className={styles.skillsSearch}>
                 <Input
                     type="text"
-                    placeholder={t('jobs:filters.searchSkills', 'Search skills...')}
+                    placeholder="Search skills..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className={styles.searchInput}
-                    aria-label={t('jobs:filters.searchSkillsAria', 'Search skills')}
+                    aria-label="Search skills"
                 />
             </div>
 
@@ -139,15 +136,15 @@ const SkillsFilter = ({
                 <div className={styles.selectedSkills}>
                     <div className={styles.selectedSkillsHeader}>
                         <span className={styles.selectedCount}>
-                            {t('jobs:filters.skillsSelected', '{{count}} selected', { count: selectedSkills.length })}
+                            {selectedSkills.length} selected
                         </span>
                         <button
                             type="button"
                             onClick={onClearSkills}
                             className={styles.clearSkillsButton}
-                            aria-label={t('jobs:filters.clearSkillsAria', 'Clear all selected skills')}
+                            aria-label="Clear all selected skills"
                         >
-                            {t('common:actions.clearAll', 'Clear all')}
+                            Clear all
                         </button>
                     </div>
 
@@ -158,7 +155,7 @@ const SkillsFilter = ({
                                 type="button"
                                 onClick={() => onSkillToggle(skill)}
                                 className={styles.selectedSkillTag}
-                                aria-label={t('jobs:filters.removeSkill', 'Remove {{skill}}', { skill })}
+                                aria-label={`Remove ${skill}`}
                             >
                                 {skill}
                                 <X size={12} aria-hidden="true" />
@@ -168,7 +165,7 @@ const SkillsFilter = ({
                 </div>
             )}
 
-            <div className={styles.skillsGrid} role="listbox" aria-label={t('jobs:filters.availableSkills', 'Available skills')}>
+            <div className={styles.skillsGrid} role="listbox" aria-label="Available skills">
                 {filteredSkills.map(skill => (
                     <button
                         key={skill}
@@ -188,7 +185,7 @@ const SkillsFilter = ({
 
                 {filteredSkills.length === 0 && (
                     <div className={styles.noResults}>
-                        {t('jobs:filters.noSkillsFound', 'No skills found matching "{{searchTerm}}"', { searchTerm })}
+                        No skills found matching "{searchTerm}"
                     </div>
                 )}
             </div>
@@ -216,7 +213,6 @@ const JobFilters = ({
     jobTypes = ['Full Time', 'Part Time', 'Contract', 'Remote'],
     datePostedOptions = ['Today', 'This Week', 'This Month', 'All Time']
 }) => {
-    const { t } = useTranslation(['jobs', 'common']);
     const [expandedSections, setExpandedSections] = useState({
         salary: true,
         type: true,
@@ -293,7 +289,7 @@ const JobFilters = ({
     return (
         <aside
             className={styles.container}
-            aria-label={t('jobs:filters.ariaLabel', 'Job filters')}
+            aria-label="Job filters"
         >
             {/* Header */}
             <div className={styles.header}>
@@ -304,9 +300,9 @@ const JobFilters = ({
                         aria-hidden="true"
                     />
                     <h2 className={styles.title}>
-                        {t('common:actions.filters', 'Filters')}
+                        Filters
                         {activeFiltersCount > 0 && (
-                            <span className={styles.filterCount} aria-label={t('jobs:filters.activeFiltersCount', '{{count}} active filters', { count: activeFiltersCount })}>
+                            <span className={styles.filterCount} aria-label={`${activeFiltersCount} active filters`}>
                                 ({activeFiltersCount})
                             </span>
                         )}
@@ -318,10 +314,10 @@ const JobFilters = ({
                     onClick={handleClearAll}
                     className={styles.clearButton}
                     disabled={activeFiltersCount === 0}
-                    aria-label={t('common:actions.clearAllFilters', 'Clear all filters')}
+                    aria-label="Clear all filters"
                 >
                     <X size={16} aria-hidden="true" />
-                    {t('common:actions.clearAll', 'Clear all')}
+                    Clear all
                 </button>
             </div>
 
@@ -336,7 +332,7 @@ const JobFilters = ({
                 >
                     <div className={styles.sectionHeader}>
                         <DollarSign size={16} className={styles.sectionIcon} aria-hidden="true" />
-                        <span className={styles.sectionTitle}>{t('jobs:filters.salaryRange', 'Salary Range')}</span>
+                        <span className={styles.sectionTitle}>Salary Range</span>
                     </div>
                     {expandedSections.salary ?
                         <ChevronUp size={16} aria-hidden="true" /> :
@@ -349,7 +345,7 @@ const JobFilters = ({
                         id="salary-section"
                         className={styles.sectionContent}
                         role="region"
-                        aria-label={t('jobs:filters.salaryRangeOptions', 'Salary range filter options')}
+                        aria-label="Salary range filter options"
                     >
                         <SalaryFilter
                             filters={filters}
@@ -370,7 +366,7 @@ const JobFilters = ({
                 >
                     <div className={styles.sectionHeader}>
                         <Briefcase size={16} className={styles.sectionIcon} aria-hidden="true" />
-                        <span className={styles.sectionTitle}>{t('jobs:filters.jobType', 'Job Type')}</span>
+                        <span className={styles.sectionTitle}>Job Type</span>
                     </div>
                     {expandedSections.type ?
                         <ChevronUp size={16} aria-hidden="true" /> :
@@ -383,9 +379,9 @@ const JobFilters = ({
                         id="type-section"
                         className={styles.sectionContent}
                         role="region"
-                        aria-label={t('jobs:filters.jobTypeOptions', 'Job type filter options')}
+                        aria-label="Job type filter options"
                     >
-                        <div className={styles.optionsList} role="radiogroup" aria-label={t('jobs:filters.selectJobType', 'Select job type')}>
+                        <div className={styles.optionsList} role="radiogroup" aria-label="Select job type">
                             {jobTypes.map(type => (
                                 <label
                                     key={type}
@@ -399,7 +395,7 @@ const JobFilters = ({
                                         className={styles.optionInput}
                                         aria-label={type}
                                     />
-                                    <span className={styles.optionText}>{t(`jobs:types.${type.replace(' ', '')}`, type)}</span>
+                                    <span className={styles.optionText}>{type}</span>
                                     {filters.jobType === type && (
                                         <Check size={14} className={styles.optionCheck} aria-hidden="true" />
                                     )}
@@ -421,7 +417,7 @@ const JobFilters = ({
                 >
                     <div className={styles.sectionHeader}>
                         <Users size={16} className={styles.sectionIcon} aria-hidden="true" />
-                        <span className={styles.sectionTitle}>{t('jobs:filters.skills', 'Skills')}</span>
+                        <span className={styles.sectionTitle}>Skills</span>
                     </div>
                     {expandedSections.skills ?
                         <ChevronUp size={16} aria-hidden="true" /> :
@@ -434,7 +430,7 @@ const JobFilters = ({
                         id="skills-section"
                         className={styles.sectionContent}
                         role="region"
-                        aria-label={t('jobs:filters.skillsOptions', 'Skills filter options')}
+                        aria-label="Skills filter options"
                     >
                         <SkillsFilter
                             skills={availableSkills}
@@ -457,7 +453,7 @@ const JobFilters = ({
                 >
                     <div className={styles.sectionHeader}>
                         <Briefcase size={16} className={styles.sectionIcon} aria-hidden="true" />
-                        <span className={styles.sectionTitle}>{t('jobs:filters.experienceLevel', 'Experience Level')}</span>
+                        <span className={styles.sectionTitle}>Experience Level</span>
                     </div>
                     {expandedSections.experience ?
                         <ChevronUp size={16} aria-hidden="true" /> :
@@ -470,9 +466,9 @@ const JobFilters = ({
                         id="experience-section"
                         className={styles.sectionContent}
                         role="region"
-                        aria-label={t('jobs:filters.experienceOptions', 'Experience level filter options')}
+                        aria-label="Experience level filter options"
                     >
-                        <div className={styles.optionsList} role="radiogroup" aria-label={t('jobs:filters.selectExperience', 'Select experience level')}>
+                        <div className={styles.optionsList} role="radiogroup" aria-label="Select experience level">
                             {experienceLevels.map(level => (
                                 <label
                                     key={level}
@@ -486,7 +482,7 @@ const JobFilters = ({
                                         className={styles.optionInput}
                                         aria-label={level}
                                     />
-                                    <span className={styles.optionText}>{t(`jobs:experience.${level.replace(' ', '')}`, level)}</span>
+                                    <span className={styles.optionText}>{level}</span>
                                     {filters.experienceLevel === level && (
                                         <Check size={14} className={styles.optionCheck} aria-hidden="true" />
                                     )}
@@ -508,7 +504,7 @@ const JobFilters = ({
                 >
                     <div className={styles.sectionHeader}>
                         <Clock size={16} className={styles.sectionIcon} aria-hidden="true" />
-                        <span className={styles.sectionTitle}>{t('jobs:filters.datePosted', 'Date Posted')}</span>
+                        <span className={styles.sectionTitle}>Date Posted</span>
                     </div>
                     {expandedSections.datePosted ?
                         <ChevronUp size={16} aria-hidden="true" /> :
@@ -521,9 +517,9 @@ const JobFilters = ({
                         id="datePosted-section"
                         className={styles.sectionContent}
                         role="region"
-                        aria-label={t('jobs:filters.datePostedOptions', 'Date posted filter options')}
+                        aria-label="Date posted filter options"
                     >
-                        <div className={styles.optionsList} role="radiogroup" aria-label={t('jobs:filters.selectDatePosted', 'Select date posted')}>
+                        <div className={styles.optionsList} role="radiogroup" aria-label="Select date posted">
                             {datePostedOptions.map(option => {
                                 const value = option.toLowerCase().replace(' ', '');
                                 return (
@@ -539,7 +535,7 @@ const JobFilters = ({
                                             className={styles.optionInput}
                                             aria-label={option}
                                         />
-                                        <span className={styles.optionText}>{t(`jobs:datePosted.${option.replace(' ', '')}`, option)}</span>
+                                        <span className={styles.optionText}>{option}</span>
                                         {filters.datePosted === value && (
                                             <Check size={14} className={styles.optionCheck} aria-hidden="true" />
                                         )}
@@ -558,18 +554,18 @@ const JobFilters = ({
                     onClick={handleClearAll}
                     disabled={activeFiltersCount === 0}
                     className={styles.clearFiltersButton}
-                    aria-label={t('common:actions.clearAllFilters', 'Clear all filters')}
+                    aria-label="Clear all filters"
                 >
-                    {t('common:actions.clearAll', 'Clear All')}
+                    Clear All
                 </Button>
 
                 <Button
                     variant="primary"
                     onClick={handleApplyFilters}
                     className={styles.applyButton}
-                    aria-label={t('common:actions.applyFilters', 'Apply filters')}
+                    aria-label="Apply filters"
                 >
-                    {t('common:actions.applyFilters', 'Apply Filters')}
+                    Apply Filters
                 </Button>
             </div>
         </aside>
