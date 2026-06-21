@@ -27,9 +27,9 @@ import styles from './Header.module.css';
 
 /** Guest (unauthenticated) navigation links. */
 const NAV_GUEST = [
-  { name: 'Jobs', path: '/jobs' },
-  { name: 'Gigs', path: '/gigs' },
-  { name: 'AI Tools', path: '/ai/cv-builder' },
+  { name: 'Jobs',     path: '/jobs' },
+  { name: 'Gigs',     path: '/gigs' },
+  { name: 'AI Tools', path: '/ai' },
 ];
 
 /**
@@ -38,44 +38,44 @@ const NAV_GUEST = [
  */
 const NAV_AUTHENTICATED = {
   jobseeker: [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Jobs', path: '/jobs' },
+    { name: 'Dashboard',    path: '/dashboard' },
+    { name: 'Jobs',         path: '/jobs' },
     { name: 'Applications', path: '/dashboard/applications' },
-    { name: 'Gigs', path: '/gigs' },
-    { name: 'Messages', path: '/chat' },
+    { name: 'Gigs',         path: '/gigs' },
+    { name: 'Messages',     path: '/chat' },
   ],
   freelancer: [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Find Gigs', path: '/gigs' },
-    { name: 'My Gigs', path: '/gigs/manage' },
+    { name: 'My Gigs',   path: '/gigs/manage' },
     { name: 'Proposals', path: '/gigs/proposals' },
-    { name: 'Messages', path: '/chat' },
+    { name: 'Messages',  path: '/chat' },
   ],
   company: [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Post Job', path: '/jobs/post' },
-    { name: 'My Jobs', path: '/dashboard/published-jobs' },
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Post Job',   path: '/jobs/post' },
+    { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
-    { name: 'Messages', path: '/chat' },
+    { name: 'Messages',   path: '/chat' },
   ],
   employer: [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Post Job', path: '/jobs/post' },
-    { name: 'My Jobs', path: '/dashboard/published-jobs' },
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Post Job',   path: '/jobs/post' },
+    { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
-    { name: 'Messages', path: '/chat' },
+    { name: 'Messages',   path: '/chat' },
   ],
   client: [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Gigs', path: '/gigs' },
+    { name: 'Dashboard',   path: '/dashboard' },
+    { name: 'Gigs',        path: '/gigs' },
     { name: 'My Projects', path: '/gigs/projects' },
-    { name: 'Talent', path: '/dashboard/talent' },
-    { name: 'Messages', path: '/chat' },
+    { name: 'Talent',      path: '/dashboard/talent' },
+    { name: 'Messages',    path: '/chat' },
   ],
   admin: [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Users', path: '/dashboard/users' },
-    { name: 'Jobs', path: '/dashboard/jobs' },
+    { name: 'Dashboard',  path: '/dashboard' },
+    { name: 'Users',      path: '/dashboard/users' },
+    { name: 'Jobs',       path: '/dashboard/jobs' },
     { name: 'Moderation', path: '/dashboard/moderation' },
   ],
 };
@@ -83,8 +83,8 @@ const NAV_AUTHENTICATED = {
 /** Avatar dropdown menu items. */
 const DROPDOWN_ITEMS = [
   { icon: <LayoutDashboard size={15} />, label: 'Dashboard', to: '/dashboard' },
-  { icon: <User size={15} />, label: 'Profile', to: '/dashboard/profile' },
-  { icon: <Settings size={15} />, label: 'Settings', to: '/dashboard/account' },
+  { icon: <User size={15} />,            label: 'Profile',   to: '/dashboard/profile' },
+  { icon: <Settings size={15} />,        label: 'Settings',  to: '/dashboard/account' },
 ];
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -95,20 +95,20 @@ const DROPDOWN_ITEMS = [
  * @returns {JSX.Element} The rendered header.
  */
 const Header = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const { user, isAuthenticated, logout, userAvatar } = useAuth();
   const { unreadCount } = useNotifications();
 
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [avatarOpen, setAvatarOpen] = useState(false);
+  const [scrolled,    setScrolled]    = useState(false);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [avatarOpen,  setAvatarOpen]  = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const avatarRef = useRef(null);
 
   // Normalise role string coming from the API (e.g. "JobSeeker" → "jobseeker")
-  const role = (user?.role || user?.userType || '').toLowerCase();
+  const role     = (user?.role || user?.userType || '').toLowerCase();
   const navLinks = isAuthenticated
     ? (NAV_AUTHENTICATED[role] || NAV_AUTHENTICATED.jobseeker)
     : NAV_GUEST;
@@ -156,8 +156,7 @@ const Header = () => {
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Redirect to jobs page with search query since /search route does not exist
-      navigate(`/jobs?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/jobs?search=${encodeURIComponent(searchQuery.trim())}`);
       setMobileOpen(false);
     }
   }, [searchQuery, navigate]);
@@ -315,7 +314,7 @@ const Header = () => {
             ) : (
               /* Guest Auth Buttons */
               <div className={styles['header__auth-group']}>
-                <Link to="/login" className={styles['header__login-btn']}>Log In</Link>
+                <Link to="/login"    className={styles['header__login-btn']}>Log In</Link>
                 <Link to="/register" className={styles['header__signup-btn']}>Sign Up</Link>
               </div>
             )}
@@ -440,7 +439,7 @@ const Header = () => {
               </button>
             ) : (
               <div className={styles['header__mobile-auth']}>
-                <Link to="/login" className={styles['header__mobile-login-btn']}>Log In</Link>
+                <Link to="/login"    className={styles['header__mobile-login-btn']}>Log In</Link>
                 <Link to="/register" className={styles['header__mobile-signup-btn']}>Sign Up</Link>
               </div>
             )}

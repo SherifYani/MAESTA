@@ -508,6 +508,51 @@
     to { transform: rotate(360deg); }
 }
 
+.form__textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: var(--line-height-relaxed);
+}
+
+.settingsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.settingsToggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.settingsToggle:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent-pink);
+}
+
+.settingsToggle input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent-pink);
+    cursor: pointer;
+}
+
+.settingsToggle span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
 /* ── Reduced Motion ─────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .page, .card, .statusMessage, .deleteConfirm {
@@ -540,6 +585,10 @@
     .twoFA__row {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .settingsGrid {
+        grid-template-columns: 1fr;
     }
 
     .deleteConfirm__actions {

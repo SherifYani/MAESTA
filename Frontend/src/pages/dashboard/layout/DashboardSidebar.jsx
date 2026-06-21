@@ -23,6 +23,7 @@ import { DashboardContext } from "./DashboardLayout";
 import {
   ROLE_NAVIGATION,
   ROLE_DISPLAY_NAMES,
+  ROLES,
 } from "../config/dashboard.config";
 import styles from "./DashboardSidebar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -55,8 +56,8 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
   const userName = user?.name || user?.fullName || "User";
   const userInitials = getUserInitials(userName);
 
-  // Get navigation for current role - memoize this if needed
-  const roleNavigation = ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION.client;
+  // Get navigation for current role - each entry is { displayName, icon, navigation: [...] }
+  const roleNavigation = (ROLE_NAVIGATION[currentRole] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
 
   /**
    * Handle role change
@@ -67,7 +68,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
       setCurrentRole(role);
       // After changing role, you might want to navigate to the dashboard home
       // or the first item in the new role's navigation
-      const newRoleNav = ROLE_NAVIGATION[role] || ROLE_NAVIGATION.client;
+      const newRoleNav = (ROLE_NAVIGATION[role] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
       if (newRoleNav.length > 0) {
         navigate(newRoleNav[0].path);
       }

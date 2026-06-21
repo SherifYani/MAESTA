@@ -75,39 +75,7 @@ services:
     networks:
       - jobmagnet_network
 
-  # ─── JobMagnet API ───────────────────────────────────────────────────────────
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: jobmagnet_api
-    restart: unless-stopped
-    depends_on:
-      sqlserver:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "http://+:8080"
-      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=JobMagnetDB;User Id=SA;Password=JobMagnet@2026!;TrustServerCertificate=True;"
-      Jwt__Key: "YourSuperSecretKeyHere_ChangeMe_AtLeast32Chars!"
-      Jwt__Issuer: "JobMagnetAPI"
-      Jwt__Audience: "JobMagnetClient"
-      Jwt__AccessTokenMinutes: "60"
-      Jwt__RefreshTokenDays: "7"
-      Minio__Endpoint: "minio:9000"
-      Minio__AccessKey: "jobmagnet_admin"
-      Minio__SecretKey: "JobMagnet@2026!"
-      Minio__UseSSL: "false"
-      Minio__PublicEndpoint: "http://localhost:9000"
-    ports:
-      - "5024:8080"
-    volumes:
-      - api_logs:/app/logs
-    networks:
-      - jobmagnet_network
-
+  
   # ─── Database UI Manager (Adminer) ──────────────────────────────────────────
   db-manager:
     image: adminer:latest

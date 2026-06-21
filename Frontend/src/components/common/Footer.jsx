@@ -11,6 +11,7 @@
 
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Heart } from 'lucide-react';
 import styles from './Footer.module.css';
@@ -46,12 +47,11 @@ const Footer = () => {
             ],
         },
         {
-            title: 'Platform',
+            title: 'Company',
             links: [
-                { label: 'Find Gigs', href: '/gigs' },
-                { label: 'AI Tools', href: '/ai/cv-builder' },
-                { label: 'Smart Search', href: '/ai/smart-search' },
-                { label: 'Help & Support', href: '/dashboard/help' },
+                { label: 'About Us', href: '/about' },
+                { label: 'Blog', href: '/blog' },
+                { label: 'Careers', href: '/careers' },
             ],
         },
         {
@@ -59,8 +59,8 @@ const Footer = () => {
             links: [
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
-                { label: 'Cookie Policy', href: '/cookies' },
-                { label: 'Contact Support', href: '/dashboard/help' },
+                { label: 'Security', href: '/security' },
+                { label: 'Contact Support', href: '/contact' },
             ],
         },
     ];
@@ -178,17 +178,17 @@ const Footer = () => {
                                 aria-label={`${section.title} navigation`}
                             >
                                 <h3 className={styles.sectionTitle}>{section.title}</h3>
-                                <ul className={styles.sectionList} role="list">
+                                <ul className={styles.sectionList}>
                                     {section.links.map((link, linkIndex) => (
                                         <li key={`link-${index}-${linkIndex}`} className={styles.sectionItem}>
-                                            <a
-                                                href={link.href}
+                                            <Link
+                                                to={link.href}
                                                 className={styles.sectionLink}
                                                 onClick={() => handleLinkClick(link.label, link.href)}
                                                 aria-label={link.label}
                                             >
                                                 {link.label}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -215,37 +215,37 @@ const Footer = () => {
                     {/* Legal Links */}
                     <div className={styles.legalSection}>
                         <nav className={styles.legalLinks} aria-label="Legal links">
-                            <a
-                                href="/dashboard/help"
+                            <Link
+                                to="/privacy"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Privacy Policy', '/dashboard/help')}
+                                onClick={() => handleLinkClick('Privacy Policy', '/privacy')}
                             >
                                 Privacy Policy
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/dashboard/help"
+                            <Link
+                                to="/terms"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Terms of Service', '/dashboard/help')}
+                                onClick={() => handleLinkClick('Terms of Service', '/terms')}
                             >
                                 Terms of Service
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/dashboard/help"
+                            <Link
+                                to="/cookies"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Cookie Policy', '/dashboard/help')}
+                                onClick={() => handleLinkClick('Cookie Policy', '/cookies')}
                             >
                                 Cookie Policy
-                            </a>
+                            </Link>
                             <span className={styles.legalSeparator} aria-hidden="true">•</span>
-                            <a
-                                href="/dashboard/help"
+                            <Link
+                                to="/accessibility"
                                 className={styles.legalLink}
-                                onClick={() => handleLinkClick('Accessibility', '/dashboard/help')}
+                                onClick={() => handleLinkClick('Accessibility', '/accessibility')}
                             >
                                 Accessibility
-                            </a>
+                            </Link>
                         </nav>
                     </div>
 

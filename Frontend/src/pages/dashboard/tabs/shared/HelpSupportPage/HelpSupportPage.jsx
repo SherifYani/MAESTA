@@ -103,8 +103,7 @@ const FAQ_SECTIONS = [
 
 const QUICK_LINKS = [
     { label: 'Getting Started Guide', icon: <BookOpen size={20} />, href: '#faq' },
-    { label: 'Profile Settings', icon: <Users size={20} />, href: '/dashboard/profile' },
-    { label: 'Account Settings', icon: <Shield size={20} />, href: '/dashboard/account' },
+    { label: 'Settings', icon: <Users size={20} />, href: '/dashboard/account' },
     { label: 'Billing & Wallet', icon: <CreditCard size={20} />, href: '/dashboard/billing' },
 ];
 

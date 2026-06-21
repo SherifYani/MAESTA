@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Shield, Key, Monitor, AlertTriangle, Eye, EyeOff, CheckCircle, XCircle, LogOut } from 'lucide-react';
+import { Shield, Key, Monitor, AlertTriangle, Eye, EyeOff, CheckCircle, XCircle, LogOut, Bell, Globe, Moon, Save } from 'lucide-react';
 import authService from '../../../../../services/authService';
 import profileService from '../../../../../services/profileService';
 import styles from './AccountSettings.module.css';
@@ -63,9 +63,23 @@ const StatusMessage = ({ type, message }) => {
  * @returns {JSX.Element} The rendered account settings page.
  */
 const AccountSettings = () => {
-    const [activeTab, setActiveTab] = useState('security');
+    const [activeTab, setActiveTab] = useState('preferences');
 
     console.log('AccountSettings component mounted');
+
+    // Backend user settings
+    const [settingsForm, setSettingsForm] = useState({
+        language: 'en',
+        timeZone: '',
+        emailNotifications: true,
+        smsNotifications: false,
+        pushNotifications: false,
+        darkMode: false,
+        preferences: '',
+    });
+    const [settingsStatus, setSettingsStatus] = useState({ type: '', message: '' });
+    const [isLoadingSettings, setIsLoadingSettings] = useState(false);
+    const [isSavingSettings, setIsSavingSettings] = useState(false);
 
     // Change Password
     const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -87,6 +101,59 @@ const AccountSettings = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteStatus, setDeleteStatus] = useState({ type: '', message: '' });
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
+    // ─── Load backend user settings ────────────────────────────────────────
+    const loadSettings = useCallback(async () => {
+        setIsLoadingSettings(true);
+        setSettingsStatus({ type: '', message: '' });
+        try {
+            const data = await profileService.getUserSettings();
+            setSettingsForm({
+                language: data?.language || 'en',
+                timeZone: data?.timeZone || '',
+                emailNotifications: Boolean(data?.emailNotifications),
+                smsNotifications: Boolean(data?.smsNotifications),
+                pushNotifications: Boolean(data?.pushNotifications),
+                darkMode: Boolean(data?.darkMode),
+                preferences: data?.preferences || '',
+            });
+        } catch (err) {
+            setSettingsStatus({ type: 'error', message: err?.message || 'Failed to load settings.' });
+        } finally {
+            setIsLoadingSettings(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadSettings();
+    }, [loadSettings]);
+
+    const handleSettingsChange = (field, value) => {
+        setSettingsForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSaveSettings = async (e) => {
+        e.preventDefault();
+        setIsSavingSettings(true);
+        setSettingsStatus({ type: '', message: '' });
+        try {
+            const updated = await profileService.updateUserSettings(settingsForm);
+            setSettingsForm({
+                language: updated?.language || settingsForm.language,
+                timeZone: updated?.timeZone || settingsForm.timeZone,
+                emailNotifications: Boolean(updated?.emailNotifications),
+                smsNotifications: Boolean(updated?.smsNotifications),
+                pushNotifications: Boolean(updated?.pushNotifications),
+                darkMode: Boolean(updated?.darkMode),
+                preferences: updated?.preferences || '',
+            });
+            setSettingsStatus({ type: 'success', message: 'Settings saved successfully.' });
+        } catch (err) {
+            setSettingsStatus({ type: 'error', message: err?.message || 'Failed to save settings.' });
+        } finally {
+            setIsSavingSettings(false);
+        }
+    };
 
     // ─── Load sessions when Sessions tab is opened ──────────────────────────
     const loadSessions = useCallback(async () => {
@@ -211,6 +278,12 @@ const AccountSettings = () => {
             {/* Tab Navigation */}
             <nav className={styles.tabs} role="tablist" aria-label="Account settings sections">
                 <TabButton
+                    active={activeTab === 'preferences'}
+                    onClick={() => setActiveTab('preferences')}
+                    icon={<Globe size={18} />}
+                    label="Preferences"
+                />
+                <TabButton
                     active={activeTab === 'security'}
                     onClick={() => setActiveTab('security')}
                     icon={<Key size={18} />}
@@ -229,6 +302,112 @@ const AccountSettings = () => {
                     label="Danger Zone"
                 />
             </nav>
+
+            {/* ── Preferences Tab ── */}
+            {activeTab === 'preferences' && (
+                <div className={styles.content} role="tabpanel" aria-label="User preferences">
+                    <div className={styles.card}>
+                        <div className={styles.card__header}>
+                            <div className={styles.card__icon}><Globe size={22} /></div>
+                            <div>
+                                <h2 className={styles.card__title}>Platform Settings</h2>
+                                <p className={styles.card__subtitle}>Manage backend-backed language, timezone, theme, and notification preferences.</p>
+                            </div>
+                        </div>
+
+                        <StatusMessage type={settingsStatus.type} message={settingsStatus.message} />
+
+                        {isLoadingSettings ? (
+                            <div className={styles.sessions__loading}>
+                                <div className={styles.spinner} aria-label="Loading settings" />
+                            </div>
+                        ) : (
+                            <form className={styles.form} onSubmit={handleSaveSettings}>
+                                <div className={styles.form__group}>
+                                    <label className={styles.form__label} htmlFor="settings-language">Language</label>
+                                    <select
+                                        id="settings-language"
+                                        className={styles.form__input}
+                                        value={settingsForm.language}
+                                        onChange={(e) => handleSettingsChange('language', e.target.value)}
+                                    >
+                                        <option value="en">English</option>
+                                        <option value="ar">Arabic</option>
+                                    </select>
+                                </div>
+
+                                <div className={styles.form__group}>
+                                    <label className={styles.form__label} htmlFor="settings-timezone">Time Zone</label>
+                                    <input
+                                        id="settings-timezone"
+                                        type="text"
+                                        className={styles.form__input}
+                                        value={settingsForm.timeZone}
+                                        onChange={(e) => handleSettingsChange('timeZone', e.target.value)}
+                                        placeholder="Africa/Cairo"
+                                    />
+                                </div>
+
+                                <div className={styles.settingsGrid}>
+                                    <label className={styles.settingsToggle}>
+                                        <input
+                                            type="checkbox"
+                                            checked={settingsForm.emailNotifications}
+                                            onChange={(e) => handleSettingsChange('emailNotifications', e.target.checked)}
+                                        />
+                                        <span><Bell size={18} /> Email notifications</span>
+                                    </label>
+                                    <label className={styles.settingsToggle}>
+                                        <input
+                                            type="checkbox"
+                                            checked={settingsForm.smsNotifications}
+                                            onChange={(e) => handleSettingsChange('smsNotifications', e.target.checked)}
+                                        />
+                                        <span><Bell size={18} /> SMS notifications</span>
+                                    </label>
+                                    <label className={styles.settingsToggle}>
+                                        <input
+                                            type="checkbox"
+                                            checked={settingsForm.pushNotifications}
+                                            onChange={(e) => handleSettingsChange('pushNotifications', e.target.checked)}
+                                        />
+                                        <span><Bell size={18} /> Push notifications</span>
+                                    </label>
+                                    <label className={styles.settingsToggle}>
+                                        <input
+                                            type="checkbox"
+                                            checked={settingsForm.darkMode}
+                                            onChange={(e) => handleSettingsChange('darkMode', e.target.checked)}
+                                        />
+                                        <span><Moon size={18} /> Dark mode preference</span>
+                                    </label>
+                                </div>
+
+                                <div className={styles.form__group}>
+                                    <label className={styles.form__label} htmlFor="settings-preferences">Advanced Preferences JSON</label>
+                                    <textarea
+                                        id="settings-preferences"
+                                        className={`${styles.form__input} ${styles.form__textarea}`}
+                                        value={settingsForm.preferences}
+                                        onChange={(e) => handleSettingsChange('preferences', e.target.value)}
+                                        placeholder='{"dashboardDensity":"comfortable"}'
+                                        rows={4}
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className={styles.btn__primary}
+                                    disabled={isSavingSettings}
+                                >
+                                    <Save size={16} />
+                                    {isSavingSettings ? 'Saving…' : 'Save Settings'}
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ── Security Tab ── */}
             {activeTab === 'security' && (

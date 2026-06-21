@@ -141,7 +141,7 @@ export const ROLE_NAVIGATION = {
       { label: "Interviews", path: "/dashboard/interviews", icon: Calendar },
       { label: "Analytics", path: "/dashboard/performance-analytics", icon: TrendingUp },
       { label: "Company Profile", path: "/dashboard/profile", icon: Building },
-      { label: "Settings", path: "/dashboard/profile/edit", icon: Settings },
+      { label: "Settings", path: "/dashboard/account", icon: Settings },
     ]
   },
   [ROLES.JOBSEEKER]: {
@@ -168,7 +168,7 @@ export const ROLE_NAVIGATION = {
       { label: "Statistics", path: "/dashboard/statistics", icon: BarChart },
       { label: "Staff", path: "/dashboard/staff", icon: UserPlus },
       { label: "Subscriptions", path: "/dashboard/subscriptions", icon: DollarSign },
-      { label: "Settings", path: "/dashboard/profile/edit", icon: Settings },
+      { label: "Settings", path: "/dashboard/account", icon: Settings },
     ]
   }
 };

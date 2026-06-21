@@ -34,6 +34,7 @@ const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => 
 // Static Pages
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
+const MarketingInfoPage = lazy(() => import("./pages/MarketingInfoPage.jsx"));
 
 // Profile Pages (Phase 4)
 const JobSeekerProfile = lazy(() => import("./pages/profiles/JobSeekerProfile"));
@@ -73,6 +74,15 @@ function App() {
       <Routes>
         {/* Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<MarketingInfoPage pageKey="about" />} />
+        <Route path="/blog" element={<MarketingInfoPage pageKey="blog" />} />
+        <Route path="/careers" element={<MarketingInfoPage pageKey="careers" />} />
+        <Route path="/privacy" element={<MarketingInfoPage pageKey="privacy" />} />
+        <Route path="/terms" element={<MarketingInfoPage pageKey="terms" />} />
+        <Route path="/security" element={<MarketingInfoPage pageKey="security" />} />
+        <Route path="/cookies" element={<MarketingInfoPage pageKey="cookies" />} />
+        <Route path="/accessibility" element={<MarketingInfoPage pageKey="accessibility" />} />
+        <Route path="/contact" element={<MarketingInfoPage pageKey="contact" />} />
 
         {/* Auth Pages - Managed individually for simplicity and layout-specific skeletons */}
         <Route path="/login" element={<LoginForm />} />

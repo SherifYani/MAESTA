@@ -348,10 +348,40 @@ const profileService = {
         }
     },
 
+    // Get user settings
+    getUserSettings: async () => {
+        try {
+            const response = await ApiService.get('/api/Profile/me/settings');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    // Update user settings
+    updateUserSettings: async (settings) => {
+        try {
+            const response = await ApiService.put('/api/Profile/me/settings', settings);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
     // Update notification preferences
     updateNotificationPreferences: async (preferences) => {
         try {
             const response = await ApiService.put('/api/Profile/me/settings', preferences);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    // Get active account sessions
+    getActiveSessions: async () => {
+        try {
+            const response = await ApiService.get('/api/Profile/sessions');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;

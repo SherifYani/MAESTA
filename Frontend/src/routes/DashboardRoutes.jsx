@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import DashboardLayout from "../pages/dashboard/layout/DashboardLayout";
 import TableSkeleton from "../components/common/Skeleton/TableSkeleton";
@@ -263,6 +263,7 @@ const PerformanceAnalyticsWithData = () => {
 const RecommendedJobsWithData = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     jobService
@@ -272,13 +273,40 @@ const RecommendedJobsWithData = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleJobSave = async (jobId, shouldSave) => {
+    setJobs((prev) =>
+      prev.map((job) =>
+        (job.id || job.jobId) === jobId ? { ...job, isSaved: shouldSave } : job,
+      ),
+    );
+
+    try {
+      if (shouldSave) {
+        await jobService.saveJob(jobId);
+      } else {
+        await jobService.unsaveJob(jobId);
+      }
+    } catch (err) {
+      setJobs((prev) =>
+        prev.map((job) =>
+          (job.id || job.jobId) === jobId ? { ...job, isSaved: !shouldSave } : job,
+        ),
+      );
+      console.error("Failed to update saved job", err);
+    }
+  };
+
+  const handleJobApply = (jobId) => {
+    navigate(`/jobs/${jobId}/apply`);
+  };
+
   if (loading) return <TableSkeleton rows={5} columns={1} />;
 
   return (
     <RecommendedJobs
       jobs={jobs}
-      onJobSave={jobService.saveJob}
-      onJobApply={() => {}}
+      onJobSave={handleJobSave}
+      onJobApply={handleJobApply}
     />
   );
 };
@@ -286,6 +314,7 @@ const RecommendedJobsWithData = () => {
 const SavedJobsWithData = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     jobService
@@ -295,14 +324,34 @@ const SavedJobsWithData = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleRemoveJob = async (jobId) => {
+    const previousJobs = jobs;
+    setJobs((prev) => prev.filter((job) => (job.id || job.jobId) !== jobId));
+
+    try {
+      await jobService.unsaveJob(jobId);
+    } catch (err) {
+      setJobs(previousJobs);
+      console.error("Failed to remove saved job", err);
+    }
+  };
+
+  const handleViewJob = (jobId) => {
+    navigate(`/jobs/${jobId}`);
+  };
+
+  const handleApplyJob = (jobId) => {
+    navigate(`/jobs/${jobId}/apply`);
+  };
+
   if (loading) return <TableSkeleton rows={5} columns={1} />;
 
   return (
     <SavedJobs
       jobs={jobs}
-      onRemoveJob={jobService.unsaveJob}
-      onViewJob={() => {}}
-      onApplyJob={() => {}}
+      onRemoveJob={handleRemoveJob}
+      onViewJob={handleViewJob}
+      onApplyJob={handleApplyJob}
     />
   );
 };

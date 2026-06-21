@@ -39,7 +39,7 @@ const ErrorPage = () => {
    * @function
    */
   const handleSearch = () => {
-    navigate("/search");
+    navigate("/jobs");
   };
 
   /**
@@ -122,12 +122,12 @@ const ErrorPage = () => {
               </a>
             </li>
             <li>
-              <a href="/profile" className={styles.suggestionLink}>
+              <a href="/dashboard/profile" className={styles.suggestionLink}>
                 Your Profile
               </a>
             </li>
             <li>
-              <a href="/help" className={styles.suggestionLink}>
+              <a href="/contact" className={styles.suggestionLink}>
                 Help Center
               </a>
             </li>
