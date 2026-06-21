@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import { X, MoreVertical } from 'lucide-react';
+import { X } from 'lucide-react';
 import styles from './NotificationItem.module.css';
 import { formatRelativeTime } from '../../utils/notificationHelpers';
 import { getNotificationIcon } from '../../utils/notificationTypes';

@@ -218,18 +218,70 @@ namespace JobMagnet.Application.Services
             var jobSeeker = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
             if (jobSeeker == null) throw new KeyNotFoundException("JobSeeker not found");
 
-            // Remove existing skills
-            var existingSkills = await _context.UserSkills.Where(s => s.UserId == jobSeeker.UserId).ToListAsync();
-            _context.UserSkills.RemoveRange(existingSkills);
+            var existingUserSkills = await _context.UserSkills.Where(s => s.UserId == jobSeeker.UserId).ToListAsync();
+            var existingSkillIds = existingUserSkills.Select(s => s.SkillId).ToHashSet();
+
+            var requestedSkillIds = new HashSet<int>();
+
+            if (request.Skills != null && request.Skills.Any())
+            {
+                var uniqueRequestedSkills = request.Skills
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Select(s => s.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var skillName in uniqueRequestedSkills)
+                {
+                    var skill = await _context.Skills.FirstOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower());
+                    if (skill == null)
+                    {
+                        skill = new Domain.Entities.Skill
+                        {
+                            Name = skillName,
+                            CreatedAt = DateTimeOffset.UtcNow,
+                            IsDeleted = false
+                        };
+                        _context.Skills.Add(skill);
+                        await _context.SaveChangesAsync(); // Save to generate SkillId
+                    }
+                    else if (skill.IsDeleted)
+                    {
+                        skill.IsDeleted = false;
+                        skill.UpdatedAt = DateTimeOffset.UtcNow;
+                        _context.Skills.Update(skill);
+                        await _context.SaveChangesAsync();
+                    }
+                    requestedSkillIds.Add(skill.SkillId);
+                }
+            }
+
+            // Remove skills that are no longer requested
+            var skillsToRemove = existingUserSkills.Where(s => !requestedSkillIds.Contains(s.SkillId)).ToList();
+            if (skillsToRemove.Any())
+            {
+                _context.UserSkills.RemoveRange(skillsToRemove);
+            }
 
             // Add new skills
-            var newSkills = request.Skills.Select(s => new Domain.Entities.UserSkill
+            var newSkills = new List<Domain.Entities.UserSkill>();
+            foreach (var skillId in requestedSkillIds)
             {
-                UserId = jobSeeker.UserId,
-                SkillId = 1 // You might need a way to resolve this if it's a foreign key to Skill table
-            });
+                if (!existingSkillIds.Contains(skillId))
+                {
+                    newSkills.Add(new Domain.Entities.UserSkill
+                    {
+                        UserId = jobSeeker.UserId,
+                        SkillId = skillId,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    });
+                }
+            }
 
-            await _context.UserSkills.AddRangeAsync(newSkills);
+            if (newSkills.Any())
+            {
+                await _context.UserSkills.AddRangeAsync(newSkills);
+            }
+
             await _context.SaveChangesAsync();
         }
 

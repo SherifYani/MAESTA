@@ -12,7 +12,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, User, X, Loader2, Bot, Lightbulb, Upload } from 'lucide-react';
+import { ArrowLeft, User, X, Loader2, Bot, Lightbulb, Upload } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
 import { PageContainer } from '../../components/layout';
 import styles from './CandidateAnalysisPage.module.css';
@@ -28,7 +28,7 @@ const CandidateAnalysisPage = () => {
     const [candidates, setCandidates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResults, setAnalysisResults] = useState(null);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [error, setError] = useState('');
 
     /**
      * Handles file upload for candidate resumes
@@ -43,7 +43,6 @@ const CandidateAnalysisPage = () => {
             status: 'pending'
         }));
         setCandidates(prev => [...prev, ...newCandidates]);
-        setUploadedFiles(prev => [...prev, ...files]);
     };
 
     /**
@@ -65,33 +64,32 @@ const CandidateAnalysisPage = () => {
         }
 
         setIsAnalyzing(true);
+        setError('');
         try {
-            // Simulate AI analysis
             const results = await Promise.all(
                 candidates.map(async (candidate) => {
                     try {
-                        const analysis = await aiAssistantService.getJobRecommendations({
-                            resume: candidate.file,
-                            jobDescription
-                        });
+                        const text = await candidate.file.text();
+                        const resumeText = text.slice(0, 12000);
+                        const analysis = await aiAssistantService.analyzeResume(resumeText);
                         return {
                             ...candidate,
                             status: 'analyzed',
-                            score: Math.floor(Math.random() * 40) + 60, // Simulated score
-                            matchingSkills: ['JavaScript', 'React', 'Node.js'],
-                            missingSkills: ['Docker', 'AWS'],
-                            experience: { years: 3, relevant: true },
-                            recommendation: 'مرشح مناسب للمنصب'
+                            score: analysis?.matchScore || analysis?.score || 0,
+                            matchingSkills: analysis?.matchingSkills || analysis?.skills || [],
+                            missingSkills: analysis?.missingSkills || [],
+                            experience: analysis?.experience || null,
+                            recommendation: analysis?.recommendation || analysis?.analysis || 'Analysis completed'
                         };
                     } catch (error) {
-                        return { ...candidate, status: 'error' };
+                        return { ...candidate, status: 'error', error: error.message };
                     }
                 })
             );
 
             setAnalysisResults(results.sort((a, b) => (b.score || 0) - (a.score || 0)));
         } catch (error) {
-            console.error('Error analyzing candidates:', error);
+            setError(error.message || 'Error analyzing candidates');
         } finally {
             setIsAnalyzing(false);
         }
@@ -114,6 +112,18 @@ const CandidateAnalysisPage = () => {
             </header>
 
             <main className={styles.content}>
+                <section className={styles.section}>
+                    <h2 className={styles.sectionTitle}>Job Description</h2>
+                    <textarea
+                        className={styles.jobDescriptionInput}
+                        value={jobDescription}
+                        onChange={(event) => setJobDescription(event.target.value)}
+                        placeholder="Paste the job description or requirements here..."
+                        rows={8}
+                    />
+                    {error && <p role="alert">{error}</p>}
+                </section>
+
                 {/* Upload Section */}
                 <section className={styles.section}>
                     <h2 className={styles.sectionTitle}> Upload Resumes</h2>

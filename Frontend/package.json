@@ -25,6 +25,7 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules dist build .next .cache coverage logs tmp temp obj bin",
+    "postinstall": "cd node_modules/@mediapipe/tasks-vision && { [ -f vision_bundle_mjs.js.map ] || ln -s vision_bundle.mjs.map vision_bundle_mjs.js.map; } || true",
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",

@@ -49,7 +49,6 @@ const ChatInterface = () => {
     const [messageInput, setMessageInput] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
     const [showMobileList, setShowMobileList] = useState(true);
-    const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -77,12 +76,14 @@ const ChatInterface = () => {
      * Handle message send
      */
     const handleSendMessage = async () => {
-        if (!messageInput.trim()) return;
+        if (!messageInput.trim() && !selectedFile) return;
         if (!activeConversation) return;
 
         try {
-            await sendMessage(messageInput.trim());
+            const attachmentText = selectedFile?.url ? `\n${selectedFile.url}` : '';
+            await sendMessage(`${messageInput.trim()}${attachmentText}`.trim());
             setMessageInput('');
+            setSelectedFile(null);
         } catch (error) {
             console.error('Failed to send message:', error);
         }
@@ -101,10 +102,10 @@ const ChatInterface = () => {
 
     /**
      * Handle file selection
-     * @param {File} file - Selected file
+     * @param {Object} uploadedFile - Uploaded file metadata
      */
-    const handleFileSelect = (file) => {
-        setSelectedFile(file);
+    const handleFileSelect = (uploadedFile) => {
+        setSelectedFile(uploadedFile);
     };
 
     /**
@@ -227,10 +228,8 @@ const ChatInterface = () => {
                                     <span className="sr-only">Attach file</span>
                                 </label>
                                 <FileUploader
-                                    id="file-upload"
-                                    ref={fileInputRef}
-                                    onFileSelect={handleFileSelect}
-                                    className={styles.fileInput}
+                                    onUpload={handleFileSelect}
+                                    disabled={loading}
                                 />
 
                                 {/* Text Input */}

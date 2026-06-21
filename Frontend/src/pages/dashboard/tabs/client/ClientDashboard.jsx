@@ -47,7 +47,7 @@ import styles from "./ClientDashboard.module.css";
 const ClientDashboard = ({ data }) => {
   // Live API data
   const [jobPosts,  setJobPosts]  = useState([]);
-  const [apiLoading, setApiLoading] = useState(true);
+  const [, setApiLoading] = useState(true);
 
   // Static / mock-backed data (no API endpoints yet)
   const activities        = data.activities;

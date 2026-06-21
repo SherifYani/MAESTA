@@ -24,7 +24,6 @@ import EarningsOverviewWidget from "./components/EarningsOverviewWidget";
 
 import {
   Plus,
-  TrendingUp,
   Award,
   Zap,
   DollarSign,
@@ -34,7 +33,6 @@ import {
   BarChart3,
   CheckCircle,
   ArrowUpRight,
-  MapPin,
   Users,
 } from "lucide-react";
 import styles from "./FreelancerDashboard.module.css";
@@ -45,7 +43,7 @@ import styles from "./FreelancerDashboard.module.css";
 const FreelancerDashboard = ({ data }) => {
   // Live API data
   const [jobPosts,    setJobPosts]    = useState([]);
-  const [apiLoading,  setApiLoading]  = useState(true);
+  const [,  setApiLoading]  = useState(true);
 
   // Static / mock-backed data (no API endpoints yet)
   const activities        = data.activities;

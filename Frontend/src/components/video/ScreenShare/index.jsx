@@ -25,11 +25,7 @@ const ScreenShare = ({ stream, isSharing, onStopSharing }) => {
             <div className={styles.content}>
                 {stream ? (
                     <div className={styles.streamPlaceholder}>
-                        {/* <video ref={videoRef} autoPlay playsInline className={styles.video} /> */}
-                        <div className={styles.mockContent}>
-                            <Monitor size={48} className={styles.icon} />
-                            <span>Shared Screen Content</span>
-                        </div>
+                        <video autoPlay playsInline muted className={styles.video} />
                     </div>
                 ) : (
                     <div className={styles.placeholder}>

@@ -20,6 +20,7 @@ import FileUpload from "../../components/forms/FileUpload";
 import "../../styles/pages/onboarding.css";
 import { validateFile } from "../../utils/form-validation";
 import authService from "../../services/authService";
+import draftService from "../../services/draftService";
 import { useAuth } from "../../context/AuthContext"; // AuthContext named export
 
 /**
@@ -50,7 +51,7 @@ function JobSeekerOnboarding() {
     education: [{ id: "1", degree: "", institution: "", year: "" }],
   });
 
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [, setProfilePicture] = useState(null);
   const [resume, setResume] = useState(null); // GUIDE expects CVUrl (URL), not file upload
   const [completionStatus, setCompletionStatus] = useState({
     professionalInfo: false,
@@ -65,6 +66,23 @@ function JobSeekerOnboarding() {
     cvUrl: "",
     preferredJobType: "",
   });
+  const [draftMessage, setDraftMessage] = useState("");
+
+  useEffect(() => {
+    const loadDraft = async () => {
+      try {
+        const draft = await draftService.getDraft('jobSeekerOnboardingDraft');
+        if (!draft) return;
+
+        setFormData(prev => ({ ...prev, ...(draft.formData || {}) }));
+        setExtraFields(prev => ({ ...prev, ...(draft.extraFields || {}) }));
+      } catch (error) {
+        setApiError(error?.response?.data?.message || "Failed to load saved draft.");
+      }
+    };
+
+    loadDraft();
+  }, []);
 
   /**
    * Calculate completion status for each section
@@ -192,16 +210,21 @@ function JobSeekerOnboarding() {
   /**
    * Saves the current form data as a draft (local storage or API)
    */
-  const handleSaveDraft = () => {
+  const handleSaveDraft = async () => {
+    setIsLoading(true);
+    setDraftMessage("");
+    setApiError("");
+
     try {
-      const draftData = {
+      await draftService.saveDraft('jobSeekerOnboardingDraft', {
         formData,
-      };
-      localStorage.setItem("jobSeekerDraft", JSON.stringify(draftData));
-      alert("Draft saved successfully!");
+        extraFields,
+      });
+      setDraftMessage("Draft saved successfully!");
     } catch (error) {
-      console.error("Failed to save draft", error);
-      alert("Failed to save draft. Please try again.");
+      setApiError(error?.response?.data?.message || "Failed to save draft. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

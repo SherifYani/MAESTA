@@ -15,5 +15,6 @@ namespace JobMagnet.Application.Interfaces
         Task ArchiveConversationAsync(int userId, int otherUserId);
         Task UnarchiveConversationAsync(int userId, int otherUserId);
         Task UpdateTypingStatusAsync(int userId, int otherUserId, bool isTyping);
+        Task<IEnumerable<BlockedUserDto>> GetBlockedUsersAsync(int userId);
     }
 }

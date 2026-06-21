@@ -9,13 +9,12 @@
  * @last-modified-date 2026-01-18
  */
 
-import { useContext, useState, useEffect, useMemo } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
   ChevronDown,
   Menu,
-  X,
   User,
   Settings,
   CreditCard,
@@ -54,15 +53,14 @@ const DashboardHeader = ({
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Build the display user from AuthContext, falling back to props or defaults
   const defaultUser = useMemo(() => ({
-    id: "1",
-    name: authUser?.name || "Demo User",
-    email: authUser?.email || "",
+    id: authUser?.id || user?.id || null,
+    name: authUser?.name || user?.name || authUser?.email || user?.email || "User",
+    email: authUser?.email || user?.email || "",
     avatarInitials: authUser?.avatarInitials ||
-      (authUser?.name ? authUser.name.split(" ").map(n => n[0]).join("").toUpperCase() : "DU"),
-    role: authUser?.role || currentRole,
-  }), [authUser, currentRole]);
+      (authUser?.name ? authUser.name.split(" ").map(n => n[0]).join("").toUpperCase() : "U"),
+    role: authUser?.role || user?.role || currentRole,
+  }), [authUser, user, currentRole]);
 
 
 
@@ -80,27 +78,6 @@ const DashboardHeader = ({
       admin: "Administrator",
     };
     return roleMap[role] || "Client";
-  };
-
-  /**
-   * Format relative time
-   * @param {Date} date - Date to format
-   * @returns {string} Formatted relative time
-   */
-  const formatRelativeTime = (date) => {
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} min ago`;
-    if (diffHours < 24)
-      return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
-
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
   // Default user menu items
@@ -140,7 +117,7 @@ const DashboardHeader = ({
   };
 
   /**
-   * Handle logout — calls AuthContext.logout() then navigates to mock-login
+   * Handle logout — calls AuthContext.logout() then navigates to login
    */
   const handleMenuItemClick = (item) => {
     if (item.isLogout) {

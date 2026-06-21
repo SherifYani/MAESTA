@@ -17,7 +17,6 @@ import { useAuth } from "../../../../context/AuthContext";
 import jobService from '../../../../services/jobService';
 import dashboardService from '../../../../services/dashboardService';
 import StatsGrid from "../../components/StatsGrid";
-import RecentActivity from "../../components/RecentActivity";
 import PendingActions from "../../components/PendingActions";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -25,38 +24,21 @@ import Badge from "../../components/ui/Badge";
 
 // Import new company components
 import CompanySummary from "./components/CompanySummary/CompanySummary";
-import JobMetricsChart from "./components/shared/JobMetricsChart";
 
 // Import lightweight widget versions for dashboard overview
-import PerformanceAnalyticsWidget from "./components/PerformanceAnalytics/PerformanceAnalyticsWidget";
 import PublishedJobsWidget from "./components/PublishedJobs/PublishedJobsWidget";
 import NewApplicantsWidget from "./components/NewApplicants/NewApplicantsWidget";
 
-import {
-  ROLES,
-} from "../../config/dashboard.config";
+
 import {
   Plus,
   Users,
   Briefcase,
   Clock,
   Target,
-  Award,
-  BarChart3,
-  CheckCircle,
   ArrowUpRight,
   MapPin,
   Building,
-  TrendingUp,
-  Eye,
-  Calendar,
-  FileText,
-  UserCheck,
-  UserX,
-  BarChart,
-  Settings,
-  Search,
-  Filter,
   Download,
   RefreshCw,
   Mail,
@@ -71,9 +53,7 @@ const CompanyDashboard = () => {
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery] = useState("");
 
   // Live API data
   const [publishedJobs,  setPublishedJobs]  = useState([]);
@@ -106,7 +86,7 @@ const CompanyDashboard = () => {
     recentActivity:       [],
     pendingActions:       [],
     hiringTeam:           [],
-  }), [user, publishedJobs, newApplicants, companyProfile]);
+  }), [user, companyProfile, stats]);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
   const fetchData = useCallback(async () => {
@@ -158,18 +138,6 @@ const CompanyDashboard = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  // Filter jobs based on search and active filter
-  const filteredJobs = publishedJobs.filter((job) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      (job.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.location || '').toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesFilter = activeFilter === "all" || job.status === activeFilter;
-    return matchesSearch && matchesFilter;
-  });
 
   // Filter applicants
   const filteredApplicants = newApplicants.filter((applicant) => {
@@ -224,13 +192,11 @@ const CompanyDashboard = () => {
   };
 
   // Event handlers
-  const handleViewApplicant  = (id)    => navigate(`/dashboard/applicants/${id}`);
+  const handleViewApplicant  = (id)    => navigate(`/dashboard/applicants?applicantId=${id}`);
   const handleViewJob        = (id)    => navigate(`/jobs/${id}`);
-  const handleEditJob        = (id)    => navigate(`/dashboard/published-jobs/${id}/edit`);
-  const handleManageApplicants = (id)  => navigate(`/dashboard/applicants?jobId=${id}`);
-  const handleScheduleInterview = (id) => navigate(`/dashboard/interviews/schedule?applicantId=${id}`);
   const handleRefreshDashboard  = ()   => fetchData();
   const handleExportData        = (type) => navigate(`/dashboard/export?type=${type}`);
+  const handleActionToggle = () => handleRefreshDashboard();
 
   // Loading state
   if (loading || !dashboardData) {
@@ -241,10 +207,6 @@ const CompanyDashboard = () => {
       </div>
     );
   }
-
-  const activeJobs =
-    dashboardData.publishedJobs?.filter((job) => job.status === "active") || [];
-  const jobPerformance = { labels: [], datasets: [] };
 
   return (
     <div className={styles.companyDashboard}>
@@ -451,9 +413,7 @@ const CompanyDashboard = () => {
           }>
           <PendingActions
             actions={dashboardData.pendingActions || []}
-            onActionComplete={(id, completed) => {
-              console.log(`Action ${id} completed: ${completed}`);
-            }}
+            onActionComplete={handleActionToggle}
           />
         </Card>
       </div>

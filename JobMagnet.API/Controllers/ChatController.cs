@@ -109,5 +109,12 @@ namespace JobMagnet.API.Controllers
             await _chatService.UpdateTypingStatusAsync(GetUserId(), otherUserId, isTyping);
             return Ok();
         }
+
+        [HttpGet("blocked")]
+        public async Task<IActionResult> GetBlockedUsersAsync()
+        {
+            var blocked = await _chatService.GetBlockedUsersAsync(GetUserId());
+            return Ok(blocked);
+        }
     }
 }

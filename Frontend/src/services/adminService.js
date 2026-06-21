@@ -7,6 +7,31 @@
  */
 import ApiService from './ApiService';
 
+const toArray = (value) => value?.items || value?.data?.items || value?.data || value || [];
+
+const toReportRow = (report) => ({
+    ...report,
+    id: report.reportId || report.id,
+    reportId: report.reportId || report.id,
+    reportType: report.entityType || report.type || report.reportType || 'general',
+    generatedAt: report.createdAt || report.generatedAt,
+    status: report.status || 'Pending',
+    name: report.reason || report.entityType || 'Report',
+    value: report.status || 'Pending'
+});
+
+const downloadJson = (fileName, data) => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+};
+
 /**
  * Get pending user approvals.
  * Backend: GET api/Admin/pending-approvals
@@ -74,31 +99,175 @@ export const resolveReport = async (reportId, action) => {
     return response.data;
 };
 
-// ─── Missing endpoints (Placeholders to avoid compilation errors) ───────────
+// Reports
+export const getReportTypes = async () => {
+    const reports = toArray(await getPendingReports());
+    const types = [...new Set(reports.map(r => r.entityType || r.type || r.reportType || 'general'))];
+    return {
+        success: true,
+        data: types.length > 0
+            ? types.map(t => ({ id: t, name: t, description: `${t} reports currently pending review` }))
+            : [{ id: 'dashboard', name: 'Dashboard', description: 'Current admin dashboard metrics' }]
+    };
+};
 
-export const getReportTypes = async () => ({ success: true, data: [] });
-export const getReportHistory = async () => ({ success: true, data: [] });
-export const generateReport = async () => ({ success: true, data: {} });
-export const downloadReport = async () => ({ success: true });
+export const getReportHistory = async () => {
+    const reports = toArray(await getPendingReports()).map(toReportRow);
+    return { success: true, data: reports };
+};
 
-export const getPendingActions = async () => ({ success: true, data: { items: [] } });
-export const bulkApprove = async () => ({ success: true });
-export const bulkReject = async () => ({ success: true });
-export const getPendingItemDetail = async () => ({ success: true, data: {} });
-export const resolvePendingItem = async () => ({ success: true });
+export const generateReport = async (reportType = 'dashboard') => {
+    if (reportType === 'dashboard') {
+        const metrics = await getDashboardMetrics();
+        return {
+            success: true,
+            data: {
+                reportId: `dashboard-${Date.now()}`,
+                reportType,
+                generatedAt: new Date().toISOString(),
+                rows: Object.entries(metrics || {}).map(([name, value]) => ({ id: name, name, value }))
+            }
+        };
+    }
 
-export const getActivities = async () => ({ success: true, data: { activities: [] } });
-export const getActivityTypes = async () => ({ success: true, data: [] });
-export const exportActivities = async () => ({ success: true });
+    const reports = toArray(await getPendingReports())
+        .filter(r => (r.entityType || r.type || r.reportType || 'general') === reportType)
+        .map(toReportRow);
 
-export const getUsers = async () => ({ success: true, data: { users: [] } });
-export const updateUserStatus = async (userId, status) => toggleUserStatus(userId, status === 'active');
-export const updateUserRole = async () => ({ success: true });
+    return {
+        success: true,
+        data: {
+            reportId: `${reportType}-${Date.now()}`,
+            reportType,
+            generatedAt: new Date().toISOString(),
+            rows: reports
+        }
+    };
+};
 
-export const getJobsForModeration = async () => ({ success: true, data: { jobs: [] } });
-export const approveJob = async () => ({ success: true });
-export const rejectJob = async () => ({ success: true });
-export const editJob = async () => ({ success: true });
+export const downloadReport = async (reportId, format = 'json') => {
+    const reports = toArray(await getPendingReports()).map(toReportRow);
+    const report = reports.find(r => String(r.reportId) === String(reportId)) || { reportId, reports };
+    downloadJson(`admin-report-${reportId}.${format === 'json' ? 'json' : 'json'}`, report);
+    return { success: true, data: report };
+};
+
+// Pending Actions
+export const getPendingActions = async () => {
+    const items = toArray(await getPendingApprovals());
+    return { success: true, data: { items } };
+};
+
+export const bulkApprove = async (userIds) => {
+    const results = await Promise.all(userIds.map(id => approveUser(id)));
+    return { success: true, results };
+};
+
+export const bulkReject = async (userIds) => {
+    const results = await Promise.all(userIds.map(id => deleteUser(id)));
+    return { success: true, results };
+};
+
+export const getPendingItemDetail = async (actionId, itemId) => {
+    const items = toArray(await getPendingApprovals());
+    const item = items.find(i => String(i.userId || i.id) === String(itemId));
+    if (!item) return { success: false, data: null };
+
+    return {
+        success: true,
+        data: {
+            ...item,
+            id: item.userId || item.id,
+            title: `${item.firstName || ''} ${item.lastName || ''}`.trim() || item.email,
+            email: item.email,
+            status: item.registrationStatus || 'PendingApproval',
+            submittedAt: item.createdAt,
+            priority: 'medium'
+        }
+    };
+};
+
+export const resolvePendingItem = async (actionId, itemId, resolution = {}) => {
+    const action = typeof resolution === 'string' ? resolution : resolution.action;
+    if (action === 'approve' || action === 'approved') {
+        const data = await approveUser(itemId);
+        return { success: true, data };
+    }
+
+    if (action === 'reject' || action === 'rejected') {
+        const data = await deleteUser(itemId);
+        return { success: true, data };
+    }
+
+    throw new Error(`Unsupported pending item action: ${action}`);
+};
+
+// Activities
+export const getActivities = async () => {
+    const response = await ApiService.get('/api/Dashboard/summary');
+    const summary = response.data;
+    const activities = summary?.recentActivities || summary?.activities || [];
+    return { success: true, data: { activities } };
+};
+
+export const getActivityTypes = async () => ({
+    success: true,
+    data: [
+        { id: 'login', name: 'Login' },
+        { id: 'job', name: 'Job Posting' },
+        { id: 'application', name: 'Application' },
+        { id: 'registration', name: 'Registration' },
+        { id: 'payment', name: 'Payment' }
+    ]
+});
+
+export const exportActivities = async () => {
+    const response = await ApiService.get('/api/Dashboard/summary');
+    downloadJson('admin-activities.json', response.data);
+    return { success: true, data: response.data };
+};
+
+// Users Management
+export const getUsers = async () => {
+    const users = toArray(await getPendingApprovals());
+    return { success: true, data: { users } };
+};
+
+export const updateUserStatus = async (userId, status) => {
+    const isActive = status === 'active' || status === true;
+    const data = await toggleUserStatus(userId, isActive);
+    return { success: true, data };
+};
+
+export const updateUserRole = async () => {
+    throw new Error('Changing user roles is not supported by the current Admin API.');
+};
+
+// Jobs Moderation
+export const getJobsForModeration = async () => {
+    const response = await ApiService.get('/api/jobs', { params: { page: 1, limit: 50 } });
+    const jobs = response.data?.items || response.data?.jobs || response.data || [];
+    return { success: true, data: { jobs } };
+};
+
+export const approveJob = async (jobId) => {
+    const response = await ApiService.put(`/api/jobs/${jobId}/status`, true, {
+        headers: { 'Content-Type': 'application/json' }
+    });
+    return { success: true, data: response.data };
+};
+
+export const rejectJob = async (jobId) => {
+    const response = await ApiService.put(`/api/jobs/${jobId}/status`, false, {
+        headers: { 'Content-Type': 'application/json' }
+    });
+    return { success: true, data: response.data };
+};
+
+export const editJob = async (jobId, jobData) => {
+    const response = await ApiService.put(`/api/jobs/${jobId}`, jobData);
+    return { success: true, data: response.data };
+};
 
 const adminService = {
     getPendingApprovals,

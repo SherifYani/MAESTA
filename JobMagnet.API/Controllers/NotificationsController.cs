@@ -80,5 +80,12 @@ namespace JobMagnet.API.Controllers
             await _notificationService.SubscribePushAsync(GetUserId(), deviceToken);
             return Ok(new { message = "Push subscription successful" });
         }
+
+        [HttpDelete("push/subscribe")]
+        public async Task<IActionResult> UnsubscribePushAsync()
+        {
+            await _notificationService.UnsubscribePushAsync(GetUserId());
+            return Ok(new { message = "Push subscription removed" });
+        }
     }
 }

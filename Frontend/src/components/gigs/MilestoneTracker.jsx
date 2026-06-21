@@ -18,8 +18,6 @@ import {
     DollarSign,
     Calendar,
     TrendingUp,
-    MoreVertical,
-    Edit,
     Trash2,
     ChevronDown,
     ChevronUp

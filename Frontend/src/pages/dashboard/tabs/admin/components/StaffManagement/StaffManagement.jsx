@@ -8,14 +8,14 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { UserPlus, Shield, MoreVertical, Mail, Key, Users, UserCheck, UserX } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { staffData as initialStaffData } from '../../config/adminMockData';
+import { getStaffData } from '../../config/adminDataService';
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -25,7 +25,15 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const StaffManagement = () => {
-    const [staffData, setStaffData] = useState(initialStaffData);
+    const [staffData, setStaffData] = useState([]);
+    const [, setLoading] = useState(true);
+
+    useEffect(() => {
+        getStaffData().then(data => {
+            setStaffData(data);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

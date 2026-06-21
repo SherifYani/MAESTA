@@ -78,7 +78,7 @@ const gigService = {
             const response = await ApiService.get('/api/gigs/proposals/my');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -88,20 +88,21 @@ const gigService = {
             const response = await ApiService.get(`/api/gigs/${gigId}/proposals`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Update proposal
+    // Update proposal status
     updateProposal: async (proposalId, proposalData) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("updateProposal is mocked");
-            return { success: true, id: proposalId, ...proposalData };
-            // const response = await ApiService.put(`/api/proposals/${proposalId}`, proposalData);
-            // return response.data;
+            const status = proposalData?.status || proposalData;
+            const response = await ApiService.put(`/api/gigs/proposals/${proposalId}/status`,
+                JSON.stringify(status),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -111,7 +112,7 @@ const gigService = {
             const response = await ApiService.delete(`/api/gigs/proposals/${proposalId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -124,7 +125,7 @@ const gigService = {
             );
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -137,7 +138,7 @@ const gigService = {
             );
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -149,7 +150,7 @@ const gigService = {
             const response = await ApiService.post(`/api/contracts`, { proposalId, ...contractData });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -159,7 +160,7 @@ const gigService = {
             const response = await ApiService.get('/api/contracts/my-contracts');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -169,75 +170,56 @@ const gigService = {
             const response = await ApiService.get(`/api/contracts/${contractId}`);
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Update contract status
-    updateContractStatus: async (contractId, status) => {
-        try {
-            // MOCKED: Not implemented in backend yet. Use milestone/delivery status instead.
-            console.warn("updateContractStatus is mocked");
-            return { success: true, id: contractId, status };
-            // const response = await ApiService.put(`/api/contracts/${contractId}/status`, { status });
-            // return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+    // Update contract status is not supported by the current backend API.
+    updateContractStatus: async () => {
+        throw new Error('Updating contract status is not supported by the current backend API.');
     },
 
     // ==================== Milestones ====================
 
-    // Add milestone to contract
-    addMilestone: async (contractId, milestoneData) => {
-        try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("addMilestone is mocked");
-            return { success: true, id: Math.floor(Math.random() * 1000), ...milestoneData };
-            // const response = await ApiService.post(`/api/contracts/${contractId}/milestones`, milestoneData);
-            // return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+    // Add milestone is not supported after contract creation by the current backend API.
+    addMilestone: async () => {
+        throw new Error('Adding milestones after contract creation is not supported by the current backend API.');
     },
 
-    // Update milestone
+    // Update milestone status
     updateMilestone: async (milestoneId, milestoneData) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("updateMilestone is mocked");
-            return { success: true, id: milestoneId, ...milestoneData };
-            // const response = await ApiService.put(`/api/milestones/${milestoneId}`, milestoneData);
-            // return response.data;
+            const status = milestoneData?.status || milestoneData;
+            const response = await ApiService.put(`/api/contracts/milestones/${milestoneId}/status`,
+                JSON.stringify(status),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Complete milestone
-    completeMilestone: async (milestoneId) => {
+    // Complete contract delivery
+    completeMilestone: async (contractId, deliveryData = {}) => {
         try {
-            // MOCKED: Not implemented in backend yet. 
-            // In the future this might map to submitDelivery or updateMilestoneStatus
-            console.warn("completeMilestone is mocked");
-            return { success: true, id: milestoneId, status: 'completed' };
-            // const response = await ApiService.post(`/api/milestones/${milestoneId}/complete`);
-            // return response.data;
+            const response = await ApiService.post(`/api/contracts/${contractId}/deliver`, {
+                fileUrl: deliveryData.fileUrl || deliveryData.url || '',
+                message: deliveryData.message || deliveryData.description || 'Delivery submitted'
+            });
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
-    // Approve milestone (client)
+    // Approve milestone (client) — maps to approve delivery
     approveMilestone: async (milestoneId) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("approveMilestone is mocked");
-            return { success: true, id: milestoneId, status: 'approved' };
-            // const response = await ApiService.post(`/api/milestones/${milestoneId}/approve`);
-            // return response.data;
+            const response = await ApiService.put(`/api/contracts/deliveries/${milestoneId}/approve`);
+            return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -249,20 +231,26 @@ const gigService = {
             const response = await ApiService.get('/api/gigs/my-gigs');
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
     // Get gig statistics
     getGigStatistics: async (gigId) => {
         try {
-            // MOCKED: Not implemented in backend yet.
-            console.warn("getGigStatistics is mocked");
-            return { views: 0, proposals: 0, active: true };
-            // const response = await ApiService.get(`/api/gigs/${gigId}/statistics`);
-            // return response.data;
+            const [gigRes, proposalsRes] = await Promise.all([
+                ApiService.get(`/api/gigs/${gigId}`),
+                ApiService.get(`/api/gigs/${gigId}/proposals`)
+            ]);
+            const gig = gigRes.data;
+            const proposals = proposalsRes.data;
+            return {
+                views: 0,
+                proposals: proposals?.length || 0,
+                active: gig?.isActive ?? true
+            };
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -313,26 +301,35 @@ const gigService = {
         throw new Error('Invalid decision status');
     },
 
-    // Get workspace data (gig + active contract + milestones + chat)
+    // Get workspace data (gig + related contract details when available)
     getWorkspace: async (gigId) => {
         try {
-            // In a real app, this might be a specific endpoint aggregating data
-            const response = await ApiService.get(`/api/gigs/${gigId}/workspace`);
-            return response.data;
-        } catch (error) {
-            // Fallback mock if endpoint missing during dev
-            console.warn("Fetching mock workspace data");
+            const [gigResponse, contractsResponse] = await Promise.all([
+                ApiService.get(`/api/gigs/${gigId}`),
+                ApiService.get('/api/contracts/my-contracts')
+            ]);
+
+            const gig = gigResponse.data;
+            const contracts = contractsResponse.data?.items || contractsResponse.data || [];
+            const contract = contracts.find(c => String(c.projectId || c.gigId) === String(gigId));
+
             return {
                 data: {
+                    ...(gig?.data || gig),
                     id: gigId,
-                    title: "Mock Workspace Gig",
-                    milestones: [],
+                    title: gig?.title || gig?.projectTitle || contract?.projectTitle || 'Workspace',
+                    contract,
+                    milestones: contract?.milestones || [],
                     messages: [],
                     files: [],
-                    participants: []
+                    participants: [
+                        contract?.clientName && { name: contract.clientName, role: 'client' },
+                        contract?.freelancerName && { name: contract.freelancerName, role: 'freelancer' }
+                    ].filter(Boolean)
                 }
             };
-            // throw error.response?.data || error.message;
+        } catch (error) {
+            throw error;
         }
     },
 
@@ -349,7 +346,7 @@ const gigService = {
             const response = await ApiService.get(endpoint, { params: { status } });
             return response.data;
         } catch (error) {
-            throw error.response?.data || error.message;
+            throw error;
         }
     }
 };

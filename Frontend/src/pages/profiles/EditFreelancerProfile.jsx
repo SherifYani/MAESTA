@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import profileService from "../../services/profileService";
 import GeneralSelect from "../../components/common/GeneralSelect";
@@ -61,23 +61,6 @@ export default function EditFreelancerProfile() {
     setSkills(skills.filter((_, i) => i !== index));
   };
 
-  const handleExperienceChange = (index, field, value) => {
-    const updated = [...experiences];
-    updated[index] = { ...updated[index], [field]: value };
-    setExperiences(updated);
-  };
-
-  const addExperience = () => {
-    setExperiences([
-      ...experiences,
-      { id: Date.now(), jobTitle: "", companyName: "", description: "", startDate: "", endDate: "" },
-    ]);
-  };
-
-  const removeExperience = (index) => {
-    setExperiences(experiences.filter((_, i) => i !== index));
-  };
-
   const handlePortfolioChange = (index, field, value) => {
     const updated = [...portfolio];
     updated[index] = { ...updated[index], [field]: value };
@@ -108,28 +91,43 @@ export default function EditFreelancerProfile() {
 
     if (!validateForm()) return;
 
-    const updatedFreelancerData = {
-      fullName: formData.fullName,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      profilePictureUrl: formData.profilePictureUrl,
-      profile: {
-        ...freelancerData.profile,
-        headline: formData.headline,
-        overview: formData.overview,
-        hourlyRate: Number(formData.hourlyRate),
-      },
-      skills,
-      experiences,
-      portfolio,
+    const nameParts = formData.fullName.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    const freelancerProfilePayload = {
+      professionalTitle: formData.headline,
+      hourlyRate: Number(formData.hourlyRate) || 0,
+      bio: formData.overview,
     };
 
     try {
       setLoading(true);
       setError(null);
-      await profileService.updateFreelancerProfile(updatedFreelancerData);
-      
-      updateFreelancerData(updatedFreelancerData);
+      await profileService.updateProfile({
+        firstName,
+        lastName,
+        phone: formData.phoneNumber,
+        profilePictureUrl: formData.profilePictureUrl,
+      });
+      const savedProfile = await profileService.updateFreelancerProfile(freelancerProfilePayload);
+      updateFreelancerData({
+        ...freelancerData,
+        ...savedProfile,
+        fullName: formData.fullName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        profilePictureUrl: formData.profilePictureUrl,
+        profile: {
+          ...freelancerData.profile,
+          headline: savedProfile?.professionalTitle || formData.headline,
+          overview: savedProfile?.bio || formData.overview,
+          hourlyRate: savedProfile?.hourlyRate ?? Number(formData.hourlyRate),
+        },
+        skills,
+        experiences,
+        portfolio,
+      });
       navigate("/dashboard/profile");
     } catch (err) {
       setError(err.message || "Failed to update profile. Please try again.");

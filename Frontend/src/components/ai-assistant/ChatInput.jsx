@@ -85,7 +85,6 @@ const ChatInput = ({ onSendMessage, disabled }) => {
         <form
             className={styles.container}
             onSubmit={handleSubmit}
-            role="form"
             aria-label="Chat input"
         >
             <div className={styles.wrapper}>

@@ -49,22 +49,21 @@ apiClient.interceptors.response.use(
   (error) => {
     // Auto-logout on 401 Unauthorized (expired or invalid token)
     if (error.response?.status === 401) {
-      const token = tokenService.getToken();
-      // Skip auto-logout if we are using a mock token for demo purposes
-      if (token === 'mock_jwt_token_for_demo_12345') {
-        return Promise.reject(error);
-      }
-
       tokenService.clearToken();
       localStorage.removeItem('token');
       // Only redirect if not already on an auth page to avoid redirect loops
       const currentPath = window.location.pathname;
-      const authPaths = ['/login', '/register', '/forgotpassword', '/resetpassword', '/verify', '/mock-login'];
+      const authPaths = ['/login', '/register', '/forgotpassword', '/resetpassword', '/verify'];
       if (!authPaths.includes(currentPath)) {
         window.location.href = '/login';
       }
     }
-    console.error('API Error:', error.response?.status, error.response?.data || error.message);
+    // 404 = expected "not found" (e.g. no active subscription) — use warn, not error
+    if (error.response?.status === 404) {
+      console.warn('API 404:', error.config?.url, error.response?.data?.message || 'Not found');
+    } else {
+      console.error('API Error:', error.response?.status, error.response?.data || error.message);
+    }
     return Promise.reject(error);
   }
 );

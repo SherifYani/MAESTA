@@ -23,8 +23,6 @@ import {
   Eye,
   Trash2,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   MapPin,
   DollarSign,
   BarChart
@@ -295,15 +293,14 @@ const DetailedApplications = ({
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedApplications = filteredApplications.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-  const startDisplay = filteredApplications.length > 0 ? startIdx + 1 : 0;
-  const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredApplications.length);
+
   const winSize = Math.min(5, totalPages);
   let startPageNum;
   if (totalPages <= 5) startPageNum = 1;
   else if (currentPage <= 3) startPageNum = 1;
   else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
   else startPageNum = currentPage - 2;
-  const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
+
 
   // If no applications
   if (applications.length === 0) {

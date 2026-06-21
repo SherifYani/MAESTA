@@ -11,9 +11,9 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-    MoreVertical, Edit, Trash, CheckCircle, Ban,
+    MoreVertical, Trash, CheckCircle, Ban,
     UserPlus, Users, UserCheck, UserX, Shield,
 } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
@@ -21,21 +21,21 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { usersData } from '../../config/adminMockData';
+import { getUsersData } from '../../config/adminDataService';
 import styles from './UserManagement.module.css';
 
-// Number of rows to display per page
 const PAGE_SIZE = 10;
 
-/**
- * User Management Component.
- * All data transformation (filter, sort, paginate) lives here;
- * AdminDataTable is a purely controlled, presentational component.
- * @returns {JSX.Element}
- */
 const UserManagement = () => {
-    // ── Data source ─────────────────────────────────────────────────────────
-    const [users, setUsers] = useState(usersData);
+    const [users, setUsers] = useState([]);
+    const [, setLoading] = useState(true);
+
+    useEffect(() => {
+        getUsersData().then(data => {
+            setUsers(data);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

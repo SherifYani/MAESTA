@@ -329,8 +329,11 @@ namespace JobMagnet.Application.Services
 
             var recommendations = jobs
                 .Select(j => {
-                    var matchCount = userSkills.Count(s => j.Title.ToLower().Contains(s) || j.Description.ToLower().Contains(s));
-                    var score = userSkills.Any() ? (double)matchCount / userSkills.Count * 100 : 0;
+                    var title = j.Title?.ToLower() ?? "";
+                    var desc = j.Description?.ToLower() ?? "";
+                    var matchCount = userSkills.Where(s => !string.IsNullOrEmpty(s)).Count(s => title.Contains(s) || desc.Contains(s));
+                    var validSkillsCount = userSkills.Count(s => !string.IsNullOrEmpty(s));
+                    var score = validSkillsCount > 0 ? (double)matchCount / validSkillsCount * 100 : 0;
                     return new { Job = j, Score = score };
                 })
                 .Where(x => x.Score > 0)

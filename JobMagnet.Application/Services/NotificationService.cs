@@ -142,6 +142,17 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task UnsubscribePushAsync(int userId)
+        {
+            var settings = await _context.UserSettings.FindAsync(userId);
+            if (settings != null)
+            {
+                settings.Preferences = null; // Clear device token
+                settings.UpdatedAt = DateTimeOffset.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+        }
+
         // Helper for other services to trigger notifications
         public async Task CreateNotificationAsync(int userId, string title, string message, string type, string? actionUrl = null)
         {

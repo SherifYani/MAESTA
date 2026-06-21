@@ -25,6 +25,7 @@ namespace JobMagnet.Application.Services
         {
             var application = await _context.JobApplications
                 .Include(a => a.Job)
+                .Include(a => a.JobSeeker)
                 .FirstOrDefaultAsync(a => a.JobApplicationId == request.JobApplicationId);
 
             if (application == null) throw new KeyNotFoundException("Application not found");
@@ -57,7 +58,10 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
 
             // Notify Job Seeker
-            await _notificationService.CreateNotificationAsync(application.JobSeekerId, "New Interview Scheduled", $"You have a new interview for {application.Job?.Title}: {request.Title}", "Interview", $"/interviews/{interview.InterviewId}");
+            if (application.JobSeeker != null)
+            {
+                await _notificationService.CreateNotificationAsync(application.JobSeeker.UserId, "New Interview Scheduled", $"You have a new interview for {application.Job?.Title}: {request.Title}", "Interview", "/dashboard/applications");
+            }
 
             return await GetInterviewByIdAsync(employerUserId, interview.InterviewId);
         }
@@ -86,7 +90,8 @@ namespace JobMagnet.Application.Services
 
             // Notify other party
             var targetUserId = isEmployer ? interview.JobSeeker!.UserId : interview.Employer!.UserId;
-            await _notificationService.CreateNotificationAsync(targetUserId, "Interview Status Updated", $"The status of your interview '{interview.Title}' has been changed to {request.Status}", "Interview", $"/interviews/{interview.InterviewId}");
+            var targetUrl = isEmployer ? "/dashboard/applications" : "/dashboard/interviews";
+            await _notificationService.CreateNotificationAsync(targetUserId, "Interview Status Updated", $"The status of your interview '{interview.Title}' has been changed to {request.Status}", "Interview", targetUrl);
 
             return await GetInterviewByIdAsync(userId, interviewId);
         }
@@ -110,8 +115,10 @@ namespace JobMagnet.Application.Services
 
             await _context.SaveChangesAsync();
 
-            var targetUserId = interview.Employer?.UserId == userId ? interview.JobSeeker!.UserId : interview.Employer!.UserId;
-            await _notificationService.CreateNotificationAsync(targetUserId, "Interview Rescheduled", $"Your interview '{interview.Title}' has been rescheduled to {request.NewScheduledAt}", "Interview", $"/interviews/{interview.InterviewId}");
+            var isEmployer = interview.Employer?.UserId == userId;
+            var targetUserId = isEmployer ? interview.JobSeeker!.UserId : interview.Employer!.UserId;
+            var targetUrl = isEmployer ? "/dashboard/applications" : "/dashboard/interviews";
+            await _notificationService.CreateNotificationAsync(targetUserId, "Interview Rescheduled", $"Your interview '{interview.Title}' has been rescheduled to {request.NewScheduledAt}", "Interview", targetUrl);
 
             return await GetInterviewByIdAsync(userId, interviewId);
         }
@@ -184,5 +191,57 @@ namespace JobMagnet.Application.Services
             Status = i.Status,
             CreatedAt = i.CreatedAt
         };
+
+        public async Task<IEnumerable<AvailableSlotDto>> GetAvailableSlotsAsync(int userId, DateTime? from = null, DateTime? to = null)
+        {
+            var fromDate = from ?? DateTimeOffset.UtcNow;
+            var toDate = to ?? fromDate.AddDays(14);
+
+            var existingInterviews = await _context.Interviews
+                .Where(i => (i.EmployerId == userId || i.JobSeekerId == userId)
+                         && i.Status != "Cancelled" && i.Status != "Rejected")
+                .ToListAsync();
+
+            var slots = new List<AvailableSlotDto>();
+            var currentTime = fromDate.DateTime.Date.AddHours(9); // 9 AM local
+
+            while (currentTime < toDate)
+            {
+                // Skip weekends
+                if (currentTime.DayOfWeek != DayOfWeek.Saturday && currentTime.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    if (currentTime.Hour < 17) // 5 PM
+                    {
+                        var slotEnd = currentTime.AddMinutes(30);
+                        var slotDateTime = new DateTimeOffset(currentTime, TimeSpan.Zero); // UTC
+
+                        var hasConflict = existingInterviews.Any(i =>
+                            i.Status != "Cancelled" && i.Status != "Rejected" &&
+                            slotDateTime < i.ScheduledAt && slotEnd > i.ScheduledAt.UtcDateTime
+                        );
+
+                        slots.Add(new AvailableSlotDto
+                        {
+                            Time = currentTime.ToString("HH:mm"),
+                            DateTime = slotDateTime,
+                            DurationMinutes = 30,
+                            Available = !hasConflict
+                        });
+
+                        currentTime = slotEnd;
+                    }
+                    else
+                    {
+                        currentTime = currentTime.AddDays(1).Date.AddHours(9);
+                    }
+                }
+                else
+                {
+                    currentTime = currentTime.AddDays(1).Date.AddHours(9);
+                }
+            }
+
+            return slots;
+        }
     }
 }

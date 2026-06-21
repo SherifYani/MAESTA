@@ -112,11 +112,13 @@ const CompanyInterviews = () => {
   const confirmReschedule = async () => {
     if (!selectedInterview || !newDate || !newTime) return;
     try {
+      const scheduledDate = newDate.toISOString().split('T')[0];
       const response = await interviewService.rescheduleInterview(
         selectedInterview.id,
-        newDate.toISOString().split('T')[0],
-        newTime,
-        rescheduleReason
+        {
+          newScheduledAt: new Date(`${scheduledDate}T${newTime}`).toISOString(),
+          reason: rescheduleReason
+        }
       );
       if (response.success) {
         setSuccess('Interview rescheduled successfully');
@@ -238,7 +240,6 @@ const CompanyInterviews = () => {
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
     for (let i = 1; i <= lastDay.getDate(); i++) {

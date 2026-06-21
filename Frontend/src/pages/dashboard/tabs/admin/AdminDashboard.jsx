@@ -19,29 +19,36 @@ import StatsGrid from '../../components/StatsGrid';
 import RecentActivity from './components/Overview/RecentActivity';
 import PendingActions from './components/Overview/PendingActions';
 import SystemHealth from './components/Overview/SystemHealth';
-import { adminStats, activitiesData, pendingActions, healthData } from './config/adminMockData';
+import { getAdminStats, getActivitiesData, getPendingActionsData, getHealthData } from './config/adminDataService';
 
-/**
- * Admin Dashboard Component
- * Manages navigation between sub-sections and displays high-level metrics.
- * @returns {JSX.Element} Rendered component
- */
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [adminStats, setAdminStats] = useState(null);
+  const [activitiesData, setActivitiesData] = useState([]);
+  const [pendingActions, setPendingActions] = useState([]);
+  const [healthData, setHealthData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleExportReport = () => {
-    // Navigate to reports page or trigger export functionality
     navigate('/dashboard/admin/reports');
   };
 
   useEffect(() => {
-    // Simulate initial data loading
-    const timer = setTimeout(() => {
+    Promise.all([
+      getAdminStats(),
+      getActivitiesData(),
+      getPendingActionsData(),
+      getHealthData()
+    ]).then(([stats, activities, pending, health]) => {
+      setAdminStats(stats);
+      setActivitiesData(activities);
+      setPendingActions(pending);
+      setHealthData(health);
       setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    }).catch(() => setIsLoading(false));
   }, []);
+
+  if (!adminStats) return null;
 
   const adminMetrics = [
     {
@@ -63,17 +70,17 @@ const AdminDashboard = () => {
     {
       title: "Active Jobs",
       value: adminStats.activeJobs,
-      change: "+5", // Mock change
+      change: adminStats.activeJobsChange || "0",
       icon: FileText,
-      trendType: "up",
+      trendType: adminStats.activeJobsChange?.includes('-') ? "down" : "up",
       description: "Currently active"
     },
     {
       title: "Pending Moderation",
       value: adminStats.pendingModeration,
-      change: adminStats.pendingModeration > 10 ? "+5" : "-2",
+      change: adminStats.pendingModerationChange || "0",
       icon: ShieldAlert,
-      trendType: "down", // Assuming fewer is better or neutral
+      trendType: adminStats.pendingModerationChange?.includes('-') ? "down" : "up",
       description: "Items to review"
     }
   ];

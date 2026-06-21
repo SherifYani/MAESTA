@@ -16,6 +16,7 @@ import { Search, MapPin, Filter } from 'lucide-react';
 import { Input, Button, Pagination } from '../../components/common';
 import GeneralSelect from '../../components/common/GeneralSelect';
 import jobService from '../../services/jobService';
+import generalService from '../../services/generalService';
 import JobFilters from '../../components/jobs/JobFilters';
 import { PageContainer } from '../../components/layout';
 import styles from './JobSearchPage.module.css';
@@ -45,13 +46,21 @@ const JobSearchPage = () => {
         total: 0,
         totalPages: 0
     });
+    const [availableSkills, setAvailableSkills] = useState([]);
 
-    // Mock available skills - in a real app, these would come from an API
-    const availableSkills = [
-        'React', 'Node.js', 'Python', 'Java', 'TypeScript',
-        'AWS', 'Docker', 'Kubernetes', 'SQL', 'MongoDB',
-        'UI/UX Design', 'Project Management', 'Agile'
-    ];
+    useEffect(() => {
+        const loadSkills = async () => {
+            try {
+                const skills = await generalService.autocompleteSkills('');
+                const items = Array.isArray(skills) ? skills : (skills?.items || skills?.data || []);
+                setAvailableSkills(items.map(skill => skill.name || skill.skillName || skill).filter(Boolean));
+            } catch (error) {
+                setAvailableSkills([]);
+            }
+        };
+
+        loadSkills();
+    }, []);
 
     const fetchJobs = useCallback(async () => {
         try {
@@ -89,15 +98,6 @@ const JobSearchPage = () => {
     useEffect(() => {
         fetchJobs();
     }, [fetchJobs]);
-
-    /**
-     * Handles search input changes
-     * @param {Object} searchParams - The search parameters to update
-     */
-    const handleSearch = (searchParams) => {
-        setFilters(prev => ({ ...prev, ...searchParams }));
-        setPagination(prev => ({ ...prev, page: 1 }));
-    };
 
     /**
      * Handles filter changes

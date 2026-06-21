@@ -12,6 +12,7 @@ namespace JobMagnet.Application.Interfaces
         Task<NotificationPreferencesDto> GetPreferencesAsync(int userId);
         Task UpdatePreferencesAsync(int userId, NotificationPreferencesDto preferences);
         Task SubscribePushAsync(int userId, string deviceToken);
+        Task UnsubscribePushAsync(int userId);
         Task CreateNotificationAsync(int userId, string title, string message, string type, string? actionUrl = null);
     }
 }

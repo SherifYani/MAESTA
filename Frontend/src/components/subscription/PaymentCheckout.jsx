@@ -339,10 +339,6 @@ const PaymentCheckout = ({
      * Get card icon based on type
      * @returns {React.ElementType} Icon component
      */
-    const getCardIcon = () => {
-        return CreditCard; // In a real app, you'd have icons for each card type
-    };
-
     /**
      * Handle cancel button click
      */

@@ -19,8 +19,7 @@ import {
     DollarSign,
     Clock,
     Briefcase,
-    Users,
-    Search
+    Users
 } from 'lucide-react';
 import { Button, Input } from '../common';
 import styles from './GigFilters.module.css';

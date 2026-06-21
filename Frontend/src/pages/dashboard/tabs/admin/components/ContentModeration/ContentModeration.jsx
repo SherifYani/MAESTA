@@ -8,23 +8,27 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, Shield } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { reportsData } from '../../config/adminMockData';
+import { getReportsData } from '../../config/adminDataService';
 import styles from './ContentModeration.module.css';
 
 const PAGE_SIZE = 10;
 
-/**
- * Content Moderation component — fully controlled parent for AdminDataTable.
- * @returns {JSX.Element}
- */
 const ContentModeration = () => {
-    const [reports, setReports] = useState(reportsData);
+    const [reports, setReports] = useState([]);
+    const [, setLoading] = useState(true);
+
+    useEffect(() => {
+        getReportsData().then(data => {
+            setReports(data);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, []);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

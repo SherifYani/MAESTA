@@ -7,7 +7,7 @@
  */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { format, parse, isValid, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { format, parse, isValid, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
 import styles from './DatePicker.module.css';
 
 export const DatePicker = ({

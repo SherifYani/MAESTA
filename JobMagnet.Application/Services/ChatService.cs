@@ -230,6 +230,28 @@ namespace JobMagnet.Application.Services
             }, otherUserId.ToString());
         }
 
+        public async Task<IEnumerable<BlockedUserDto>> GetBlockedUsersAsync(int userId)
+        {
+            var blocked = await _context.BlockedUsers
+                .Include(b => b.BlockedUserEntity)
+                .Where(b => b.BlockedByUserId == userId)
+                .OrderByDescending(b => b.BlockedAt)
+                .Select(b => new BlockedUserDto
+                {
+                    BlockId = b.BlockId,
+                    BlockedUserId = b.BlockedUserId,
+                    BlockedUserName = b.BlockedUserEntity != null 
+                        ? $"{b.BlockedUserEntity.FirstName} {b.BlockedUserEntity.LastName}" 
+                        : "Unknown",
+                    BlockedUserProfilePicture = b.BlockedUserEntity != null ? b.BlockedUserEntity.ProfilePictureUrl : null,
+                    Reason = b.Reason,
+                    BlockedAt = b.BlockedAt
+                })
+                .ToListAsync();
+
+            return blocked;
+        }
+
         private static ChatMessageDto MapMessage(Domain.Entities.Message m, string? senderName, string? receiverName, int receiverId) => new()
         {
             ChatId = m.ChatId,
