@@ -1,0 +1,23 @@
+# .dockerignore
+**/.git
+**/node_modules
+**/obj
+**/bin
+**/dist
+**/build
+.env
+.env.*
+.vscode
+.idea
+*.log
+docker-compose.yml
+Dockerfile
+README.md
+*.md
+allfiles.txt
+CompleteDatabase_WithIndexes.sql
+CreateAllIndexes.sql
+DatabaseReport.sql
+Fix_FullTextIndexes.sql
+Frontend/
+Backend/

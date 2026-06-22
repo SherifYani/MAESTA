@@ -1,0 +1,22 @@
+/**
+ * @file ChatPage.module.css
+ * @description Styles for ChatPage component
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+.container {
+    width: 100%;
+    height: calc(100vh - var(--header-height, 80px));
+    overflow: hidden;
+    background-color: var(--color-background);
+    padding: 0 !important;
+}
+
+/* Dark Mode Support */
+.dark .container {
+    background-color: var(--color-background);
+}

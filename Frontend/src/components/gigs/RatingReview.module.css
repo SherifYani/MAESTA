@@ -1,0 +1,772 @@
+/**
+ * @file RatingReview.module.css
+ * @description Styles for the RatingReview component.
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+/* ==========================================================================
+   Main Container
+   ========================================================================== */
+
+.container {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    max-width: 48rem;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px var(--color-translucent-white-1);
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.targetUser {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-background);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.userAvatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+}
+
+.avatarFallback {
+    color: var(--color-accent-foreground);
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    text-align: left;
+}
+
+.userName {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.userRole {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Error Container
+   ========================================================================== */
+
+.errorContainer {
+    background-color: var(--color-destructive-foreground);
+    color: var(--color-destructive);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-destructive);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Form Layout
+   ========================================================================== */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+/* ==========================================================================
+   Rating Section
+   ========================================================================== */
+
+.ratingSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.sectionTitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+    text-align: center;
+}
+
+.starRating {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: center;
+}
+
+.starContainer {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+}
+
+.starButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-1);
+    color: var(--color-muted);
+    transition: all 0.2s ease;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.starButton:hover:not(:disabled) {
+    transform: scale(1.1);
+    color: var(--color-accent-pink);
+}
+
+.starButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.starButton[aria-checked="true"] {
+    color: var(--color-accent-pink);
+}
+
+.star {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.starActive {
+    color: var(--color-accent-pink) !important;
+}
+
+.ratingLabel {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-accent-pink);
+    line-height: var(--line-height-tight);
+    min-height: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.ratingValue {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-normal);
+}
+
+/* ==========================================================================
+   Recommendation Section
+   ========================================================================== */
+
+.recommendationSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.recommendationTitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+    text-align: center;
+}
+
+.recommendationButtons {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.recommendationButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all 0.3s ease;
+    line-height: var(--line-height-tight);
+}
+
+.recommendationButton:hover:not(:disabled) {
+    border-color: var(--color-accent-pink);
+    background-color: var(--color-radial-pink-3);
+}
+
+.recommendationButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.recommendationButton[aria-pressed="true"] {
+    border-color: var(--color-accent-pink);
+    background-color: var(--color-radial-pink-1);
+    color: var(--color-accent-pink);
+}
+
+.recommendationButton[aria-pressed="true"] svg {
+    color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Review Section
+   ========================================================================== */
+
+.reviewSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.reviewLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.optionalText {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    font-weight: var(--font-weight-normal);
+    margin-left: var(--space-1);
+}
+
+.reviewTextarea {
+    width: 100%;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    resize: vertical;
+    min-height: 8rem;
+    transition: all 0.3s ease;
+}
+
+.reviewTextarea:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.reviewTextarea:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: var(--color-muted);
+}
+
+.reviewTextarea::placeholder {
+    color: var(--color-muted-foreground);
+    opacity: 0.7;
+}
+
+.reviewFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.reviewHint {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+    flex: 1;
+}
+
+.charCountWrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.charCount {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    line-height: var(--line-height-tight);
+}
+
+.charCountNormal {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+}
+
+.charCountInfo {
+    background-color: var(--color-radial-pink-1);
+    color: var(--color-accent-pink);
+}
+
+.charCountWarning {
+    background-color: var(--color-destructive-foreground);
+    color: var(--color-destructive);
+}
+
+/* ==========================================================================
+   Tips Section
+   ========================================================================== */
+
+.tipsSection {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.tipsTitle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-2) 0;
+    line-height: var(--line-height-tight);
+}
+
+.tipsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.tipsList li {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-tight);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+}
+
+.tipsList li::before {
+    content: '•';
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+.actionButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.submitButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 12rem;
+    justify-content: center;
+}
+
+.disclaimer {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: center;
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Submitted State
+   ========================================================================== */
+
+.submittedContainer {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-12) var(--space-8);
+    text-align: center;
+    max-width: 48rem;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px var(--color-translucent-white-1);
+}
+
+.submittedIcon {
+    color: var(--color-chart-2);
+    margin-bottom: var(--space-6);
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.submittedTitle {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-4) 0;
+    line-height: var(--line-height-tight);
+}
+
+.submittedMessage {
+    font-size: var(--font-size-base);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--space-8) 0;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.submittedActions {
+    display: flex;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Desktop large: 75rem (1200px) */
+@media (min-width: 75rem) {
+    .container {
+        padding: var(--space-10);
+    }
+
+    .title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .sectionTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .star {
+        size: 48;
+    }
+
+    .recommendationButton {
+        padding: var(--space-4) var(--space-8);
+        font-size: var(--font-size-base);
+    }
+
+    .reviewTextarea {
+        min-height: 10rem;
+    }
+}
+
+/* Tablet landscape: 60.5rem (968px) */
+@media (max-width: 60.5rem) {
+    .container {
+        padding: var(--space-6);
+    }
+
+    .header {
+        padding-bottom: var(--space-4);
+        margin-bottom: var(--space-6);
+    }
+
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .form {
+        gap: var(--space-6);
+    }
+
+    .recommendationButtons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .recommendationButton {
+        width: 100%;
+        max-width: 20rem;
+        justify-content: center;
+    }
+
+    .actionButtons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .submitButton {
+        width: 100%;
+    }
+}
+
+/* Tablet portrait: 40rem (640px) */
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+        margin: 0 var(--space-2);
+    }
+
+    .header {
+        gap: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .targetUser {
+        padding: var(--space-2) var(--space-3);
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sectionTitle {
+        font-size: var(--font-size-base);
+    }
+
+    .star {
+        size: 32;
+    }
+
+    .ratingLabel {
+        font-size: var(--font-size-sm);
+    }
+
+    .reviewLabel {
+        font-size: var(--font-size-sm);
+    }
+
+    .reviewTextarea {
+        padding: var(--space-3);
+        min-height: 6rem;
+        font-size: var(--font-size-sm);
+    }
+
+    .reviewFooter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+
+    .tipsSection {
+        padding: var(--space-3);
+    }
+
+    .tipsList li {
+        font-size: var(--font-size-xs);
+    }
+
+    .disclaimer {
+        font-size: var(--font-size-xs);
+    }
+
+    .submittedContainer {
+        padding: var(--space-8) var(--space-4);
+    }
+
+    .submittedTitle {
+        font-size: var(--font-size-xl);
+    }
+
+    .submittedMessage {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .container,
+    .starButton,
+    .recommendationButton,
+    .reviewTextarea,
+    .errorContainer,
+    .submittedIcon {
+        transition: none;
+    }
+
+    .starButton:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .errorContainer {
+        animation: none;
+    }
+
+    .submittedIcon {
+        animation: none;
+    }
+
+    .progressFill::after {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .container {
+        border: 2px solid var(--color-border);
+    }
+
+    .starButton {
+        border: 1px solid currentColor;
+    }
+
+    .recommendationButton {
+        border: 2px solid var(--color-border);
+    }
+
+    .reviewTextarea {
+        border: 2px solid var(--color-border);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+.dark .container {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dark .targetUser {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+}
+
+.dark .starButton:hover:not(:disabled) {
+    color: var(--color-vivid-pink);
+}
+
+.dark .recommendationButton:hover:not(:disabled) {
+    background-color: var(--color-accent);
+}
+
+.dark .recommendationButton[aria-pressed="true"] {
+    background-color: var(--color-radial-pink-2);
+}
+
+.dark .reviewTextarea {
+    background-color: var(--color-background);
+    border-color: var(--color-border);
+}
+
+.dark .tipsSection {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+}
+
+.dark .charCountNormal {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.dark .submittedContainer {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+}

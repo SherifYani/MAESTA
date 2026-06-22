@@ -1,0 +1,431 @@
+/**
+ * @file JobSearchPage.module.css
+ * @description Contains all styles for the JobSearchPage component
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-normal);
+}
+
+/* Search / Controls Section handled in controlsBar mapping below */
+
+/* Content Layout */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    width: 100%;
+}
+
+/* Controls Bar */
+.controlsBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-card);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+}
+
+.searchSection {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+}
+
+.searchIcon,
+.locationIcon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.searchInput,
+.locationInput {
+    padding-left: var(--space-8);
+}
+
+/* Override input styling inside controlsBar */
+.controlsBar :global(.input) {
+    width: 100%;
+    padding-left: var(--space-8);
+    border-radius: var(--radius-full);
+}
+
+.searchButton {
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.filterToggleButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filterToggleButton:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.filterToggleButton.active {
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+}
+
+/* Main Content */
+.mainContent {
+    min-height: var(--space-125);
+    /* 500px */
+}
+
+.jobsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+}
+
+.resultsCount {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.sortSelect {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    background: var(--color-input);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.sortSelect:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+}
+
+.sortSelect:hover {
+    border-color: var(--color-accent-hover);
+}
+
+/* Jobs Grid */
+.jobsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.jobCard {
+    background: var(--color-card);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 var(--space-1) var(--space-2) var(--color-translucent-white-1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.jobCard:hover,
+.jobCard:focus {
+    box-shadow: 0 var(--space-2) var(--space-7) var(--color-shadow-pink);
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.jobHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2);
+}
+
+.jobTitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.saveButton {
+    background: none;
+    border: none;
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    transition: color 0.2s ease;
+    padding: 0;
+}
+
+.saveButton:hover,
+.saveButtonSaved {
+    color: var(--color-accent-pink);
+}
+
+.companyName {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent-pink);
+    margin-bottom: var(--space-1);
+    font-size: var(--font-size-base);
+}
+
+.jobLocation {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-3);
+}
+
+.jobMeta {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.jobType {
+    background: var(--color-secondary);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.salary {
+    color: var(--color-accent-pink);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+}
+
+/* Loading & Empty States */
+.loadingContainer,
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+}
+
+.spinner {
+    width: var(--space-10);
+    height: var(--space-10);
+    border: 3px solid var(--color-muted);
+    border-top-color: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+    animation: spin 0.8s linear infinite;
+    margin-bottom: var(--space-4);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.emptyIcon {
+    font-size: var(--font-size-5xl);
+    margin-bottom: var(--space-4);
+    color: var(--color-accent-pink);
+}
+
+.emptyTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+}
+
+.emptySubtitle {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-base);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+}
+
+.paginationButton {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.paginationButton:hover:not(:disabled) {
+    background: var(--color-accent);
+    border-color: var(--color-accent-hover);
+}
+
+.paginationButtonActive {
+    background: var(--color-accent-pink);
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+}
+
+.paginationButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .title {
+        font-size: var(--font-size-xl);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-base);
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .jobsHeader {
+        flex-direction: column;
+        gap: var(--space-3);
+        align-items: flex-start;
+    }
+
+    .sortSelect {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 40rem) {
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .controlsBar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: var(--space-3);
+    }
+
+    .searchSection {
+        max-width: 100%;
+    }
+
+    .filterToggleButton {
+        justify-content: center;
+    }
+
+    .jobCard {
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+    }
+
+    .jobTitle {
+        font-size: var(--font-size-base);
+    }
+
+    .companyName {
+        font-size: var(--font-size-sm);
+    }
+
+    .jobMeta {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+
+    .emptyState {
+        padding: var(--space-8) var(--space-4);
+    }
+
+    .emptyIcon {
+        font-size: var(--font-size-4xl);
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation: none;
+    }
+
+    .searchButton,
+    .paginationButton,
+    .resetButton,
+    .jobCard {
+        transition: none;
+    }
+
+    .jobCard:hover,
+    .jobCard:focus {
+        transform: none;
+    }
+}
+
+/* Dark theme adjustments */
+.dark .jobCard:hover,
+.dark .jobCard:focus {
+    border-color: var(--color-accent-pink);
+    background: var(--color-card-foreground);
+}
+
+.dark .saveButton:hover {
+    color: var(--color-vivid-pink);
+}

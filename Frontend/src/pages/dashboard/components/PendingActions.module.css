@@ -1,0 +1,417 @@
+/**
+ * @file PendingActions.module.css
+ * @description CSS Module for PendingActions component - NO card container
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-21
+ */
+
+/* ==========================================================================
+   Pending Actions Content - Direct rendering, no card wrapper
+   ========================================================================== */
+
+.pendingActionsContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Progress Tracking
+   ========================================================================== */
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.progressBar {
+  height: 6px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progressFill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-translucent-white-1),
+      transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* ==========================================================================
+   Actions List
+   ========================================================================== */
+
+.actionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ==========================================================================
+   Action Item
+   ========================================================================== */
+
+.actionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.actionItem:hover {
+  background-color: var(--color-muted);
+}
+
+.actionItem.completed {
+  opacity: 0.7;
+  background-color: var(--color-muted);
+}
+
+.actionItem.completed .actionTitle {
+  text-decoration: line-through;
+  color: var(--color-muted-foreground);
+}
+
+.actionItem.completed .checkbox {
+  background-color: var(--color-vivid-pink);
+  border-color: var(--color-vivid-pink);
+}
+
+/* ==========================================================================
+   Checkbox
+   ========================================================================== */
+
+.checkbox {
+  flex-shrink: 0;
+  background: none;
+  border: 2px solid var(--color-border);
+  padding: var(--space-1);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-1);
+}
+
+.checkbox:hover {
+  background-color: var(--color-accent-pink);
+  border-color: var(--color-accent-pink);
+  transform: scale(1.1);
+}
+
+.checkbox:active {
+  transform: scale(0.95);
+}
+
+.checkIcon {
+  color: var(--color-primary-white);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.actionItem.completed .checkIcon {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Action Content
+   ========================================================================== */
+
+.actionContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-2);
+  gap: var(--space-2);
+}
+
+.actionTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  flex: 1;
+}
+
+/* ==========================================================================
+   Action Metadata
+   ========================================================================== */
+
+.actionMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.priority {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-muted);
+}
+
+.priorityHigh {
+  color: var(--color-chart-5);
+}
+
+.priorityMedium {
+  color: var(--color-chart-3);
+}
+
+.priorityLow {
+  color: var(--color-chart-4);
+}
+
+.priorityDefault {
+  color: var(--color-muted-foreground);
+}
+
+.dueDate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Action Description
+   ========================================================================== */
+
+.actionDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-3) 0;
+  line-height: var(--line-height-normal);
+}
+
+/* ==========================================================================
+   Action Buttons
+   ========================================================================== */
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.actionButton:first-of-type {
+  background-color: var(--color-accent-pink);
+  color: var(--color-primary-white);
+}
+
+.actionButton:first-of-type:hover {
+  background-color: var(--color-vivid-pink);
+  transform: translateY(-1px);
+}
+
+.actionButton:not(:first-of-type) {
+  background-color: transparent;
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+.actionButton:not(:first-of-type):hover {
+  background-color: var(--color-muted);
+  border-color: var(--color-ring);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+  color: var(--color-muted-foreground);
+}
+
+.emptyIcon {
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+  color: var(--color-accent-pink);
+}
+
+.emptyState h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.emptyState p {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .actionItem {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .actionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .actionMeta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .actionButtons {
+    width: 100%;
+  }
+
+  .actionButton {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actionItem {
+    padding: var(--space-3);
+  }
+
+  .actionMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .actionButton {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .actionItem,
+  .checkbox,
+  .progressFill,
+  .actionButton {
+    transition: none;
+  }
+
+  .checkbox:hover {
+    transform: none;
+  }
+
+  .actionButton:hover {
+    transform: none;
+  }
+
+  .progressFill::after {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .actionItem {
+    border: 1px solid var(--color-foreground);
+  }
+
+  .checkbox {
+    border: 2px solid var(--color-foreground);
+  }
+
+  .progress {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

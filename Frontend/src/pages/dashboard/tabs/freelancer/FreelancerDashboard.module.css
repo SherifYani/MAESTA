@@ -1,0 +1,784 @@
+/**
+ * @file FreelancerDashboard.module.css - Enhanced Version
+ * @description CSS Module for FreelancerDashboard component with similar styling to ClientDashboard
+ * @author Sherif Talaat
+ * @version 3.0.0
+ * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-21
+ */
+
+/* ==========================================================================
+   Dashboard Container
+   ========================================================================== */
+
+.freelancerDashboard {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: var(--space-4);
+}
+
+/* ==========================================================================
+   Metrics Section
+   ========================================================================== */
+
+.metricsSection {
+  margin-bottom: var(--space-6);
+}
+
+.quickInsightsSection {
+  margin-bottom: var(--space-8);
+}
+
+/* ==========================================================================
+   Content Grid Layout - 2 Column
+   ========================================================================== */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  align-items: start;
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ==========================================================================
+   Dashboard Cards - Fixed Height Issues
+   ========================================================================== */
+
+.activityCard,
+.actionsCard,
+.jobsCard,
+.earningsCard,
+.profileCard,
+.metricsCard,
+.quickActionsCard {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: fit-content;
+}
+
+.activityCard {
+  min-height: 280px;
+}
+
+.actionsCard {
+  min-height: 320px;
+}
+
+.profileCard {
+  min-height: 280px;
+}
+
+.earningsCard {
+  min-height: 260px;
+}
+
+.jobsCard {
+  min-height: 260px;
+}
+
+.metricsCard {
+  height: 200px;
+}
+
+.quickActionsCard {
+  height: 180px;
+}
+
+.activityCard:hover,
+.actionsCard:hover,
+.jobsCard:hover,
+.earningsCard:hover,
+.profileCard:hover,
+.metricsCard:hover,
+.quickActionsCard:hover {
+  border-color: var(--color-ring);
+  box-shadow: 0 4px 16px var(--color-translucent-white-3);
+}
+
+/* ==========================================================================
+   Compact Job Posts
+   ========================================================================== */
+
+.compactJobsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.compactJobsList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.compactJobsList::-webkit-scrollbar-track {
+  background: var(--color-muted);
+}
+
+.compactJobsList::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.compactJobCard {
+  width: 99%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.compactJobCard:hover {
+  background-color: var(--color-sidebar);
+  border-color: var(--color-accent-pink);
+  transform: translateX(5px);
+}
+
+.jobCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  gap: var(--space-2);
+}
+
+.jobCardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.jobCardTitle h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jobCardIcon {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+.jobCardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.jobMetaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.jobMetaItem svg {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Profile Completeness Card
+   ========================================================================== */
+
+.profileContent {
+  padding: var(--space-2) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+.profileProgress {
+  flex-shrink: 0;
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.progressCircle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-accent-pink) 0% var(--progress-percentage),
+    var(--color-muted) var(--progress-percentage) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.progressCircle::before {
+  content: "";
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background-color: var(--color-card);
+  top: 8px;
+  left: 8px;
+}
+
+.progressText {
+  position: relative;
+  z-index: 1;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+}
+
+.profileTips {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Earnings Overview Card
+   ========================================================================== */
+
+.earningsContent {
+  padding: var(--space-2) 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.earningsStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.earningsStat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.earningsStatLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.earningsStatValue {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}
+
+.earningsProgress {
+  margin: var(--space-4) 0;
+  flex: 1;
+}
+
+.earningsProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.earningsProgressLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.earningsProgressValue {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-pink);
+}
+
+.earningsProgressBar {
+  height: 8px;
+  background-color: var(--color-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progressFill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-translucent-white-1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+.earningsInsights {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.earningsInsight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+.earningsInsight svg {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   KPI Grid
+   ========================================================================== */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  height: 100%;
+}
+
+.kpiItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s ease;
+}
+
+.kpiItem:hover {
+  background-color: var(--color-sidebar);
+  transform: translateX(4px);
+}
+
+.kpiIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiIconWrapper svg {
+  color: var(--color-accent-pink);
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.kpiLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpiValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}
+
+.kpiValueSmall {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Quick Actions Panel
+   ========================================================================== */
+
+.quickActionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  height: 100%;
+}
+
+.quickActionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  flex: 1;
+}
+
+.quickActionItem:hover {
+  background-color: var(--color-muted);
+  border-color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.quickActionItem svg {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+.quickActionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.quickActionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.quickActionDesc {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .leftColumn,
+  .rightColumn {
+    gap: var(--space-4);
+  }
+
+  /* Reset heights on mobile */
+  .activityCard,
+  .actionsCard,
+  .profileCard,
+  .earningsCard,
+  .jobsCard,
+  .metricsCard,
+  .quickActionsCard {
+    height: auto !important;
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .headerActions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileContent {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-4);
+  }
+
+  .profileProgress {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .freelancerDashboard {
+    padding: var(--space-4);
+  }
+
+  .header {
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .headerActions button {
+    width: 100%;
+  }
+
+  .compactJobsList {
+    max-height: none;
+  }
+
+  .earningsStats {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .earningsInsights {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .freelancerDashboard {
+    padding: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .kpiValue {
+    font-size: var(--font-size-base);
+  }
+
+  .compactJobCard {
+    padding: var(--space-2);
+  }
+
+  .jobCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jobCardMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    width: 100%;
+  }
+
+  .progressCircle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .progressCircle::before {
+    width: 64px;
+    height: 64px;
+    top: 8px;
+    left: 8px;
+  }
+
+  .progressText {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .freelancerDashboard,
+  .activityCard,
+  .actionsCard,
+  .profileCard,
+  .earningsCard,
+  .jobsCard,
+  .metricsCard,
+  .quickActionsCard,
+  .kpiItem,
+  .quickActionItem,
+  .compactJobCard,
+  .progressFill {
+    transition: none;
+    animation: none;
+  }
+
+  .activityCard:hover,
+  .actionsCard:hover,
+  .profileCard:hover,
+  .earningsCard:hover,
+  .jobsCard:hover,
+  .metricsCard:hover,
+  .quickActionsCard:hover {
+    transform: none;
+  }
+
+  .kpiItem:hover,
+  .quickActionItem:hover,
+  .compactJobCard:hover {
+    transform: none;
+  }
+
+  .progressFill::after {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom: 2px solid var(--color-foreground);
+  }
+
+  .kpiItem {
+    border: 1px solid var(--color-foreground);
+  }
+
+  .quickActionItem {
+    border: 2px solid var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

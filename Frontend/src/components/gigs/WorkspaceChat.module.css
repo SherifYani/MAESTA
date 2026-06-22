@@ -1,0 +1,653 @@
+/**
+ * @file WorkspaceChat.module.css
+ * @description Styles for WorkspaceChat component following BEM methodology
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-05
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.container {
+    --chat-header-height: 4rem;
+    --chat-input-height: 5rem;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    min-height: var(--chat-header-height);
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.participantCount {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-none);
+}
+
+.participantIcon {
+    opacity: 0.7;
+}
+
+/* Search Container */
+.searchContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 12rem;
+}
+
+.searchIcon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--color-ring);
+    background-color: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.searchInput:hover {
+    background-color: var(--color-input-hover);
+}
+
+.searchInput::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Messages List
+   ========================================================================== */
+
+.messageList {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    background-color: var(--color-background);
+    background-image:
+        radial-gradient(var(--color-radial-pink-1) 1px, transparent 1px),
+        radial-gradient(var(--color-radial-pink-2) 1px, transparent 1px);
+    background-size: 40px 40px, 80px 80px;
+    background-position: 0 0, 20px 20px;
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: var(--space-8);
+}
+
+.emptyText {
+    text-align: center;
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Message Items
+   ========================================================================== */
+
+.messageRow {
+    display: flex;
+    gap: var(--space-3);
+    max-width: 70%;
+    animation: messageAppear 0.3s ease-out;
+}
+
+.messageRowOwn {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Avatar */
+.avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+    color: var(--color-primary-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+/* Message Content */
+.messageContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.messageRowOwn .messageContent {
+    align-items: flex-end;
+}
+
+.senderName {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-left: var(--space-2);
+    font-weight: var(--font-weight-medium);
+}
+
+.messageRowOwn .senderName {
+    display: none;
+}
+
+/* Message Bubble */
+.messageBubble {
+    background-color: var(--color-card);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    border-top-left-radius: 0;
+    box-shadow: 0 2px 8px var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.messageBubbleOwn {
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border-radius: var(--radius-lg);
+    border-top-right-radius: 0;
+    border: none;
+}
+
+.messageText {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    color: var(--color-foreground);
+}
+
+.messageBubbleOwn .messageText {
+    color: var(--color-primary-white);
+}
+
+/* Attachments */
+.attachments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.attachment {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background-color: var(--color-muted);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    transition: background-color 0.2s ease;
+}
+
+.attachment:hover {
+    background-color: var(--color-accent);
+}
+
+.attachmentIcon {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.attachmentName {
+    font-size: var(--font-size-xs);
+    color: var(--color-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Message Meta */
+.messageMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+}
+
+.timestamp {
+    font-size: 0.625rem;
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-none);
+}
+
+.status {
+    font-size: 0.625rem;
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status.sending {
+    color: var(--color-muted-foreground);
+}
+
+.status.sent {
+    color: var(--color-accent-pink);
+}
+
+.status.delivered {
+    color: var(--color-chart-2);
+}
+
+.status.read {
+    color: var(--color-chart-3);
+}
+
+.status.error {
+    color: var(--color-destructive);
+}
+
+/* ==========================================================================
+   Input Area
+   ========================================================================== */
+
+.inputArea {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    min-height: var(--chat-input-height);
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-border);
+}
+
+/* Hidden file input */
+.fileInput {
+    display: none;
+}
+
+/* Attach Button */
+.attachButton {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.attachButton:hover:not(:disabled) {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-color: var(--color-accent);
+}
+
+.attachButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.uploadingSpinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-muted-foreground);
+    border-top-color: var(--color-accent-pink);
+    border-radius: var(--radius-full);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Input Container */
+.inputContainer {
+    flex: 1;
+    position: relative;
+}
+
+.messageInput {
+    width: 100%;
+    min-height: 2.5rem;
+    max-height: 10rem;
+    padding: var(--space-3);
+    border: 1px solid var(--color-input);
+    border-radius: var(--radius-2xl);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    resize: none;
+    transition: all 0.2s ease;
+}
+
+.messageInput:focus {
+    outline: none;
+    border-color: var(--color-ring);
+    background-color: var(--color-input-hover);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.messageInput:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.messageInput::placeholder {
+    color: var(--color-muted-foreground);
+}
+
+.inputHint {
+    position: absolute;
+    bottom: -1.25rem;
+    left: var(--space-3);
+    font-size: 0.625rem;
+    color: var(--color-muted-foreground);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.messageInput:focus+.inputHint {
+    opacity: 1;
+}
+
+/* Send Button */
+.sendButton {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--color-primary-white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.sendButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.sendButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.sendButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop adjustments */
+@media (max-width: 75rem) {
+    .container {
+        border-radius: var(--radius-lg);
+    }
+
+    .header {
+        padding: var(--space-3);
+    }
+
+    .messageList {
+        padding: var(--space-3);
+    }
+
+    .inputArea {
+        padding: var(--space-3);
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .container {
+        border-radius: var(--radius-md);
+    }
+
+    .messageRow {
+        max-width: 85%;
+    }
+
+    .searchContainer {
+        min-width: 10rem;
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .messageInput {
+        min-height: 2.25rem;
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .attachButton,
+    .sendButton {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .container {
+        border-radius: var(--radius-md);
+        border: none;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+        padding: var(--space-3);
+    }
+
+    .headerInfo {
+        align-items: center;
+        text-align: center;
+    }
+
+    .searchContainer {
+        min-width: 100%;
+    }
+
+    .searchInput {
+        width: 100%;
+    }
+
+    .messageRow {
+        max-width: 95%;
+    }
+
+    .avatar {
+        width: 2rem;
+        height: 2rem;
+        font-size: var(--font-size-xs);
+    }
+
+    .messageBubble {
+        padding: var(--space-2);
+        font-size: var(--font-size-xs);
+    }
+
+    .inputArea {
+        padding: var(--space-2);
+        gap: var(--space-2);
+    }
+
+    .messageInput {
+        font-size: var(--font-size-xs);
+        padding: var(--space-2);
+    }
+
+    .attachButton,
+    .sendButton {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .inputHint {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Specific Styles
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .messageList {
+        background-image:
+            radial-gradient(var(--color-radial-pink-1) 1px, transparent 1px),
+            radial-gradient(var(--color-radial-pink-2) 1px, transparent 1px);
+    }
+
+    .messageBubble {
+        box-shadow: 0 2px 8px var(--color-translucent-white-1);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .messageRow {
+        animation: none;
+    }
+
+    .attachButton,
+    .sendButton,
+    .searchInput,
+    .messageInput {
+        transition: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .messageBubble {
+        border-width: 2px;
+    }
+
+    .messageBubbleOwn {
+        border: 2px solid var(--color-accent-pink);
+    }
+}
+
+/* ==========================================================================
+   Custom Scrollbar
+   ========================================================================== */
+
+.messageList {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent-pink) var(--color-muted);
+}
+
+.messageList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messageList::-webkit-scrollbar-track {
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
+}
+
+.messageList::-webkit-scrollbar-thumb {
+    background: var(--color-accent-pink);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--color-muted);
+}
+
+.messageList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-vivid-pink);
+}

@@ -1,0 +1,54 @@
+/**
+ * @file FormInput.css
+ * @description Styles for form input components including password toggle and field-specific overrides
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+@import "../../shared/_form-base.css";
+@import "../../shared/_form-animations.css";
+
+/* ==========================================================================
+   Form Input Specific Enhancements
+   ========================================================================== */
+
+/* Password toggle button - NOT in base styles */
+.form-input__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--space-6);
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  z-index: 2;
+
+  /* Hover state */
+  &:hover {
+    color: var(--color-accent-pink);
+    background: var(--color-translucent-white-1);
+  }
+
+  /* Active/focus states */
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Adjust input field padding when password toggle is present */
+.form-input__wrapper:has(.form-input__password-toggle) .form-input__field {
+  padding-right: calc(var(--space-6) * 5.25); /* Space for icon + toggle */
+}

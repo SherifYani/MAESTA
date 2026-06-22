@@ -1,0 +1,105 @@
+/**
+ * @file VoicePlayer.module.css
+ * @description Styles for the voice player button
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+.button {
+    background: none;
+    border: none;
+    padding: var(--space-1);
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: var(--space-2);
+    border-radius: var(--radius-sm);
+    line-height: 1;
+}
+
+.button:hover:not(:disabled) {
+    color: var(--color-accent-pink);
+    background-color: var(--color-translucent-white-1);
+    transform: scale(1.1);
+}
+
+.button:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    color: var(--color-accent-pink);
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button.playing {
+    color: var(--color-accent-pink);
+    animation: pulse 1s infinite;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .button:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .button.playing {
+        animation: none;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .icon {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .button {
+        margin-top: var(--space-1);
+        padding: var(--space-1);
+    }
+
+    .icon {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 40rem) {
+    .button {
+        margin-top: var(--space-1);
+    }
+
+    .icon {
+        width: 12px;
+        height: 12px;
+    }
+}

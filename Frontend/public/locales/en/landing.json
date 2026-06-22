@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "Your next opportunity awaits",
+    "title": "Find Your Dream Job",
+    "subtitle": "Discover opportunities at top tech companies. Smart matching, quick apply, and real salaries. Your next great career move is just a few clicks away.",
+    "startSearching": "Start Searching",
+    "learnMore": "Learn More",
+    "activeJobs": "Active Jobs",
+    "companies": "Companies",
+    "successRate": "Success Rate"
+  },
+  "jobs": {
+    "heading": "Featured Opportunities",
+    "viewDetails": "View Details",
+    "seniorReact": "Senior React Developer",
+    "uxDesigner": "UX/UI Designer",
+    "productManager": "Product Manager",
+    "devopsEngineer": "DevOps Engineer",
+    "sanFrancisco": "San Francisco, CA",
+    "newYork": "New York, NY",
+    "austin": "Austin, TX",
+    "remote": "Remote",
+    "fullTime": "Full-time",
+    "contract": "Contract"
+  },
+  "features": {
+    "heading": "Why Choose MAESTA",
+    "smartMatchingTitle": "Smart Matching",
+    "smartMatchingDesc": "AI-powered algorithm finds jobs that match your skills and goals perfectly",
+    "quickApplyTitle": "Quick Apply",
+    "quickApplyDesc": "Apply to jobs with one click using your profile information",
+    "salaryInsightsTitle": "Salary Insights",
+    "salaryInsightsDesc": "See real salary data and compensation packages upfront"
+  },
+  "impact": {
+    "heading": "Our Impact",
+    "stat1Title": "TechFlow Hiring",
+    "stat1Result": "500+ Hires",
+    "stat1Desc": "Found top engineering talent in weeks, not months",
+    "stat2Title": "Talent Satisfaction",
+    "stat2Result": "95% Happy",
+    "stat2Desc": "95% of job seekers find roles in under 30 days"
+  },
+  "pricing": {
+    "heading": "Simple Pricing",
+    "freeName": "Job Seeker Free",
+    "freePrice": "Free",
+    "freeDesc": "Perfect for exploring opportunities",
+    "freeFeat1": "Unlimited job search",
+    "freeFeat2": "5 applications/day",
+    "freeFeat3": "Resume upload",
+    "freeCta": "Get Started",
+    "premiumName": "Premium",
+    "premiumDesc": "For serious job hunters",
+    "premiumFeat1": "Unlimited applications",
+    "premiumFeat2": "Advanced job alerts",
+    "premiumFeat3": "Salary negotiation guide",
+    "premiumCta": "Start Free Trial"
+  },
+  "testimonials": {
+    "heading": "Success Stories From Our Users",
+    "alexRole": "Found job in 2 weeks",
+    "alexCompany": "Senior Developer at Google",
+    "alexContent": "MAESTA made my job search incredibly easy. I found my dream role without any hassle!",
+    "sarahRole": "Career switcher",
+    "sarahCompany": "UX Designer at Adobe",
+    "sarahContent": "The platform is intuitive and the job matches are spot on. Highly recommend!"
+  },
+  "cta": {
+    "heading": "Ready to find your perfect role?",
+    "subtitle": "Join thousands of professionals who found their dream job on MAESTA",
+    "button": "Start Your Search"
+  }
+}

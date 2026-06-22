@@ -1,0 +1,82 @@
+/**
+ * @file VideoCallUI.module.css
+ * @description Styles for VideoCallUI component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #111827;
+    /* Dark background for video */
+    color: white;
+}
+
+.grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.participant {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.avatar {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.toolbar {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    background-color: #1f2937;
+}
+
+.button {
+    background-color: #374151;
+    border: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #4b5563;
+}
+
+.button.active {
+    background-color: #ef4444;
+    /* Red for muted/off */
+}
+
+.endCall {
+    background-color: #dc2626;
+}
+
+.endCall:hover {
+    background-color: #b91c1c;
+}

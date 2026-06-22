@@ -1,0 +1,85 @@
+/**
+ * @file ScreenShare.module.css
+ * @description Styles for the screen sharing view and overlay controls.
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary-black);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--color-border);
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-primary-white);
+}
+
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    color: var(--color-muted-foreground);
+}
+
+.stopButton {
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-destructive);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+    transition: opacity 0.2s;
+}
+
+.stopButton:hover {
+    opacity: 0.9;
+}
+
+.streamPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: #2a2a2a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mockContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-muted-foreground);
+}
+
+.closeButton {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: var(--space-2);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}

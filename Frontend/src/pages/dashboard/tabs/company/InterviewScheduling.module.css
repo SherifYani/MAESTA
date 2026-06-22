@@ -1,0 +1,222 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.header h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.header p {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-base);
+}
+
+.loadingContainer, .errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: var(--space-4);
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.card h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.profileHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-radial-pink-1);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    border: 2px solid var(--color-accent-pink);
+}
+
+.profileHeader p {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+    margin: 2px 0;
+}
+
+.appliedJobs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.appliedJobs h4 {
+    font-size: var(--font-size-base);
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.jobItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3);
+    background: var(--color-muted);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.formGroup label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.slotsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--space-3);
+}
+
+.slotBtn {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: var(--font-size-sm);
+}
+
+.slotBtn:hover:not(:disabled) {
+    border-color: var(--color-accent-pink);
+    background: var(--color-accent);
+}
+
+.selectedSlot {
+    background: var(--color-radial-pink-1);
+    border-color: var(--color-primary);
+    color: var(--color-foreground);
+    box-shadow: 0 0 10px var(--color-shadow-pink);
+}
+
+.disabledSlot {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-muted);
+}
+
+.noSlots {
+    color: var(--color-warning);
+    font-size: var(--font-size-sm);
+}
+
+.textarea {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-foreground);
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+.confirmContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.confirmContent ul {
+    list-style: none;
+    padding: var(--space-4);
+    background: var(--color-muted);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+}
+
+.confirmContent li {
+    color: var(--color-foreground);
+}
+
+.confirmContent p {
+    color: var(--color-foreground);
+    margin: 0;
+}

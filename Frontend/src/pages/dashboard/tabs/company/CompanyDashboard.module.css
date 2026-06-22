@@ -1,0 +1,1418 @@
+/**
+ * @file CompanyDashboard.module.css
+ * @description Enhanced CSS Module for CompanyDashboard component with modern responsive design
+ * @author Sherif Talaat
+ * @version 7.0.0
+ * @date 2026-1-28
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-1-28
+ *
+ * Breakpoints:
+ * - Large Desktop: 75rem (1200px)
+ * - Desktop: 60.5rem (968px)
+ * - Tablet: 40rem (640px)
+ * - Mobile: < 40rem
+ *
+ * Features:
+ * - Modern glassmorphism effects
+ * - Smooth animations and transitions
+ * - Advanced gradient backgrounds
+ * - Responsive grid layouts
+ * - Enhanced accessibility
+ */
+
+/* ==========================================================================
+   Dashboard Container - Enhanced with Modern Background
+   ========================================================================== */
+
+.companyDashboard {
+  padding: var(--space-4);
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Decorative background gradient overlay */
+.companyDashboard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 400px;
+  background: radial-gradient(ellipse at top,
+      var(--color-radial-pink-1) 0%,
+      transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.companyDashboard>* {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 40rem) {
+  .companyDashboard {
+    padding: var(--space-6);
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .companyDashboard {
+    padding: var(--space-8);
+  }
+}
+
+@media (min-width: 75rem) {
+  .companyDashboard {
+    padding: var(--space-10);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Loading State - Enhanced with Modern Spinner
+   ========================================================================== */
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  gap: var(--space-6);
+  min-height: 400px;
+  background: var(--color-card);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(10px);
+}
+
+.loadingSpinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent-pink);
+  border-right-color: var(--color-vivid-pink);
+  border-radius: var(--radius-full);
+  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  box-shadow: 0 0 20px var(--color-shadow-pink);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingContainer p {
+  font-size: var(--font-size-lg);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================================================
+   Header Section - Modern Glassmorphism Design
+   ========================================================================== */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 24px var(--color-shadow-pink);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  /* Keep below sidebar (sidebar is typically z-index: 50 or higher) */
+}
+
+.header:hover {
+  box-shadow: 0 8px 32px var(--color-shadow-pink);
+}
+
+@media (min-width: 60.5rem) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-10);
+  }
+}
+
+@media (min-width: 75rem) {
+  .header {
+    padding: var(--space-10) var(--space-12);
+  }
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg,
+      var(--color-foreground) 0%,
+      var(--color-accent-pink) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes shimmer {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.subtitle {
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-normal);
+  max-width: 600px;
+}
+
+/* ==========================================================================
+   Header Actions - Simplified Button Layout
+   ========================================================================== */
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  align-items: center;
+}
+
+@media (max-width: 60.5rem) {
+  .headerActions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .headerActions>*,
+  .headerActions>*>button {
+    flex: 1;
+  }
+}
+
+/* Action Buttons Container */
+.actionButtons {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .actionButtons {
+    width: auto;
+  }
+}
+
+@media (min-width: 75rem) {
+  .actionButtons {
+    gap: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Quick Insights Section - Enhanced Visual Hierarchy
+   ========================================================================== */
+
+.quickInsightsSection {
+  margin-bottom: var(--space-8);
+  animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .quickInsightsSection {
+    margin-bottom: var(--space-10);
+  }
+}
+
+@media (min-width: 75rem) {
+  .quickInsightsSection {
+    margin-bottom: var(--space-12);
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-border);
+  position: relative;
+}
+
+.sectionHeader::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  transition: width 0.3s ease;
+}
+
+.sectionHeader:hover::after {
+  width: 160px;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 40rem) {
+  .sectionTitle {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (min-width: 75rem) {
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+}
+
+/* ==========================================================================
+   Content Grid Layout - Single Column with Row Variants
+   ========================================================================== */
+
+.contentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .contentGrid {
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 75rem) {
+  .contentGrid {
+    gap: var(--space-10);
+  }
+}
+
+/* Full Width Row - For widgets that span the entire width */
+.fullWidthRow {
+  display: flex;
+  width: 100%;
+  gap: var(--space-6);
+}
+
+@media (min-width: 40rem) {
+  .fullWidthRow {
+    gap: var(--space-8);
+  }
+}
+
+/* Two Column Row - For side-by-side widgets */
+.twoColumnRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+@media (min-width: 60.5rem) {
+  .twoColumnRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 75rem) {
+  .twoColumnRow {
+    gap: var(--space-10);
+  }
+}
+
+/* ==========================================================================
+   Widget Containers - Modern Card Design
+   ========================================================================== */
+
+.widget {
+  width: 100%;
+  min-width: 0;
+  animation: fadeInScale 0.5s ease-out both;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.widget:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.widget:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.widget:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.widget:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.widget>* {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 40rem) {
+  .widget {
+    margin-bottom: var(--space-6);
+  }
+
+  .widget:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ==========================================================================
+   Card Styles - Glassmorphism with Gradient Borders
+   ========================================================================== */
+
+.activityCard,
+.chartCard,
+.quickActionsCard,
+.pendingActionsCard {
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: auto;
+  min-height: 200px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient border effect */
+.activityCard::before,
+.chartCard::before,
+.quickActionsCard::before,
+.pendingActionsCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-2xl);
+  padding: 2px;
+  background: linear-gradient(135deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink),
+      var(--color-accent-pink));
+  -webkit-mask:
+    linear-gradient(var(--color-primary-white) 0 0) content-box,
+    linear-gradient(var(--color-primary-white) 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(var(--color-primary-white) 0 0) content-box,
+    linear-gradient(var(--color-primary-white) 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.activityCard:hover,
+.chartCard:hover,
+.quickActionsCard:hover,
+.pendingActionsCard:hover {
+  border-color: transparent;
+  box-shadow: 0 12px 40px var(--color-shadow-pink);
+  transform: translateY(-4px);
+}
+
+.activityCard:hover::before,
+.chartCard:hover::before,
+.quickActionsCard:hover::before,
+.pendingActionsCard:hover::before {
+  opacity: 1;
+}
+
+.chartCard {
+  min-height: 280px;
+}
+
+@media (min-width: 40rem) {
+  .chartCard {
+    min-height: 320px;
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .chartCard {
+    min-height: 350px;
+  }
+}
+
+@media (min-width: 75rem) {
+  .chartCard {
+    min-height: 380px;
+  }
+}
+
+/* ==========================================================================
+   Quick Access Panel - Modern Interactive List
+   ========================================================================== */
+
+.quickActionsList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .quickActionsList {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .quickActionsList {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+@media (min-width: 75rem) {
+  .quickActionsList {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+.quickActionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  min-height: 70px;
+}
+
+.quickActionItem::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      var(--color-radial-pink-1),
+      transparent);
+  transition: left 0.5s ease;
+}
+
+.quickActionItem:hover::before {
+  left: 100%;
+}
+
+.quickActionItem:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent-pink);
+  transform: translateX(8px) scale(1.02);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+@media (min-width: 60.5rem) {
+  .quickActionItem {
+    padding: var(--space-4);
+    min-height: 75px;
+  }
+}
+
+@media (min-width: 75rem) {
+  .quickActionItem {
+    padding: var(--space-5);
+    min-height: 80px;
+  }
+}
+
+.quickActionContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.quickActionTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 75rem) {
+  .quickActionTitle {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.quickActionDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--line-height-normal);
+}
+
+.quickActionArrow {
+  color: var(--color-accent-pink);
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.quickActionItem:hover .quickActionArrow {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Pending Actions Section
+   ========================================================================== */
+
+.pendingActionsSection {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
+  animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+@media (min-width: 60.5rem) {
+  .pendingActionsSection {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-10);
+  }
+}
+
+@media (min-width: 75rem) {
+  .pendingActionsSection {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+  }
+}
+
+/* ==========================================================================
+   Performance Summary Footer - Modern Stats Display
+   ========================================================================== */
+
+.performanceFooter {
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-sidebar) 100%);
+  border-radius: var(--radius-2xl);
+  border: 2px solid var(--color-border);
+  box-shadow: 0 8px 32px var(--color-shadow-pink);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.performanceFooter::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle,
+      var(--color-radial-pink-1) 0%,
+      transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 40rem) {
+  .performanceFooter {
+    padding: var(--space-8);
+  }
+}
+
+@media (min-width: 75rem) {
+  .performanceFooter {
+    padding: var(--space-10);
+  }
+}
+
+.footerStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 40rem) {
+  .footerStats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 60.5rem) {
+  .footerStats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 75rem) {
+  .footerStats {
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-10);
+  }
+}
+
+.footerStat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.footerStat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.footerStat:hover::before {
+  transform: scaleX(1);
+}
+
+.footerStat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+  border-color: var(--color-accent-pink);
+}
+
+@media (min-width: 75rem) {
+  .footerStat {
+    padding: var(--space-5);
+  }
+}
+
+.footerStatLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+@media (min-width: 75rem) {
+  .footerStatLabel {
+    font-size: var(--font-size-sm);
+  }
+}
+
+.footerStatValue {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  background: linear-gradient(135deg,
+      var(--color-foreground) 0%,
+      var(--color-accent-pink) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (min-width: 60.5rem) {
+  .footerStatValue {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (min-width: 75rem) {
+  .footerStatValue {
+    font-size: 2rem;
+  }
+}
+
+/* ==========================================================================
+   Touch-Friendly Design for Mobile
+   ========================================================================== */
+
+@media (max-width: 40rem) {
+
+  .actionButtons button,
+  .filterBtn,
+  .quickActionItem {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .searchInputWrapper {
+    padding: var(--space-4);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .footerStatValue {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  * {
+    background: transparent;
+    color: var(--color-foreground);
+    box-shadow: none;
+    text-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+
+  /* Disable all animations in print */
+  * {
+    animation: none;
+    transition: none;
+  }
+
+  .companyDashboard {
+    padding: 0;
+    max-width: none;
+    background: transparent;
+  }
+
+  .companyDashboard::before {
+    display: none;
+  }
+
+  .headerActions,
+  .actionButtons,
+  .filterButtons,
+  .quickActionArrow {
+    display: none;
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .performanceFooter {
+    background: white;
+    border: 1px solid #ccc;
+  }
+
+  .performanceFooter::before {
+    display: none;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .companyDashboard,
+  .activityCard,
+  .chartCard,
+  .quickActionsCard,
+  .pendingActionsCard,
+  .quickActionItem,
+  .filterBtn,
+  .searchInputWrapper,
+  .loadingSpinner,
+  .widget,
+  .quickInsightsSection,
+  .pendingActionsSection,
+  .performanceFooter::before {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .quickActionItem:hover,
+  .filterBtn:hover,
+  .activityCard:hover,
+  .chartCard:hover,
+  .quickActionsCard:hover,
+  .pendingActionsCard:hover {
+    transform: none;
+  }
+
+  .loadingSpinner {
+    border-top-color: var(--color-border);
+  }
+}
+
+/* ==========================================================================
+   High Contrast Mode Support
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+
+  .header,
+  .activityCard,
+  .chartCard,
+  .quickActionsCard,
+  .pendingActionsCard {
+    border: 3px solid var(--color-foreground);
+  }
+
+  .searchInputWrapper {
+    border: 3px solid var(--color-foreground);
+  }
+
+  .filterBtn {
+    border: 3px solid var(--color-foreground);
+  }
+
+  .filterBtn.active {
+    background: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .quickActionItem {
+    border: 3px solid var(--color-foreground);
+  }
+
+  .performanceFooter {
+    border: 3px solid var(--color-foreground);
+  }
+
+  .sectionHeader::after {
+    background: var(--color-foreground);
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Specific Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .performanceFooter {
+    background: linear-gradient(135deg,
+        var(--color-card) 0%,
+        var(--color-background) 100%);
+  }
+
+  .searchInputWrapper {
+    background: var(--color-input);
+  }
+
+  .filterBtn {
+    background: var(--color-card);
+  }
+
+  .filterBtn:hover {
+    background: var(--color-accent);
+  }
+
+  .footerStat {
+    background: var(--color-background);
+  }
+}
+
+/* ==========================================================================
+   Landscape Mode for Mobile
+   ========================================================================== */
+
+@media (max-width: 40rem) and (orientation: landscape) {
+  .contentGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .header {
+    flex-direction: row;
+    padding: var(--space-4);
+  }
+
+  .headerActions {
+    width: auto;
+    min-width: 280px;
+  }
+
+  .quickActionsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Smooth Scrolling for Widgets
+   ========================================================================== */
+
+.widget {
+  scroll-margin-top: var(--space-6);
+}
+
+@media (min-width: 40rem) {
+  .widget {
+    scroll-margin-top: var(--space-8);
+  }
+}
+
+@media (min-width: 75rem) {
+  .widget {
+    scroll-margin-top: var(--space-10);
+  }
+}
+
+/* ==========================================================================
+   Focus Styles for Accessibility
+   ========================================================================== */
+
+.quickActionItem:focus-visible,
+.filterBtn:focus-visible,
+.searchInput:focus-visible,
+.clearSearch:focus-visible {
+  outline: 3px solid var(--color-accent-pink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--color-radial-pink-2);
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==========================================================================
+   Loading State Skeleton Animation
+   ========================================================================== */
+
+.widget.loading {
+  background: linear-gradient(90deg,
+      var(--color-muted) 0%,
+      var(--color-accent) 50%,
+      var(--color-muted) 100%);
+  background-size: 200% 100%;
+  animation: loading 2s ease-in-out infinite;
+  border-radius: var(--radius-2xl);
+  min-height: 200px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+   Utility Classes for Dashboard
+   ========================================================================== */
+
+.hideOnMobile {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .hideOnMobile {
+    display: block;
+  }
+}
+
+.showOnMobile {
+  display: block;
+}
+
+@media (min-width: 40rem) {
+  .showOnMobile {
+    display: none;
+  }
+}
+
+/* Sticky header for mobile scrolling */
+@media (max-width: 40rem) {
+  .header {
+    position: sticky;
+    top: 0;
+    background: var(--color-card);
+    z-index: 1;
+    margin-bottom: var(--space-6);
+  }
+}
+
+/* ==========================================================================
+   Custom Scrollbar for Dashboard Widgets
+   ========================================================================== */
+
+.widget::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.widget::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.widget::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+      var(--color-accent-pink),
+      var(--color-vivid-pink));
+  border-radius: var(--radius-md);
+}
+
+.widget::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vivid-pink);
+}
+
+/* ==========================================================================
+   Performance Optimizations
+   ========================================================================== */
+
+.quickActionItem,
+.filterBtn,
+.searchInputWrapper,
+.activityCard,
+.chartCard,
+.quickActionsCard,
+.pendingActionsCard {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ==========================================================================
+   Grid Gap Animation on Resize
+   ========================================================================== */
+
+.contentGrid,
+.footerStats,
+.quickActionsList {
+  transition: gap 0.3s ease;
+}
+
+/* ==========================================================================
+   Advanced Gradient Backgrounds for Cards
+   ========================================================================== */
+
+.activityCard,
+.chartCard {
+  background: linear-gradient(135deg,
+      var(--color-card) 0%,
+      var(--color-popover) 100%);
+}
+
+.quickActionsCard,
+.pendingActionsCard {
+  background: radial-gradient(ellipse at top left,
+      var(--color-card) 0%,
+      var(--color-background) 100%);
+}
+
+/* ==========================================================================
+   About Company Content Styles
+   ========================================================================== */
+
+.aboutCompanyContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-2);
+}
+
+.companyDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.companyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+}
+
+.detailItem svg {
+  color: var(--color-accent-pink);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Hiring Team Styles
+   ========================================================================== */
+
+.teamList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2);
+}
+
+.teamMember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-accent);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.teamMember:hover {
+  background: var(--color-popover);
+  border-color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.memberAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+
+.memberInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.memberName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberRole {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberEmail {
+  color: var(--color-accent-pink);
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.memberEmail:hover {
+  color: var(--color-vivid-pink);
+  background: var(--color-radial-pink-2);
+}
+
+/* ==========================================================================
+   Quick Stats List Styles
+   ========================================================================== */
+
+.statsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2);
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--color-accent);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.statItem:hover {
+  background: var(--color-popover);
+  border-color: var(--color-accent-pink);
+  transform: translateX(4px);
+}
+
+.statKey {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.statValue {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+}

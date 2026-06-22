@@ -1,0 +1,159 @@
+/**
+ * @file WorkspacePage.module.css
+ * @description Styles for WorkspacePage component
+ * @author Sherif Talaat
+ * @date 05-02-2026
+ */
+
+.pageWrapper {
+    min-height: 100vh;
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header {
+    background-color: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0 0 var(--space-1) 0;
+}
+
+.statusBadge {
+    font-size: var(--font-size-xs);
+    background-color: #dbeafe;
+    /* Light blue */
+    color: #1e40af;
+    /* Dark blue */
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-medium);
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.videoButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.main {
+    flex: 1;
+    width: 100%;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    /* Chat sidebar fixed width */
+    gap: var(--space-6);
+    height: calc(100vh - 140px);
+    /* Fill remaining height roughly */
+}
+
+.leftPanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    overflow-y: auto;
+    padding-right: var(--space-2);
+}
+
+.rightPanel {
+    height: 100%;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.sectionHeader h3 {
+    font-size: var(--font-size-lg);
+    margin: 0;
+}
+
+.manageLink {
+    background: none;
+    border: none;
+    color: var(--color-accent-pink);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+
+.filesSection {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+}
+
+.filesSection h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+}
+
+.videoContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background-color: black;
+}
+
+.closeVideoButton {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 60;
+}
+
+/* Responsive */
+@media (max-width: 60.5rem) {
+    .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .rightPanel {
+        height: 500px;
+        /* Fixed height for chat on mobile */
+    }
+
+    .headerContent {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .headerActions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

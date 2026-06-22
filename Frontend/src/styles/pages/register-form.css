@@ -1,0 +1,515 @@
+/**
+ * @file register-form.css
+ * @description Styles for the registration form components
+ * @author Sherif Talaat
+ * @version 2.1.0
+ * @date 2025-10-10
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+/* ==========================================================================
+   Layout & Container
+   ========================================================================== */
+
+.register-form__container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.register-form__card {
+  background: var(--color-translucent-white-1);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--color-translucent-white-1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-10);
+  box-shadow: 0 24px 64px var(--color-translucent-black-1);
+  width: 100%;
+  max-width: 35rem;
+}
+
+/* ==========================================================================
+   Form Header
+   ========================================================================== */
+
+.register-form__header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.register-form__title {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-white);
+  margin-bottom: var(--space-2);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-white) 0%,
+    var(--color-light-pink) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.register-form__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-accent-pink);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Form Sections & Headings
+   ========================================================================== */
+
+.register-form__section-title {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-white);
+  margin-bottom: var(--space-2);
+}
+
+.register-form__section-description {
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-6);
+}
+
+/* ==========================================================================
+   Form Elements
+   ========================================================================== */
+
+.register-form__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Role Selection */
+.register-form__role-selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+
+  @media (max-width: 48rem) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Password Requirements
+   ========================================================================== */
+
+.register-form__password-requirements {
+  background: var(--color-translucent-white-3);
+  border: 1px solid var(--color-translucent-white-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: var(--space-2) 0px var(--space-6);
+}
+
+.register-form__requirements-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-translucent-white-4);
+  margin-bottom: var(--space-3);
+  font-weight: var(--font-weight-medium);
+}
+
+.register-form__requirements-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0;
+}
+
+.register-form__requirement-item {
+  font-size: var(--font-size-sm);
+  color: var(--color-translucent-white-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color 0.2s ease;
+}
+.register-form__requirement-item--valid {
+  color: var(--color-accent-pink);
+}
+.register-form__requirement-icon {
+  width: 1rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Terms & Conditions
+   ========================================================================== */
+
+.register-form__terms-container {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.register-form__terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-translucent-white-4);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.register-form__terms-checkbox {
+  margin-top: 0.125rem;
+  cursor: pointer;
+  accent-color: var(--color-accent-pink);
+}
+
+.register-form__terms-link {
+  color: var(--color-accent-pink);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: var(--color-vivid-pink);
+  }
+}
+
+/* ==========================================================================
+   Submit Button
+   ========================================================================== */
+
+.register-form__submit-button {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  background: linear-gradient(
+    135deg,
+    var(--color-submit-pink-1) 0%,
+    var(--color-submit-pink-2) 100%
+  );
+  color: var(--color-primary-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px var(--color-shadow-pink);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.register-form__submit-button--loading {
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: buttonSpin 0.6s linear infinite;
+  }
+}
+
+/* ==========================================================================
+   Sign In Link
+   ========================================================================== */
+
+.register-form__sign-in-link {
+  text-align: center;
+  margin: var(--space-3) 0;
+  color: var(--color-primary-white);
+  font-size: var(--font-size-sm);
+}
+
+.register-form__sign-in-text {
+  display: inline;
+  color: var(--color-primary-white);
+  margin-right: var(--space-2);
+}
+
+.register-form__sign-in-anchor {
+  color: var(--color-accent-pink);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--color-vivid-pink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+/* ==========================================================================
+   Divider
+   ========================================================================== */
+
+.register-form__divider {
+  text-align: center;
+  margin: var(--space-4) 0;
+  position: relative;
+  color: var(--color-primary-white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-accent-pink),
+      transparent
+    );
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+}
+
+/* ==========================================================================
+   Social Login
+   ========================================================================== */
+
+.register-form__social-login {
+  margin-top: var(--space-4);
+}
+
+.register-form__social-login-text {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-translucent-white-5);
+  margin-bottom: var(--space-4);
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: var(--color-translucent-white-2);
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+}
+
+.register-form__social-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+
+  @media (max-width: 48rem) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.register-form__social-button {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-translucent-white-1);
+  border-radius: var(--radius-md);
+  background: var(--color-translucent-white-1);
+  color: var(--color-primary-white);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-translucent-black-1);
+    border-color: var(--color-accent-pink);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--color-translucent-black-1);
+  }
+}
+
+.register-form__social-button-icon {
+  font-size: 1.125rem;
+}
+
+/* ==========================================================================
+   Terms Text
+   ========================================================================== */
+
+.register-form__terms-text {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-white);
+  margin-top: var(--space-7);
+  line-height: 1.6;
+  padding: 0 var(--space-4);
+}
+
+/* ==========================================================================
+   Error & Validation States
+   ========================================================================== */
+
+.register-form__error-message {
+  font-size: var(--font-size-sm);
+  color: var(--color-vivid-pink);
+  margin-top: calc(var(--space-1) * -1);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes buttonSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 75rem) {
+  .register-form__card {
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .register-form__title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .register-form__container {
+    padding: var(--space-4);
+  }
+
+  .register-form__card {
+    padding: var(--space-6) var(--space-4);
+    box-shadow: 0 12px 32px var(--color-translucent-black-1);
+  }
+
+  .register-form__title {
+    font-size: 1.5rem;
+  }
+
+  .register-form__section-title {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .register-form__card {
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .register-form__title {
+    font-size: 1.25rem;
+  }
+
+  .register-form__terms-text {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .register-form__submit-button,
+  .register-form__social-button {
+    transition: none;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .register-form__submit-button--loading::after {
+    animation-duration: 1s;
+  }
+
+  @keyframes buttonSpin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

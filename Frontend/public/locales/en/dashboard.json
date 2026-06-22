@@ -1,0 +1,35 @@
+{
+  "activeJobs": "Active Jobs",
+  "admin": {
+    "contentModeration": "Content Moderation",
+    "reports": "Reports",
+    "systemHealth": "System Health",
+    "userManagement": "User Management"
+  },
+  "company": {
+    "activeListings": "Active Listings",
+    "candidates": "Candidates",
+    "interviews": "Interviews",
+    "myJobs": "My Jobs",
+    "publishedJobs": "Published Jobs"
+  },
+  "freelancer": {
+    "activeProjects": "Active Projects",
+    "earnings": "Earnings",
+    "myGigs": "My Gigs",
+    "proposals": "Proposals"
+  },
+  "jobseeker": {
+    "applications": "My Applications",
+    "profileCompletion": "Profile Completion",
+    "profileSummary": "Profile Summary",
+    "recommendedJobs": "Recommended Jobs",
+    "savedJobs": "Saved Jobs"
+  },
+  "overview": "Overview",
+  "pendingActions": "Pending Actions",
+  "recentActivity": "Recent Activity",
+  "revenue": "Revenue",
+  "statistics": "Statistics",
+  "totalUsers": "Total Users"
+}

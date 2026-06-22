@@ -1,0 +1,171 @@
+.adminOperationsPage {
+  min-height: 100%;
+  padding: var(--space-4);
+  background:
+    radial-gradient(circle at top left, var(--color-radial-pink-1), transparent 34rem),
+    radial-gradient(circle at top right, var(--color-radial-pink-2), transparent 28rem);
+}
+
+.operationsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+
+.glassCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--color-card) 82%, transparent);
+  box-shadow: 0 1rem 2.5rem var(--color-translucent-black-1, rgba(0, 0, 0, 0.08));
+  backdrop-filter: blur(10px);
+  padding: var(--space-5);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glassCard:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 1.25rem 3rem var(--color-shadow-pink);
+  transform: translateY(-1px);
+}
+
+.metricLabel {
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-2);
+}
+
+.metricValue {
+  color: var(--color-foreground);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.select,
+.input {
+  min-height: 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  padding: 0 var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-foreground);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  padding: 0 var(--space-4);
+}
+
+.buttonSecondary {
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+
+.buttonDanger {
+  background: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.statusMessage {
+  margin: var(--space-4) 0 0;
+  color: var(--color-muted-foreground);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-3);
+}
+
+.healthSummary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.settingPreset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--color-card) 86%, transparent);
+  color: var(--color-foreground);
+  cursor: pointer;
+  padding: var(--space-5);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settingPreset:hover {
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 1rem 2rem var(--color-shadow-pink);
+  transform: translateY(-1px);
+}
+
+.settingPreset span,
+.settingPreset small {
+  color: var(--color-muted-foreground);
+}
+
+.settingToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 48rem) {
+  .adminOperationsPage {
+    padding: var(--space-3);
+  }
+
+  .toolbarActions {
+    width: 100%;
+  }
+
+  .select,
+  .input,
+  .button {
+    width: 100%;
+  }
+}

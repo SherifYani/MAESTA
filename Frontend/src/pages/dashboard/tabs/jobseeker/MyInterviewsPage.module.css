@@ -1,0 +1,281 @@
+/* MyInterviewsPage.module.css */
+
+.container {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.header {
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 0.25rem;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+}
+
+/* ── Stats Row ──────────────────────────────────────── */
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.statCard {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+}
+
+.statValue {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-primary, #6366f1);
+    display: block;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary, #64748b);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* ── Filters ────────────────────────────────────────── */
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.filterBtn {
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border, #e2e8f0);
+    background: var(--color-surface, #fff);
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filterBtn:hover {
+    border-color: var(--color-primary, #6366f1);
+    color: var(--color-primary, #6366f1);
+}
+
+.filterBtn.active {
+    background: var(--color-primary, #6366f1);
+    border-color: var(--color-primary, #6366f1);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ── List ───────────────────────────────────────────── */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ── Interview Card ─────────────────────────────────── */
+.card {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.cardIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.cardBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.cardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.cardTitle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.statusBadge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.status_scheduled  { background: #dbeafe; color: #1d4ed8; }
+.status_rescheduled { background: #fef3c7; color: #92400e; }
+.status_completed  { background: #d1fae5; color: #065f46; }
+.status_cancelled  { background: #fee2e2; color: #991b1b; }
+.status_rejected   { background: #fce7f3; color: #9d174d; }
+
+.cardMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #64748b);
+    margin-top: 0.5rem;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.cardNotes {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary, #64748b);
+    background: var(--color-surface-alt, #f8fafc);
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    border-left: 3px solid var(--color-primary, #6366f1);
+}
+
+/* ── Join / Location ─────────────────────────────────── */
+.joinLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    padding: 0.45rem 1rem;
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.joinLink:hover { opacity: 0.88; }
+
+/* ── Empty ───────────────────────────────────────────── */
+.empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--color-text-secondary, #64748b);
+}
+
+.emptyIcon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.emptyTitle {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    margin: 0 0 0.4rem;
+}
+
+.emptyText {
+    font-size: 0.9rem;
+    margin: 0 0 1.25rem;
+}
+
+.browsBtn {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    background: var(--color-primary, #6366f1);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+}
+
+.browsBtn:hover { opacity: 0.85; }
+
+/* ── Loading ─────────────────────────────────────────── */
+.loadingWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.skeleton {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: 14px;
+    padding: 1.5rem;
+    height: 100px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
+}
+
+/* ── Error ───────────────────────────────────────────── */
+.error {
+    text-align: center;
+    padding: 3rem;
+    color: #dc2626;
+}
+
+.retryBtn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.25rem;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}

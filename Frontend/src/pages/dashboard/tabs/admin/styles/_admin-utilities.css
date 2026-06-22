@@ -1,0 +1,364 @@
+/**
+ * @file _admin-utilities.css
+ * @description Utility classes for Admin Dashboard
+ * Provides common patterns and helpers
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import './_admin-design-tokens.css';
+
+/* ==================== Flexbox Utilities ==================== */
+.admin-flex {
+    display: flex;
+}
+
+.admin-flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-flex-wrap {
+    flex-wrap: wrap;
+}
+
+.admin-flex-1 {
+    flex: 1;
+}
+
+/* ==================== Spacing Utilities ==================== */
+.admin-gap-xs {
+    gap: var(--admin-space-xs);
+}
+
+.admin-gap-sm {
+    gap: var(--admin-space-sm);
+}
+
+.admin-gap-md {
+    gap: var(--admin-space-md);
+}
+
+.admin-gap-lg {
+    gap: var(--admin-space-lg);
+}
+
+.admin-gap-xl {
+    gap: var(--admin-space-xl);
+}
+
+.admin-mt-xs {
+    margin-top: var(--admin-space-xs);
+}
+
+.admin-mt-sm {
+    margin-top: var(--admin-space-sm);
+}
+
+.admin-mt-md {
+    margin-top: var(--admin-space-md);
+}
+
+.admin-mt-lg {
+    margin-top: var(--admin-space-lg);
+}
+
+.admin-mt-xl {
+    margin-top: var(--admin-space-xl);
+}
+
+.admin-mb-xs {
+    margin-bottom: var(--admin-space-xs);
+}
+
+.admin-mb-sm {
+    margin-bottom: var(--admin-space-sm);
+}
+
+.admin-mb-md {
+    margin-bottom: var(--admin-space-md);
+}
+
+.admin-mb-lg {
+    margin-bottom: var(--admin-space-lg);
+}
+
+.admin-mb-xl {
+    margin-bottom: var(--admin-space-xl);
+}
+
+/* ==================== Text Utilities ==================== */
+.admin-text-muted {
+    color: var(--color-muted-foreground);
+}
+
+.admin-text-small {
+    font-size: var(--admin-font-size-small);
+}
+
+.admin-text-xs {
+    font-size: var(--admin-font-size-xs);
+}
+
+.admin-text-center {
+    text-align: center;
+}
+
+.admin-text-right {
+    text-align: right;
+}
+
+.admin-font-semibold {
+    font-weight: 600;
+}
+
+.admin-font-bold {
+    font-weight: 700;
+}
+
+/* ==================== Status Badge Utilities ==================== */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all var(--admin-transition-fast);
+}
+
+.admin-badge--success {
+    background: var(--admin-color-success-subtle);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.admin-badge--warning {
+    background: var(--admin-color-warning-subtle);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning);
+}
+
+.admin-badge--danger {
+    background: var(--admin-color-danger-subtle);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+.admin-badge--info {
+    background: var(--admin-color-info-subtle);
+    color: var(--color-info);
+    border: 1px solid var(--color-info);
+}
+
+.admin-badge--neutral {
+    background: var(--admin-glass-background);
+    color: var(--color-muted-foreground);
+    border: var(--admin-glass-border);
+}
+
+/* ==================== Button Utilities ==================== */
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--admin-space-xs);
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    border: none;
+    outline: none;
+}
+
+.admin-btn:hover {
+    opacity: var(--admin-hover-opacity);
+    transform: translateY(-1px);
+}
+
+.admin-btn:active {
+    transform: scale(var(--admin-active-scale));
+}
+
+.admin-btn:disabled {
+    opacity: var(--admin-disabled-opacity);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.admin-btn--primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.admin-btn--secondary {
+    background: var(--admin-glass-background);
+    color: var(--color-foreground);
+    border: var(--admin-glass-border);
+}
+
+.admin-btn--danger {
+    background: var(--color-danger);
+    color: white;
+}
+
+.admin-btn--sm {
+    padding: var(--admin-space-xs) var(--admin-space-sm);
+    font-size: var(--admin-font-size-small);
+}
+
+.admin-btn--icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: var(--admin-radius-md);
+}
+
+/* ==================== Loading States ==================== */
+.admin-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--admin-space-xl);
+    color: var(--color-muted-foreground);
+}
+
+.admin-skeleton {
+    background: linear-gradient(90deg,
+            var(--admin-glass-background) 0%,
+            rgba(255, 255, 255, 0.15) 50%,
+            var(--admin-glass-background) 100%);
+    background-size: 200% 100%;
+    animation: admin-skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: var(--admin-radius-md);
+}
+
+@keyframes admin-skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ==================== Empty States ==================== */
+.admin-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--admin-space-2xl);
+    text-align: center;
+    color: var(--color-muted-foreground);
+    gap: var(--admin-space-md);
+}
+
+.admin-empty-state__icon {
+    width: 64px;
+    height: 64px;
+    opacity: 0.5;
+}
+
+.admin-empty-state__title {
+    font-size: var(--admin-font-size-card-title);
+    font-weight: 600;
+    color: var(--color-foreground);
+}
+
+.admin-empty-state__description {
+    font-size: var(--admin-font-size-body);
+    max-width: 400px;
+}
+
+/* ==================== Dividers ==================== */
+.admin-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--admin-space-lg) 0;
+}
+
+.admin-divider--vertical {
+    width: 1px;
+    height: auto;
+    margin: 0 var(--admin-space-sm);
+}
+
+/* ==================== Truncate Text ==================== */
+.admin-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.admin-line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ==================== Visibility Utilities ==================== */
+.admin-hidden {
+    display: none;
+}
+
+.admin-visible {
+    display: block;
+}
+
+@media (max-width: 968px) {
+    .admin-hidden-tablet {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-hidden-mobile {
+        display: none;
+    }
+}
+
+/* ==================== Accessibility ==================== */
+.admin-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.admin-focus-ring:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}

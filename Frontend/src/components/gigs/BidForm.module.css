@@ -1,0 +1,613 @@
+/**
+ * @file BidForm.module.css
+ * @description Styles for the BidForm component.
+ * @author Sherif Talaat
+ * @date 2026-02-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-07
+ */
+
+/* ==========================================================================
+   Main Container
+   ========================================================================== */
+
+.container {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    padding: var(--space-6);
+    max-width: 48rem;
+    margin: 0 auto;
+    box-shadow: 0 8px 16px var(--color-translucent-white-1);
+    transition: all 0.3s ease;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-4);
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.closeButton {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover {
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+    border-color: var(--color-border);
+}
+
+.closeButton:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Error Banner
+   ========================================================================== */
+
+.errorBanner {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Form Layout
+   ========================================================================== */
+
+.gridRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+
+.label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-foreground);
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Input Fields
+   ========================================================================== */
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputIcon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.inputWrapper :global(.input) {
+    width: 100%;
+    padding-left: var(--space-10);
+    padding-right: var(--space-3);
+}
+
+.isInvalid {
+    border-color: var(--color-destructive) !important;
+    background-color: var(--color-destructive-foreground) !important;
+}
+
+.isInvalid:focus {
+    box-shadow: 0 0 0 3px var(--color-destructive) !important;
+}
+
+.errorText {
+    color: var(--color-destructive);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
+    margin-top: var(--space-1);
+}
+
+/* ==========================================================================
+   Textarea
+   ========================================================================== */
+
+.textarea {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    resize: vertical;
+    min-height: 8rem;
+    transition: all 0.3s ease;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-pink);
+    box-shadow: 0 0 0 3px var(--color-radial-pink-1);
+}
+
+.textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-muted);
+}
+
+.textareaFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-1);
+}
+
+.charCount {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    line-height: var(--line-height-tight);
+}
+
+.charLimitExceeded {
+    color: var(--color-destructive);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* ==========================================================================
+   File Upload
+   ========================================================================== */
+
+.fileUpload {
+    margin-top: var(--space-2);
+}
+
+.fileInput {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.fileLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    transition: all 0.3s ease;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+}
+
+.fileLabel:hover,
+.fileLabel:focus {
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+    background-color: var(--color-radial-pink-3);
+    outline: none;
+}
+
+.fileLabel:active {
+    border-color: var(--color-select-pink);
+    color: var(--color-select-pink);
+}
+
+.fileHint {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-top: var(--space-1);
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Attachments
+   ========================================================================== */
+
+.attachmentList {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.attachmentItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background-color: var(--color-muted);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+    transition: all 0.2s ease;
+}
+
+.attachmentItem:hover {
+    background-color: var(--color-accent);
+}
+
+.fileIcon {
+    flex-shrink: 0;
+    color: var(--color-muted-foreground);
+}
+
+.fileName {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-foreground);
+}
+
+.fileSize {
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
+}
+
+.removeFile {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-1);
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.removeFile:hover {
+    color: var(--color-destructive);
+    background-color: var(--color-translucent-white-1);
+}
+
+.removeFile:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 1px;
+}
+
+.totalSize {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    text-align: right;
+    margin-top: var(--space-2);
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Terms & Conditions
+   ========================================================================== */
+
+.termsGroup {
+    margin-bottom: var(--space-6);
+    padding: var(--space-3);
+    background-color: var(--color-background);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    cursor: pointer;
+    line-height: var(--line-height-normal);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    margin-top: 0.25rem;
+    accent-color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.checkboxLabel input[type="checkbox"]:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   Preview Mode
+   ========================================================================== */
+
+.previewContent {
+    background-color: var(--color-background);
+    padding: var(--space-6);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--color-border);
+}
+
+.previewRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.previewRow:last-child {
+    border-bottom: none;
+}
+
+.previewSection {
+    margin-top: var(--space-4);
+}
+
+.previewText {
+    white-space: pre-wrap;
+    color: var(--color-foreground);
+    margin-top: var(--space-2);
+    line-height: var(--line-height-relaxed);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-card);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.value {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-accent-pink);
+    font-size: var(--font-size-lg);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Desktop large: 75rem (1200px) */
+@media (min-width: 75rem) {
+    .container {
+        padding: var(--space-8);
+        max-width: 56rem;
+    }
+
+    .title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .gridRow {
+        gap: var(--space-8);
+    }
+
+    .textarea {
+        min-height: 10rem;
+    }
+
+    .actions {
+        gap: var(--space-4);
+    }
+}
+
+/* Tablet landscape: 60.5rem (968px) */
+@media (max-width: 60.5rem) {
+    .container {
+        padding: var(--space-5);
+    }
+
+    .gridRow {
+        gap: var(--space-4);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .textarea {
+        min-height: 6rem;
+    }
+
+    .actions button {
+        padding: var(--space-2) var(--space-3);
+    }
+}
+
+/* Tablet portrait: 40rem (640px) */
+@media (max-width: 40rem) {
+    .container {
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+        margin: 0 var(--space-2);
+    }
+
+    .gridRow {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .header {
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+    }
+
+    .title {
+        font-size: var(--font-size-base);
+    }
+
+    .fieldGroup {
+        margin-bottom: var(--space-4);
+    }
+
+    .textarea {
+        min-height: 5rem;
+        font-size: var(--font-size-sm);
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+        gap: var(--space-2);
+    }
+
+    .actions button {
+        width: 100%;
+    }
+
+    .checkboxLabel {
+        font-size: var(--font-size-xs);
+    }
+
+    .previewContent {
+        padding: var(--space-4);
+    }
+
+    .previewRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+        padding: var(--space-2) 0;
+    }
+
+    .value {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .container,
+    .closeButton,
+    .textarea,
+    .fileLabel,
+    .attachmentItem,
+    .removeFile {
+        transition: none;
+    }
+
+    .errorBanner {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .container {
+        border: 2px solid var(--color-border);
+    }
+
+    .closeButton {
+        border: 1px solid currentColor;
+    }
+
+    .textarea:focus,
+    .fileLabel:focus {
+        outline: 2px solid var(--color-primary-black);
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+.dark .container {
+    background-color: var(--color-card);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dark .previewContent {
+    background-color: var(--color-background);
+}
+
+.dark .previewText {
+    background-color: var(--color-card);
+}
+
+.dark .attachmentItem {
+    background-color: var(--color-accent);
+}
+
+.dark .removeFile:hover {
+    background-color: var(--color-translucent-white-2);
+}
+
+.dark .termsGroup {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+}

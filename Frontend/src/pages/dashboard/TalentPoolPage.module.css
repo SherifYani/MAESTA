@@ -1,0 +1,317 @@
+/**
+ * @file TalentPoolPage.module.css
+ * @description CSS module for TalentPoolPage, featuring glassmorphism layouts, search controls, and grid lists.
+ */
+
+.pageContainer {
+    position: relative;
+    padding: var(--space-6);
+    max-width: 1600px;
+    margin: 0 auto;
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pageContainer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 350px;
+    background: radial-gradient(ellipse at top,
+            var(--color-radial-pink-1) 0%,
+            transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.titleSection {
+    flex: 1;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+}
+
+.controlsBar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-card);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+}
+
+.searchSection {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+}
+
+.searchIcon {
+    position: absolute;
+    left: var(--space-3);
+    color: var(--color-muted-foreground);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.searchInput {
+    padding-left: var(--space-8) !important;
+}
+
+.filterSection {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.select {
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-foreground);
+    font-size: var(--font-size-sm);
+    transition: all 0.3s ease;
+}
+
+.select:focus {
+    border-color: var(--color-accent-pink);
+    outline: none;
+}
+
+.talentGrid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-6);
+}
+
+.talentCard {
+    background: var(--color-card);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.talentCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius-2xl);
+    padding: 2px;
+    background: linear-gradient(135deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink),
+            var(--color-accent-pink));
+    -webkit-mask: linear-gradient(white 0 0) content-box,
+            linear-gradient(white 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(white 0 0) content-box,
+            linear-gradient(white 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.talentCard:hover::before {
+    opacity: 1;
+}
+
+.talentCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px var(--color-shadow-pink);
+}
+
+.talentHeader {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-accent-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    background: var(--color-translucent-white-1);
+    color: var(--color-accent-pink);
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.talentInfo {
+    flex: 1;
+}
+
+.name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    margin-bottom: 2px;
+}
+
+.roleTitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    margin-bottom: 4px;
+}
+
+.rating {
+    font-size: var(--font-size-xs);
+    color: #eab308;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.bio {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    margin-bottom: var(--space-4);
+    line-height: var(--line-height-relaxed);
+}
+
+.skillsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-bottom: var(--space-6);
+}
+
+.skillBadge {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    background: var(--color-translucent-white-1);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+}
+
+.cardFooter {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rate {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+}
+
+.rate span {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-muted-foreground);
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.contactBtn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.contactBtn:hover {
+    border-color: var(--color-accent-pink);
+    color: var(--color-accent-pink);
+    transform: translateY(-1px);
+}
+
+.viewBtn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    border: none;
+    color: white;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.viewBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-16) var(--space-6);
+    background: var(--color-card);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--color-border);
+    backdrop-filter: blur(10px);
+    color: var(--color-muted-foreground);
+    width: 100%;
+}

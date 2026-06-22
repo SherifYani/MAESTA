@@ -1,0 +1,182 @@
+/**
+ * @file StatisticsDashboard.module.css
+ * @description Styles for StatisticsDashboard component
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ */
+
+@import '../../styles/_admin-design-tokens.css';
+@import '../../styles/_admin-layout-base.css';
+@import '../../styles/_admin-utilities.css';
+
+.container {
+    composes: admin-page-container from global;
+}
+
+/* ==================== Time Range Selector ==================== */
+.timeRangeSelector {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+}
+
+.timeRangeSelector__icon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.timeRangeSelect {
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    font-size: var(--admin-font-size-body);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    outline: none;
+    min-width: 160px;
+}
+
+.timeRangeSelect:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(255, 102, 196, 0.1);
+}
+
+/* ==================== Content ==================== */
+.content {
+    composes: admin-content from global;
+    display: grid;
+    gap: var(--admin-space-lg);
+}
+
+/* ==================== Chart Cards ==================== */
+.chartCard {
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-lg);
+    backdrop-filter: var(--admin-glass-backdrop);
+    padding: var(--admin-space-lg);
+    transition: all var(--admin-transition-base);
+}
+
+.chartCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-card-hover);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.chartCard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--admin-space-lg);
+    padding-bottom: var(--admin-space-md);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.chartCard__title {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-sm);
+}
+
+.chartCard__title h3 {
+    font-size: var(--admin-font-size-card-title);
+    font-weight: 700;
+    color: var(--color-foreground);
+    margin: 0;
+}
+
+.chartCard__icon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.chartCard__subtitle {
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    font-weight: 600;
+}
+
+.chartCard__body {
+    position: relative;
+    min-height: 300px;
+}
+
+/* ==================== Custom Tooltip ==================== */
+.tooltip {
+    background: var(--admin-glass-background);
+    border: var(--admin-glass-border);
+    border-radius: var(--admin-radius-md);
+    backdrop-filter: var(--admin-glass-backdrop-strong);
+    padding: var(--admin-space-sm) var(--admin-space-md);
+    box-shadow: var(--admin-shadow-dropdown);
+}
+
+.tooltip__label {
+    font-size: var(--admin-font-size-small);
+    font-weight: 700;
+    color: var(--color-foreground);
+    margin: 0 0 var(--admin-space-xs) 0;
+}
+
+.tooltip__item {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-space-xs);
+    font-size: var(--admin-font-size-small);
+    color: var(--color-muted-foreground);
+    margin: var(--admin-space-xs) 0;
+}
+
+.tooltip__item strong {
+    color: var(--color-foreground);
+}
+
+.tooltip__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 968px) {
+    .chartCard {
+        padding: var(--admin-space-md);
+    }
+
+    .chartCard__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--admin-space-xs);
+    }
+
+    .chartCard__body {
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 640px) {
+    .content {
+        gap: var(--admin-space-md);
+    }
+
+    .chartCard {
+        padding: var(--admin-space-sm);
+    }
+
+    .chartCard__title h3 {
+        font-size: var(--admin-font-size-body);
+    }
+
+    .chartCard__body {
+        min-height: 200px;
+    }
+
+    .timeRangeSelect {
+        min-width: 140px;
+        font-size: var(--admin-font-size-small);
+    }
+}

@@ -1,0 +1,237 @@
+/**
+ * @file RecommendedJobsWidget.module.css
+ * @description Lightweight widget styles for Recommended Jobs overview with premium design
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2026-01-28
+ */
+
+/* ==========================================================================
+   Recommended Jobs Widget Container
+   ========================================================================== */
+
+.recommendedJobsWidget {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.jobsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* ==========================================================================
+   Job Item - Premium Card Style with Recommendation Accent
+   ========================================================================== */
+
+.jobItem {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    background: linear-gradient(135deg,
+            var(--color-background),
+            var(--color-translucent-white-1));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gradient border effect on hover */
+.jobItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-radial-pink-1),
+            transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.jobItem:hover::before {
+    left: 100%;
+}
+
+.jobItem:hover {
+    border-color: var(--color-accent-pink);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Item Header
+   ========================================================================== */
+
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2);
+    gap: var(--space-3);
+}
+
+.jobInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.jobInfo h4 {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-foreground);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    line-height: var(--line-height-tight);
+}
+
+.briefcaseIcon {
+    color: var(--color-accent-pink);
+    flex-shrink: 0;
+}
+
+.company {
+    margin: var(--space-1) 0 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* ==========================================================================
+   Status Badges
+   ========================================================================== */
+
+.statusBadge {
+    font-size: var(--font-size-2xs);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ==========================================================================
+   Item Meta
+   ========================================================================== */
+
+.itemMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+}
+
+.location,
+.salary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.matchBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-card);
+    background: var(--color-chart-2);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-chart-2);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-8);
+    background: var(--color-sidebar);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--color-border);
+    color: var(--color-muted-foreground);
+    font-size: var(--font-size-sm);
+}
+
+.emptyState p {
+    margin: var(--space-2) 0 0 0;
+    max-width: 300px;
+    line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 60.5rem) {
+    .itemHeader {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .itemMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 40rem) {
+    .jobItem {
+        padding: var(--space-3);
+    }
+
+    .jobInfo h4 {
+        font-size: var(--font-size-sm);
+    }
+
+    .emptyState {
+        padding: var(--space-6);
+    }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jobItem,
+    .jobItem::before {
+        transition: none;
+    }
+
+    .jobItem:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .jobItem {
+        border: 2px solid var(--color-foreground);
+    }
+
+    .matchBadge {
+        border-width: 2px;
+    }
+}

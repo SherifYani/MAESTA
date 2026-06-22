@@ -1,0 +1,306 @@
+/**
+ * @file AssistantSettings.module.css
+ * @description Styles for the Sherif Talaat settings panel
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+.panel {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px var(--color-translucent-white-1);
+    border: 1px solid var(--color-border);
+    animation: slideDown 0.2s ease;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-background);
+}
+
+.title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: var(--font-size-2xl);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    padding: var(--space-1);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover,
+.closeButton:focus {
+    color: var(--color-foreground);
+    background-color: var(--color-accent);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.content {
+    padding: var(--space-5);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-muted);
+}
+
+.setting:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-normal);
+}
+
+.select {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-input);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.select:hover,
+.select:focus {
+    border-color: var(--color-ring);
+    background-color: var(--color-input-hover);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-muted);
+    transition: 0.3s;
+    border-radius: var(--radius-full);
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--color-primary-white);
+    transition: 0.3s;
+    border-radius: var(--radius-full);
+    box-shadow: 0 1px 3px var(--color-translucent-white-2);
+}
+
+.toggle input:checked+.slider {
+    background: linear-gradient(135deg,
+            var(--color-accent-pink),
+            var(--color-vivid-pink));
+}
+
+.toggle input:checked+.slider::before {
+    transform: translateX(20px);
+}
+
+.toggle input:focus+.slider {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.rangeContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.range {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--color-muted);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-accent-pink);
+    cursor: pointer;
+    border: 2px solid var(--color-primary-white);
+    box-shadow: 0 2px 4px var(--color-shadow-pink);
+}
+
+.range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-accent-pink);
+    cursor: pointer;
+    border: 2px solid var(--color-primary-white);
+    box-shadow: 0 2px 4px var(--color-shadow-pink);
+}
+
+.range:focus {
+    outline: none;
+}
+
+.range:focus::-webkit-slider-thumb {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.range:focus::-moz-range-thumb {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+.speedValue {
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    min-width: 30px;
+    text-align: center;
+    font-weight: var(--font-weight-medium);
+}
+
+.footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-background);
+}
+
+.resetButton {
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted-foreground);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: var(--font-weight-medium);
+}
+
+.resetButton:hover,
+.resetButton:focus {
+    background-color: var(--color-accent);
+    color: var(--color-foreground);
+    border-color: var(--color-accent-hover);
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 75rem) {
+    .panel {
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 60.5rem) {
+    .panel {
+        max-width: 350px;
+    }
+
+    .content {
+        max-height: 280px;
+        padding: var(--space-4);
+    }
+
+    .header,
+    .footer {
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
+@media (max-width: 40rem) {
+    .panel {
+        max-width: 100%;
+        border-radius: var(--radius-md);
+    }
+
+    .setting {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+        padding: var(--space-3) 0;
+    }
+
+    .rangeContainer {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .range {
+        flex: 1;
+        max-width: 120px;
+    }
+}

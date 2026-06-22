@@ -1,0 +1,276 @@
+/**
+ * @file MainLayout.module.css
+ * @description Styles for MainLayout component using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-07
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-08
+ */
+
+/* ==========================================================================
+   Layout Container
+   ========================================================================== */
+
+.layoutContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    background-color: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+    transition: all 0.3s ease;
+}
+
+/* Header when scrolled */
+.headerScrolled {
+    box-shadow: 0 4px 20px var(--color-shadow-pink);
+    backdrop-filter: blur(10px);
+    background-color: color-mix(in oklch, var(--color-card), transparent 10%);
+}
+
+/* ==========================================================================
+   Main Content
+   ========================================================================== */
+
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 60vh;
+    /* Ensure content area has minimum height */
+}
+
+/* Focus state for main content */
+.mainContent:focus {
+    outline: none;
+}
+
+.mainContent:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: -2px;
+}
+
+/* Content transitioning state */
+.contentTransitioning {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Loading Container
+   ========================================================================== */
+
+.loadingContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: var(--space-12);
+}
+
+/* ==========================================================================
+   Transition Overlay
+   ========================================================================== */
+
+.transitionOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-translucent-white-1);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    pointer-events: none;
+    animation: fadeInOut 0.3s ease;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer {
+    margin-top: auto;
+    background-color: var(--color-card);
+    border-top: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   Development Indicator
+   ========================================================================== */
+
+.devIndicator {
+    position: fixed;
+    top: var(--space-2);
+    right: var(--space-2);
+    background-color: var(--color-destructive);
+    color: var(--color-primary-white);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+}
+
+.devIndicator:hover {
+    opacity: 1;
+}
+
+.devText {
+    display: block;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .mainContent {
+        padding: 0 var(--space-4);
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .header {
+        position: static;
+    }
+
+    .mainContent {
+        padding: 0 var(--space-3);
+        min-height: 50vh;
+    }
+
+    .loadingContainer {
+        padding: var(--space-8);
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .layoutContainer {
+        min-height: calc(100vh - env(safe-area-inset-bottom));
+    }
+
+    .mainContent {
+        padding: 0 var(--space-2);
+        min-height: 40vh;
+    }
+
+    .loadingContainer {
+        padding: var(--space-6);
+    }
+
+    .devIndicator {
+        top: var(--space-1);
+        right: var(--space-1);
+        font-size: 0.625rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+
+    .header,
+    .footer,
+    .devIndicator {
+        display: none;
+    }
+
+    .mainContent {
+        min-height: auto;
+    }
+
+    .layoutContainer {
+        min-height: auto;
+        background-color: white;
+        color: black;
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .transitionOverlay {
+        background-color: var(--color-translucent-black-1);
+    }
+
+    .header {
+        background-color: var(--color-card);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .layoutContainer,
+    .header,
+    .transitionOverlay {
+        transition: none;
+    }
+
+    .transitionOverlay {
+        animation: none;
+        display: none;
+    }
+
+    .contentTransitioning {
+        opacity: 1;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .header {
+        border-bottom-width: 2px;
+    }
+
+    .footer {
+        border-top-width: 2px;
+    }
+}

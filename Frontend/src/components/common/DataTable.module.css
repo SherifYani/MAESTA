@@ -1,0 +1,101 @@
+/* 
+ * @file DataTable.module.css
+ * @description Styles for DataTable component – glassmorphism, animations.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-border);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.header {
+  background: var(--color-muted);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.headerCell {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sortIcon {
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}
+
+.row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s;
+}
+
+.row:hover {
+  background-color: var(--color-accent);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.selected {
+  background-color: var(--color-radial-pink-1);
+}
+
+.cell {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-foreground);
+  vertical-align: middle;
+}
+
+.checkboxCell {
+  text-align: center;
+  width: 40px;
+}
+
+.emptyMessage {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-muted-foreground);
+}
+
+.selectionInfo {
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-muted);
+}
+
+.selectAllLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}

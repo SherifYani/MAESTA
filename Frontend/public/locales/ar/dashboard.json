@@ -1,0 +1,33 @@
+{
+  "admin": {
+    "activities": "الأنشطة",
+    "jobs": "الوظائف",
+    "moderation": "الإشراف",
+    "reports": "التقارير",
+    "staff": "الموظفين",
+    "statistics": "الإحصائيات",
+    "subscriptions": "الاشتراكات",
+    "users": "المستخدمين"
+  },
+  "company": {
+    "applicants": "المتقدمين",
+    "candidates": "المرشحين",
+    "export": "تصدير",
+    "interviews": "المقابلات",
+    "myJobs": "وظائفي",
+    "performance": "الأداء"
+  },
+  "freelancer": {
+    "myGigs": "مهامي",
+    "proposals": "العروض المقدمة"
+  },
+  "jobseeker": {
+    "applications": "الطلبات",
+    "recommendedJobs": "الوظائف الموصى بها",
+    "savedJobs": "الوظائف المحفوظة"
+  },
+  "overview": "نظرة عامة",
+  "recentActivity": "النشاط الأخير",
+  "statistics": "الإحصائيات",
+  "welcome": "مرحباً بك في لوحة التحكم"
+}

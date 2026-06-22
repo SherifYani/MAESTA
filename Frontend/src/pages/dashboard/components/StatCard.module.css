@@ -1,0 +1,269 @@
+/**
+ * @file StatCard.module.css
+ * @description CSS Module for StatCard component with premium design system
+ * @author Sherif Talaat
+ * @version 2.0.0
+ * @date 2025-12-19
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-20
+ */
+
+/* ==========================================================================
+   Stat Card Container
+   ========================================================================== */
+
+.statCard {
+  background-color: var(--color-translucent-white-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.statCard:hover {
+  border-color: var(--color-ring);
+  box-shadow: 0 8px 24px var(--color-translucent-white-3);
+  transform: translateY(-2px);
+}
+
+.statCard:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-translucent-white-3);
+}
+
+/* ==========================================================================
+   Card Header
+   ========================================================================== */
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
+
+/* ==========================================================================
+   Icon Container
+   ========================================================================== */
+
+.iconContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+.icon {
+  color: var(--color-primary-white);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.statCard:hover .icon {
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Trend Indicator
+   ========================================================================== */
+
+.trendIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--color-muted);
+}
+
+.trendIconPositive {
+  color: var(--color-chart-2);
+}
+
+.trendIconNegative {
+  color: var(--color-chart-5);
+}
+
+.trendIconNeutral {
+  color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Card Content
+   ========================================================================== */
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cardTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Value Container
+   ========================================================================== */
+
+.valueContainer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.cardValue {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-foreground);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Change Text
+   ========================================================================== */
+
+.changeText {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.changepositive {
+  background-color: var(--color-chart-2);
+  color: var(--color-card);
+}
+
+.changenegative {
+  background-color: var(--color-chart-5);
+  color: var(--color-card);
+}
+
+.changeneutral {
+  background-color: var(--color-muted);
+  color: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Card Description
+   ========================================================================== */
+
+.cardDescription {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin: var(--space-1) 0 0 0;
+  line-height: var(--line-height-normal);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .statCard {
+    padding: var(--space-4);
+  }
+
+  .iconContainer {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cardValue {
+    font-size: var(--font-size-xl);
+  }
+
+  .changeText {
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-1);
+  }
+}
+
+@media (max-width: 480px) {
+  .statCard {
+    padding: var(--space-3);
+  }
+
+  .cardHeader {
+    margin-bottom: var(--space-3);
+  }
+
+  .iconContainer {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .trendIndicator {
+    padding: 2px;
+  }
+
+  .trendIndicator svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ==========================================================================
+   Accessibility & Motion Management
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard {
+    transition: none;
+  }
+
+  .statCard:hover {
+    transform: none;
+  }
+
+  .statCard:active {
+    transform: none;
+  }
+
+  .statCard:hover .icon {
+    transform: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .statCard {
+    border: 2px solid var(--color-foreground);
+  }
+
+  .iconContainer {
+    border: 1px solid var(--color-foreground);
+  }
+
+  .trendIndicator {
+    border: 1px solid var(--color-foreground);
+  }
+
+  .changeText {
+    border: 1px solid currentColor;
+  }
+}

@@ -1,0 +1,111 @@
+/**
+ * @file AdminPendingActions.module.css
+ * @description Styles for AdminPendingActions page – mostly for custom sticky bar and cell overrides.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ * 
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-05-04
+ */
+
+.container {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.bulkActionsBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-card);
+  border: 2px solid var(--color-accent-pink);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-6);
+  margin-bottom: var(--space-6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+  animation: slideDown 0.3s ease-out;
+}
+
+.selectedCount {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.bulkButtons {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.idCell {
+  font-family: monospace;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.itemTitle {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-foreground);
+}
+
+.itemSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.modalField {
+  margin-top: var(--space-4);
+}
+
+.modalField label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 40rem) {
+  .container {
+    padding: var(--space-3);
+  }
+  .bulkActionsBar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .actionButtons {
+    flex-direction: column;
+  }
+}

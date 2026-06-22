@@ -1,0 +1,503 @@
+/**
+ * @file BillingToggle.module.css
+ * @description Styles for BillingToggle component using BEM methodology and design system
+ * @author Sherif Talaat
+ * @date 2026-02-06
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-02-06
+ */
+
+/* ==========================================================================
+   Container
+   ========================================================================== */
+
+.container {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 4px 16px var(--color-shadow-pink);
+    border-color: var(--color-ring);
+}
+
+/* Size Variants */
+.container--sm {
+    padding: var(--space-1);
+    gap: var(--space-2);
+}
+
+.container--md {
+    padding: var(--space-2);
+    gap: var(--space-3);
+}
+
+.container--lg {
+    padding: var(--space-3);
+    gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Option Labels
+   ========================================================================== */
+
+.optionGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 5rem;
+}
+
+.optionGroup:first-child {
+    justify-content: flex-end;
+}
+
+.optionGroup:last-child {
+    justify-content: flex-start;
+}
+
+.optionLabel {
+    font-weight: var(--font-weight-semibold);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* Size variants for labels */
+.container--sm .optionLabel {
+    font-size: var(--font-size-sm);
+}
+
+.container--md .optionLabel {
+    font-size: var(--font-size-base);
+}
+
+.container--lg .optionLabel {
+    font-size: var(--font-size-lg);
+}
+
+.optionLabelActive {
+    color: var(--color-foreground);
+}
+
+.optionLabelInactive {
+    color: var(--color-muted-foreground);
+}
+
+.optionIcon {
+    transition: all 0.3s ease;
+}
+
+.optionIconActive {
+    color: var(--color-accent-pink);
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Toggle Switch
+   ========================================================================== */
+
+.toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    background-color: var(--color-muted);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* Size variants for toggle */
+.container--sm .toggle {
+    height: 1.5rem;
+    width: 3rem;
+}
+
+.container--md .toggle {
+    height: 2rem;
+    width: 4rem;
+}
+
+.container--lg .toggle {
+    height: 2.5rem;
+    width: 5rem;
+}
+
+/* Color Variants */
+.toggle--primary {
+    background-color: var(--color-muted);
+}
+
+.toggle--accent {
+    background-color: var(--color-accent);
+}
+
+.toggle--success {
+    background-color: color-mix(in oklch, var(--color-chart-2), transparent 50%);
+}
+
+.toggleActive {
+    background-color: var(--color-chart-4);
+}
+
+.toggle--accent.toggleActive {
+    background-color: var(--color-accent-pink);
+}
+
+.toggle--success.toggleActive {
+    background-color: var(--color-chart-2);
+}
+
+.toggle:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.toggle:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggleThumb {
+    position: absolute;
+    background-color: var(--color-primary-white);
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Size variants for thumb */
+.container--sm .toggleThumb {
+    width: 1rem;
+    height: 1rem;
+    transform: translateX(0.25rem);
+}
+
+.container--md .toggleThumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    transform: translateX(0.25rem);
+}
+
+.container--lg .toggleThumb {
+    width: 2rem;
+    height: 2rem;
+    transform: translateX(0.25rem);
+}
+
+.container--sm .toggleThumbActive {
+    transform: translateX(1.75rem);
+}
+
+.container--md .toggleThumbActive {
+    transform: translateX(2.25rem);
+}
+
+.container--lg .toggleThumbActive {
+    transform: translateX(2.75rem);
+}
+
+/* ==========================================================================
+   Savings Badge
+   ========================================================================== */
+
+.savingsBadge {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-bold);
+    animation: badgePop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+    z-index: 1;
+}
+
+@keyframes badgePop {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Size variants for savings badge */
+.savingsBadge--sm {
+    font-size: var(--font-size-xs);
+    padding: 0.125rem 0.5rem;
+    gap: 0.125rem;
+}
+
+.savingsBadge--md {
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-2);
+    gap: var(--space-1);
+}
+
+.savingsBadge--lg {
+    font-size: var(--font-size-sm);
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+}
+
+.savingsIcon {
+    flex-shrink: 0;
+}
+
+.savingsText {
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Savings Tooltip
+   ========================================================================== */
+
+.savingsTooltip {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 16rem;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-popover);
+    color: var(--color-popover-foreground);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.container:hover .savingsTooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.tooltipArrow {
+    position: absolute;
+    top: -0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--color-popover);
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.tooltipText {
+    margin: 0;
+    text-align: center;
+    line-height: var(--line-height-tight);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* 75rem (1200px) - Desktop */
+@media (max-width: 75rem) {
+    .container--lg {
+        padding: var(--space-2);
+        gap: var(--space-3);
+    }
+
+    .container--lg .toggle {
+        height: 2rem;
+        width: 4rem;
+    }
+
+    .container--lg .toggleThumb {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .container--lg .toggleThumbActive {
+        transform: translateX(2.25rem);
+    }
+}
+
+/* 60.5rem (968px) - Tablet Landscape */
+@media (max-width: 60.5rem) {
+    .container {
+        padding: var(--space-1);
+        gap: var(--space-2);
+    }
+
+    .optionGroup {
+        min-width: 4rem;
+    }
+
+    .optionLabel {
+        font-size: var(--font-size-sm);
+    }
+
+    .toggle {
+        height: 1.5rem;
+        width: 3rem;
+    }
+
+    .toggleThumb {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .toggleThumbActive {
+        transform: translateX(1.75rem) !important;
+    }
+}
+
+/* 40rem (640px) - Mobile & Tablet Portrait */
+@media (max-width: 40rem) {
+    .container {
+        width: 100%;
+        justify-content: space-between;
+        padding: var(--space-2);
+    }
+
+    .optionGroup {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-1);
+        min-width: auto;
+    }
+
+    .optionLabel {
+        font-size: var(--font-size-xs);
+        text-align: center;
+    }
+
+    .optionIcon {
+        display: none;
+    }
+
+    .toggle {
+        height: 1.5rem;
+        width: 3rem;
+    }
+
+    .savingsBadge {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-top: var(--space-2);
+        order: 1;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .savingsTooltip {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Dark Theme Adjustments
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .toggleThumb {
+        background-color: var(--color-primary-white);
+    }
+
+    .savingsTooltip {
+        background-color: var(--color-popover);
+        border-color: var(--color-border);
+    }
+
+    .tooltipArrow {
+        background-color: var(--color-popover);
+        border-color: var(--color-border);
+    }
+}
+
+/* ==========================================================================
+   Accessibility Improvements
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .container,
+    .toggle,
+    .toggleThumb,
+    .optionLabel,
+    .optionIcon {
+        transition: none;
+        animation: none;
+    }
+
+    .toggle:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .toggle {
+        border: 2px solid var(--color-border);
+    }
+
+    .toggleThumb {
+        border: 1px solid var(--color-border);
+    }
+
+    .savingsBadge {
+        border: 2px solid var(--color-primary-white);
+    }
+}
+
+/* ==========================================================================
+   Focus States
+   ========================================================================== */
+
+.toggle:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--color-radial-pink-1);
+}
+
+/* ==========================================================================
+   Screen Reader Only Text
+   ========================================================================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

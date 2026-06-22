@@ -1,0 +1,391 @@
+/**
+ * @file registration-page.css
+ * @description Styles for the registration page layout and components
+ * @author Shahd Mohay
+ * @version 2.1.0
+ * @date 2025-10-10
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-09
+ *
+ * Changes Made:
+ * - Fixed background gradients
+ * - Dark theme support ensured
+ * - All colors now use variables from globals.css
+ * - Removed hardcoded colors and duplicate styles
+ * - Updated to use new --color- variable naming convention
+ */
+
+/* ==========================================================================
+   Layout & Structure
+   ========================================================================== */
+
+.registration-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-primary-black);
+}
+
+.registration-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle at 15% 30%,
+      var(--color-radial-pink-1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      var(--color-radial-pink-2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      var(--color-radial-pink-3) 0%,
+      transparent 60%
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+/* ==========================================================================
+   Back Button
+   ========================================================================== */
+
+.registration-page__back-button {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-8);
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-translucent-black-1);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-translucent-white-2);
+  color: var(--color-primary-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+
+  &:hover {
+    background: var(--color-translucent-white-1);
+    transform: translateX(calc(var(--space-1) * -1));
+    border-color: var(--color-translucent-white-4);
+    box-shadow: 0 8px 24px var(--color-translucent-black-1);
+  }
+}
+
+/* ==========================================================================
+    Background Canvas
+   ========================================================================== */
+
+.register__canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 62.5rem;
+  height: 62.5rem;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Left Section (Hero/Content Area)
+   ========================================================================== */
+
+.registration-page__left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 3.75rem;
+  position: relative;
+  gap: var(--space-12);
+  z-index: 2;
+}
+
+/* Canvas container */
+.registration-page__canvas-container {
+  width: 31.25rem;
+  height: 31.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Floating particles */
+.registration-page__floating-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   Welcome Content
+   ========================================================================== */
+
+.registration-page__welcome-content {
+  text-align: center;
+  color: var(--color-primary-white);
+  max-width: 35rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  z-index: 2;
+}
+
+/* Badge */
+.registration-page__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.25rem;
+  background: var(--color-translucent-black-1);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-translucent-white-2);
+  border-radius: 6.25rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-translucent-white-4);
+  margin: 0 auto;
+  box-shadow: 0 0.25rem 1rem var(--color-translucent-black-1);
+  z-index: 2;
+}
+
+.registration-page__badge-icon {
+  color: var(--color-accent-pink);
+}
+
+/* Title */
+.registration-page__welcome-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0.25rem 1.5rem var(--color-shadow-pink);
+  margin: 0;
+  z-index: 2;
+}
+
+.registration-page__gradient-text {
+  background: linear-gradient(
+    135deg,
+    var(--color-select-pink) 0%,
+    var(--color-accent-pink) 40%,
+    var(--color-light-pink) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease infinite;
+  background-size: 200% auto;
+}
+
+/* Description */
+.registration-page__welcome-description {
+  font-size: var(--font-size-lg);
+  line-height: 1.7;
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-normal);
+  margin: 0;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   Features List
+   ========================================================================== */
+
+.registration-page__features-list {
+  display: flex;
+  gap: var(--space-6);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+  padding: 0;
+  list-style: none;
+  z-index: 2;
+}
+
+.registration-page__feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-translucent-black-1);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-translucent-white-2);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-translucent-white-4);
+  transition: all 0.3s ease;
+  cursor: default;
+  z-index: 2;
+
+  &:hover {
+    background: var(--color-translucent-white-1);
+    border-color: var(--color-translucent-white-4);
+    transform: translateY(calc(var(--space-1) * -0.5));
+  }
+}
+
+.registration-page__feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
+  );
+  color: var(--color-accent-pink);
+}
+
+/* ==========================================================================
+   Right Section (Form Area)
+   ========================================================================== */
+
+.registration-page__right-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.75rem;
+  background: var(--color-translucent-black-1);
+  backdrop-filter: blur(24px);
+  border-left: 1px solid var(--color-translucent-white-1);
+  z-index: 2;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 75rem) {
+  .registration-page {
+    flex-direction: column;
+  }
+
+  .registration-page__left-section,
+  .registration-page__right-section {
+    padding: var(--space-12) var(--space-6);
+    width: 100%;
+  }
+
+  .registration-page__right-section {
+    border-left: none;
+    border-top: 1px solid var(--color-translucent-white-1);
+  }
+
+  .registration-page__canvas-container {
+    width: 25rem;
+    height: 25rem;
+  }
+
+  .registration-page__welcome-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .registration-page__left-section,
+  .registration-page__right-section {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .registration-page__canvas-container {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .registration-page__welcome-title {
+    font-size: 2.5rem;
+  }
+
+  .registration-page__welcome-description {
+    font-size: var(--font-size-base);
+  }
+
+  .registration-page__features-list {
+    gap: var(--space-3);
+  }
+
+  .registration-page__feature-item {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  .registration-page__back-button {
+    top: var(--space-4);
+    left: var(--space-4);
+  }
+}
+
+@media (max-width: 30rem) {
+  .registration-page__welcome-title {
+    font-size: 2rem;
+  }
+
+  .registration-page__canvas-container {
+    width: 16rem;
+    height: 16rem;
+  }
+
+  .registration-page__features-list {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .registration-page::before {
+    animation: none;
+  }
+
+  .registration-page__gradient-text {
+    animation: none;
+  }
+
+  .registration-page__back-button,
+  .registration-page__feature-item {
+    transition: none;
+  }
+
+  .registration-page__back-button:hover,
+  .registration-page__feature-item:hover {
+    transform: none;
+  }
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}

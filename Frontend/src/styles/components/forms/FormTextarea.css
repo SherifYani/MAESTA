@@ -1,0 +1,78 @@
+/**
+ * @file FormTextarea.css
+ * @description Styles for form textarea components including character counter and resizing behavior
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2025-12-05
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2025-12-05
+ */
+
+@import "../../shared/_form-base.css";
+@import "../../shared/_form-animations.css";
+
+/* ==========================================================================
+   Form Textarea Specific Enhancements
+   ONLY adding what's not in _form-base.css
+   ========================================================================== */
+
+.form-textarea {
+  /* Character counter - NOT in base styles */
+  &__counter {
+    position: absolute;
+    bottom: var(--space-2);
+    right: var(--space-4);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted-foreground);
+    background: var(--color-translucent-white-3);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+
+    /* Counter states */
+    &--warning {
+      color: var(--color-accent-pink);
+      font-weight: var(--font-weight-medium);
+    }
+
+    &--error {
+      color: var(--color-destructive);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  /* Auto-resize feature - NOT in base styles */
+  &__field--auto-resize {
+    resize: none;
+    overflow-y: hidden;
+    min-height: var(--textarea-min-height);
+  }
+
+  /* Counter position adjustment for size variants */
+  &__wrapper--sm &__counter {
+    bottom: var(--space-1);
+    right: var(--space-3);
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+  }
+
+  &__wrapper--lg &__counter {
+    bottom: var(--space-3);
+    right: var(--space-5);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Support
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .form-textarea__counter {
+    transition: none;
+  }
+}

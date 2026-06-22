@@ -1,0 +1,539 @@
+/**
+ * @file GeneralSelect.module.css
+ * @description Styles for the GeneralSelect component using BEM methodology.
+ *              Uses global CSS variables for theming and spacing.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-03-11
+ *
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-03-16
+ */
+
+/* === Block: modern-select === */
+.modern-select {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.modern-select--open {
+  z-index: 50;
+}
+
+/* === Element: button === */
+.modern-select__button {
+  appearance: none;
+  position: relative;
+  padding: var(--space-3) var(--space-5);
+  /* 0.75rem 1.25rem */
+  border-radius: 12px;
+  /* matches form-base 12px border-radius */
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg,
+      var(--card) 0%,
+      var(--muted) 100%);
+  border: 2px solid var(--border);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  outline: none;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-sans);
+}
+
+.modern-select__button:hover:not(.modern-select__button--disabled) {
+  border-color: var(--color-accent-pink);
+}
+
+.modern-select__button:focus:not(.modern-select__button--disabled) {
+  border-color: var(--accent-pink);
+  box-shadow:
+    0 0 60px var(--shadow-pink),
+    0 0 30px var(--shadow-pink),
+    0 0 0 4px color-mix(in srgb, var(--accent-pink) 15%, transparent);
+  transform: translateY(-2px);
+}
+
+.modern-select__button:active:not(.modern-select__button--disabled) {
+  transform: translateY(0);
+}
+
+.modern-select__button--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg,
+      var(--translucent-white-1) 0%,
+      var(--translucent-white-3) 100%);
+}
+
+/* Dark theme overrides */
+.dark .modern-select__button {
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--accent-pink) 8%, transparent) 0%,
+      color-mix(in srgb, var(--accent-pink) 4%, transparent) 100%);
+  border-color: color-mix(in srgb, var(--accent-pink) 20%, transparent);
+  color: var(--foreground);
+}
+
+/* === Element: button-content === */
+.modern-select__button-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.modern-select__icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent-pink);
+  flex-shrink: 0;
+}
+
+.modern-select__text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === Element: chevron === */
+.modern-select__chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+.modern-select__chevron--open {
+  transform: rotate(180deg);
+  color: var(--accent-pink);
+}
+
+/* === Element: dropdown === */
+.modern-select__dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-2xl);
+  /* 1.5rem – slightly larger for modern feel */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideDownIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  max-height: 24rem;
+}
+
+@keyframes slideDownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scaleY(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.dark .modern-select__dropdown {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  border-color: color-mix(in srgb, var(--accent-pink) 20%, transparent);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 30px var(--shadow-pink);
+}
+
+/* === Element: dropdown-header === */
+.modern-select__dropdown-header {
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--accent-pink) 8%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 4%, transparent) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-pink) 10%, transparent);
+  flex-shrink: 0;
+}
+
+.dark .modern-select__dropdown-header {
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--accent-pink) 12%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 6%, transparent) 100%);
+}
+
+.modern-select__dropdown-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.dark .modern-select__dropdown-label {
+  color: var(--muted-foreground);
+}
+
+/* === Element: options-container === */
+.modern-select__options-container {
+  max-height: 16rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  flex: 1;
+}
+
+/* Custom scrollbar using global accent colors */
+.modern-select__options-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-select__options-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modern-select__options-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+      var(--accent-pink),
+      var(--vivid-pink));
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.modern-select__options-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,
+      var(--vivid-pink),
+      var(--accent-pink));
+}
+
+/* Firefox scrollbar */
+.modern-select__options-container {
+  scrollbar-color: var(--accent-pink) transparent;
+  scrollbar-width: thin;
+}
+
+/* === Element: option === */
+.modern-select__option {
+  position: relative;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+.modern-select__option:hover,
+.modern-select__option--highlighted {
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-pink) 12%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 8%, transparent) 100%);
+}
+
+.modern-select__option--selected {
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-pink) 15%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 10%, transparent) 100%);
+  font-weight: var(--font-weight-semibold);
+}
+
+.modern-select__option:active {
+  transform: scale(0.98);
+}
+
+.dark .modern-select__option {
+  color: var(--foreground);
+}
+
+.dark .modern-select__option:hover,
+.dark .modern-select__option--highlighted {
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-pink) 20%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 12%, transparent) 100%);
+}
+
+.dark .modern-select__option--selected {
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-pink) 25%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 15%, transparent) 100%);
+}
+
+/* === Element: option-bg (background layer) === */
+.modern-select__option-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-pink) 12%, transparent) 0%,
+      color-mix(in srgb, var(--vivid-pink) 8%, transparent) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modern-select__option:hover .modern-select__option-bg,
+.modern-select__option--highlighted .modern-select__option-bg {
+  opacity: 1;
+}
+
+/* === Element: option-content === */
+.modern-select__option-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--space-4);
+}
+
+.modern-select__option-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.modern-select__option-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === Element: option-indicator (dot) === */
+.modern-select__option-indicator {
+  flex-shrink: 0;
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modern-select__option-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+}
+
+/* === Element: option-checkmark === */
+.modern-select__option-checkmark {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--accent-pink);
+  flex-shrink: 0;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* === Element: option-line (hover accent line) === */
+.modern-select__option-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent-pink), var(--vivid-pink));
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modern-select__option:hover .modern-select__option-line,
+.modern-select__option--highlighted .modern-select__option-line {
+  width: 100%;
+}
+
+/* === Element: dropdown-footer === */
+.modern-select__dropdown-footer {
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--accent-pink) 3%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--accent-pink) 10%, transparent);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.dark .modern-select__dropdown-footer {
+  background: color-mix(in srgb, var(--accent-pink) 6%, transparent);
+}
+
+.modern-select__footer-text {
+  font-size: var(--font-size-xs);
+  color: var(--muted-foreground);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+.dark .modern-select__footer-text {
+  color: var(--muted-foreground);
+}
+
+/* === Element: empty === */
+.modern-select__empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.dark .modern-select__empty {
+  color: var(--muted-foreground);
+}
+
+/* === Element: hidden (native select for a11y) === */
+.modern-select__hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* === Responsive Design === */
+@media (max-width: 40rem) {
+
+  /* 640px */
+  .modern-select__button {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+
+  .modern-select__dropdown {
+    border-radius: var(--radius-xl);
+    top: calc(100% + var(--space-1));
+  }
+
+  .modern-select__option {
+    padding: var(--space-3) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  .modern-select__options-container {
+    max-height: 12rem;
+  }
+
+  .modern-select__icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .modern-select__chevron {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+/* Additional breakpoints (optional) */
+@media (max-width: 60.5rem) {
+  /* 968px */
+  /* Adjustments for tablet if needed */
+}
+
+@media (max-width: 75rem) {
+  /* 1200px */
+  /* Adjustments for smaller desktop if needed */
+}
+
+/* === Accessibility === */
+.modern-select__button:focus-visible {
+  outline: 2px solid var(--accent-pink);
+  outline-offset: 2px;
+}
+
+.modern-select__option:focus-visible {
+  outline: 2px solid var(--accent-pink);
+  outline-offset: -2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .modern-select__button,
+  .modern-select__option,
+  .modern-select__dropdown,
+  .modern-select__chevron,
+  .modern-select__option-indicator,
+  .modern-select__option-checkmark,
+  .modern-select__option-line {
+    transition: none;
+    animation: none;
+  }
+
+  .modern-select__option-line {
+    width: 0 !important;
+  }
+
+  .modern-select__chevron--open {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: more) {
+  .modern-select__button {
+    border-width: 3px;
+  }
+
+  .modern-select__dropdown {
+    border-width: 3px;
+  }
+
+  .modern-select__option {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modern-select__button:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .modern-select__dropdown {
+    display: none;
+  }
+}

@@ -1,0 +1,100 @@
+/**
+ * @file AdminJobsModeration.module.css
+ * @description Styles for the Admin Jobs Moderation page.
+ * @author Sherif Talaat
+ * @version 1.0.0
+ * @date 2026-05-04
+ */
+
+.container {
+  padding: var(--space-6);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.jobTitle {
+  font-weight: var(--font-weight-medium);
+}
+
+.companyName {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detailSection {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-3);
+}
+
+.detailSection:last-child {
+  border-bottom: none;
+}
+
+.companyInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-2);
+}
+
+.modalField {
+  margin-top: var(--space-4);
+}
+
+.formLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-2);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-input);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (max-width: 60.5rem) {
+  .container {
+    padding: var(--space-4);
+  }
+  .actionButtons {
+    flex-direction: column;
+  }
+}
