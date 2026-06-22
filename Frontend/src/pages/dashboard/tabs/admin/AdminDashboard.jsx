@@ -11,7 +11,7 @@ import {
   Users,
   FileText,
   ShieldAlert,
-  CreditCard,
+  Send,
 } from 'lucide-react';
 import styles from './AdminDashboard.module.css';
 
@@ -60,12 +60,12 @@ const AdminDashboard = () => {
       description: "Registered users"
     },
     {
-      title: "Total Revenue",
-      value: `$${adminStats.totalRevenue.toLocaleString()}`,
-      change: adminStats.revenueGrowth,
-      icon: CreditCard,
-      trendType: adminStats.revenueGrowth.includes('+') ? 'up' : 'down',
-      description: "Monthly revenue"
+      title: "Applications",
+      value: adminStats.totalApplications.toLocaleString(),
+      change: `${adminStats.pendingApplications} pending`,
+      icon: Send,
+      trendType: adminStats.pendingApplications > 0 ? "up" : "neutral",
+      description: "Total job applications"
     },
     {
       title: "Active Jobs",

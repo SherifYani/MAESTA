@@ -1,15 +1,15 @@
 import adminService from '../../../../../services/adminService';
-import jobService from '../../../../../services/jobService';
 import paymentService from '../../../../../services/paymentService';
 
 export const getAdminStats = async () => {
     try {
         const metrics = await adminService.getDashboardMetrics();
-        const pendingReports = await adminService.getPendingReports();
         return {
             totalUsers: metrics?.totalUsers || 0,
-            activeJobs: metrics?.activeJobs || 0,
-            pendingModeration: (metrics?.pendingModeration || 0) + (pendingReports?.length || 0),
+            activeJobs: metrics?.activeJobs ?? metrics?.totalJobs ?? 0,
+            pendingModeration: metrics?.pendingReportsCount || metrics?.pendingModeration || 0,
+            totalApplications: metrics?.totalApplications || 0,
+            pendingApplications: metrics?.pendingApplications || 0,
             totalRevenue: metrics?.totalRevenue || 0,
             userGrowth: metrics?.userGrowth || "0%",
             revenueGrowth: metrics?.revenueGrowth || "0%",
@@ -19,9 +19,9 @@ export const getAdminStats = async () => {
         };
     } catch (error) {
         return {
-            totalUsers: 0, activeJobs: 0, pendingModeration: 0, totalRevenue: 0,
-            userGrowth: "0%", revenueGrowth: "0%", activeSessions: 0,
-            avgResponseTime: "N/A", successRate: "N/A"
+            totalUsers: 0, activeJobs: 0, pendingModeration: 0, totalApplications: 0,
+            pendingApplications: 0, totalRevenue: 0, userGrowth: "0%", revenueGrowth: "0%",
+            activeSessions: 0, avgResponseTime: "N/A", successRate: "N/A"
         };
     }
 };
@@ -46,17 +46,7 @@ export const getUsersData = async () => {
 
 export const getJobsData = async () => {
     try {
-        const response = await jobService.getJobs({ page: 1, limit: 50 });
-        const jobs = response?.items || response || [];
-        return jobs.map((j, i) => ({
-            id: j.jobId || j.id,
-            title: j.title || j.jobTitle || 'Untitled',
-            company: j.company || j.companyName || 'Unknown',
-            type: j.type || j.jobType || 'Unspecified',
-            status: j.status || j.isPublished ? 'active' : 'inactive',
-            postedDate: j.createdAt || j.postedDate || null,
-            reports: j.reports || 0
-        }));
+        return await adminService.getAdminJobs();
     } catch (error) {
         return [];
     }
@@ -195,10 +185,9 @@ export const getRevenueData = async () => {
 
 export const getJobPostingsData = async () => {
     try {
-        const response = await jobService.getJobs({ page: 1, limit: 50 });
-        const jobs = response?.items || response || [];
+        const jobs = await adminService.getAdminJobs();
         return [
-            { name: 'Total', jobs: jobs.length, active: jobs.filter(j => j.isPublished).length }
+            { name: 'Total', jobs: jobs.length, active: jobs.filter(j => j.status === 'active').length }
         ];
     } catch (error) {
         return [{ name: 'Total', jobs: 0, active: 0 }];

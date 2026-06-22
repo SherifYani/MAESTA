@@ -258,6 +258,22 @@ const DetailedApplications = ({
   };
 
   /**
+   * Get the application ID from different API payload shapes
+   * @param {Object} application - Application object
+   * @returns {string|number|null} Application ID
+   */
+  const getApplicationId = (application) =>
+    application.id || application.applicationId || application.jobApplicationId || null;
+
+  /**
+   * Get the related job ID from different application payload shapes
+   * @param {Object} application - Application object
+   * @returns {string|number|null} Related job ID
+   */
+  const getApplicationJobId = (application) =>
+    application.jobId || application.job?.id || application.job?.jobId || null;
+
+  /**
    * Toggle application details
    * @param {string} appId - Application ID
    */
@@ -266,14 +282,42 @@ const DetailedApplications = ({
   };
 
   /**
+   * Handle view details action
+   * @param {Object} application - Application object
+   * @param {Event} e - Click event
+   */
+  const handleViewDetails = (application, e) => {
+    e.stopPropagation();
+    const jobId = getApplicationJobId(application);
+
+    if (jobId) {
+      navigate(`/jobs/${jobId}`);
+      return;
+    }
+
+    onViewApplication(getApplicationId(application));
+  };
+
+  /**
+   * Handle status action by expanding the application card
+   * @param {string} appId - Application ID
+   * @param {Event} e - Click event
+   */
+  const handleUpdateStatus = (appId, e) => {
+    e.stopPropagation();
+    setExpandedAppId(appId);
+    onUpdateStatus(appId);
+  };
+
+  /**
    * Handle application withdrawal
    * @param {string} appId - Application ID
    * @param {Event} e - Click event
    */
-  const handleWithdraw = (appId, e) => {
+  const handleWithdraw = async (appId, e) => {
     e.stopPropagation();
     if (window.confirm("Are you sure you want to withdraw this application?")) {
-      onWithdrawApplication(appId);
+      await onWithdrawApplication(appId);
     }
   };
 
@@ -293,13 +337,6 @@ const DetailedApplications = ({
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedApplications = filteredApplications.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
-  const winSize = Math.min(5, totalPages);
-  let startPageNum;
-  if (totalPages <= 5) startPageNum = 1;
-  else if (currentPage <= 3) startPageNum = 1;
-  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
-  else startPageNum = currentPage - 2;
 
 
   // If no applications
@@ -470,11 +507,13 @@ const DetailedApplications = ({
       {/* Applications List */}
       <div className={styles.applicationsList}>
         {pagedApplications.map(application => {
+          const applicationId = getApplicationId(application);
+
           return (
-            <article 
-              key={application.id} 
-              className={`${styles.applicationCard} ${expandedAppId === application.id ? styles.expanded : ''}`}
-              onClick={() => toggleAppDetails(application.id)}
+            <article
+              key={applicationId}
+              className={`${styles.applicationCard} ${expandedAppId === applicationId ? styles.expanded : ''}`}
+              onClick={() => toggleAppDetails(applicationId)}
               role="button"
               tabIndex={0}
             >
@@ -528,7 +567,7 @@ const DetailedApplications = ({
               </div>
 
               {/* Expandable Content */}
-              {expandedAppId === application.id && (
+              {expandedAppId === applicationId && (
                 <div className={styles.expandedContent}>
                   {application.timeline && (
                     <div className={styles.timelineSection}>
@@ -562,10 +601,7 @@ const DetailedApplications = ({
                     <Button
                       variant="outline"
                       size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onViewApplication(application.id);
-                      }}
+                      onClick={(e) => handleViewDetails(application, e)}
                     >
                       <Eye size={16} /> View Details
                     </Button>
@@ -574,7 +610,7 @@ const DetailedApplications = ({
                       <Button
                         variant="destructive"
                         size="small"
-                        onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
+                        onClick={(e) => { e.stopPropagation(); handleWithdraw(applicationId, e); }}
                       >
                         <Trash2 size={16} /> Withdraw
                       </Button>
@@ -583,7 +619,7 @@ const DetailedApplications = ({
                     <Button
                       variant="primary"
                       size="small"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => handleUpdateStatus(applicationId, e)}
                     >
                       Update Status
                     </Button>
@@ -592,15 +628,12 @@ const DetailedApplications = ({
               )}
 
               {/* Collapsed Actions */}
-              {expandedAppId !== application.id && (
+              {expandedAppId !== applicationId && (
                 <div className={styles.collapsedActions}>
                   <Button
                     variant="ghost"
                     size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onViewApplication(application.id);
-                    }}
+                    onClick={(e) => handleViewDetails(application, e)}
                   >
                     <Eye size={14} />
                   </Button>
@@ -609,7 +642,7 @@ const DetailedApplications = ({
                     <Button
                       variant="ghost"
                       size="small"
-                      onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
+                      onClick={(e) => { e.stopPropagation(); handleWithdraw(applicationId, e); }}
                     >
                       <Trash2 size={14} />
                     </Button>

@@ -21,11 +21,13 @@ const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage.jsx"
 const VerificationEmailPage = lazy(() => import("./pages/auth/VerificationEmailPage.jsx"));
 const LoginForm = lazy(() => import("./pages/Login.jsx"));
 const OnboardingPage = lazy(() => import("./pages/onboarding/OnboardingPage.jsx"));
+const CompanyProfileView = lazy(() => import("./pages/profiles/CompanyProfileView"));
 
 const DashboardRoutes = lazy(() => import("./routes/DashboardRoutes"));
 const JobRoutes = lazy(() => import("./routes/JobRoutes"));
 const AiRoutes = lazy(() => import("./routes/AiRoutes"));
 const GigRoutes = lazy(() => import("./routes/GigRoutes"));
+
 const ChatRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.ChatRoutes })));
 const NotificationRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.NotificationRoutes })));
 const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.SubscriptionRoutes })));
@@ -109,6 +111,8 @@ function App() {
             </Suspense>
           </ProtectedRoute>
         } />
+
+        <Route path="/company/:companyId" element={<CompanyProfileView />} />
 
         {/* Gig Module - Handles /gigs */}
         <Route path="/gigs/*" element={

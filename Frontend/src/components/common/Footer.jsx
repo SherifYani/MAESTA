@@ -13,7 +13,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Heart } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import styles from './Footer.module.css';
 
 /**
@@ -93,10 +93,10 @@ const Footer = () => {
      * Social media links
      */
     const socialLinks = [
-        { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/maesta' },
-        { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/maesta' },
-        { icon: Facebook, label: 'Facebook', href: 'https://facebook.com/maesta' },
-        { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/maesta' },
+        { iconClass: 'fa-brands fa-linkedin-in', href: 'https://linkedin.com/company/maesta' },
+        { iconClass: 'fa-brands fa-facebook-f', href: 'https://facebook.com/maesta' },
+        { iconClass: 'fa-brands fa-instagram', href: 'https://instagram.com/maesta' },
+        { iconClass: 'fa-brands fa-x-twitter', href: 'https://twitter.com/maesta' },
     ];
 
     /**
@@ -149,7 +149,6 @@ const Footer = () => {
                             <h4 className={styles.socialTitle}>Follow Us</h4>
                             <div className={styles.socialLinks} aria-label="Social media links">
                                 {socialLinks.map((social, index) => {
-                                    const Icon = social.icon;
                                     return (
                                         <a
                                             key={`social-${index}`}
@@ -160,8 +159,7 @@ const Footer = () => {
                                             onClick={() => handleLinkClick(social.label, social.href)}
                                             aria-label={`Follow us on ${social.label}`}
                                         >
-                                            <Icon size={20} className={styles.socialIcon} aria-hidden="true" />
-                                            <span className="sr-only">{social.label}</span>
+                                            <i className={`${social.iconClass} ${styles.socialIcon}`} aria-hidden="true"></i>
                                         </a>
                                     );
                                 })}
@@ -205,10 +203,6 @@ const Footer = () => {
                     <div className={styles.copyrightSection}>
                         <p className={styles.copyrightText}>
                             &copy; {currentYear} maesta. All rights reserved.
-                        </p>
-                        <p className={styles.copyrightSubtext}>
-                            Made with <Heart size={12} className={styles.heartIcon} aria-hidden="true" />{' '}
-                            to help you find your dream job.
                         </p>
                     </div>
 

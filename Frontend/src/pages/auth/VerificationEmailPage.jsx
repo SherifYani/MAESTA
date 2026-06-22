@@ -16,7 +16,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../../components/forms/FormInput";
 import { isFormValid } from "../../utils/form-validation";
 import { useResendTimer } from "../../hooks/useResendTimer";
-import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import authService from "../../services/authService";
 import "../../styles/shared/_form-base.css";
@@ -149,7 +148,6 @@ function VerificationEmailPage() {
 
   return (
     <div>
-      <Header />
       <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">

@@ -33,11 +33,24 @@ Use this when a user asks to ensure header/footer/dashboard navigation works and
    - A link labeled `Profile` should normally open `/dashboard/profile`.
    - A link labeled `Profile Settings` should open `/dashboard/profile/edit` only when the user specifically wants profile-edit fields.
    - A link labeled `Settings` or `Account` should open `/dashboard/account` when the project has a separate account settings page.
+   - If a role has no profile page (for example an admin account in MAESTA), remove or filter the `Profile` dropdown item for that role instead of linking it to a dead route.
    - If the backend exposes user settings endpoints, build or wire a dedicated settings page instead of redirecting settings to profile edit. In MAESTA this means using `GET /api/Profile/me/settings` and `PUT /api/Profile/me/settings`.
    - If dropdown links use raw `<a href>` for internal dashboard routes, convert to `button` plus `navigate(...)` or `Link` to avoid full reloads and to centralize logout handling.
    - After converting anchors to buttons, update CSS so `.menuItem` includes button reset styles: transparent background, no border, full width, inherited font, and left text alignment.
 
-5. Add missing pages with a reusable pattern.
+5. Hide global chrome on focused auth/onboarding flows.
+   - When the user asks to remove the header during a later registration phase, inspect the actual route component for that phase, not only the initial `/register` page. In MAESTA, registration phase two is `OnboardingPage.jsx` at `/register/onboarding`.
+   - Email verification and reset password pages may import `Header` directly even when routed from auth flow; remove both the JSX and the now-unused import.
+   - Keep the footer unless the user asks for a fully chrome-free page; auth pages often still need footer/legal links.
+   - Re-run the build after removing header imports because unused imports become lint warnings in CRA builds.
+
+6. Fix footer social/icon loading separately from navigation.
+   - First verify whether the app already imports a brand icon font globally (MAESTA imports `@fortawesome/fontawesome-free/css/all.css` from `styles/index.css`).
+   - If `lucide-react` brand icons fail or render unexpectedly, replace brand social icons with Font Awesome classes such as `fa-brands fa-linkedin-in`, `fa-facebook-f`, `fa-instagram`, and `fa-x-twitter`.
+   - Remove unused lucide brand imports and add CSS for icon font sizing (`font-size`, `line-height`) on the existing social icon class.
+   - Keep external social links as normal anchors with `target="_blank"` and `rel="noopener noreferrer"`.
+
+7. Add missing pages with a reusable pattern.
    - Prefer one reusable public information page component driven by a `pageKey` map for simple footer/legal/company pages.
    - Add routes in the root router for each public path: `/about`, `/blog`, `/careers`, `/privacy`, `/terms`, `/security`, `/cookies`, `/accessibility`, `/contact`.
    - Use the existing layout (`MainLayout`), `Link`, CSS Modules, CSS variables, and design-system tokens rather than hardcoded styling.

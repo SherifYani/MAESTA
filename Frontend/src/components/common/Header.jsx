@@ -112,6 +112,9 @@ const Header = () => {
   const navLinks = isAuthenticated
     ? (NAV_AUTHENTICATED[role] || NAV_AUTHENTICATED.jobseeker)
     : NAV_GUEST;
+  const dropdownItems = role === 'admin'
+    ? DROPDOWN_ITEMS.filter((item) => item.label !== 'Profile')
+    : DROPDOWN_ITEMS;
 
   /* ── Scroll listener — activates glassmorphism backdrop ── */
   useEffect(() => {
@@ -279,7 +282,7 @@ const Header = () => {
                       </div>
 
                       <div className={styles['header__dropdown-body']}>
-                        {DROPDOWN_ITEMS.map((item) => (
+                        {dropdownItems.map((item) => (
                           <Link
                             key={item.to}
                             to={item.to}

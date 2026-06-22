@@ -48,6 +48,7 @@ namespace JobMagnet.Application.DTOs.Job
         public bool IsPublished { get; set; }
         public int? EmployerId { get; set; }
         public string? CompanyName { get; set; }
+        public int? CompanyId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
         public double? MatchScore { get; set; }

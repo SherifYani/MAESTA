@@ -77,6 +77,20 @@ Use this after an integration audit finds React frontend calls that are mocked, 
    - For interview scheduling, ensure the frontend uses the backend's actual application identifier and DTO fields (`jobApplicationId`, `scheduledAt`, `durationMinutes`, `meetingLink`/`location`) rather than UI-only `applicantId`, `scheduledDate`, or `scheduledTime` fields.
    - Re-run the frontend build after removing dead handlers; eslint no-undef/no-unused-vars errors often reveal leftover modal state or helper functions from disabled fake actions.
 
+12. For jobseeker application-card actions, trace both the card component and its route wrapper.
+   - In card UIs with bottom-right icon buttons, verify each button has a real `onClick` and is not only stopping propagation from the parent card's expand/collapse handler.
+   - The route wrapper may pass `onViewApplication={() => {}}` even when the card component calls `onViewApplication(id)` correctly; wire it to a real route such as job details or application details.
+   - Normalize IDs before invoking actions because application payloads may use `id`, `applicationId`, or `jobApplicationId`, while view navigation may need `jobId`, `job.id`, or `job.jobId`.
+   - After a destructive service call such as withdraw succeeds, update local list state immediately (`filter` the removed application) or reload the collection so the UI visibly changes.
+   - For buttons without a supported API action, provide a visible UI behavior (for example expand the card to show current status/timeline) instead of a no-op.
+
+13. For admin dashboards that do not reflect jobs/applications, avoid public or role-limited endpoints.
+   - Trace admin widgets through both the overview page and admin data service; dashboards often call `jobService.getJobs()` or employer-only endpoints that omit inactive jobs and cannot see all applications.
+   - Add small Admin API endpoints for platform-wide reads when needed: `GET /api/Admin/jobs`, `GET /api/Admin/applications`, and aggregate metrics such as `activeJobs`, `totalApplications`, and `pendingApplications`.
+   - Keep moderation actions under Admin API too; do not reuse employer-scoped routes like `PUT /api/jobs/{id}/status` because they can reject admins as unauthorized.
+   - Normalize admin DTOs at the frontend service boundary into table/card fields (`id`, `company`, `postedBy`, `status`, `applications`, `reports`, `postedAt`) before components consume them.
+   - If the normal solution build is blocked by a running API process locking DLLs, verify compile by building the API project to a temporary output folder, for example `dotnet build JobMagnet.API/JobMagnet.API.csproj -o .qwen/tmp/api-build`.
+
 ## Useful Search Patterns
 
 ```bash

@@ -44,7 +44,7 @@ namespace JobMagnet.Application.Services
                 .OrderByDescending(j => j.CreatedAt)
                 .Skip((request.Page - 1) * request.Limit)
                 .Take(request.Limit)
-                .Select(j => MapJob(j, null, null))
+                .Select(j => MapJob(j, null, null, null))
                 .ToListAsync();
 
             return new PagedJobsResponse
@@ -65,12 +65,12 @@ namespace JobMagnet.Application.Services
 
             if (job == null) throw new KeyNotFoundException("Job not found");
 
-            var companyName = await _context.Companies
+            var company = await _context.Companies
                 .Where(c => c.Employer != null && c.Employer.UserId == job.PostedByUserId)
-                .Select(c => c.CompanyName)
+                .Select(c => new { c.CompanyName, c.CompanyId })
                 .FirstOrDefaultAsync();
 
-            return MapJob(job, companyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task<JobDto> CreateJobAsync(int employerUserId, CreateJobRequest request)
@@ -98,7 +98,7 @@ namespace JobMagnet.Application.Services
             // For now, we return the basic job DTO
 
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId);
-            return MapJob(job, company?.CompanyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task<JobDto> UpdateJobAsync(int employerUserId, int jobId, CreateJobRequest request)
@@ -120,7 +120,7 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
             
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId);
-            return MapJob(job, company?.CompanyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task DeleteJobAsync(int employerId, int jobId)
@@ -145,7 +145,7 @@ namespace JobMagnet.Application.Services
             return await _context.Jobs
                 .AsNoTracking()
                 .Where(j => j.PostedByUserId == employer.UserId && !j.IsDeleted)
-                .Select(j => MapJob(j, company != null ? company.CompanyName : null, null))
+                .Select(j => MapJob(j, company != null ? company.CompanyName : null, company != null ? (int?)company.CompanyId : null, null))
                 .ToListAsync();
         }
 
@@ -307,9 +307,12 @@ namespace JobMagnet.Application.Services
             var companies = await _context.Companies
                 .Include(c => c.Employer)
                 .Where(c => c.Employer != null && userIds.Contains(c.Employer.UserId))
-                .ToDictionaryAsync(c => c.Employer!.UserId, c => c.CompanyName);
+                .ToDictionaryAsync(c => c.Employer!.UserId, c => new { c.CompanyName, c.CompanyId });
 
-            return savedJobs.Select(s => MapJob(s.Job!, companies.GetValueOrDefault(s.Job!.PostedByUserId), null)).ToList();
+            return savedJobs.Select(s => {
+                var comp = companies.GetValueOrDefault(s.Job!.PostedByUserId);
+                return MapJob(s.Job!, comp?.CompanyName, comp?.CompanyId, null);
+            }).ToList();
         }
 
         public async Task<IEnumerable<JobDto>> GetRecommendedJobsAsync(int userId)
@@ -339,14 +342,14 @@ namespace JobMagnet.Application.Services
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
                 .Take(10)
-                .Select(x => MapJob(x.Job, null, x.Score))
+                .Select(x => MapJob(x.Job, null, null, x.Score))
                 .ToList();
 
             return recommendations;
         }
 
         // ─── Private Mappers ──────────────────────────────────────────────────
-        private static JobDto MapJob(Domain.Entities.Job job, string? companyName, double? matchScore) => new()
+        private static JobDto MapJob(Domain.Entities.Job job, string? companyName, int? companyId, double? matchScore) => new()
         {
             JobId = job.JobId,
             Title = job.Title,
@@ -359,6 +362,7 @@ namespace JobMagnet.Application.Services
             IsPublished = job.IsActive,
             EmployerId = job.PostedByUserId,
             CompanyName = companyName,
+            CompanyId = companyId,
             CreatedAt = job.CreatedAt,
             UpdatedAt = job.UpdatedAt,
             MatchScore = matchScore

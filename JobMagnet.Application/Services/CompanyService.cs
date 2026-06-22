@@ -76,7 +76,52 @@ namespace JobMagnet.Application.Services
 
             if (company == null) throw new KeyNotFoundException("Company not found");
 
-            return MapCompany(company);
+            var dto = MapCompany(company);
+
+            var employer = await _context.Employers.AsNoTracking()
+                .FirstOrDefaultAsync(e => e.EmployerId == company.EmployerId && !e.IsDeleted);
+
+            if (employer != null)
+            {
+                // Fetch Members
+                dto.Members = await _context.Employers
+                    .Include(e => e.User)
+                    .Where(e => (e.CompanyId == company.CompanyId || e.EmployerId == company.EmployerId) && !e.IsDeleted)
+                    .Select(e => new CompanyMemberDto
+                    {
+                        Id = e.UserId,
+                        Name = e.User != null ? $"{e.User.FirstName} {e.User.LastName}".Trim() : "Unknown",
+                        Role = e.EmployerId == company.EmployerId ? "Admin" : "Member",
+                        Avatar = e.User != null ? e.User.ProfilePictureUrl : null
+                    })
+                    .ToListAsync();
+
+                // Fetch Jobs
+                dto.Jobs = await _context.Jobs
+                    .Where(j => j.PostedByUserId == employer.UserId && !j.IsDeleted)
+                    .Select(j => new CompanyJobDto
+                    {
+                        Id = j.JobId,
+                        Title = j.Title,
+                        Location = j.Location ?? string.Empty,
+                        JobType = j.Type ?? string.Empty,
+                        Status = j.IsActive ? "Open" : "Closed",
+                        PostedAt = j.CreatedAt,
+                        ApplicationsCount = _context.JobApplications.Count(a => a.JobId == j.JobId && !a.IsDeleted)
+                    })
+                    .ToListAsync();
+
+                // Calculate Stats
+                dto.Stats = new CompanyStatsDto
+                {
+                    TotalJobs = dto.Jobs.Count,
+                    ActiveJobs = dto.Jobs.Count(j => j.Status == "Open"),
+                    TotalHires = _context.JobApplications.Count(a => a.JobId > 0 && a.Job!.PostedByUserId == employer.UserId && a.Status == "hired"),
+                    AvgTimeToHire = 15
+                };
+            }
+
+            return dto;
         }
 
         public async Task<IEnumerable<CompanyDto>> SearchCompaniesAsync(string query)

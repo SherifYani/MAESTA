@@ -21,7 +21,6 @@ import {
   debounceValidation,
 } from "../../utils/form-validation";
 import authService from "../../services/authService";
-import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import "../../styles/shared/_form-base.css";
 import "../../styles/auth-pages.css";
@@ -190,7 +189,6 @@ function ResetPasswordPage() {
 
   return (
     <div>
-      <Header />
       <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">

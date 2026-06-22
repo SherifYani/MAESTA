@@ -82,6 +82,34 @@ namespace JobMagnet.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("jobs")]
+        public async Task<IActionResult> GetJobs()
+        {
+            var result = await _adminService.GetJobsAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("applications")]
+        public async Task<IActionResult> GetApplications()
+        {
+            var result = await _adminService.GetApplicationsAsync();
+            return Ok(result);
+        }
+
+        [HttpPut("jobs/{jobId:int}/status")]
+        public async Task<IActionResult> ToggleJobStatus(int jobId, [FromBody] bool isActive)
+        {
+            try
+            {
+                await _adminService.ToggleJobStatusAsync(jobId, isActive);
+                return Ok(new { message = "Job status updated successfully" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("reports")]
         public async Task<IActionResult> GetPendingReports()
         {

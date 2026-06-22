@@ -99,6 +99,9 @@ namespace JobMagnet.Application.Services
             {
                 TotalUsers = await _context.Users.CountAsync(u => !u.IsDeleted),
                 TotalJobs = await _context.Jobs.CountAsync(j => !j.IsDeleted),
+                ActiveJobs = await _context.Jobs.CountAsync(j => !j.IsDeleted && j.IsActive),
+                TotalApplications = await _context.JobApplications.CountAsync(a => !a.IsDeleted),
+                PendingApplications = await _context.JobApplications.CountAsync(a => !a.IsDeleted && a.Status.ToLower() == "pending"),
                 TotalProjects = await _context.Projects.CountAsync(p => !p.IsDeleted),
                 PendingReportsCount = await _context.Reports.CountAsync(r => r.Status == "Pending" && !r.IsDeleted),
                 OngoingInterviewsCount = await _context.Interviews.CountAsync(i => (i.Status == "Scheduled" || i.Status == "Rescheduled") && !i.IsDeleted),
@@ -106,6 +109,75 @@ namespace JobMagnet.Application.Services
                     .Where(t => t.Type == "Payment" && t.Status == "Completed" && !t.IsDeleted)
                     .SumAsync(t => t.Amount)
             };
+        }
+
+        public async Task<IEnumerable<AdminJobDto>> GetJobsAsync()
+        {
+            return await _context.Jobs
+                .AsNoTracking()
+                .Where(j => !j.IsDeleted)
+                .OrderByDescending(j => j.CreatedAt)
+                .Select(j => new AdminJobDto
+                {
+                    JobId = j.JobId,
+                    Title = j.Title,
+                    Description = j.Description,
+                    Location = j.Location,
+                    JobType = j.Type,
+                    SalaryMin = j.MinSalary,
+                    SalaryMax = j.MaxSalary,
+                    IsPublished = j.IsActive,
+                    PostedByUserId = j.PostedByUserId,
+                    PostedByName = _context.Users
+                        .Where(u => u.UserId == j.PostedByUserId)
+                        .Select(u => (u.FirstName + " " + u.LastName).Trim())
+                        .FirstOrDefault() ?? "Unknown",
+                    CompanyName = _context.Companies
+                        .Where(c => c.Employer != null && c.Employer.UserId == j.PostedByUserId && !c.IsDeleted)
+                        .Select(c => c.CompanyName)
+                        .FirstOrDefault(),
+                    ApplicationsCount = _context.JobApplications.Count(a => a.JobId == j.JobId && !a.IsDeleted),
+                    ReportsCount = _context.Reports.Count(r => r.EntityType == "Job" && r.EntityId == j.JobId && !r.IsDeleted),
+                    CreatedAt = j.CreatedAt,
+                    UpdatedAt = j.UpdatedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AdminApplicationDto>> GetApplicationsAsync()
+        {
+            return await _context.JobApplications
+                .AsNoTracking()
+                .Include(a => a.Job)
+                .Include(a => a.JobSeeker)
+                .ThenInclude(js => js!.User)
+                .Where(a => !a.IsDeleted)
+                .OrderByDescending(a => a.AppliedAt)
+                .Select(a => new AdminApplicationDto
+                {
+                    ApplicationId = a.JobApplicationId,
+                    JobId = a.JobId,
+                    JobTitle = a.Job != null ? a.Job.Title : string.Empty,
+                    JobSeekerId = a.JobSeekerId,
+                    ApplicantName = a.JobSeeker != null && a.JobSeeker.User != null
+                        ? (a.JobSeeker.User.FirstName + " " + a.JobSeeker.User.LastName).Trim()
+                        : string.Empty,
+                    CoverLetter = a.CoverLetter,
+                    CVUrl = a.ResumeUrl,
+                    Status = a.Status,
+                    AppliedAt = a.AppliedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task ToggleJobStatusAsync(int jobId, bool isActive)
+        {
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.JobId == jobId && !j.IsDeleted);
+            if (job == null) throw new KeyNotFoundException("Job not found");
+
+            job.IsActive = isActive;
+            job.UpdatedAt = DateTimeOffset.UtcNow;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<SystemReportDto>> GetPendingReportsAsync()

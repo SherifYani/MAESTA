@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import DashboardLayout from "../pages/dashboard/layout/DashboardLayout";
@@ -438,14 +438,25 @@ const SavedJobsWithData = () => {
 const DetailedApplicationsWithData = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  const loadApplications = useCallback(() => {
+    setLoading(true);
     jobService
       .getMyApplications()
       .then((res) => setApplications(res?.items || res || []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadApplications();
+  }, [loadApplications]);
+
+  const handleWithdrawApplication = async (applicationId) => {
+    await jobService.withdrawApplication(applicationId);
+    setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+  };
 
   if (loading) return <TableSkeleton rows={5} columns={1} />;
 
@@ -462,8 +473,8 @@ const DetailedApplicationsWithData = () => {
         rejected: applications.filter((app) => app.status === "rejected")
           .length,
       }}
-      onViewApplication={() => {}}
-      onWithdrawApplication={jobService.withdrawApplication}
+      onViewApplication={(id) => navigate(`/dashboard/applications/${id}`)}
+      onWithdrawApplication={handleWithdrawApplication}
     />
   );
 };

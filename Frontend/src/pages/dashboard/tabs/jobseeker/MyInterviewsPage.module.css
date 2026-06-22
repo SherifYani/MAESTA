@@ -1,281 +1,801 @@
-/* MyInterviewsPage.module.css */
+/**
+ * @file MyInterviewsPage.module.css
+ * @description Job Seeker — My Interviews page styles.
+ *              Glassmorphism design system aligned with MAESTA design spec.
+ *              Breakpoints: 75rem (large desktop), 60.5rem (tablet/desktop), 40rem (mobile).
+ * @author Sherif Talaat
+ * @last-modified-by Sherif Talaat
+ * @last-modified-date 2026-06-21
+ */
+
+/* ==========================================================================
+   Page Container — Premium Animated Background
+   ========================================================================== */
 
 .container {
-    padding: 2rem;
-    max-width: 1100px;
-    margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  min-height: 100vh;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Header ─────────────────────────────────────────── */
-.header {
-    margin-bottom: 2rem;
+/* Animated radial gradient background blob */
+.container::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 20% 30%, var(--color-radial-pink-1) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, var(--color-radial-pink-2) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, var(--color-radial-pink-3) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+  animation: float 20s ease-in-out infinite;
 }
 
-.title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-text-primary, #0f172a);
-    margin: 0 0 0.25rem;
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%       { transform: translate(30px, -30px) rotate(120deg); }
+  66%       { transform: translate(-20px, 20px) rotate(240deg); }
 }
 
-.subtitle {
-    font-size: 0.95rem;
-    color: var(--color-text-secondary, #64748b);
-    margin: 0;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Stats Row ──────────────────────────────────────── */
-.statsRow {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.statCard {
-    background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, #e2e8f0);
-    border-radius: 12px;
-    padding: 1.25rem 1rem;
-    text-align: center;
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.statValue {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-primary, #6366f1);
-    display: block;
+@keyframes cardAppear {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.statLabel {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary, #64748b);
-    margin-top: 0.25rem;
-    display: block;
-}
-
-/* ── Filters ────────────────────────────────────────── */
-.filters {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-}
-
-.filterBtn {
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-    border: 1px solid var(--color-border, #e2e8f0);
-    background: var(--color-surface, #fff);
-    color: var(--color-text-secondary, #64748b);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.filterBtn:hover {
-    border-color: var(--color-primary, #6366f1);
-    color: var(--color-primary, #6366f1);
-}
-
-.filterBtn.active {
-    background: var(--color-primary, #6366f1);
-    border-color: var(--color-primary, #6366f1);
-    color: #fff;
-    font-weight: 600;
-}
-
-/* ── List ───────────────────────────────────────────── */
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* ── Interview Card ─────────────────────────────────── */
-.card {
-    background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, #e2e8f0);
-    border-radius: 14px;
-    padding: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1.25rem;
-    transition: box-shadow 0.2s, transform 0.2s;
-}
-
-.card:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-}
-
-.cardIcon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.cardBody {
-    flex: 1;
-    min-width: 0;
-}
-
-.cardTop {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.4rem;
-    flex-wrap: wrap;
-}
-
-.cardTitle {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--color-text-primary, #0f172a);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.statusBadge {
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 0.25rem 0.7rem;
-    border-radius: 999px;
-    text-transform: capitalize;
-    white-space: nowrap;
-}
-
-.status_scheduled  { background: #dbeafe; color: #1d4ed8; }
-.status_rescheduled { background: #fef3c7; color: #92400e; }
-.status_completed  { background: #d1fae5; color: #065f46; }
-.status_cancelled  { background: #fee2e2; color: #991b1b; }
-.status_rejected   { background: #fce7f3; color: #9d174d; }
-
-.cardMeta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary, #64748b);
-    margin-top: 0.5rem;
-}
-
-.metaItem {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.cardNotes {
-    margin-top: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary, #64748b);
-    background: var(--color-surface-alt, #f8fafc);
-    border-radius: 8px;
-    padding: 0.6rem 0.85rem;
-    border-left: 3px solid var(--color-primary, #6366f1);
-}
-
-/* ── Join / Location ─────────────────────────────────── */
-.joinLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.75rem;
-    padding: 0.45rem 1rem;
-    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-    color: #fff;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: opacity 0.2s;
-}
-
-.joinLink:hover { opacity: 0.88; }
-
-/* ── Empty ───────────────────────────────────────────── */
-.empty {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--color-text-secondary, #64748b);
-}
-
-.emptyIcon {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-}
-
-.emptyTitle {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--color-text-primary, #0f172a);
-    margin: 0 0 0.4rem;
-}
-
-.emptyText {
-    font-size: 0.9rem;
-    margin: 0 0 1.25rem;
-}
-
-.browsBtn {
-    display: inline-block;
-    padding: 0.6rem 1.5rem;
-    background: var(--color-primary, #6366f1);
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: opacity 0.2s;
-}
-
-.browsBtn:hover { opacity: 0.85; }
-
-/* ── Loading ─────────────────────────────────────────── */
-.loadingWrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.skeleton {
-    background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, #e2e8f0);
-    border-radius: 14px;
-    padding: 1.5rem;
-    height: 100px;
-    animation: pulse 1.5s ease-in-out infinite;
+@keyframes shimmerSlide {
+  0%   { left: -100%; }
+  100% { left: 100%; }
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.5; }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
 }
 
-/* ── Error ───────────────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Header — Glassmorphism Hero Card
+   ========================================================================== */
+
+.header {
+  margin-bottom: var(--space-8);
+  padding: var(--space-8);
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  position: relative;
+  overflow: hidden;
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Animated shimmer top border */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent-pink),
+    var(--color-vivid-pink),
+    var(--color-accent-pink),
+    transparent
+  );
+  animation: shimmerSlide 3s ease-in-out infinite;
+}
+
+.title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(
+    135deg,
+    var(--color-foreground) 0%,
+    var(--color-accent-pink) 50%,
+    var(--color-vivid-pink) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 var(--space-2);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   Stats Row — KPI Cards
+   ========================================================================== */
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.statCard {
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  cursor: default;
+}
+
+/* Gradient border on hover via pseudo-element */
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink),
+    var(--color-accent-pink)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.statCard:hover::before { opacity: 1; }
+
+.statCard:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 12px 32px var(--color-shadow-pink),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: transparent;
+}
+
+.statValue {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(135deg, var(--color-foreground), var(--color-accent-pink));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  line-height: var(--line-height-tight);
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-top: var(--space-2);
+  display: block;
+}
+
+/* ==========================================================================
+   Filters — Pill Row
+   ========================================================================== */
+
+.filters {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.filterBtn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.filterBtn:hover {
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
+  transform: translateY(-1px);
+}
+
+.filterBtn.active {
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  border-color: transparent;
+  color: var(--color-primary-white);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
+}
+
+/* ==========================================================================
+   Interview List
+   ========================================================================== */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
+   Interview Card — Premium Glassmorphism
+   ========================================================================== */
+
+.card {
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 var(--color-translucent-white-1);
+  animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Gradient border shimmer on hover */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-2xl);
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-pink),
+    var(--color-vivid-pink),
+    var(--color-accent-pink)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Subtle shimmer sweep on hover */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-radial-pink-1),
+    transparent
+  );
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card:hover::after { left: 100%; }
+
+.card:hover {
+  transform: translateY(-4px) scale(1.005);
+  box-shadow:
+    0 12px 40px var(--color-shadow-pink),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: transparent;
+}
+
+/* ── Card Icon ── */
+.cardIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-white);
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 20px var(--color-shadow-pink),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.card:hover .cardIcon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ── Card Body ── */
+.cardBody {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+/* ── Status Badges ── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+/* Theme-aware status colors using semantic CSS variables */
+.status_scheduled {
+  background: var(--color-info-bg, rgba(59, 130, 246, 0.12));
+  color: var(--color-info, #3b82f6);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.status_rescheduled {
+  background: var(--color-warning-bg, rgba(234, 179, 8, 0.12));
+  color: var(--color-warning, #eab308);
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.status_completed {
+  background: var(--color-success-bg, rgba(34, 197, 94, 0.12));
+  color: var(--color-success, #22c55e);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.status_cancelled {
+  background: var(--color-error-bg, rgba(239, 68, 68, 0.12));
+  color: var(--color-error, #ef4444);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.status_rejected {
+  background: rgba(157, 23, 77, 0.12);
+  color: #9d174d;
+  border-color: rgba(157, 23, 77, 0.3);
+}
+
+/* ── Card Meta Row ── */
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin-top: var(--space-3);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-radial-pink-1);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  transition: all 0.25s ease;
+}
+
+.metaItem:hover {
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
+}
+
+/* ── Card Notes ── */
+.cardNotes {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), var(--color-radial-pink-2));
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-accent-pink);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   Join Meeting Link — CTA Button
+   ========================================================================== */
+
+.joinLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px var(--color-shadow-pink);
+  position: relative;
+  z-index: 1;
+}
+
+.joinLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+  opacity: 0.92;
+}
+
+.joinLink:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  background: var(--color-card);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: var(--space-5);
+  display: block;
+  animation: float 4s ease-in-out infinite;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-foreground);
+  margin: 0 0 var(--space-3);
+}
+
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0 0 var(--space-6);
+  line-height: var(--line-height-relaxed);
+  max-width: 40ch;
+  margin-inline: auto;
+}
+
+.browsBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-8);
+  background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
+  color: var(--color-primary-white);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px var(--color-shadow-pink);
+}
+
+.browsBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px var(--color-shadow-pink);
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   Loading State — Skeleton Shimmer
+   ========================================================================== */
+
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeleton {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  height: 120px;
+  animation: pulse 1.6s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-radial-pink-1),
+    transparent
+  );
+  animation: shimmerSlide 1.6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Error State
+   ========================================================================== */
+
 .error {
-    text-align: center;
-    padding: 3rem;
-    color: #dc2626;
+  text-align: center;
+  padding: var(--space-12);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.error p {
+  color: var(--color-error, #ef4444);
+  font-size: var(--font-size-base);
+  margin: 0 0 var(--space-4);
+  font-weight: var(--font-weight-medium);
 }
 
 .retryBtn {
-    margin-top: 1rem;
-    padding: 0.5rem 1.25rem;
-    background: #dc2626;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-error-bg, rgba(239, 68, 68, 0.12));
+  color: var(--color-error, #ef4444);
+  border: 1.5px solid var(--color-error, #ef4444);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-sans);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.retryBtn:hover {
+  background: var(--color-error, #ef4444);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* ── Tablet / Small Desktop: 60.5rem (968px) ── */
+@media (max-width: 60.5rem) {
+  .container {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .cardTitle {
+    max-width: 55%;
+  }
+}
+
+/* ── Mobile: 40rem (640px) ── */
+@media (max-width: 40rem) {
+  .container {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  .header {
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .title {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .statCard {
+    padding: var(--space-4) var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .statValue {
+    font-size: clamp(1.4rem, 6vw, 1.9rem);
+  }
+
+  .filters {
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .filterBtn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  .card {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .cardIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cardTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .cardTitle {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .cardMeta {
+    gap: var(--space-2);
+  }
+
+  .metaItem {
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .empty {
+    padding: var(--space-10) var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+  }
+
+  .skeleton {
+    height: 90px;
+    border-radius: var(--radius-xl);
+  }
+}
+
+/* ── Large Desktop: 75rem (1200px) ── */
+@media (min-width: 75rem) {
+  .container {
+    padding: var(--space-10) var(--space-8);
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+  }
+
+  .card {
+    padding: var(--space-8);
+  }
+
+  .cardIcon {
+    width: 60px;
+    height: 60px;
+  }
 }

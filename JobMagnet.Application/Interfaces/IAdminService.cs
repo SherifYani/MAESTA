@@ -11,6 +11,9 @@ namespace JobMagnet.Application.Interfaces
         Task ToggleUserStatusAsync(int userId, bool isActive);
         Task DeleteUserAsync(int userId);
         Task<AdminDashboardMetricsDto> GetDashboardMetricsAsync();
+        Task<IEnumerable<AdminJobDto>> GetJobsAsync();
+        Task<IEnumerable<AdminApplicationDto>> GetApplicationsAsync();
+        Task ToggleJobStatusAsync(int jobId, bool isActive);
         Task<IEnumerable<SystemReportDto>> GetPendingReportsAsync();
         Task ResolveReportAsync(int reportId, string action);
     }

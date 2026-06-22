@@ -9,6 +9,41 @@ import ApiService from './ApiService';
 
 const toArray = (value) => value?.items || value?.data?.items || value?.data || value || [];
 
+const getStatus = (value) => {
+    if (value?.status) return String(value.status).toLowerCase();
+    return value?.isPublished ? 'active' : 'inactive';
+};
+
+const toAdminJobRow = (job) => ({
+    ...job,
+    id: job.jobId || job.id,
+    title: job.title || job.jobTitle || 'Untitled',
+    description: job.description || '',
+    company: job.companyName || job.company || 'Unknown',
+    postedBy: job.postedByName || job.postedBy || 'Unknown',
+    type: job.jobType || job.type || 'Unspecified',
+    location: job.location || '-',
+    salary: job.salary || [job.salaryMin, job.salaryMax].filter(Boolean).join(' - ') || '-',
+    status: getStatus(job),
+    applications: job.applicationsCount || job.applications || 0,
+    reports: job.reportsCount || job.reports || 0,
+    postedAt: job.createdAt || job.postedAt || job.postedDate || null,
+    postedDate: job.createdAt || job.postedDate || null
+});
+
+const toAdminApplicationRow = (application) => ({
+    ...application,
+    id: application.applicationId || application.id,
+    applicationId: application.applicationId || application.id,
+    jobId: application.jobId,
+    jobTitle: application.jobTitle || application.job?.title || 'Untitled',
+    applicantId: application.applicantId || application.jobSeekerId,
+    applicantName: application.applicantName || application.applicant || 'Unknown',
+    status: application.status || 'Pending',
+    appliedAt: application.appliedAt || application.createdAt || null,
+    cvUrl: application.cvUrl || application.resumeUrl || application.CVUrl || ''
+});
+
 const toReportRow = (report) => ({
     ...report,
     id: report.reportId || report.id,
@@ -77,6 +112,16 @@ export const deleteUser = async (userId) => {
 export const getDashboardMetrics = async () => {
     const response = await ApiService.get('/api/Admin/dashboard/metrics');
     return response.data;
+};
+
+export const getAdminJobs = async () => {
+    const response = await ApiService.get('/api/Admin/jobs');
+    return toArray(response).map(toAdminJobRow);
+};
+
+export const getAdminApplications = async () => {
+    const response = await ApiService.get('/api/Admin/applications');
+    return toArray(response).map(toAdminApplicationRow);
 };
 
 /**
@@ -244,21 +289,45 @@ export const updateUserRole = async () => {
 };
 
 // Jobs Moderation
-export const getJobsForModeration = async () => {
-    const response = await ApiService.get('/api/jobs', { params: { page: 1, limit: 50 } });
-    const jobs = response.data?.items || response.data?.jobs || response.data || [];
-    return { success: true, data: { jobs } };
+export const getJobsForModeration = async (params = {}) => {
+    const jobs = await getAdminJobs();
+    const searchTerm = params.search?.toLowerCase();
+    const status = params.status && params.status !== 'all' ? params.status.toLowerCase() : null;
+    const filteredJobs = jobs.filter(job => {
+        const matchesStatus = !status || job.status === status;
+        const matchesSearch = !searchTerm
+            || job.title.toLowerCase().includes(searchTerm)
+            || job.company.toLowerCase().includes(searchTerm);
+        return matchesStatus && matchesSearch;
+    });
+
+    const page = params.page || 1;
+    const limit = params.limit || filteredJobs.length || 1;
+    const start = (page - 1) * limit;
+
+    return {
+        success: true,
+        data: {
+            jobs: filteredJobs.slice(start, start + limit),
+            pagination: {
+                totalItems: filteredJobs.length,
+                totalPages: Math.max(1, Math.ceil(filteredJobs.length / limit)),
+                page,
+                limit
+            }
+        }
+    };
 };
 
 export const approveJob = async (jobId) => {
-    const response = await ApiService.put(`/api/jobs/${jobId}/status`, true, {
+    const response = await ApiService.put(`/api/Admin/jobs/${jobId}/status`, true, {
         headers: { 'Content-Type': 'application/json' }
     });
     return { success: true, data: response.data };
 };
 
 export const rejectJob = async (jobId) => {
-    const response = await ApiService.put(`/api/jobs/${jobId}/status`, false, {
+    const response = await ApiService.put(`/api/Admin/jobs/${jobId}/status`, false, {
         headers: { 'Content-Type': 'application/json' }
     });
     return { success: true, data: response.data };
@@ -275,6 +344,8 @@ const adminService = {
     toggleUserStatus,
     deleteUser,
     getDashboardMetrics,
+    getAdminJobs,
+    getAdminApplications,
     getPendingReports,
     resolveReport,
     getReportTypes,
