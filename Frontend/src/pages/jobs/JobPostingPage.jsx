@@ -16,6 +16,7 @@ import jobService from '../../services/jobService';
 import { PageContainer } from '../../components/layout';
 import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './JobPostingPage.module.css';
+import DateInput from '../../components/forms/dateInput';
 
 /**
  * Job posting page for companies to create new job listings
@@ -301,14 +302,15 @@ const JobPostingPage = () => {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label htmlFor="deadline">Application Deadline</label>
-                                <input
-                                    type="date"
-                                    id="deadline"
+                                <DateInput
                                     name="deadline"
+                                    label="Application Deadline"
                                     value={formData.deadline}
                                     onChange={handleInputChange}
                                     aria-label="Application deadline"
+                                    showAge={false}
+                                    allowFuture={true}
+                                    allowPast={false}
                                 />
                             </div>
                         </div>

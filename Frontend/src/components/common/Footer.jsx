@@ -161,7 +161,6 @@ const Footer = () => {
                                             aria-label={`Follow us on ${social.label}`}
                                         >
                                             <Icon size={20} className={styles.socialIcon} aria-hidden="true" />
-                                            <span className="sr-only">{social.label}</span>
                                         </a>
                                     );
                                 })}

@@ -15,8 +15,7 @@ import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
 import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 import { ArrowLeft } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; // Import useAuth hook
-import Header from "../../components/common/Header";
+import { useAuth } from "../../context/AuthContext";
 import Footer from "../../components/common/Footer";
 
 export default function OnboardingPage() {
@@ -57,7 +56,6 @@ export default function OnboardingPage() {
 
   return (
     <div>
-      <Header />
       <div className="min-h-screen">
         <button
           className="registration-page__back-button"

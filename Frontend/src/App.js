@@ -45,6 +45,7 @@ const EditJobSeekerProfile = lazy(() => import("./pages/profiles/EditJobSeekerPr
 const EditCompanyProfile = lazy(() => import("./pages/profiles/EditCompanyProfile"));
 const EditClientProfile = lazy(() => import("./pages/profiles/EditClientProfile"));
 const EditFreelancerProfile = lazy(() => import("./pages/profiles/EditFreelancerProfile"));
+const CompanyProfileView = lazy(() => import("./pages/profiles/CompanyProfileView"));
 
 // Onboarding Pages (Phase 5)
 const JobSeekerOnboarding = lazy(() => import("./pages/onboarding/JobSeekerOnboarding"));
@@ -91,7 +92,9 @@ function App() {
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-
+        
+        <Route path="/company/:companyId" element={<CompanyProfileView />} />
+        
         {/* Job Module - Handles /jobs */}
         <Route path="/jobs/*" element={
           <ProtectedRoute>

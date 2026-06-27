@@ -33,6 +33,7 @@ export const Button = ({
     onClick,
     disabled = false,
     className = '',
+    loading = false,  // consumed here, NOT forwarded to DOM
     ...rest
 }) => {
     // Combine class names
@@ -71,5 +72,6 @@ Button.propTypes = {
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
+    loading: PropTypes.bool,
     className: PropTypes.string
 };

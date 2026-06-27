@@ -47,9 +47,9 @@ import styles from "./DetailedApplications.module.css";
 const DetailedApplications = ({
   applications = [],
   stats = {},
-  onViewApplication = () => {},
-  onWithdrawApplication = () => {},
-  onUpdateStatus = () => {}
+  onViewApplication = () => { },
+  onWithdrawApplication = () => { },
+  onUpdateStatus = () => { }
 }) => {
   const [filters, setFilters] = useState({
     status: "all",
@@ -70,7 +70,7 @@ const DetailedApplications = ({
 
     // Apply filters
     if (filters.status !== "all") {
-      filtered = filtered.filter(app => 
+      filtered = filtered.filter(app =>
         app.status?.toLowerCase() === filters.status.toLowerCase()
       );
     }
@@ -78,7 +78,7 @@ const DetailedApplications = ({
     if (filters.dateRange !== "all") {
       const now = new Date();
       const cutoff = new Date();
-      
+
       switch (filters.dateRange) {
         case "week":
           cutoff.setDate(now.getDate() - 7);
@@ -92,7 +92,7 @@ const DetailedApplications = ({
         default:
           break;
       }
-      
+
       filtered = filtered.filter(app => {
         const appDate = new Date(app.appliedDate || app.date);
         return appDate >= cutoff;
@@ -107,7 +107,7 @@ const DetailedApplications = ({
     // Apply sorting
     switch (sortBy) {
       case "date":
-        filtered.sort((a, b) => 
+        filtered.sort((a, b) =>
           new Date(b.appliedDate || b.date) - new Date(a.appliedDate || a.date)
         );
         break;
@@ -126,7 +126,7 @@ const DetailedApplications = ({
           "rejected": 5,
           "withdrawn": 6
         };
-        filtered.sort((a, b) => 
+        filtered.sort((a, b) =>
           (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99)
         );
         break;
@@ -149,7 +149,7 @@ const DetailedApplications = ({
    */
   const getStatusConfig = (status) => {
     const statusLower = status?.toLowerCase() || "";
-    
+
     switch (statusLower) {
       case "offer":
       case "accepted":
@@ -210,11 +210,11 @@ const DetailedApplications = ({
   const renderStatusBadge = (status, stage) => {
     const config = getStatusConfig(status);
     const Icon = config.icon;
-    
+
     return (
-      <Badge 
-        variant="custom" 
-        style={{ 
+      <Badge
+        variant="custom"
+        style={{
           background: config.bgColor,
           color: config.color,
           borderColor: config.color
@@ -234,7 +234,7 @@ const DetailedApplications = ({
    */
   const renderTimeline = (timeline) => {
     if (!timeline || !Array.isArray(timeline)) return null;
-    
+
     return (
       <div className={styles.timeline}>
         {timeline.slice(0, 3).map((item, index) => (
@@ -244,9 +244,9 @@ const DetailedApplications = ({
               <span className={styles.timelineAction}>{item.action}</span>
               <span className={styles.timelineDate}>{item.date}</span>
             </div>
-            <Badge 
-              variant={item.status === "completed" ? "success" : 
-                      item.status === "scheduled" ? "warning" : "default"}
+            <Badge
+              variant={item.status === "completed" ? "success" :
+                item.status === "scheduled" ? "warning" : "default"}
               size="sm"
             >
               {item.status}
@@ -258,6 +258,22 @@ const DetailedApplications = ({
   };
 
   /**
+   * Get the application ID from different API payload shapes
+   * @param {Object} application - Application object
+   * @returns {string|number|null} Application ID
+   */
+  const getApplicationId = (application) =>
+    application.id || application.applicationId || application.jobApplicationId || null;
+
+  /**
+   * Get the related job ID from different application payload shapes
+   * @param {Object} application - Application object
+   * @returns {string|number|null} Related job ID
+   */
+  const getApplicationJobId = (application) =>
+    application.jobId || application.job?.id || application.job?.jobId || null;
+
+  /**
    * Toggle application details
    * @param {string} appId - Application ID
    */
@@ -266,14 +282,42 @@ const DetailedApplications = ({
   };
 
   /**
+   * Handle view details action
+   * @param {Object} application - Application object
+   * @param {Event} e - Click event
+   */
+  const handleViewDetails = (application, e) => {
+    e.stopPropagation();
+    const jobId = getApplicationJobId(application);
+
+    if (jobId) {
+      navigate(`/jobs/${jobId}`);
+      return;
+    }
+
+    onViewApplication(getApplicationId(application));
+  };
+
+  /**
+   * Handle status action by expanding the application card
+   * @param {string} appId - Application ID
+   * @param {Event} e - Click event
+   */
+  const handleUpdateStatus = (appId, e) => {
+    e.stopPropagation();
+    setExpandedAppId(appId);
+    onUpdateStatus(appId);
+  };
+
+  /**
    * Handle application withdrawal
    * @param {string} appId - Application ID
    * @param {Event} e - Click event
    */
-  const handleWithdraw = (appId, e) => {
+  const handleWithdraw = async (appId, e) => {
     e.stopPropagation();
     if (window.confirm("Are you sure you want to withdraw this application?")) {
-      onWithdrawApplication(appId);
+      await onWithdrawApplication(appId);
     }
   };
 
@@ -293,13 +337,6 @@ const DetailedApplications = ({
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedApplications = filteredApplications.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
-  const winSize = Math.min(5, totalPages);
-  let startPageNum;
-  if (totalPages <= 5) startPageNum = 1;
-  else if (currentPage <= 3) startPageNum = 1;
-  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
-  else startPageNum = currentPage - 2;
 
 
   // If no applications
@@ -321,20 +358,20 @@ const DetailedApplications = ({
   // Application statistics
   const applicationStats = {
     total: stats.total || applications.length,
-    underReview: stats.underReview || applications.filter(app => 
+    underReview: stats.underReview || applications.filter(app =>
       ["applied", "review", "pending"].includes(app.status?.toLowerCase())
     ).length,
-    interview: stats.interview || applications.filter(app => 
-      ["interview", "scheduled"].some(status => 
+    interview: stats.interview || applications.filter(app =>
+      ["interview", "scheduled"].some(status =>
         app.status?.toLowerCase().includes(status)
       )
     ).length,
-    offers: stats.offers || applications.filter(app => 
-      ["offer", "accepted"].some(status => 
+    offers: stats.offers || applications.filter(app =>
+      ["offer", "accepted"].some(status =>
         app.status?.toLowerCase().includes(status)
       )
     ).length,
-    rejected: stats.rejected || applications.filter(app => 
+    rejected: stats.rejected || applications.filter(app =>
       ["rejected", "not selected"].includes(app.status?.toLowerCase())
     ).length,
   };
@@ -349,7 +386,7 @@ const DetailedApplications = ({
             Track and manage all your job applications
           </p>
         </div>
-        
+
         <div className={styles.headerStats}>
           <div className={styles.statCard}>
             <div className={styles.statValue}>{applicationStats.total}</div>
@@ -373,7 +410,7 @@ const DetailedApplications = ({
       {/* Controls Bar */}
       <div className={styles.controls}>
         <div className={styles.filterControls}>
-          <button 
+          <button
             className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
             onClick={() => setShowFilters(!showFilters)}
           >
@@ -385,7 +422,7 @@ const DetailedApplications = ({
               </span>
             )}
           </button>
-          
+
           <div className={styles.sortDropdown}>
             <GeneralSelect
               value={sortBy}
@@ -400,7 +437,7 @@ const DetailedApplications = ({
             />
           </div>
         </div>
-        
+
         <div className={styles.viewOptions}>
           <Button variant="outline" size="sm">
             <BarChart size={16} /> Analytics
@@ -470,11 +507,13 @@ const DetailedApplications = ({
       {/* Applications List */}
       <div className={styles.applicationsList}>
         {pagedApplications.map(application => {
+          const applicationId = getApplicationId(application);
+
           return (
-            <article 
-              key={application.id} 
-              className={`${styles.applicationCard} ${expandedAppId === application.id ? styles.expanded : ''}`}
-              onClick={() => toggleAppDetails(application.id)}
+            <article
+              key={applicationId}
+              className={`${styles.applicationCard} ${expandedAppId === applicationId ? styles.expanded : ''}`}
+              onClick={() => toggleAppDetails(applicationId)}
               role="button"
               tabIndex={0}
             >
@@ -486,7 +525,7 @@ const DetailedApplications = ({
                   </div>
                   <p className={styles.company}>{application.company}</p>
                 </div>
-                
+
                 <div className={styles.appMeta}>
                   <div className={styles.matchScore}>
                     <TrendingUp size={14} />
@@ -518,7 +557,7 @@ const DetailedApplications = ({
                     </div>
                   )}
                 </div>
-                
+
                 {application.notes && (
                   <div className={styles.notes}>
                     <span className={styles.notesLabel}>Notes: </span>
@@ -528,7 +567,7 @@ const DetailedApplications = ({
               </div>
 
               {/* Expandable Content */}
-              {expandedAppId === application.id && (
+              {expandedAppId === applicationId && (
                 <div className={styles.expandedContent}>
                   {application.timeline && (
                     <div className={styles.timelineSection}>
@@ -536,7 +575,7 @@ const DetailedApplications = ({
                       {renderTimeline(application.timeline)}
                     </div>
                   )}
-                  
+
                   {application.offerDetails && (
                     <div className={styles.offerSection}>
                       <h4>Offer Details</h4>
@@ -550,40 +589,37 @@ const DetailedApplications = ({
                       </div>
                     </div>
                   )}
-                  
+
                   {application.feedback && (
                     <div className={styles.feedbackSection}>
                       <h4>Feedback</h4>
                       <p>{application.feedback}</p>
                     </div>
                   )}
-                  
+
                   <div className={styles.expandedActions}>
                     <Button
                       variant="outline"
                       size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onViewApplication(application.id);
-                      }}
+                      onClick={(e) => handleViewDetails(application, e)}
                     >
                       <Eye size={16} /> View Details
                     </Button>
-                    
+
                     {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
                       <Button
                         variant="destructive"
                         size="small"
-                        onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
+                        onClick={(e) => { e.stopPropagation(); handleWithdraw(applicationId, e); }}
                       >
                         <Trash2 size={16} /> Withdraw
                       </Button>
                     )}
-                    
+
                     <Button
                       variant="primary"
                       size="small"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => handleUpdateStatus(applicationId, e)}
                     >
                       Update Status
                     </Button>
@@ -592,24 +628,21 @@ const DetailedApplications = ({
               )}
 
               {/* Collapsed Actions */}
-              {expandedAppId !== application.id && (
+              {expandedAppId !== applicationId && (
                 <div className={styles.collapsedActions}>
                   <Button
                     variant="ghost"
                     size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onViewApplication(application.id);
-                    }}
+                    onClick={(e) => handleViewDetails(application, e)}
                   >
                     <Eye size={14} />
                   </Button>
-                  
+
                   {!["rejected", "withdrawn", "offer"].includes(application.status?.toLowerCase()) && (
                     <Button
                       variant="ghost"
                       size="small"
-                      onClick={(e) => { e.stopPropagation(); handleWithdraw(application.id, e); }}
+                      onClick={(e) => { e.stopPropagation(); handleWithdraw(applicationId, e); }}
                     >
                       <Trash2 size={14} />
                     </Button>

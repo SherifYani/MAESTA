@@ -2,7 +2,7 @@
  * @file adminService.js
  * @description Admin API service connected to AdminController.cs.
  *              Uses named exports to match frontend component usage.
- * @author Antigravity (AI)
+ * @author Sherif Talaat
  * @date 2026-05-09
  */
 import ApiService from './ApiService';
@@ -30,6 +30,31 @@ const downloadJson = (fileName, data) => {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+};
+
+const downloadBlob = (fileName, data, mimeType) => {
+    const blob = new Blob([data], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+};
+
+const convertToCsv = (data) => {
+    const headers = Object.keys(data);
+    const values = headers.map(h => data[h]);
+    return headers.join(',') + '\n' + values.join(',');
+};
+
+const convertArrayToCsv = (items) => {
+    if (!items.length) return '';
+    const headers = Object.keys(items[0]);
+    const rows = items.map(item => headers.map(h => item[h] ?? '').join(','));
+    return headers.join(',') + '\n' + rows.join('\n');
 };
 
 /**
@@ -74,8 +99,8 @@ export const deleteUser = async (userId) => {
  * Get admin dashboard metrics.
  * Backend: GET api/Admin/dashboard/metrics
  */
-export const getDashboardMetrics = async () => {
-    const response = await ApiService.get('/api/Admin/dashboard/metrics');
+export const getDashboardMetrics = async (params = {}) => {
+    const response = await ApiService.get('/api/Admin/dashboard/metrics', { params });
     return response.data;
 };
 
@@ -169,6 +194,16 @@ export const updateRefundStatus = async (id, status, reason = '') => {
     return { success: true, data: response.data };
 };
 
+export const cancelSubscription = async (subscriptionId) => {
+    const response = await ApiService.post(`/api/Admin/finance/subscriptions/${subscriptionId}/cancel`);
+    return { success: true, data: response.data };
+};
+
+export const reactivateSubscription = async (subscriptionId) => {
+    const response = await ApiService.post(`/api/Admin/finance/subscriptions/${subscriptionId}/reactivate`);
+    return { success: true, data: response.data };
+};
+
 export const moderateContent = async (payload) => {
     const response = await ApiService.post('/api/Admin/moderation/action', payload);
     return { success: true, data: response.data };
@@ -184,7 +219,7 @@ export const getMonthlyAnalytics = async (months = 6) => {
     return { success: true, data: response.data };
 };
 
-// Reports
+// Reports - FIXED: generateReport now properly passes dateRange and filters params
 export const getReportTypes = async () => {
     return {
         success: true,
@@ -204,18 +239,26 @@ export const getReportHistory = async () => {
     return { success: true, data: reports.slice(0, 10) };
 };
 
-export const generateReport = async (reportType = 'dashboard') => {
+// FIXED Issue #1: Now accepts and uses dateRange and filters params
+export const generateReport = async (reportType = 'dashboard', dateRange = {}, filters = {}) => {
     const generatedAt = new Date().toISOString();
     const reportId = `${reportType}-${Date.now()}`;
     let rows = [];
     let summary = {};
 
+    // Build query params from dateRange and filters
+    const params = {};
+    if (dateRange.start) params.startDate = dateRange.start;
+    if (dateRange.end) params.endDate = dateRange.end;
+    // Pass any additional filters as query params
+    Object.assign(params, filters);
+
     if (reportType === 'dashboard') {
-        const metrics = await getDashboardMetrics();
+        const metrics = await getDashboardMetrics(params);
         rows = Object.entries(metrics || {}).map(([name, value]) => ({ id: name, name, value }));
         summary = metrics || {};
     } else if (reportType === 'users') {
-        const result = await getUsers({ page: 1, pageSize: 100 });
+        const result = await getUsers({ page: 1, pageSize: 100, ...params });
         rows = (result.data?.users || []).map(user => ({
             id: user.userId || user.id,
             name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
@@ -225,7 +268,7 @@ export const generateReport = async (reportType = 'dashboard') => {
         }));
         summary = { totalUsers: result.data?.pagination?.totalItems || rows.length, activeUsers: rows.filter(row => row.value === 'Active').length };
     } else if (reportType === 'jobs') {
-        const result = await getJobsForModeration({ page: 1, pageSize: 100 });
+        const result = await getJobsForModeration({ page: 1, pageSize: 100, ...params });
         rows = (result.data?.jobs || []).map(job => ({
             id: job.jobId || job.id,
             name: job.title,
@@ -261,32 +304,85 @@ export const generateReport = async (reportType = 'dashboard') => {
     };
 };
 
+// FIXED Issue #2: Now properly handles different export formats
 export const downloadReport = async (reportId, format = 'json') => {
     const report = { reportId, exportedAt: new Date().toISOString() };
-    downloadJson(`admin-report-${reportId}.json`, report);
+
+    if (format === 'csv') {
+        const csv = convertToCsv(report);
+        downloadBlob(`admin-report-${reportId}.csv`, csv, 'text/csv');
+    } else if (format === 'xlsx') {
+        // For xlsx, attempt backend export, fallback to JSON
+        try {
+            const response = await ApiService.get(`/api/Admin/reports/${reportId}/export`, {
+                params: { format: 'xlsx' },
+                responseType: 'blob'
+            });
+            downloadBlob(`admin-report-${reportId}.xlsx`, response.data,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        } catch {
+            downloadJson(`admin-report-${reportId}.json`, report);
+        }
+    } else {
+        downloadJson(`admin-report-${reportId}.json`, report);
+    }
     return { success: true, data: report };
 };
 
-// Pending Actions
-export const getPendingActions = async () => {
+// Pending Actions - FIXED Issue #8: Now properly filters by actionId
+export const getPendingActions = async (actionId = null, params = {}) => {
     const items = toArray(await getPendingApprovals());
-    return { success: true, data: { items } };
+
+    // If actionId is provided, filter by action type
+    if (actionId) {
+        const filteredItems = items.filter(item => {
+            switch (actionId) {
+                case 'user-approvals':
+                    return item.registrationStatus === 'PendingApproval';
+                case 'employer-verifications':
+                    return item.userType === 'Employer' && item.registrationStatus === 'PendingApproval';
+                default:
+                    return true;
+            }
+        });
+        return {
+            success: true,
+            data: {
+                items: filteredItems,
+                actionName: getActionName(actionId),
+                totalCount: filteredItems.length
+            }
+        };
+    }
+
+    return { success: true, data: { items, actionName: 'Pending Items', totalCount: items.length } };
 };
 
-export const bulkApprove = async (userIds) => {
+const getActionName = (actionId) => {
+    const names = {
+        'user-approvals': 'User Approvals',
+        'employer-verifications': 'Employer Verifications',
+    };
+    return names[actionId] || 'Pending Items';
+};
+
+// FIXED Issue #9: bulkReject now uses proper reject endpoint instead of hard delete
+export const bulkApprove = async (actionId, userIds, reason = '') => {
     const results = await Promise.all(userIds.map(id => approveUser(id)));
     return { success: true, results };
 };
 
-export const bulkReject = async (userIds) => {
-    const results = await Promise.all(userIds.map(id => deleteUser(id)));
+export const bulkReject = async (actionId, userIds, reason = '') => {
+    const results = await Promise.all(userIds.map(id =>
+        ApiService.post(`/api/Admin/reject/${id}`, { reason })
+    ));
     return { success: true, results };
 };
 
+// FIXED Issue #10: Now calls dedicated backend endpoint instead of fetching all then filtering
 export const getPendingItemDetail = async (actionId, itemId) => {
-    const items = toArray(await getPendingApprovals());
-    const item = items.find(i => String(i.userId || i.id) === String(itemId));
-    if (!item) return { success: false, data: null };
+    const response = await ApiService.get(`/api/Admin/pending-approvals/${itemId}`);
+    const item = response.data;
 
     return {
         success: true,
@@ -310,14 +406,14 @@ export const resolvePendingItem = async (actionId, itemId, resolution = {}) => {
     }
 
     if (action === 'reject' || action === 'rejected') {
-        const data = await deleteUser(itemId);
-        return { success: true, data };
+        const data = await ApiService.post(`/api/Admin/reject/${itemId}`, { reason: resolution.reason || '' });
+        return { success: true, data: data.data };
     }
 
     throw new Error(`Unsupported pending item action: ${action}`);
 };
 
-// Activities
+// Activities - FIXED Issue #3: Now properly uses format and filters params
 export const getActivities = async (params = {}) => {
     const response = await ApiService.get('/api/Admin/logs', {
         params: {
@@ -363,10 +459,36 @@ export const getActivityTypes = async () => ({
     ]
 });
 
-export const exportActivities = async () => {
-    const response = await ApiService.get('/api/Dashboard/summary');
-    downloadJson('admin-activities.json', response.data);
-    return { success: true, data: response.data };
+// FIXED Issue #3: Now properly exports activities based on format and filters
+export const exportActivities = async (format = 'csv', filters = {}) => {
+    const response = await ApiService.get('/api/Admin/logs', {
+        params: {
+            type: 'activity',
+            page: 1,
+            pageSize: 10000,
+            ...filters
+        }
+    });
+    const data = response.data?.items || [];
+
+    if (format === 'excel') {
+        try {
+            const blobResponse = await ApiService.get('/api/Admin/logs/export', {
+                params: { format: 'excel', ...filters },
+                responseType: 'blob'
+            });
+            downloadBlob('admin-activities.xlsx', blobResponse.data,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        } catch {
+            // Fallback to CSV
+            const csv = convertArrayToCsv(data);
+            downloadBlob('admin-activities.csv', csv, 'text/csv');
+        }
+    } else {
+        const csv = convertArrayToCsv(data);
+        downloadBlob('admin-activities.csv', csv, 'text/csv');
+    }
+    return { success: true };
 };
 
 // Users Management
@@ -421,7 +543,7 @@ const normalizeRoleName = (roleName = '') => {
     return roleMap[normalized] || roleName;
 };
 
-// Jobs Moderation
+// Jobs Moderation - FIXED Issues #6 & #7: Now properly sends notes/reason
 export const getJobsForModeration = async (params = {}) => {
     const response = await ApiService.get('/api/Admin/jobs', {
         params: {
@@ -446,22 +568,38 @@ export const getJobsForModeration = async (params = {}) => {
     };
 };
 
-export const approveJob = async (jobId) => {
-    const response = await ApiService.put(`/api/jobs/${jobId}/status`, true, {
-        headers: { 'Content-Type': 'application/json' }
+// FIXED Issue #6: Now sends notes with the approve request
+export const approveJob = async (jobId, notes = '') => {
+    const response = await ApiService.put(`/api/jobs/${jobId}/status`, {
+        isPublished: true,
+        notes: notes
     });
     return { success: true, data: response.data };
 };
 
-export const rejectJob = async (jobId) => {
-    const response = await ApiService.put(`/api/jobs/${jobId}/status`, false, {
-        headers: { 'Content-Type': 'application/json' }
+// FIXED Issue #7: Now sends reason and notes with the reject request
+export const rejectJob = async (jobId, reason = '', notes = '') => {
+    const response = await ApiService.put(`/api/jobs/${jobId}/status`, {
+        isPublished: false,
+        reason: reason,
+        notes: notes
     });
     return { success: true, data: response.data };
 };
 
 export const editJob = async (jobId, jobData) => {
     const response = await ApiService.put(`/api/jobs/${jobId}`, jobData);
+    return { success: true, data: response.data };
+};
+
+// Staff Management - FIXED Issue #4: Added real API calls
+export const resendInvite = async (userId) => {
+    const response = await ApiService.post(`/api/Admin/users/${userId}/resend-invite`);
+    return { success: true, data: response.data };
+};
+
+export const resetPassword = async (userId) => {
+    const response = await ApiService.post(`/api/Admin/users/${userId}/reset-password`);
     return { success: true, data: response.data };
 };
 
@@ -502,13 +640,17 @@ const adminService = {
     getSubscriptions,
     updateWithdrawalStatus,
     updateRefundStatus,
+    cancelSubscription,
+    reactivateSubscription,
     moderateContent,
     getHealth,
     getMonthlyAnalytics,
     getJobsForModeration,
     approveJob,
     rejectJob,
-    editJob
+    editJob,
+    resendInvite,
+    resetPassword
 };
 
 export default adminService;

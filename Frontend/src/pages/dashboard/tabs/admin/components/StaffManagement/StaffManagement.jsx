@@ -15,7 +15,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import adminService from '../../../../../../services/adminService';
+import * as adminService from '../../../../../../services/adminService';
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -132,15 +132,25 @@ const StaffManagement = () => {
         if (page >= 1 && page <= totalPages) setCurrentPage(page);
     }, [totalPages]);
 
-    const handleResendInvite = useCallback((staff) => {
-        console.log(`Resending invitation to ${staff.email}`);
-        alert(`Invitation resent to ${staff.email}`);
+    const handleResendInvite = useCallback(async (staff) => {
+        try {
+            await adminService.resendInvite(staff.id);
+            alert(`Invitation resent to ${staff.email}`);
+        } catch (err) {
+            console.error('Failed to resend invite', err);
+            alert('Failed to resend invitation');
+        }
         setSelectedStaff(null);
     }, []);
 
-    const handleResetPassword = useCallback((staff) => {
-        console.log(`Resetting password for ${staff.email}`);
-        alert(`Password reset instructions sent to ${staff.email}`);
+    const handleResetPassword = useCallback(async (staff) => {
+        try {
+            await adminService.resetPassword(staff.id);
+            alert(`Password reset instructions sent to ${staff.email}`);
+        } catch (err) {
+            console.error('Failed to reset password', err);
+            alert('Failed to reset password');
+        }
         setSelectedStaff(null);
     }, []);
 

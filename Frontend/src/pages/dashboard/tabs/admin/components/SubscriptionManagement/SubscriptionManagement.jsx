@@ -24,6 +24,7 @@ import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { getSubscriptionsData } from '../../config/adminDataService';
+import * as adminService from '../../../../../../services/adminService';
 import styles from './SubscriptionManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -144,11 +145,32 @@ const SubscriptionManagement = () => {
         setSelectedSubscription(null);
     }, []);
 
-    const handleCancelSubscription = useCallback((id, user) => {
-        if (window.confirm(`Cancel subscription for ${user}?`)) {
-            handleUpdateStatus(id, 'cancelled');
+    const handleCancelSubscription = useCallback(async (id, user) => {
+        if (!window.confirm(`Cancel subscription for ${user}?`)) return;
+        try {
+            await adminService.cancelSubscription(id);
+            setSubscriptions(prev => prev.map(sub =>
+                sub.id === id ? { ...sub, status: 'cancelled' } : sub
+            ));
+        } catch (err) {
+            console.error('Failed to cancel subscription', err);
+            alert('Failed to cancel subscription');
         }
-    }, [handleUpdateStatus]);
+        setSelectedSubscription(null);
+    }, []);
+
+    const handleReactivate = useCallback(async (id, user) => {
+        try {
+            await adminService.reactivateSubscription(id);
+            setSubscriptions(prev => prev.map(sub =>
+                sub.id === id ? { ...sub, status: 'active' } : sub
+            ));
+        } catch (err) {
+            console.error('Failed to reactivate subscription', err);
+            alert('Failed to reactivate subscription');
+        }
+        setSelectedSubscription(null);
+    }, []);
 
     // =========================================================================
     // Cell renderers
@@ -212,7 +234,7 @@ const SubscriptionManagement = () => {
                         {row.status === 'cancelled' && (
                             <button
                                 className={styles.actions__item}
-                                onClick={() => handleUpdateStatus(row.id, 'active')}
+                                onClick={() => handleReactivate(row.id, row.user)}
                                 role="menuitem"
                             >
                                 <RefreshCw size={14} />
