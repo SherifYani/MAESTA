@@ -173,6 +173,11 @@ const Header = () => {
   /* ── Helpers ── */
   const isActive = (path) => location.pathname === path;
 
+  /** Navigation links for the current auth state / role. */
+  const navLinks = isAuthenticated
+    ? (NAV_AUTHENTICATED[role] ?? NAV_GUEST)
+    : NAV_GUEST;
+
   const headerClass = [
     styles.header,
     scrolled ? styles['header--scrolled'] : '',
