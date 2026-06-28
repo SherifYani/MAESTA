@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import profileService from "../../services/profileService";
 import "../../styles/profile.css";
 import styles from "./CompanyProfileView.module.css";
@@ -27,67 +27,55 @@ export default function CompanyProfileView() {
     const navigate = useNavigate();
     const [companyData, setCompanyData] = useState(null);
     const [loading, setLoading] = useState(true);
+    
     const [error, setError] = useState(null);
 
+    const [profileUnavailable, setProfileUnavailable] = useState(false);
+
     useEffect(() => {
+        let cancelled = false;
         const fetchCompanyProfile = async () => {
+            if (!companyId) { setLoading(false); return; }
+            setLoading(true);
+            setError(null);
+            setProfileUnavailable(false);
             try {
-                setLoading(true);
-                setError(null);
-                // Fetch company profile by ID
                 const data = await profileService.getCompanyProfile(companyId);
-
-                // Normalize backend PascalCase/camelCase fields just like ProfileContext does
-                const normalizedData = {
-                    ...data,
-                    name: data.companyName || data.name,
-                    websiteUrl: data.website || data.websiteUrl || "",
-                    location:
-                        data.location ||
-                        (data.city ?
-                            [data.city, data.country].filter(Boolean).join(", ")
-                            : data.address || ""),
-                    verificationStatus:
-                        data.isVerified != null ?
-                            data.isVerified ?
-                                "Verified"
-                                : "Unverified"
-                            : data.verificationStatus || "Unverified",
-                    members: (data.members || []).map((m) => ({
-                        id: m.id,
-                        name: m.name,
-                        role: m.role,
-                        avatar: m.avatar,
-                    })),
-                    jobs: (data.jobs || []).map((j) => ({
-                        id: j.id,
-                        title: j.title,
-                        location: j.location,
-                        jobType: j.jobType,
-                        status: j.status,
-                        postedAt: j.postedAt,
-                        applicationsCount: j.applicationsCount,
-                    })),
-                    stats: {
-                        totalJobs: data.stats?.totalJobs || 0,
-                        activeJobs: data.stats?.activeJobs || 0,
-                        totalHires: data.stats?.totalHires || 0,
-                        avgTimeToHire: data.stats?.avgTimeToHire || 0,
-                    },
-                };
-
-                setCompanyData(normalizedData);
+                if (!cancelled) {
+                    const normalizedData = {
+                        ...data,
+                        name: data.companyName || data.name,
+                        websiteUrl: data.website || data.websiteUrl || "",
+                        location:
+                            data.location ||
+                            (data.city
+                                ? [data.city, data.country].filter(Boolean).join(", ")
+                                : data.address || ""),
+                        verificationStatus:
+                            data.isVerified != null
+                                ? data.isVerified ? "Verified" : "Unverified"
+                                : data.verificationStatus || "Unverified",
+                        members: (data.members || []).map((m) => ({ id: m.id, name: m.name, role: m.role, avatar: m.avatar })),
+                        jobs: (data.jobs || []).map((j) => ({ id: j.id, title: j.title, location: j.location, jobType: j.jobType, status: j.status, postedAt: j.postedAt, applicationsCount: j.applicationsCount })),
+                        stats: { totalJobs: data.stats?.totalJobs || 0, activeJobs: data.stats?.activeJobs || 0, totalHires: data.stats?.totalHires || 0, avgTimeToHire: data.stats?.avgTimeToHire || 0 },
+                    };
+                    setCompanyData(normalizedData);
+                }
             } catch (err) {
-                console.error("Error loading company profile:", err);
-                setError(err.message || "Failed to load company profile");
+                if (cancelled) return;
+                // 404 = company profile not set up yet — show friendly state, not an error
+                const status = err?.response?.status;
+                if (status === 404 || status === 400) {
+                    setProfileUnavailable(true);
+                } else {
+                    setError(err.message || "Failed to load company profile");
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
-
-        if (companyId) {
-            fetchCompanyProfile();
-        }
+        fetchCompanyProfile();
+        return () => { cancelled = true; };
     }, [companyId]);
 
     /**
@@ -96,7 +84,14 @@ export default function CompanyProfileView() {
      * @returns {string} Formatted date string.
      */
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString();
+        if (!dateString) return "N/A";
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return "N/A";
+            return date.toLocaleDateString();
+        } catch (e) {
+            return "N/A";
+        }
     };
 
     /**
@@ -105,7 +100,8 @@ export default function CompanyProfileView() {
      * @returns {string} BEM modifier class for status styling.
      */
     const getStatusClass = (status) => {
-        return `profile__status profile__status--${status.toLowerCase()}`;
+        if (!status) return 'profile__status';
+        return `profile__status profile__status--${typeof status === 'string' ? status.toLowerCase() : 'unknown'}`;
     };
 
     /**
@@ -114,7 +110,7 @@ export default function CompanyProfileView() {
      * @returns {string} BEM modifier class for role styling.
      */
     const getRoleClass = (role) => {
-        const normalizedRole = role.toLowerCase().replace("_", "-");
+        const normalizedRole = role ? role.toLowerCase().replace(/_/g, "-") : "unknown";
         return `profile__member-role profile__member-role--${normalizedRole}`;
     };
 
@@ -132,6 +128,24 @@ export default function CompanyProfileView() {
             <div className={styles.loadingContainer}>
                 <p>Loading company profile...</p>
             </div>
+        );
+    }
+
+    // Company exists on the platform but hasn't set up a public profile yet
+    if (profileUnavailable) {
+        return (
+            <MainLayout>
+                <div className={styles.errorContainer}>
+                    <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🏢</div>
+                    <h2>{companyData?.name || "Company"}</h2>
+                    <p style={{ color: "var(--color-muted-foreground)", margin: "0.5rem 0 1.5rem" }}>
+                        This company hasn't set up a public profile yet.
+                    </p>
+                    <button onClick={() => navigate(-1)} className={styles.backBtn}>
+                        ← Go Back
+                    </button>
+                </div>
+            </MainLayout>
         );
     }
 
@@ -337,24 +351,24 @@ export default function CompanyProfileView() {
                                     <article
                                         key={job.id}
                                         className="profile__job-card"
-                                        aria-label={`Job listing: ${job.title}`}>
+                                        aria-label={`Job listing: ${job.title || 'Untitled Job'}`}>
                                         <div className="profile__job-header">
-                                            <h3 className="profile__job-title">{job.title}</h3>
+                                            <h3 className="profile__job-title">{job.title || 'Untitled Job'}</h3>
 
                                             <span
                                                 className={getStatusClass(job.status)}
-                                                aria-label={`Job status: ${job.status}`}>
-                                                {job.status}
+                                                aria-label={`Job status: ${job.status || 'Unknown'}`}>
+                                                {job.status || 'Unknown'}
                                             </span>
                                         </div>
 
                                         <div className="profile__job-meta">
-                                            <span aria-label={`Location: ${job.location}`}>
-                                                📍 {job.location}
+                                            <span aria-label={`Location: ${job.location || 'Not specified'}`}>
+                                                📍 {job.location || 'Not specified'}
                                             </span>
 
-                                            <span aria-label={`Job type: ${job.jobType}`}>
-                                                💼 {job.jobType}
+                                            <span aria-label={`Job type: ${job.jobType || 'Not specified'}`}>
+                                                💼 {job.jobType || 'Not specified'}
                                             </span>
 
                                             <span
@@ -372,3 +386,11 @@ export default function CompanyProfileView() {
         </MainLayout>
     );
 }
+
+
+
+
+
+
+
+

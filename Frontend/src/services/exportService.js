@@ -83,11 +83,48 @@ export const generateExport = async (exportType, dateRange, filters, format = 'j
     return { success: true, data: exportData };
 };
 
-export const downloadExport = async (exportId) => {
+const convertArrayToCsv = (items) => {
+    if (!items || !items.length) return '';
+    const headers = Object.keys(items[0]);
+    const headerRow = headers.map(h => `"${h.replace(/"/g, '""')}"`).join(',');
+    const rows = items.map(item =>
+        headers.map(h => {
+            const val = item[h] ?? '';
+            return `"${String(val).replace(/"/g, '""')}"`;
+        }).join(',')
+    );
+    return headerRow + '\n' + rows.join('\n');
+};
+
+const downloadBlob = (fileName, data, mimeType) => {
+    const blob = new Blob([data], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+};
+
+export const downloadExport = async (exportId, format) => {
     const exportData = exportsById.get(exportId);
     if (!exportData) throw new Error('Export data is no longer available. Generate it again.');
 
-    downloadJson(`${exportData.exportType}.${exportData.format === 'json' ? 'json' : 'json'}`, exportData.data);
+    const targetFormat = format || exportData.format || 'json';
+    const filename = `${exportData.exportType}_${exportId}`;
+
+    if (targetFormat === 'csv' || targetFormat === 'excel') {
+        const csvContent = convertArrayToCsv(exportData.data);
+        downloadBlob(`${filename}.csv`, csvContent, 'text/csv;charset=utf-8;');
+    } else if (targetFormat === 'pdf') {
+        // Fallback to CSV for PDF if no generator exists, or clean layout
+        const csvContent = convertArrayToCsv(exportData.data);
+        downloadBlob(`${filename}.csv`, csvContent, 'text/csv;charset=utf-8;');
+    } else {
+        downloadJson(`${filename}.json`, exportData.data);
+    }
     return { success: true };
 };
 

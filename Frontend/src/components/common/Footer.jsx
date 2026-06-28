@@ -72,8 +72,8 @@ const Footer = () => {
         {
             icon: Mail,
             label: 'Email',
-            value: 'hello@maesta.com',
-            href: 'mailto:hello@maesta.com',
+            value: 'hello@Job Magnet.com',
+            href: 'mailto:hello@Job Magnet.com',
         },
         {
             icon: Phone,
@@ -93,10 +93,10 @@ const Footer = () => {
      * Social media links
      */
     const socialLinks = [
-        { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/maesta' },
-        { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/maesta' },
-        { icon: Facebook, label: 'Facebook', href: 'https://facebook.com/maesta' },
-        { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/maesta' },
+        { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/Job Magnet' },
+        { icon: Twitter, label: 'Twitter', href: 'https://twitter.com/Job Magnet' },
+        { icon: Facebook, label: 'Facebook', href: 'https://facebook.com/Job Magnet' },
+        { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/Job Magnet' },
     ];
 
     /**
@@ -117,7 +117,7 @@ const Footer = () => {
                     {/* Logo and Description */}
                     <div className={styles.brandSection}>
                         <div className={styles.brandLogo}>
-                            <span className={styles.logoText}>maesta</span>
+                            <span className={styles.logoText}>Job Magnet</span>
                             <span className={styles.logoDot} aria-hidden="true">•</span>
                         </div>
                         <p className={styles.brandDescription}>
@@ -203,7 +203,7 @@ const Footer = () => {
                     {/* Copyright */}
                     <div className={styles.copyrightSection}>
                         <p className={styles.copyrightText}>
-                            &copy; {currentYear} maesta. All rights reserved.
+                            &copy; {currentYear} Job Magnet. All rights reserved.
                         </p>
                         <p className={styles.copyrightSubtext}>
                             Made with <Heart size={12} className={styles.heartIcon} aria-hidden="true" />{' '}

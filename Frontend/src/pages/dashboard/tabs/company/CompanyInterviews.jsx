@@ -376,7 +376,6 @@ const CompanyInterviews = () => {
           totalPages={totalPages}
           totalItems={totalItems}
           onPageChange={setCurrentPage}
-          onRowClick={handleInterviewClick}
           sortConfig={sortConfig}
           onSort={(key) => {
             setSortConfig(prev => ({

@@ -125,6 +125,7 @@ const DetailedApplications = lazy(
     import("../pages/dashboard/tabs/jobseeker/components/DetailedApplications/DetailedApplications.jsx"),
 );
 const MyInterviewsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/MyInterviewsPage"));
+const AssessmentsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/AssessmentsPage"));
 
 // Shared Pages (all authenticated roles)
 const AccountSettings = lazy(
@@ -304,9 +305,25 @@ const NewApplicantsWithData = () => {
       onScheduleInterview={(id) => navigate(`/dashboard/interviews/schedule?applicationId=${id}`)}
       onUpdateApplicantStatus={updateStatus}
       onBulkAction={async (action, ids) => {
-        if (action === "export")
+        if (action === "export") {
           return exportService.generateExport("applicants", null, {}, "json");
-        await Promise.all(ids.map((id) => updateStatus(id, action)));
+        }
+        if (action === "email") {
+          // Future: implement bulk email
+          console.warn("Bulk email not implemented yet");
+          return;
+        }
+        
+        // Map UI action names to valid backend statuses
+        let status = action;
+        if (action === "shortlist") status = "shortlisted";
+        if (action === "reject") status = "rejected";
+        
+        try {
+          await Promise.all(ids.map((id) => updateStatus(id, status)));
+        } catch (error) {
+          console.error("Bulk action failed:", error);
+        }
       }}
       onExportData={() => navigate("/dashboard/export?type=applicants")}
     />
@@ -451,13 +468,46 @@ const DetailedApplicationsWithData = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadApplications = () => {
+    setLoading(true);
     jobService
       .getMyApplications()
       .then((res) => setApplications(res?.items || res || []))
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadApplications();
   }, []);
+
+  const handleWithdrawApplication = async (applicationId) => {
+    // Optimistic remove
+    setApplications((prev) => prev.filter((app) => (app.id || app.applicationId) !== applicationId));
+    try {
+      await jobService.withdrawApplication(applicationId);
+    } catch (err) {
+      console.error('Failed to withdraw application — refreshing list', err);
+      loadApplications();
+    }
+  };
+
+  const handleUpdateStatus = async (applicationId, newStatus) => {
+    try {
+      await jobService.updateApplicationStatus(applicationId, newStatus);
+      // Update local state optimistically
+      setApplications((prev) =>
+        prev.map((app) =>
+          (app.id || app.applicationId) === applicationId
+            ? { ...app, status: newStatus }
+            : app,
+        ),
+      );
+    } catch (err) {
+      console.error('Failed to update application status', err);
+      loadApplications();
+    }
+  };
 
   if (loading) return <TableSkeleton rows={5} columns={1} />;
 
@@ -466,16 +516,14 @@ const DetailedApplicationsWithData = () => {
       applications={applications}
       stats={{
         total: applications.length,
-        underReview: applications.filter((app) => app.status === "review")
-          .length,
-        interview: applications.filter((app) => app.status === "interview")
-          .length,
+        underReview: applications.filter((app) => app.status === "review").length,
+        interview: applications.filter((app) => app.status === "interview").length,
         offers: applications.filter((app) => app.status === "offer").length,
-        rejected: applications.filter((app) => app.status === "rejected")
-          .length,
+        rejected: applications.filter((app) => app.status === "rejected").length,
       }}
       onViewApplication={() => {}}
-      onWithdrawApplication={jobService.withdrawApplication}
+      onWithdrawApplication={handleWithdrawApplication}
+      onUpdateStatus={handleUpdateStatus}
     />
   );
 };
@@ -660,6 +708,14 @@ const DashboardRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={["jobseeker", "freelancer"]}>
                 <MyInterviewsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="jobseeker/assessments"
+            element={
+              <ProtectedRoute allowedRoles={["jobseeker", "freelancer"]}>
+                <AssessmentsPage />
               </ProtectedRoute>
             }
           />

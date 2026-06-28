@@ -220,6 +220,7 @@ const NewApplicants = ({
     const handleBulkAction = (action) => {
         if (onBulkAction && selectedApplicants.length > 0) {
             onBulkAction(action, selectedApplicants);
+            setSelectedApplicants([]);
         }
     };
 
@@ -265,23 +266,7 @@ const NewApplicants = ({
                     >
                         Reject
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="small"
-                        icon={Mail}
-                        onClick={() => handleBulkAction("email")}
-                    >
-                        Email
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="small"
-                        icon={Download}
-                        onClick={() => handleBulkAction("export")}
-                    >
-                        Export
-                    </Button>
-                </div>
+                </div>  
             </div>
         );
     };
@@ -454,7 +439,6 @@ const NewApplicants = ({
         return (
             <tr
                 className={`${styles.applicantRow} ${selectedApplicants.includes(applicant.id) ? styles.selected : ""}`}
-                onClick={() => handleViewApplicant(applicant.id)}
             >
                 <td>
                     <input
@@ -536,6 +520,17 @@ const NewApplicants = ({
                                 <Calendar size={16} />
                             </button>
                         )}
+
+                        <button
+                            className={styles.rowActionButton}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewApplicant(applicant.id);
+                            }}
+                            title="View Applicant"
+                        >
+                            <Eye size={16} />
+                        </button>
 
                         <button
                             className={styles.rowMoreButton}

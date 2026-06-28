@@ -30,7 +30,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
         {
             id: 1,
             type: "assistant",
-            content: "Hello! I'm the MAESTA platform smart assistant. How can I help you today?",
+            content: "Hello! I'm the Job Magnet platform smart assistant. How can I help you today?",
             timestamp: new Date(),
         },
     ]);

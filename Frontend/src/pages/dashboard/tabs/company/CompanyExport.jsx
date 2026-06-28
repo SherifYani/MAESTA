@@ -205,7 +205,7 @@ const CompanyExport = () => {
     const handleDownload = async () => {
         if (!exportData) return;
         try {
-            await exportService.downloadExport(exportData.exportId);
+            await exportService.downloadExport(exportData.exportId, exportFormat);
             setSuccess('Download started');
         } catch (err) {
             setError('Download failed');

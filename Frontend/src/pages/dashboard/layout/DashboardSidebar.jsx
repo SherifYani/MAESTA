@@ -106,7 +106,7 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
         }`}>
       <div className={styles.sidebarHeader}>
         <Link to="/" className={styles.brand} onClick={handleNavClick}>
-          <h1 className={styles.brandTitle}>MAESTA</h1>
+          <h1 className={styles.brandTitle}>Job Magnet</h1>
           <span className={styles.brandSubtitle}>Dashboard</span>
         </Link>
 

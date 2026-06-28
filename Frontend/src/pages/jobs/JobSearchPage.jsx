@@ -75,8 +75,8 @@ const JobSearchPage = () => {
                 minSalary:       filters.salaryRange?.min || undefined,
                 maxSalary:       filters.salaryRange?.max || undefined,
                 sortBy:          filters.sortBy      || undefined,
-                pageNumber:      pagination.page,
-                pageSize:        pagination.limit,
+                page:            pagination.page,
+                limit:           pagination.limit,
             };
 
             const response = await jobService.searchJobs(params);

@@ -11,7 +11,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import jobService from "../../services/jobService";
-import profileService from "../../services/profileService";
 import { PageContainer } from "../../components/layout";
 import styles from "./JobDetailsPage.module.css";
 
@@ -19,7 +18,6 @@ const JobDetailsPage = () => {
     const { jobId } = useParams();
     const navigate = useNavigate();
     const [job, setJob] = useState(null);
-    const [company, setCompany] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isSaved, setIsSaved] = useState(false);
@@ -31,21 +29,22 @@ const JobDetailsPage = () => {
                 setLoading(true);
                 setError(null);
                 const jobData = await jobService.getJobById(jobId);
-                console.log("Job data:", jobData); // for debugging
                 setJob(jobData);
                 setIsSaved(jobData.isSaved || false);
 
-                // ✅ Fetch company profile if companyId exists
-                if (jobData.companyId) {
-                    try {
-                        const companyData = await profileService.getCompanyProfile(
-                            jobData.companyId,
-                        );
-                        setCompany(companyData);
-                    } catch (err) {
-                        console.warn("Could not fetch company profile:", err);
-                        setCompany(null);
-                    }
+                // Debug: log resolved company ID so we can verify the API field name
+                const resolvedCompanyId =
+                    jobData.companyId ||
+                    jobData.employerId ||
+                    jobData.postedById ||
+                    jobData.company?.id ||
+                    jobData.company?.companyId ||
+                    null;
+                if (!resolvedCompanyId) {
+                    console.warn(
+                        "[JobDetailsPage] No company ID found on job object. " +
+                        "Available keys:", Object.keys(jobData)
+                    );
                 }
 
                 // Fetch similar jobs
@@ -140,17 +139,14 @@ const JobDetailsPage = () => {
             <main className={styles.mainContent}>
                 <article className={styles.jobHeader}>
                     <div className={styles.companyLogo}>
-                        {job.company?.logo ?
-                            <img src={job.company.logo} alt={`${job.company.name} logo`} />
-                            : <div className={styles.logoPlaceholder}>
-                                {job.company?.name?.charAt(0) || "C"}
-                            </div>
-                        }
+                        <div className={styles.logoPlaceholder}>
+                            {job.companyName?.charAt(0) || "C"}
+                        </div>
                     </div>
                     <div className={styles.jobInfo}>
                         <h1 className={styles.jobTitle}>{job.title}</h1>
                         <p className={styles.companyName}>
-                            {job.company?.name || company?.name || "Company"}
+                            {job.companyName || "Company"}
                         </p>
                         <div className={styles.jobMeta}>
                             <span className={styles.metaItem}>📍 {job.location}</span>
@@ -284,48 +280,54 @@ const JobDetailsPage = () => {
                     )}
                 </div>
 
-                {job.companyId && (
-                    <div className={styles.companyCard}>
-                        <h3 className={styles.cardTitle}>About the Company</h3>
-                        <div className={styles.companyHeader}>
-                            <div className={styles.companyLogoSmall}>
-                                {company?.logo ?
-                                    <img
-                                        src={company.logo}
-                                        alt={`${company?.name || "Company"} logo`}
-                                    />
-                                    : <div className={styles.logoPlaceholderSmall}>
-                                        {company?.name?.charAt(0) || "C"}
+                {(() => {
+                    const companyId =
+                        job.companyId ||
+                        job.employerId ||
+                        job.postedById ||
+                        job.company?.id ||
+                        job.company?.companyId ||
+                        null;
+
+                    if (!job.companyName && !companyId) return null;
+
+                    return (
+                        <div className={styles.companyCard}>
+                            <h3 className={styles.cardTitle}>About the Company</h3>
+                            <div className={styles.companyHeader}>
+                                <div className={styles.companyLogoSmall}>
+                                    <div className={styles.logoPlaceholderSmall}>
+                                        {job.companyName?.charAt(0) || "C"}
                                     </div>
-                                }
+                                </div>
+                                <div>
+                                    <h4 className={styles.companyNameSmall}>
+                                        {job.companyName || "Company"}
+                                    </h4>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className={styles.companyNameSmall}>
-                                    {company?.name || "Company Name"}
-                                </h4>
-                                <p className={styles.companyIndustry}>
-                                    {company?.industry || "Loading..."}
-                                </p>
-                            </div>
+                            {companyId ? (
+                                <button
+                                    className={styles.viewCompanyButton}
+                                    onClick={() =>
+                                        navigate(`/company/${companyId}`, {
+                                            state: { companyName: job.companyName },
+                                        })
+                                    }
+                                    aria-label={`View ${job.companyName || "company"} profile`}>
+                                    View Company Profile
+                                </button>
+                            ) : (
+                                <button
+                                    className={styles.viewCompanyButton}
+                                    disabled
+                                    title="Company profile not available">
+                                    View Company Profile
+                                </button>
+                            )}
                         </div>
-                        {company?.description && (
-                            <p className={styles.companyDescription}>
-                                {company.description.substring(0, 200)}...
-                            </p>
-                        )}
-                        {!company && (
-                            <p className={styles.companyLoading}>
-                                Loading company details...
-                            </p>
-                        )}
-                        <button
-                            className={styles.viewCompanyButton}
-                            onClick={() => navigate(`/company/${job.companyId}`)}
-                            aria-label={`View ${company?.name || "company"} profile`}>
-                            View Company Profile
-                        </button>
-                    </div>
-                )}
+                    );
+                })()}
 
                 {/* Similar Jobs Card */}
                 {similarJobs.length > 0 && (

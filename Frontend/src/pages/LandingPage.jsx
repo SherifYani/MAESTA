@@ -83,7 +83,7 @@ export default function LandingPage() {
       company: "Senior Developer at Google",
       avatar: "👨‍💼",
       content:
-        "maesta made my job search incredibly easy. I found my dream role without any hassle!",
+        "Job Magnet made my job search incredibly easy. I found my dream role without any hassle!",
     },
     {
       id: "sarah-martinez",
@@ -272,7 +272,7 @@ export default function LandingPage() {
           className="landing__features"
           aria-labelledby="features-heading">
           <h2 id="features-heading" className="landing__section-title">
-            Why Choose maesta
+            Why Choose Job Magnet
           </h2>
           <div className="landing__features-grid">
             {features.map((f) => (
@@ -378,7 +378,7 @@ export default function LandingPage() {
         <section className="landing__cta-section">
           <h2>Ready to find your perfect role?</h2>
           <p>
-            Join thousands of professionals who found their dream job on maesta
+            Join thousands of professionals who found their dream job on Job Magnet
           </p>
           <Button
             variant="primary"

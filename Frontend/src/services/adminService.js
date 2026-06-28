@@ -240,6 +240,9 @@ export const getReportHistory = async () => {
 };
 
 // FIXED Issue #1: Now accepts and uses dateRange and filters params
+const generatedReports = new Map();
+
+// FIXED Issue #1: Now accepts and uses dateRange and filters params
 export const generateReport = async (reportType = 'dashboard', dateRange = {}, filters = {}) => {
     const generatedAt = new Date().toISOString();
     const reportId = `${reportType}-${Date.now()}`;
@@ -291,7 +294,7 @@ export const generateReport = async (reportType = 'dashboard', dateRange = {}, f
         summary = { pendingReports: rows.length };
     }
 
-    return {
+    const reportResult = {
         success: true,
         data: {
             reportId,
@@ -302,17 +305,26 @@ export const generateReport = async (reportType = 'dashboard', dateRange = {}, f
             data: rows
         }
     };
+
+    generatedReports.set(reportId, reportResult.data);
+    return reportResult;
 };
 
 // FIXED Issue #2: Now properly handles different export formats
 export const downloadReport = async (reportId, format = 'json') => {
-    const report = { reportId, exportedAt: new Date().toISOString() };
+    const cachedReport = generatedReports.get(reportId);
+    const reportInfo = cachedReport ? {
+        reportId: cachedReport.reportId,
+        reportType: cachedReport.reportType,
+        generatedAt: cachedReport.generatedAt,
+        summary: cachedReport.summary
+    } : { reportId, exportedAt: new Date().toISOString() };
 
     if (format === 'csv') {
-        const csv = convertToCsv(report);
+        const csv = cachedReport ? convertArrayToCsv(cachedReport.rows) : convertToCsv(reportInfo);
         downloadBlob(`admin-report-${reportId}.csv`, csv, 'text/csv');
     } else if (format === 'xlsx') {
-        // For xlsx, attempt backend export, fallback to JSON
+        // For xlsx, attempt backend export, fallback to CSV/JSON
         try {
             const response = await ApiService.get(`/api/Admin/reports/${reportId}/export`, {
                 params: { format: 'xlsx' },
@@ -321,12 +333,13 @@ export const downloadReport = async (reportId, format = 'json') => {
             downloadBlob(`admin-report-${reportId}.xlsx`, response.data,
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         } catch {
-            downloadJson(`admin-report-${reportId}.json`, report);
+            const csv = cachedReport ? convertArrayToCsv(cachedReport.rows) : convertToCsv(reportInfo);
+            downloadBlob(`admin-report-${reportId}.csv`, csv, 'text/csv');
         }
     } else {
-        downloadJson(`admin-report-${reportId}.json`, report);
+        downloadJson(`admin-report-${reportId}.json`, cachedReport || reportInfo);
     }
-    return { success: true, data: report };
+    return { success: true, data: cachedReport || reportInfo };
 };
 
 // Pending Actions - FIXED Issue #8: Now properly filters by actionId
@@ -603,6 +616,17 @@ export const resetPassword = async (userId) => {
     return { success: true, data: response.data };
 };
 
+/**
+ * Invite a new staff member / user.
+ * Backend: POST api/Admin/users/invite
+ * @param {string} email
+ * @param {string} role  - e.g. 'Admin', 'Moderator', 'Analyst', 'Support'
+ */
+export const inviteUser = async (email, role) => {
+    const response = await ApiService.post('/api/Admin/users/invite', { email, role });
+    return { success: true, data: response.data };
+};
+
 const adminService = {
     getPendingApprovals,
     approveUser,
@@ -650,7 +674,8 @@ const adminService = {
     rejectJob,
     editJob,
     resendInvite,
-    resetPassword
+    resetPassword,
+    inviteUser
 };
 
 export default adminService;

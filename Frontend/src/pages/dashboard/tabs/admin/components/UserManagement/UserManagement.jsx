@@ -58,8 +58,14 @@ const UserManagement = () => {
     // ── Pagination state ─────────────────────────────────────────────────────
     const [currentPage, setCurrentPage] = useState(1);
 
-    // ── Action dropdown state ─────────────────────────────────────────────────
+    // ── Action dropdown state ──────────────────────────────────────────────────────
     const [selectedUser, setSelectedUser] = useState(null);
+
+    // ── Add User modal ────────────────────────────────────────────────────────
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [addForm, setAddForm] = useState({ email: '', role: 'JobSeeker' });
+    const [addLoading, setAddLoading] = useState(false);
+    const [addError, setAddError] = useState('');
 
     // =========================================================================
     // Data pipeline: filter → sort → paginate
@@ -162,6 +168,29 @@ const UserManagement = () => {
             setSelectedUser(null);
         }
     }, []);
+
+    /** Invite / Add a new user */
+    const handleAddUser = useCallback(async (e) => {
+        e.preventDefault();
+        if (!addForm.email.trim()) { setAddError('Email is required.'); return; }
+        setAddLoading(true);
+        setAddError('');
+        try {
+            await adminService.inviteUser(addForm.email.trim(), addForm.role);
+            alert(`Invitation sent to ${addForm.email}`);
+            setShowAddModal(false);
+            setAddForm({ email: '', role: 'JobSeeker' });
+        } catch (err) {
+            if (err?.response?.status === 404 || err?.response?.status === 405) {
+                alert('Add user feature is not yet available on the server. Coming soon!');
+                setShowAddModal(false);
+            } else {
+                setAddError(err?.response?.data?.message || 'Failed to send invitation.');
+            }
+        } finally {
+            setAddLoading(false);
+        }
+    }, [addForm]);
 
     // =========================================================================
     // Cell renderers
@@ -342,12 +371,81 @@ const UserManagement = () => {
                 title="User Management"
                 description="Manage user accounts, permissions, and access across the platform."
                 actions={
-                    <button className={styles.addButton}>
+                    <button className={styles.addButton} onClick={() => setShowAddModal(true)}>
                         <UserPlus size={18} />
                         Add User
                     </button>
                 }
             />
+
+            {/* ── Add User Modal ── */}
+            {showAddModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <form
+                        onSubmit={handleAddUser}
+                        style={{
+                            background: 'var(--color-surface, #1e1e2e)', borderRadius: 12,
+                            padding: 32, minWidth: 360, display: 'flex', flexDirection: 'column', gap: 16
+                        }}
+                    >
+                        <h2 style={{ margin: 0, color: 'var(--color-text, #fff)', fontSize: 18 }}>Invite New User</h2>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--color-text-muted, #aaa)', fontSize: 13 }}>
+                            Email address
+                            <input
+                                type="email"
+                                required
+                                placeholder="user@example.com"
+                                value={addForm.email}
+                                onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))}
+                                style={{
+                                    padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'var(--color-background, #141420)', color: 'var(--color-text, #fff)', fontSize: 14
+                                }}
+                            />
+                        </label>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--color-text-muted, #aaa)', fontSize: 13 }}>
+                            Role
+                            <select
+                                value={addForm.role}
+                                onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))}
+                                style={{
+                                    padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'var(--color-background, #141420)', color: 'var(--color-text, #fff)', fontSize: 14
+                                }}
+                            >
+                                <option value="JobSeeker">Job Seeker</option>
+                                <option value="Employer">Company / Employer</option>
+                                <option value="Freelancer">Freelancer</option>
+                                <option value="Client">Client</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </label>
+                        {addError && <p style={{ color: '#f87171', margin: 0, fontSize: 13 }}>{addError}</p>}
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                            <button
+                                type="button"
+                                onClick={() => { setShowAddModal(false); setAddError(''); }}
+                                style={{
+                                    padding: '8px 20px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'transparent', color: 'var(--color-text-muted, #aaa)', cursor: 'pointer'
+                                }}
+                            >Cancel</button>
+                            <button
+                                type="submit"
+                                disabled={addLoading}
+                                style={{
+                                    padding: '8px 20px', borderRadius: 8, border: 'none',
+                                    background: 'var(--color-primary, #7c3aed)', color: '#fff',
+                                    cursor: addLoading ? 'not-allowed' : 'pointer', opacity: addLoading ? 0.7 : 1
+                                }}
+                            >{addLoading ? 'Sending…' : 'Send Invite'}</button>
+                        </div>
+                    </form>
+                </div>
+            )}
 
             <AdminStatsGrid stats={statsData} columns={4} />
 

@@ -1,6 +1,6 @@
 /**
  * @file Header.jsx
- * @description Unified, responsive header component for MAESTA.
+ * @description Unified, responsive header component for Job Magnet.
  *              Adapts to authentication status and user roles.
  *              Renders guest navigation or role-specific authenticated links.
  *              Supports dark mode, mobile drawer, notification bell,
@@ -204,9 +204,9 @@ const Header = () => {
           <Link
             to="/"
             className={styles.header__logo}
-            aria-label="MAESTA — Go to homepage"
+            aria-label="Job Magnet — Go to homepage"
           >
-            MAESTA
+            Job Magnet
           </Link>
 
           {/* Desktop Navigation */}
@@ -362,7 +362,7 @@ const Header = () => {
 
           {/* Drawer Top */}
           <div className={styles['header__drawer-top']}>
-            <span className={styles.header__logo} aria-hidden="true">MAESTA</span>
+            <span className={styles.header__logo} aria-hidden="true">Job Magnet</span>
             <button
               type="button"
               className={styles.header__hamburger}
@@ -387,7 +387,7 @@ const Header = () => {
             <input
               type="search"
               className={styles['header__search-input']}
-              placeholder="Search MAESTA…"
+              placeholder="Search Job Magnet…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Search"

@@ -172,6 +172,28 @@ const SubscriptionManagement = () => {
         setSelectedSubscription(null);
     }, []);
 
+    const handleExportData = useCallback(() => {
+        if (!subscriptions.length) { alert('No data to export.'); return; }
+        const headers = Object.keys(subscriptions[0]);
+        const rows = subscriptions.map(item =>
+            headers.map(h => {
+                const val = item[h] ?? '';
+                // Wrap values containing commas in quotes
+                return String(val).includes(',') ? `"${val}"` : val;
+            }).join(',')
+        );
+        const csv = [headers.join(','), ...rows].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `subscriptions-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }, [subscriptions]);
+
     // =========================================================================
     // Cell renderers
     // =========================================================================
@@ -311,7 +333,7 @@ const SubscriptionManagement = () => {
                 title="Subscription Management"
                 description="Manage subscriptions, billing, and revenue metrics across all user plans."
                 actions={
-                    <button className={styles.exportButton}>
+                    <button className={styles.exportButton} onClick={handleExportData}>
                         <Download size={18} />
                         Export Data
                     </button>

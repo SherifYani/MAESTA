@@ -91,12 +91,42 @@ const InterviewScheduling = () => {
         }
         try {
             const formattedDate = format(date, 'yyyy-MM-dd');
-            const res = await interviewService.getAvailableSlots(formattedDate, 60);
-            if (res.success) {
-                setSlots(res.data.slots || []);
+            const res = await interviewService.getAvailableSlots(formattedDate);
+            if (res.success && res.data?.slots?.length > 0) {
+                setSlots(res.data.slots);
+            } else {
+                // Fallback: generate time slots locally
+                const now = new Date();
+                const targetDate = new Date(date);
+                const isToday = targetDate.toDateString() === now.toDateString();
+                const currentHour = now.getHours();
+                const generatedSlots = [
+                    { time: "09:00" }, { time: "10:00" }, { time: "11:00" },
+                    { time: "12:00" }, { time: "13:00" }, { time: "14:00" },
+                    { time: "15:00" }, { time: "16:00" }, { time: "17:00" },
+                ].map(slot => {
+                    const slotHour = parseInt(slot.time.split(':')[0]);
+                    return {
+                        ...slot,
+                        available: !(isToday && slotHour <= currentHour)
+                    };
+                });
+                setSlots(generatedSlots);
             }
         } catch (error) {
-            setErrorMsg("Failed to load time slots.");
+            // Fallback on error
+            const now = new Date();
+            const isToday = date.toDateString() === now.toDateString();
+            const currentHour = now.getHours();
+            const fallbackSlots = [
+                { time: "09:00" }, { time: "10:00" }, { time: "11:00" },
+                { time: "12:00" }, { time: "13:00" }, { time: "14:00" },
+                { time: "15:00" }, { time: "16:00" }, { time: "17:00" },
+            ].map(slot => {
+                const slotHour = parseInt(slot.time.split(':')[0]);
+                return { ...slot, available: !(isToday && slotHour <= currentHour) };
+            });
+            setSlots(fallbackSlots);
         }
     };
 
