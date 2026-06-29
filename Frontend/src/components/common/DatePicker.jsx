@@ -1,8 +1,8 @@
 /**
  * @file DatePicker.jsx
- * @description Date picker using date-fns for minimal size. 
+ * @description Date picker using date-fns for minimal size – fully theme‑aware.
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2026-05-04
  */
 import React, { useState, useRef, useEffect } from 'react';
@@ -77,13 +77,26 @@ export const DatePicker = ({
         placeholder={placeholder}
         className={styles.input}
         onFocus={() => setIsOpen(true)}
+        aria-label="Date picker"
       />
       {isOpen && (
         <div className={styles.popup}>
           <div className={styles.header}>
-            <button onClick={() => setViewMonth(subMonths(viewMonth, 1))}>←</button>
+            <button
+              type="button"
+              onClick={() => setViewMonth(subMonths(viewMonth, 1))}
+              aria-label="Previous month"
+            >
+              ←
+            </button>
             <span>{format(viewMonth, 'MMMM yyyy')}</span>
-            <button onClick={() => setViewMonth(addMonths(viewMonth, 1))}>→</button>
+            <button
+              type="button"
+              onClick={() => setViewMonth(addMonths(viewMonth, 1))}
+              aria-label="Next month"
+            >
+              →
+            </button>
           </div>
           <div className={styles.weekdays}>
             {weekDays.map(day => (
@@ -98,6 +111,7 @@ export const DatePicker = ({
               return (
                 <button
                   key={day.toString()}
+                  type="button"
                   className={`${styles.day} ${isSelected ? styles.selected : ''}`}
                   onClick={() => !isDisabled && handleDateSelect(day)}
                   disabled={isDisabled}

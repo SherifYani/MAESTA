@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import jobService from '../../services/jobService';
 import { PageContainer } from '../../components/layout';
+import DateInput from '../../components/forms/dateInput';
 import styles from './JobApplicationPage.module.css';
 
 /**
@@ -247,13 +248,14 @@ const JobApplicationPage = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label htmlFor="availableStartDate">Available Start Date</label>
-                        <input
-                            type="date"
-                            id="availableStartDate"
+                        <DateInput
                             name="availableStartDate"
+                            label="Available Start Date"
                             value={formData.availableStartDate}
                             onChange={handleInputChange}
+                            showAge={false}
+                            allowFuture={true}
+                            allowPast={false}
                         />
                     </div>
                 </div>

@@ -27,6 +27,12 @@
     padding: var(--space-6) var(--space-8);
     margin-bottom: var(--space-8);
     backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.section:has([class*="popup"]),
+.section:has([class*="open"]) {
+    z-index: 20;
 }
 
 .sectionTitle {

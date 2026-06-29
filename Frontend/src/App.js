@@ -45,6 +45,7 @@ const EditJobSeekerProfile = lazy(() => import("./pages/profiles/EditJobSeekerPr
 const EditCompanyProfile = lazy(() => import("./pages/profiles/EditCompanyProfile"));
 const EditClientProfile = lazy(() => import("./pages/profiles/EditClientProfile"));
 const EditFreelancerProfile = lazy(() => import("./pages/profiles/EditFreelancerProfile"));
+const CompanyProfileView = lazy(() => import("./pages/profiles/CompanyProfileView"));
 
 // Onboarding Pages (Phase 5)
 const JobSeekerOnboarding = lazy(() => import("./pages/onboarding/JobSeekerOnboarding"));
@@ -54,15 +55,15 @@ const CompanyMemberOnBoarding = lazy(() => import("./pages/onboarding/CompanyMem
 
 // Loading Fallback
 const PageLoader = () => (
-  <div style={{ 
-    height: '100vh', 
-    display: 'flex', 
-    alignItems: 'center', 
+  <div style={{
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
     background: 'var(--color-background)',
     color: 'var(--color-primary)'
   }}>
-    <div className="loader">Loading MAESTA...</div>
+    <div className="loader">Loading Job Magnet...</div>
   </div>
 );
 
@@ -94,6 +95,7 @@ function App() {
         {process.env.NODE_ENV === 'development' && (
           <Route path="/mock-login" element={<MockLoginPage />} />
         )}
+
 
         {/* Job Module - Handles /jobs */}
         <Route path="/jobs/*" element={
@@ -145,6 +147,7 @@ function App() {
         <Route path="/profiles/edit/company" element={<ProtectedRoute><EditCompanyProfile /></ProtectedRoute>} />
         <Route path="/profiles/edit/client" element={<ProtectedRoute><EditClientProfile /></ProtectedRoute>} />
         <Route path="/profiles/edit/freelancer" element={<ProtectedRoute><EditFreelancerProfile /></ProtectedRoute>} />
+        <Route path="/company/:companyId" element={<CompanyProfileView />} />
 
         {/* Onboarding Routes (Phase 5) */}
         <Route path="/onboarding/jobseeker" element={<ProtectedRoute><JobSeekerOnboarding /></ProtectedRoute>} />

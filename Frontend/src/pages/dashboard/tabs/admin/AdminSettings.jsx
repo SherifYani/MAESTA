@@ -94,7 +94,7 @@ const settingPresets = [
   { label: 'Job Posting', help: 'When false, employers cannot create new job posts.', settingKey: 'allowJobPosting', settingValue: 'true', category: 'jobs', type: 'boolean' },
   { label: 'Manual Approval', help: 'When true, new users stay PendingApproval after onboarding.', settingKey: 'requireUserApproval', settingValue: 'true', category: 'auth', type: 'boolean' },
   { label: 'Platform Commission', help: 'Default commission percent.', settingKey: 'commissionPercent', settingValue: '10', category: 'finance' },
-  { label: 'Support Email', help: 'Public support contact address.', settingKey: 'supportEmail', settingValue: 'support@maesta.com', category: 'support' },
+  { label: 'Support Email', help: 'Public support contact address.', settingKey: 'supportEmail', settingValue: 'support@Job Magnet.com', category: 'support' },
 ];
 
 const getSettingLabel = (key) => settingPresets.find((preset) => preset.settingKey === key)?.label || key;

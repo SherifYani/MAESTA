@@ -59,7 +59,7 @@ const ProposalsPage = () => {
             proposedRate: 45,
             estimatedDuration: '2 weeks',
             status: 'Pending',
-            coverLetter: 'I am an experienced full-stack developer with 5+ years of React and Node.js expertise. I have built several projects similar to MAESTA and would love to help you build your dashboard components.',
+            coverLetter: 'I am an experienced full-stack developer with 5+ years of React and Node.js expertise. I have built several projects similar to Job Magnet and would love to help you build your dashboard components.',
             createdAt: '2026-06-18T10:00:00Z',
           },
           {

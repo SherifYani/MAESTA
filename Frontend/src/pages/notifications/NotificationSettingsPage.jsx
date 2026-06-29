@@ -260,7 +260,7 @@ const NotificationSettingsPage = () => {
                             <div className={styles.settingInfo}>
                                 <span className={styles.settingLabel}>Enable Push Notifications</span>
                                 <span className={styles.settingHint}>
-                                    Allow push notifications from MAESTA
+                                    Allow push notifications from Job Magnet
                                 </span>
                             </div>
                             <label className={styles.toggle}>

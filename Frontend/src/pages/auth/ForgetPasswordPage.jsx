@@ -11,6 +11,7 @@
 
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import Header from "../../components/common/Header";
 import FormInput from "../../components/forms/FormInput";
 import {
   validateRequired,
@@ -19,7 +20,6 @@ import {
   debounceValidation,
 } from "../../utils/form-validation";
 import authService from "../../services/authService";
-import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import "../../styles/auth-pages.css";
 import "../../styles/shared/_form-base.css";
@@ -127,7 +127,6 @@ function ForgetPasswordPage() {
   if (isSubmitted) {
     return (
       <div>
-        <Header />
         <div className="page-container fade-in">
         <div className="form-card slide-up">
           <div className="form-header">

@@ -137,7 +137,7 @@ const ErrorPage = () => {
 
       {/* Footer */}
       <footer className={styles.footer}>
-        <p>© 2025 MAESTA. All rights reserved.</p>
+        <p>© 2025 Job Magnet. All rights reserved.</p>
       </footer>
     </div>
   );

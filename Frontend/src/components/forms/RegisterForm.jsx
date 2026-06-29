@@ -734,25 +734,6 @@ function RegisterForm() {
               Sign In
             </Link>
           </div>
-          <div className="register-form__social-login">
-            <div className="register-form__social-buttons">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("Google")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-google register-form__social-button-icon"></i>
-                Google
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("LinkedIn")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-linkedin register-form__social-button-icon"></i>
-                LinkedIn
-              </button>
-            </div>
-          </div>
 
           <p className="register-form__terms-text">
             By creating an account, you agree to our

@@ -26,7 +26,15 @@ const jobService = {
     // Get single job by ID
     getJobById: async (jobId) => {
         const response = await ApiService.get(`/api/jobs/${jobId}`);
-        return response.data;
+        const job = response.data;
+        if (job && !job.companyId) {
+            // Normalize: only fall back to company-specific fields, never employerId/userId
+            job.companyId =
+                job.company?.id ||
+                job.company?.companyId ||
+                null;
+        }
+        return job;
     },
 
     // Create new job posting
@@ -99,8 +107,8 @@ const jobService = {
     },
 
     // Get all applicants for the company's jobs
-    getCompanyApplicants: async () => {
-        const response = await ApiService.get('/api/jobs/applications/company');
+    getCompanyApplicants: async (params = {}) => {
+        const response = await ApiService.get('/api/jobs/applications/company', { params });
         return response.data;
     },
 

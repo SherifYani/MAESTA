@@ -31,6 +31,8 @@ namespace JobMagnet.Application.Services
                 query = query.Where(j => j.Type == request.JobType);
 
             if (!string.IsNullOrWhiteSpace(request.ExperienceLevel))
+                // TODO: Replace with a dedicated ExperienceLevel field on the Job entity when DB migration is possible
+                // Currently filtering by Description as a temporary workaround
                 query = query.Where(j => j.Description.Contains(request.ExperienceLevel));
 
             if (request.SalaryMin.HasValue)
@@ -39,14 +41,49 @@ namespace JobMagnet.Application.Services
             if (request.SalaryMax.HasValue)
                 query = query.Where(j => j.MinSalary <= request.SalaryMax.Value);
 
+            // Filter by skills if provided - search in job title and description for skill keywords
+            if (request.Skills != null && request.Skills.Any())
+            {
+                foreach (var skill in request.Skills.Where(s => !string.IsNullOrWhiteSpace(s)))
+                {
+                    var skillTerm = skill.Trim().ToLower();
+                    query = query.Where(j => (j.Title != null && j.Title.ToLower().Contains(skillTerm)) 
+                                          || (j.Description != null && j.Description.ToLower().Contains(skillTerm)));
+                }
+            }
+
+            // Filter by date range
+            if (request.DateFrom.HasValue)
+                query = query.Where(j => j.CreatedAt >= request.DateFrom.Value);
+            
+            if (request.DateTo.HasValue)
+                query = query.Where(j => j.CreatedAt <= request.DateTo.Value);
+
             var total = await query.CountAsync();
             var totalPages = request.Limit > 0 ? (int)Math.Ceiling(total / (double)request.Limit) : 0;
             
-            var jobs = await query
-                .OrderByDescending(j => j.CreatedAt)
+            // Apply sorting
+            IOrderedQueryable<Domain.Entities.Job> orderedQuery;
+            switch (request.SortBy?.ToLower())
+            {
+                case "date":
+                    orderedQuery = query.OrderByDescending(j => j.CreatedAt);
+                    break;
+                case "salary":
+                    orderedQuery = query.OrderByDescending(j => j.MaxSalary);
+                    break;
+                case "title":
+                    orderedQuery = query.OrderBy(j => j.Title);
+                    break;
+                default: // "relevance" or no sort - default by created date
+                    orderedQuery = query.OrderByDescending(j => j.CreatedAt);
+                    break;
+            }
+
+            var jobs = await orderedQuery
                 .Skip((request.Page - 1) * request.Limit)
                 .Take(request.Limit)
-                .Select(j => MapJob(j, null, null))
+                .Select(j => MapJob(j, null, null, null))
                 .ToListAsync();
 
             return new PagedJobsResponse
@@ -67,12 +104,12 @@ namespace JobMagnet.Application.Services
 
             if (job == null) throw new KeyNotFoundException("Job not found");
 
-            var companyName = await _context.Companies
+            var company = await _context.Companies
                 .Where(c => c.Employer != null && c.Employer.UserId == job.PostedByUserId)
-                .Select(c => c.CompanyName)
+                .Select(c => new { c.CompanyId, c.CompanyName })
                 .FirstOrDefaultAsync();
 
-            return MapJob(job, companyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task<JobDto> CreateJobAsync(int employerUserId, CreateJobRequest request)
@@ -103,7 +140,7 @@ namespace JobMagnet.Application.Services
             // For now, we return the basic job DTO
 
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId);
-            return MapJob(job, company?.CompanyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task<JobDto> UpdateJobAsync(int employerUserId, int jobId, CreateJobRequest request)
@@ -125,7 +162,7 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
             
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId);
-            return MapJob(job, company?.CompanyName, null);
+            return MapJob(job, company?.CompanyName, company?.CompanyId, null);
         }
 
         public async Task DeleteJobAsync(int employerId, int jobId)
@@ -147,10 +184,14 @@ namespace JobMagnet.Application.Services
 
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId);
 
+            // Materialize before expression tree — ?. is not valid inside EF Core IQueryable.Select
+            var companyName = company?.CompanyName;
+            var companyId = company?.CompanyId;
+
             return await _context.Jobs
                 .AsNoTracking()
                 .Where(j => j.PostedByUserId == employer.UserId && !j.IsDeleted)
-                .Select(j => MapJob(j, company != null ? company.CompanyName : null, null))
+                .Select(j => MapJob(j, companyName, companyId, null))
                 .ToListAsync();
         }
 
@@ -312,9 +353,12 @@ namespace JobMagnet.Application.Services
             var companies = await _context.Companies
                 .Include(c => c.Employer)
                 .Where(c => c.Employer != null && userIds.Contains(c.Employer.UserId))
-                .ToDictionaryAsync(c => c.Employer!.UserId, c => c.CompanyName);
+                .ToDictionaryAsync(c => c.Employer!.UserId, c => new { c.CompanyId, c.CompanyName });
 
-            return savedJobs.Select(s => MapJob(s.Job!, companies.GetValueOrDefault(s.Job!.PostedByUserId), null)).ToList();
+            return savedJobs.Select(s => {
+                var co = companies.GetValueOrDefault(s.Job!.PostedByUserId);
+                return MapJob(s.Job!, co?.CompanyName, co?.CompanyId, null);
+            }).ToList();
         }
 
         public async Task<IEnumerable<JobDto>> GetRecommendedJobsAsync(int userId)
@@ -344,14 +388,14 @@ namespace JobMagnet.Application.Services
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
                 .Take(10)
-                .Select(x => MapJob(x.Job, null, x.Score))
+                .Select(x => MapJob(x.Job, null, null, x.Score))
                 .ToList();
 
             return recommendations;
         }
 
         // ─── Private Mappers ──────────────────────────────────────────────────
-        private static JobDto MapJob(Domain.Entities.Job job, string? companyName, double? matchScore) => new()
+        private static JobDto MapJob(Domain.Entities.Job job, string? companyName, int? companyId, double? matchScore) => new()
         {
             JobId = job.JobId,
             Title = job.Title,
@@ -363,6 +407,7 @@ namespace JobMagnet.Application.Services
             Currency = "USD",
             IsPublished = job.IsActive,
             EmployerId = job.PostedByUserId,
+            CompanyId = companyId,
             CompanyName = companyName,
             CreatedAt = job.CreatedAt,
             UpdatedAt = job.UpdatedAt,

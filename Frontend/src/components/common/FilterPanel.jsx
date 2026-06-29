@@ -25,7 +25,17 @@ export const FilterPanel = ({
   showReset = true,
   className = '',
 }) => {
-  const [localFilters, setLocalFilters] = useState(filters);
+  // Derive initial values from the config object (not the config itself)
+  const deriveValues = (config) =>
+    Object.entries(config).reduce((acc, [key, cfg]) => {
+      if (cfg.type === 'select' && cfg.options?.length > 0) acc[key] = cfg.options[0].value;
+      else if (cfg.type === 'dateRange') acc[key] = { start: '', end: '' };
+      else acc[key] = '';
+      return acc;
+    }, {});
+
+  const [localFilters, setLocalFilters] = useState(() => deriveValues(filters));
+
 
   const handleChange = (key, value) => {
     setLocalFilters(prev => ({ ...prev, [key]: value }));
@@ -36,13 +46,11 @@ export const FilterPanel = ({
   };
 
   const handleReset = () => {
-    const resetFilters = Object.keys(localFilters).reduce((acc, key) => {
-      acc[key] = '';
-      return acc;
-    }, {});
-    setLocalFilters(resetFilters);
-    if (onReset) onReset(resetFilters);
+    const resetValues = deriveValues(filters);
+    setLocalFilters(resetValues);
+    if (onReset) onReset(resetValues);
   };
+
 
   const renderFilterInput = (key, config) => {
     const value = localFilters[key];

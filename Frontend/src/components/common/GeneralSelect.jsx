@@ -34,8 +34,10 @@ function GeneralSelect({
   options,
   label,
   icon: Icon = Trophy,
+  showIcon = true,
   placeholder = "Select an option...",
   disabled = false,
+  className = "",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -126,7 +128,7 @@ function GeneralSelect({
   };
 
   return (
-    <div className={`${styles["modern-select"]}${isOpen ? ` ${styles["modern-select--open"]}` : ""}`}>
+    <div className={`${styles["modern-select"]}${isOpen ? ` ${styles["modern-select--open"]}` : ""}${className ? ` ${className}` : ""}`}>
       {/* Select Button */}
       <button
         ref={selectRef}
@@ -140,10 +142,12 @@ function GeneralSelect({
         type="button"
       >
         <span className={styles["modern-select__button-content"]}>
-          {typeof Icon === 'string' ? (
-            <i className={`${Icon} ${styles["modern-select__icon"]}`} />
-          ) : (
-            <Icon className={styles["modern-select__icon"]} />
+          {showIcon && Icon && Icon !== "" && (
+            typeof Icon === 'string' ? (
+              <i className={`${Icon} ${styles["modern-select__icon"]}`} />
+            ) : (
+              <Icon className={styles["modern-select__icon"]} />
+            )
           )}
           <span className={styles["modern-select__text"]}>
             {selectedOption ? selectedOption.label : placeholder}
