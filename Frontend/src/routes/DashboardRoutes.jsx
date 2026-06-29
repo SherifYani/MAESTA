@@ -7,20 +7,8 @@ import jobService from "../services/jobService";
 import dashboardService from "../services/dashboardService";
 import exportService from "../services/exportService";
 
-// Data Services
-import {
-  getNewApplicantsData,
-  getPerformanceAnalyticsData,
-  updateApplicantStatus,
-  bulkApplicantAction,
-} from "../pages/dashboard/tabs/company/services/companyDataService";
-
 // Lazy load dashboard components
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
-const UserManagement = lazy(
-  () =>
-    import("../pages/dashboard/tabs/admin/components/UserManagement/UserManagement"),
-);
 const JobManagement = lazy(
   () =>
     import("../pages/dashboard/tabs/admin/components/JobManagement/JobManagement"),
@@ -333,20 +321,23 @@ const NewApplicantsWithData = () => {
 const PerformanceAnalyticsWithData = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState("monthly");
+
+  const fetchAnalytics = async (currentPeriod) => {
+    setLoading(true);
+    try {
+      const data = await dashboardService.getCompanyAnalytics({ period: currentPeriod });
+      setAnalytics(data);
+    } catch (err) {
+      console.error("Failed to load analytics", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const data = await dashboardService.getCompanyAnalytics();
-        setAnalytics(data);
-      } catch (err) {
-        console.error("Failed to load analytics", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAnalytics();
-  }, []);
+    fetchAnalytics(period);
+  }, [period]);
 
   if (loading) return <TableSkeleton rows={10} columns={6} />;
   if (!analytics) return <div>Error loading analytics</div>;
@@ -357,10 +348,10 @@ const PerformanceAnalyticsWithData = () => {
       stats={analytics.stats}
       insights={analytics.insights}
       trends={analytics.trends}
-      period={analytics.period || "monthly"}
-      onPeriodChange={() => {}}
+      period={period}
+      onPeriodChange={setPeriod}
       onExport={() => {}}
-      onRefresh={() => window.location.reload()}
+      onRefresh={() => fetchAnalytics(period)}
     />
   );
 };

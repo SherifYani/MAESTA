@@ -12,11 +12,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Users, Search, Star, MessageSquare, 
-  ExternalLink, Briefcase, Filter, ArrowRight 
+  Users, Search, Star, MessageSquare
 } from 'lucide-react';
-import { PageContainer } from '../../components/layout';
-import { Button, LoadingSpinner, Alert, Input } from '../../components/common';
+import { LoadingSpinner, Alert } from '../../components/common';
 import jobService from '../../services/jobService';
 import styles from './TalentPoolPage.module.css';
 

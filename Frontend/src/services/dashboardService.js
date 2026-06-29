@@ -55,10 +55,12 @@ export const getClientDashboard = async () => {
 
 /**
  * Get company analytics data.
+ * @param {Object} params - Query parameters
+ * @param {string} params.period - Time period (weekly, monthly, quarterly, yearly)
  * @returns {Promise<Object>}
  */
-export const getCompanyAnalytics = async () => {
-    const response = await ApiService.get('/api/Dashboard/company/analytics');
+export const getCompanyAnalytics = async (params = {}) => {
+    const response = await ApiService.get('/api/Dashboard/company/analytics', { params });
     return response.data;
 };
 

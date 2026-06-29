@@ -7,8 +7,6 @@
  * @last-modified-date 2026-02-06
  */
 
-
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import styles from "./VoicePlayer.module.css";
@@ -41,15 +39,6 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
     }, []);
 
     /**
-     * Automatically plays text when autoPlay is enabled
-     */
-    useEffect(() => {
-        if (autoPlay && isSupported && text) {
-            playText();
-        }
-    }, [text, autoPlay, isSupported, playText]);
-
-    /**
      * Plays the text using the Web Speech API
      */
     const playText = useCallback(() => {
@@ -62,7 +51,7 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
         utteranceRef.current = utterance;
 
         // Configure voice settings
-        utterance.lang = "en-US"; // Changed from Arabic to English
+        utterance.lang = "en-US";
         utterance.rate = 1;
         utterance.pitch = 1;
         utterance.volume = 1;
@@ -82,6 +71,15 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
 
         window.speechSynthesis.speak(utterance);
     }, [isSupported, text]);
+
+    /**
+     * Automatically plays text when autoPlay is enabled
+     */
+    useEffect(() => {
+        if (autoPlay && isSupported && text) {
+            playText();
+        }
+    }, [text, autoPlay, isSupported, playText]);
 
     /**
      * Stops the currently playing speech

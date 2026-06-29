@@ -406,16 +406,6 @@ const NewApplicants = ({
                             </button>
                         )}
 
-                        {applicant.actions?.canViewProfile && (
-                            <button
-                                className={styles.actionButton}
-                                onClick={(e) => handleViewProfile(applicant.id, applicant.profile.url, e)}
-                                title="View Profile"
-                            >
-                                <Eye size={16} />
-                            </button>
-                        )}
-
                         <button
                             className={styles.expandButton}
                             onClick={(e) => {
@@ -532,7 +522,7 @@ const NewApplicants = ({
                             <Eye size={16} />
                         </button>
 
-                        <button
+                        {/* <button
                             className={styles.rowMoreButton}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -541,7 +531,7 @@ const NewApplicants = ({
                             title="More actions"
                         >
                             <MoreVertical size={16} />
-                        </button>
+                        </button> */}
                     </div>
                 </td>
             </tr>
@@ -585,14 +575,6 @@ const NewApplicants = ({
                             </svg>
                         </button>
                     </div>
-
-                    <Button
-                        variant="primary"
-                        icon={Download}
-                        onClick={() => handleBulkAction("export")}
-                    >
-                        Export Report
-                    </Button>
                 </div>
             </div>
 

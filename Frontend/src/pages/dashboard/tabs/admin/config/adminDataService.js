@@ -1,6 +1,4 @@
 import adminService from '../../../../../services/adminService';
-import jobService from '../../../../../services/jobService';
-import paymentService from '../../../../../services/paymentService';
 
 export const getAdminStats = async () => {
     try {

@@ -133,15 +133,6 @@ export const getJob = async (jobId) => {
     return { success: true, data: response.data };
 };
 
-const FALLBACK_SLOTS = [
-    { time: "09:00", available: true },
-    { time: "10:00", available: true },
-    { time: "11:00", available: true },
-    { time: "13:00", available: true },
-    { time: "14:00", available: true },
-    { time: "15:00", available: true },
-];
-
 /**
  * Get available interview slots for a given date.
  * Backend: GET api/Interviews/available-slots?date=YYYY-MM-DD

@@ -168,11 +168,11 @@ export default function LoginForm() {
    * Handles social login button clicks.
    * @param {string} provider - Social login provider (e.g., "google", "linkedin").
    */
-  const handleSocialLogin = (provider) => {
-    console.log(`Social login with ${provider}`);
-    // Implementation for social login would go here
-    setError(`${provider} login is not yet implemented`);
-  };
+  // const handleSocialLogin = (provider) => {
+  //   console.log(`Social login with ${provider}`);
+  //   // Implementation for social login would go here
+  //   setError(`${provider} login is not yet implemented`);
+  // };
 
   /**
    * Navigates back to the previous page.

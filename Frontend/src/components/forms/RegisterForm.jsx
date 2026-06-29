@@ -47,16 +47,7 @@ function RegisterForm() {
     city: "",
   });
 
-  const [employerData] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
-  });
+
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,16 +70,6 @@ function RegisterForm() {
     city: "",
   });
 
-  const [employerErrors, setEmployerErrors] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
-  });
 
   const [passwordValidation, setPasswordValidation] = useState({
     minLength: false,
@@ -218,19 +199,7 @@ function RegisterForm() {
       }
 
       // Update errors
-      if (
-        name.startsWith("company") ||
-        name === "description" ||
-        name === "industry" ||
-        name === "foundedYear" ||
-        name === "website" ||
-        name === "commercialRegistrationNumber" ||
-        name === "logoUrl"
-      ) {
-        setEmployerErrors((prev) => ({ ...prev, [name]: error }));
-      } else {
-        setFormErrors((prev) => ({ ...prev, [name]: error }));
-      }
+      setFormErrors((prev) => ({ ...prev, [name]: error }));
     },
     [validatePassword, formData.password, formData.confirmPassword]
   );

@@ -33,9 +33,14 @@ namespace JobMagnet.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMyInterviewsAsync([FromQuery] int page = 1, [FromQuery] int limit = 20)
+        public async Task<IActionResult> GetMyInterviewsAsync(
+            [FromQuery] int page = 1, 
+            [FromQuery] int limit = 20,
+            [FromQuery] string? status = null,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null)
         {
-            var result = await _interviewService.GetMyInterviewsAsync(GetUserId(), GetUserRole(), page, limit);
+            var result = await _interviewService.GetMyInterviewsAsync(GetUserId(), GetUserRole(), page, limit, status, startDate, endDate);
             return Ok(result);
         }
 

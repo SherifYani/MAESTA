@@ -13,7 +13,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Heart } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram } from 'lucide-react';
 import styles from './Footer.module.css';
 
 /**
@@ -204,10 +204,6 @@ const Footer = () => {
                     <div className={styles.copyrightSection}>
                         <p className={styles.copyrightText}>
                             &copy; {currentYear} Job Magnet. All rights reserved.
-                        </p>
-                        <p className={styles.copyrightSubtext}>
-                            Made with <Heart size={12} className={styles.heartIcon} aria-hidden="true" />{' '}
-                            to help you find your dream job.
                         </p>
                     </div>
 

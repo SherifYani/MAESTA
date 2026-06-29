@@ -60,7 +60,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
      * @param {boolean} isVoice - Whether the message is from voice input
      * @returns {Promise<void>}
      */
-    const handleSendMessage = async (text, isVoice = false) => {
+    const handleSendMessage = useCallback(async (text, isVoice = false) => {
         if (!text.trim()) return;
 
         // Add user message
@@ -105,7 +105,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
         } finally {
             setIsTyping(false);
         }
-    };
+    }, [conversationId]);
 
     /**
      * Handles suggestion click from chat messages

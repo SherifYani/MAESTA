@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import profileService from "../../services/profileService";
 import "../../styles/profile.css";
 import styles from "./CompanyProfileView.module.css";

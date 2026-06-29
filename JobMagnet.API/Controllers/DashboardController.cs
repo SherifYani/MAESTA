@@ -57,9 +57,9 @@ namespace JobMagnet.API.Controllers
         }
 
         [HttpGet("company/analytics")]
-        public async Task<IActionResult> GetCompanyAnalytics()
+        public async Task<IActionResult> GetCompanyAnalytics([FromQuery] string? period = null)
         {
-            var result = await _dashboardService.GetCompanyAnalyticsAsync(GetCurrentUserId());
+            var result = await _dashboardService.GetCompanyAnalyticsAsync(GetCurrentUserId(), period);
             return Ok(result);
         }
 

@@ -36,7 +36,6 @@ export const FilterPanel = ({
 
   const [localFilters, setLocalFilters] = useState(() => deriveValues(filters));
 
-
   const handleChange = (key, value) => {
     setLocalFilters(prev => ({ ...prev, [key]: value }));
   };
