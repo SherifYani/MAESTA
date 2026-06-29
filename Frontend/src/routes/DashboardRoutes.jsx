@@ -59,6 +59,18 @@ const AdminUsersManagement = lazy(
 const AdminJobsModeration = lazy(
   () => import("../pages/dashboard/tabs/admin/AdminJobsModeration"),
 );
+const AdminFinance = lazy(
+  () => import("../pages/dashboard/tabs/admin/AdminFinance"),
+);
+const AdminLogs = lazy(
+  () => import("../pages/dashboard/tabs/admin/AdminLogs"),
+);
+const AdminSettings = lazy(
+  () => import("../pages/dashboard/tabs/admin/AdminSettings"),
+);
+const AdminHealth = lazy(
+  () => import("../pages/dashboard/tabs/admin/AdminHealth"),
+);
 
 // Lazy load named exports correctly
 const RoleBasedProfile = lazy(() =>
@@ -134,16 +146,51 @@ const TalentPoolPage = lazy(() => import("../pages/dashboard/TalentPoolPage"));
 /**
  * Company Dashboard Component Wrappers
  */
+const normalizeCompanyJob = (job) => {
+    const id = job.id || job.jobId;
+    const isPublished = job.isPublished ?? job.status === 'active' ?? true;
+    return {
+        ...job,
+        id,
+        status: isPublished ? 'active' : 'paused',
+        department: job.department || 'General',
+        postedDate: job.postedDate || job.createdAt,
+        expiryDate: job.expiryDate || job.updatedAt || job.createdAt,
+        level: job.level || job.experienceLevel,
+        type: job.type || job.jobType,
+        salary: job.salary || [job.salaryMin, job.salaryMax].filter(Boolean).join(' - ') || 'Not specified',
+        stats: {
+            applications: job.applicationCount || job.applicationsCount || 0,
+            applicants: job.applicationCount || job.applicationsCount || 0,
+            shortlisted: job.shortlistedCount || 0,
+            hired: job.hiredCount || 0,
+            completionRate: job.completionRate || 0,
+        },
+        actions: {
+            canEdit: true,
+            canPause: true,
+            canDelete: true,
+            canViewApplicants: true,
+        },
+    };
+};
+
 const PublishedJobsWithData = () => {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadJobs = () => {
+    setLoading(true);
     jobService
       .getCompanyJobs()
-      .then((res) => setJobs(res?.items || res || []))
+      .then((res) => setJobs((res?.items || res || []).map(normalizeCompanyJob)))
       .catch((err) => console.error("Failed to load jobs", err))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadJobs();
   }, []);
 
   if (loading) return <TableSkeleton rows={10} columns={6} />;
@@ -153,18 +200,25 @@ const PublishedJobsWithData = () => {
       jobs={jobs}
       stats={{
         totalJobs: jobs.length,
-        activeJobs: jobs.filter((j) => j.isPublished).length,
+        activeJobs: jobs.filter((j) => j.status === "active").length,
         totalViews: 0,
         totalApplicants: 0,
       }}
       filters={{}}
       pagination={{ currentPage: 1, totalPages: 1, totalItems: jobs.length }}
-      onCreateJob={() => {}}
-      onViewJob={() => {}}
-      onEditJob={() => {}}
-      onUpdateJobStatus={jobService.toggleJobStatus}
-      onManageApplicants={() => {}}
-      onExportData={() => {}}
+      onCreateJob={() => navigate("/jobs/post")}
+      onViewJob={(id) => navigate(`/jobs/${id}`)}
+      onEditJob={(id) => navigate(`/jobs/${id}/edit`)}
+      onUpdateJobStatus={async (id, isPublished) => {
+        await jobService.toggleJobStatus(id, isPublished);
+        loadJobs();
+      }}
+      onDeleteJob={async (id) => {
+        await jobService.deleteJob(id);
+        loadJobs();
+      }}
+      onManageApplicants={(id) => navigate(`/dashboard/applicants?jobId=${id}`)}
+      onExportData={() => navigate("/dashboard/export?type=jobs")}
     />
   );
 };
@@ -852,6 +906,14 @@ const DashboardRoutes = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route path="admin/finance" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFinance /></ProtectedRoute>} />
+          <Route path="finance" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFinance /></ProtectedRoute>} />
+          <Route path="admin/logs" element={<ProtectedRoute allowedRoles={["admin"]}><AdminLogs /></ProtectedRoute>} />
+          <Route path="logs" element={<ProtectedRoute allowedRoles={["admin"]}><AdminLogs /></ProtectedRoute>} />
+          <Route path="admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>} />
+          <Route path="admin/health" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHealth /></ProtectedRoute>} />
+          <Route path="health" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHealth /></ProtectedRoute>} />
 
           {/* Freelancer & Client Specific Routes */}
           <Route path="earnings" element={<ProtectedRoute allowedRoles={["freelancer"]}><EarningsPage /></ProtectedRoute>} />
