@@ -42,6 +42,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Jobs',         path: '/jobs' },
     { name: 'Applications', path: '/dashboard/applications' },
     { name: 'Gigs',         path: '/gigs' },
+    { name: 'AI Tools',     path: '/ai' },
     { name: 'Messages',     path: '/chat' },
   ],
   freelancer: [
@@ -49,6 +50,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Find Gigs', path: '/gigs' },
     { name: 'My Gigs',   path: '/gigs/manage' },
     { name: 'Proposals', path: '/gigs/proposals' },
+    { name: 'AI Tools',  path: '/ai' },
     { name: 'Messages',  path: '/chat' },
   ],
   company: [
@@ -56,6 +58,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Post Job',   path: '/jobs/post' },
     { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
+    { name: 'AI Tools',   path: '/ai' },
     { name: 'Messages',   path: '/chat' },
   ],
   employer: [
@@ -63,6 +66,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Post Job',   path: '/jobs/post' },
     { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
+    { name: 'AI Tools',   path: '/ai' },
     { name: 'Messages',   path: '/chat' },
   ],
   client: [
@@ -70,12 +74,14 @@ const NAV_AUTHENTICATED = {
     { name: 'Gigs',        path: '/gigs' },
     { name: 'My Projects', path: '/gigs/projects' },
     { name: 'Talent',      path: '/dashboard/talent' },
+    { name: 'AI Tools',    path: '/ai' },
     { name: 'Messages',    path: '/chat' },
   ],
   admin: [
     { name: 'Dashboard',  path: '/dashboard' },
     { name: 'Users',      path: '/dashboard/users' },
     { name: 'Jobs',       path: '/dashboard/jobs' },
+    { name: 'AI Tools',   path: '/ai' },
     { name: 'Moderation', path: '/dashboard/moderation' },
   ],
 };

@@ -185,7 +185,7 @@ const ChatInterface = () => {
                                 ) : (
                                     messages.map((message) => (
                                         <MessageBubble
-                                            key={message.chatId || message.id}
+                                            key={message.messageId || message.id || `${message.chatId}-${message.createdAt}`}
                                             message={message}
                                             isOwn={message.senderId === user?.id}
                                         />

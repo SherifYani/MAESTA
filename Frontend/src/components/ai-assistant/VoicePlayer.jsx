@@ -41,15 +41,6 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
     }, []);
 
     /**
-     * Automatically plays text when autoPlay is enabled
-     */
-    useEffect(() => {
-        if (autoPlay && isSupported && text) {
-            playText();
-        }
-    }, [text, autoPlay, isSupported, playText]);
-
-    /**
      * Plays the text using the Web Speech API
      */
     const playText = useCallback(() => {
@@ -82,6 +73,15 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
 
         window.speechSynthesis.speak(utterance);
     }, [isSupported, text]);
+
+    /**
+     * Automatically plays text when autoPlay is enabled
+     */
+    useEffect(() => {
+        if (autoPlay && isSupported && text) {
+            playText();
+        }
+    }, [text, autoPlay, isSupported, playText]);
 
     /**
      * Stops the currently playing speech

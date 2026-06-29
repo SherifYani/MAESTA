@@ -319,3 +319,11 @@
         animation: none;
     }
 }
+
+.quickActions .quickActionActive {
+    background: linear-gradient(135deg,
+            var(--color-submit-pink-1),
+            var(--color-submit-pink-2));
+    color: var(--color-primary-white);
+    border-color: var(--color-accent-pink);
+}

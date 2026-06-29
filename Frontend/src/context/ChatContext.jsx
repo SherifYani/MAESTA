@@ -46,7 +46,9 @@ export const ChatProvider = ({ children }) => {
         try {
             const connection = await chatService.connectHub(
                 // ReceiveMessage: append incoming message to state
-                (senderId, message) => {
+                (senderIdOrMessage, maybeMessage) => {
+                    const message = maybeMessage || senderIdOrMessage;
+                    const senderId = Number(message.senderId || senderIdOrMessage);
                     setMessages(prev => [...prev, message]);
                     // bump unread count in conversation list
                     setConversations(prev => prev.map(conv =>
@@ -145,25 +147,7 @@ export const ChatProvider = ({ children }) => {
 
         try {
             setError(null);
-            let newMessage;
-
-            if (hubRef.current) {
-                // Real-time via SignalR
-                await chatService.sendHubMessage(receiverId, content);
-                // Optimistically add message (server will echo it back via ReceiveMessage)
-                newMessage = {
-                    chatId: Date.now(),
-                    senderId: user?.id,
-                    senderName: user?.name,
-                    receiverId,
-                    content,
-                    isRead: false,
-                    createdAt: new Date().toISOString(),
-                };
-            } else {
-                // Fallback to REST: POST api/chat/messages
-                newMessage = await chatService.sendMessage(receiverId, content);
-            }
+            const newMessage = await chatService.sendMessageToUser(receiverId, content);
 
             setMessages(prev => [...prev, newMessage]);
             setConversations(prev => prev.map(conv =>
