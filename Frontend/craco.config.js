@@ -2,6 +2,19 @@ const tailwindcss = require('tailwindcss');
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
+  webpack: {
+    configure: (webpackConfig) => {
+      webpackConfig.ignoreWarnings = [
+        ...(webpackConfig.ignoreWarnings || []),
+        (warning) => (
+          warning.module?.resource?.includes('node_modules\\three-stdlib')
+          || warning.module?.resource?.includes('node_modules/three-stdlib')
+        ) && warning.message?.includes('Failed to parse source map'),
+      ];
+
+      return webpackConfig;
+    },
+  },
   devServer: (devServerConfig) => {
     if (Array.isArray(devServerConfig.allowedHosts)) {
       devServerConfig.allowedHosts = devServerConfig.allowedHosts.filter(Boolean);

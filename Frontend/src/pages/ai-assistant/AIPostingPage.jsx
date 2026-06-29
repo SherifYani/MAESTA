@@ -57,13 +57,13 @@ const AIPostingPage = () => {
     const generateJobPost = async () => {
         setIsGenerating(true);
         try {
-            const result = await aiAssistantService.generateJobDescription({
-                title: simpleInput.jobTitle,
-                industry: simpleInput.industry,
-                experienceLevel: simpleInput.experienceLevel,
-                workType: simpleInput.workType,
-                notes: simpleInput.additionalNotes,
-            });
+            const requirements = [
+                simpleInput.industry,
+                simpleInput.experienceLevel,
+                simpleInput.workType,
+                simpleInput.additionalNotes,
+            ].filter(Boolean).join('\n');
+            const result = await aiAssistantService.generateJobDescription(simpleInput.jobTitle, requirements);
 
             setGeneratedJob({
                 title: simpleInput.jobTitle,

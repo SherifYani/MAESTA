@@ -22,6 +22,7 @@ namespace JobMagnet.Application.DTOs.Chat
     // ─── Response DTOs ────────────────────────────────────────────────────────
     public class ChatMessageDto
     {
+        public int MessageId { get; set; }
         public int ChatId { get; set; }
         public int SenderId { get; set; }
         public string SenderName { get; set; } = string.Empty;

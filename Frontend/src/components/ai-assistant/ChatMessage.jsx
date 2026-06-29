@@ -22,7 +22,7 @@ import styles from "./ChatMessage.module.css";
  * @returns {JSX.Element} Rendered chat message component
  */
 const ChatMessage = ({ message, onSuggestionClick }) => {
-    const { type, content, timestamp, isVoice, suggestions, isError } = message;
+    const { type, content, timestamp, isVoice, suggestions, isError, sourceType, sources } = message;
     const isAssistant = type === "assistant";
 
     /**
@@ -77,6 +77,13 @@ const ChatMessage = ({ message, onSuggestionClick }) => {
                     {isAssistant && !isError && (
                         <VoicePlayer text={content} aria-label="Play message audio" />
                     )}
+
+                    {isAssistant && !isError && (sourceType || sources?.length > 0) && (
+                        <div className={styles.metadata}>
+                            {sourceType && <span>{sourceType}</span>}
+                            {sources?.length > 0 && <span>{sources.length} sources</span>}
+                        </div>
+                    )}
                 </div>
 
                 {suggestions && suggestions.length > 0 && (
@@ -114,6 +121,8 @@ ChatMessage.propTypes = {
         isVoice: PropTypes.bool,
         suggestions: PropTypes.arrayOf(PropTypes.string),
         isError: PropTypes.bool,
+        sourceType: PropTypes.string,
+        sources: PropTypes.array,
     }).isRequired,
     onSuggestionClick: PropTypes.func,
 };

@@ -105,11 +105,21 @@ const chatService = {
         return response.data;
     },
 
+    sendMessageToUser: async (receiverId, content) => {
+        const response = await ApiService.post('/api/chat/messages', { receiverId, content });
+        return response.data;
+    },
+
     /**
      * Mark all messages from a sender as read.
      * @param {number} senderId
      */
     markMessagesAsRead: async (senderId) => {
+        const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
+        return response.data;
+    },
+
+    markAsRead: async (senderId) => {
         const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
         return response.data;
     },
