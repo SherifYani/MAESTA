@@ -7,8 +7,6 @@
  */
 import ApiService from './ApiService';
 
-<<<<<<< HEAD
-=======
 const toArray = (value) => value?.items || value?.data?.items || value?.data || value || [];
 
 const toReportRow = (report) => ({
@@ -59,7 +57,6 @@ const convertArrayToCsv = (items) => {
     return headers.join(',') + '\n' + rows.join('\n');
 };
 
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 /**
  * Get pending user approvals.
  * Backend: GET api/Admin/pending-approvals
@@ -127,33 +124,31 @@ export const resolveReport = async (reportId, action) => {
     return response.data;
 };
 
-// ─── Missing endpoints (Placeholders to avoid compilation errors) ───────────
+export const getRoles = async () => {
+    const response = await ApiService.get('/api/Admin/roles');
+    return { success: true, data: response.data };
+};
 
-export const getReportTypes = async () => ({ success: true, data: [] });
-export const getReportHistory = async () => ({ success: true, data: [] });
-export const generateReport = async () => ({ success: true, data: {} });
-export const downloadReport = async () => ({ success: true });
+export const assignRole = async (userId, roleName) => {
+    const response = await ApiService.post(`/api/Admin/users/${userId}/roles/${roleName}`);
+    return { success: true, data: response.data };
+};
 
-export const getPendingActions = async () => ({ success: true, data: { items: [] } });
-export const bulkApprove = async () => ({ success: true });
-export const bulkReject = async () => ({ success: true });
-export const getPendingItemDetail = async () => ({ success: true, data: {} });
-export const resolvePendingItem = async () => ({ success: true });
+export const removeRole = async (userId, roleName) => {
+    const response = await ApiService.delete(`/api/Admin/users/${userId}/roles/${roleName}`);
+    return { success: true, data: response.data };
+};
 
-export const getActivities = async () => ({ success: true, data: { activities: [] } });
-export const getActivityTypes = async () => ({ success: true, data: [] });
-export const exportActivities = async () => ({ success: true });
+export const grantAdmin = async (userId) => {
+    const response = await ApiService.post(`/api/Admin/grant-admin/${userId}`);
+    return { success: true, data: response.data };
+};
 
-export const getUsers = async () => ({ success: true, data: { users: [] } });
-export const updateUserStatus = async (userId, status) => toggleUserStatus(userId, status === 'active');
-export const updateUserRole = async () => ({ success: true });
+export const revokeAdmin = async (userId) => {
+    const response = await ApiService.post(`/api/Admin/revoke-admin/${userId}`);
+    return { success: true, data: response.data };
+};
 
-<<<<<<< HEAD
-export const getJobsForModeration = async () => ({ success: true, data: { jobs: [] } });
-export const approveJob = async () => ({ success: true });
-export const rejectJob = async () => ({ success: true });
-export const editJob = async () => ({ success: true });
-=======
 export const getLogs = async (params = {}) => {
     const response = await ApiService.get('/api/Admin/logs', { params });
     return { success: true, data: response.data };
@@ -609,7 +604,6 @@ export const editJob = async (jobId, jobData) => {
     const response = await ApiService.put(`/api/jobs/${jobId}`, jobData);
     return { success: true, data: response.data };
 };
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
 // Staff Management - FIXED Issue #4: Added real API calls
 export const resendInvite = async (userId) => {
@@ -656,8 +650,6 @@ const adminService = {
     getUsers,
     updateUserStatus,
     updateUserRole,
-<<<<<<< HEAD
-=======
     getRoles,
     assignRole,
     removeRole,
@@ -677,7 +669,6 @@ const adminService = {
     moderateContent,
     getHealth,
     getMonthlyAnalytics,
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     getJobsForModeration,
     approveJob,
     rejectJob,

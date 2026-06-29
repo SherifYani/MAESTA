@@ -24,42 +24,6 @@ const JobDetailsPage = () => {
     const [similarJobs, setSimilarJobs] = useState([]);
 
     useEffect(() => {
-<<<<<<< HEAD
-        fetchJobDetails();
-    }, [jobId]);
-
-    /**
-     * Fetches job details and similar jobs
-     * @async
-     * @returns {Promise<void>}
-     */
-    const fetchJobDetails = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const jobData = await jobService.getJobById(jobId);
-            setJob(jobData);
-            setIsSaved(jobData.isSaved || false);
-
-            try {
-                const similar = await jobService.getSimilarJobs(jobId);
-                setSimilarJobs(similar.slice(0, 4));
-            } catch (err) {
-                console.log('Could not load similar jobs');
-            }
-        } catch (err) {
-            setError(err.message || 'Failed to load job details');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    /**
-     * Handles saving or unsaving a job
-     * @async
-     * @returns {Promise<void>}
-     */
-=======
         const fetchJobDetails = async () => {
             try {
                 setLoading(true);
@@ -101,7 +65,6 @@ const JobDetailsPage = () => {
     }, [jobId]);
 
     // --- Handlers ---
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     const handleSaveJob = async () => {
         try {
             if (isSaved) {

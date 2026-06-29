@@ -339,7 +339,6 @@ const DetailedApplications = ({
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedApplications = filteredApplications.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-<<<<<<< HEAD
   const startDisplay = filteredApplications.length > 0 ? startIdx + 1 : 0;
   const endDisplay = Math.min(startIdx + ITEMS_PER_PAGE, filteredApplications.length);
   const winSize = Math.min(5, totalPages);
@@ -349,9 +348,6 @@ const DetailedApplications = ({
   else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
   else startPageNum = currentPage - 2;
   const pageNumbers = Array.from({ length: winSize }, (_, i) => startPageNum + i);
-=======
-
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
   // If no applications
   if (applications.length === 0) {

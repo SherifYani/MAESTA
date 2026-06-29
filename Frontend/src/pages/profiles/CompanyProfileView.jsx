@@ -27,13 +27,7 @@ export default function CompanyProfileView() {
     const navigate = useNavigate();
     const [companyData, setCompanyData] = useState(null);
     const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
     const [error, setError] = useState(null);
-=======
-    
-    const [error, setError] = useState(null);
-
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     const [profileUnavailable, setProfileUnavailable] = useState(false);
 
     useEffect(() => {
@@ -98,10 +92,6 @@ export default function CompanyProfileView() {
         }
     };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     /**
      * Generates CSS class for status badge based on status value.
      * @param {string} status - Job status (e.g., "Open", "Closed").
@@ -112,21 +102,13 @@ export default function CompanyProfileView() {
         return `profile__status profile__status--${typeof status === 'string' ? status.toLowerCase() : 'unknown'}`;
     };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     /**
      * Generates CSS class for member role badge based on role value.
      * @param {string} role - Team member role (e.g., "Admin", "HR_Manager").
      * @returns {string} BEM modifier class for role styling.
      */
     const getRoleClass = (role) => {
-<<<<<<< HEAD
-        const normalizedRole = role.toLowerCase().replace("_", "-");
-=======
         const normalizedRole = role ? role.toLowerCase().replace(/_/g, "-") : "unknown";
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
         return `profile__member-role profile__member-role--${normalizedRole}`;
     };
 
@@ -367,16 +349,6 @@ export default function CompanyProfileView() {
                                     <article
                                         key={job.id}
                                         className="profile__job-card"
-<<<<<<< HEAD
-                                        aria-label={`Job listing: ${job.title}`}>
-                                        <div className="profile__job-header">
-                                            <h3 className="profile__job-title">{job.title}</h3>
-
-                                            <span
-                                                className={getStatusClass(job.status)}
-                                                aria-label={`Job status: ${job.status}`}>
-                                                {job.status}
-=======
                                         aria-label={`Job listing: ${job.title || 'Untitled Job'}`}>
                                         <div className="profile__job-header">
                                             <h3 className="profile__job-title">{job.title || 'Untitled Job'}</h3>
@@ -385,26 +357,16 @@ export default function CompanyProfileView() {
                                                 className={getStatusClass(job.status)}
                                                 aria-label={`Job status: ${job.status || 'Unknown'}`}>
                                                 {job.status || 'Unknown'}
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
                                             </span>
                                         </div>
 
                                         <div className="profile__job-meta">
-<<<<<<< HEAD
-                                            <span aria-label={`Location: ${job.location}`}>
-                                                📍 {job.location}
-                                            </span>
-
-                                            <span aria-label={`Job type: ${job.jobType}`}>
-                                                💼 {job.jobType}
-=======
                                             <span aria-label={`Location: ${job.location || 'Not specified'}`}>
                                                 📍 {job.location || 'Not specified'}
                                             </span>
 
                                             <span aria-label={`Job type: ${job.jobType || 'Not specified'}`}>
                                                 💼 {job.jobType || 'Not specified'}
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
                                             </span>
 
                                             <span
@@ -423,13 +385,3 @@ export default function CompanyProfileView() {
     );
 }
 
-
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a

@@ -15,11 +15,8 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-<<<<<<< HEAD
 import { staffData as initialStaffData } from '../../config/adminMockData';
-=======
 import * as adminService from '../../../../../../services/adminService';
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -148,8 +145,6 @@ const StaffManagement = () => {
         setSelectedStaff(null);
     }, []);
 
-<<<<<<< HEAD
-=======
     const handleRevokeAdmin = useCallback(async (staff) => {
         if (!window.confirm(`Remove admin access from ${staff.email}?`)) return;
         await adminService.revokeAdmin(staff.id);
@@ -180,7 +175,6 @@ const StaffManagement = () => {
         }
     }, [addForm]);
 
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     // =========================================================================
     // Cell renderers
     // =========================================================================

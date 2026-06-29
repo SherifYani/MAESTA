@@ -5,6 +5,7 @@ import DashboardLayout from "../pages/dashboard/layout/DashboardLayout";
 import TableSkeleton from "../components/common/Skeleton/TableSkeleton";
 import jobService from "../services/jobService";
 import dashboardService from "../services/dashboardService";
+import exportService from "../services/exportService";
 
 // Data Services
 import {
@@ -111,11 +112,8 @@ const DetailedApplications = lazy(
   () =>
     import("../pages/dashboard/tabs/jobseeker/components/DetailedApplications/DetailedApplications.jsx"),
 );
-<<<<<<< HEAD
-=======
 const MyInterviewsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/MyInterviewsPage"));
 const AssessmentsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/AssessmentsPage"));
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
 // Shared Pages (all authenticated roles)
 const AccountSettings = lazy(
@@ -171,16 +169,45 @@ const PublishedJobsWithData = () => {
   );
 };
 
+const normalizeCompanyApplicant = (applicant) => ({
+    ...applicant,
+    id: applicant.applicationId || applicant.id,
+    applicantName: applicant.applicantName || applicant.name || 'Applicant',
+    applicantEmail: applicant.applicantEmail || applicant.email || 'N/A',
+    applicantPhone: applicant.applicantPhone || applicant.phone || 'N/A',
+    appliedDate: applicant.appliedAt || applicant.appliedDate,
+    status: (applicant.status || 'pending').toLowerCase(),
+    matchScore: Math.round(applicant.matchScore || 0),
+    location: applicant.location || 'N/A',
+    resume: { url: applicant.cvUrl || applicant.resumeUrl || '' },
+    profile: { url: applicant.applicantId ? `/profiles/jobseeker/${applicant.applicantId}` : '' },
+    actions: {
+        canShortlist: true,
+        canReject: true,
+        canScheduleInterview: true,
+        canViewResume: Boolean(applicant.cvUrl || applicant.resumeUrl),
+        canViewProfile: Boolean(applicant.applicantId),
+    },
+});
+
 const NewApplicantsWithData = () => {
+  const navigate = useNavigate();
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadApplicants = () => {
+    setLoading(true);
     jobService
       .getCompanyApplicants()
-      .then((res) => setApplicants(res || []))
+      .then((res) =>
+        setApplicants((res?.items || res || []).map(normalizeCompanyApplicant)),
+      )
       .catch((err) => console.error("Failed to load applicants", err))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadApplicants();
   }, []);
 
   if (loading) return <TableSkeleton rows={10} columns={6} />;
@@ -189,10 +216,10 @@ const NewApplicantsWithData = () => {
     total: applicants.length,
     new: applicants.filter((a) => a.status === "pending" || a.status === "new")
       .length,
-    reviewed: applicants.filter((a) => a.status === "Reviewed").length,
-    shortlisted: applicants.filter((a) => a.status === "Shortlisted").length,
-    interviewed: applicants.filter((a) => a.status === "Interviewed").length,
-    rejected: applicants.filter((a) => a.status === "Rejected").length,
+    reviewed: applicants.filter((a) => a.status === "reviewed").length,
+    shortlisted: applicants.filter((a) => a.status === "shortlisted").length,
+    interviewed: applicants.filter((a) => a.status === "interviewed").length,
+    rejected: applicants.filter((a) => a.status === "rejected").length,
     avgMatchScore:
       applicants.length > 0 ?
         Math.round(
@@ -200,6 +227,11 @@ const NewApplicantsWithData = () => {
             applicants.length,
         )
       : 0,
+  };
+
+  const updateStatus = async (id, status) => {
+    await jobService.updateApplicationStatus(id, status);
+    loadApplicants();
   };
 
   return (
@@ -212,19 +244,6 @@ const NewApplicantsWithData = () => {
         totalPages: 1,
         totalItems: applicants.length,
       }}
-<<<<<<< HEAD
-      onViewApplicant={() => {}}
-      onShortlist={(id) =>
-        jobService.updateApplicationStatus(id, "Shortlisted")
-      }
-      onReject={(id) => jobService.updateApplicationStatus(id, "Rejected")}
-      onScheduleInterview={(id) =>
-        jobService.updateApplicationStatus(id, "Interviewed")
-      }
-      onUpdateApplicantStatus={jobService.updateApplicationStatus}
-      onBulkAction={() => {}}
-      onExportData={() => {}}
-=======
       onViewApplicant={(id) => navigate(`/dashboard/applicants?applicantId=${id}`)}
       onShortlist={(id) => updateStatus(id, "shortlisted")}
       onReject={(id) => updateStatus(id, "rejected")}
@@ -252,7 +271,6 @@ const NewApplicantsWithData = () => {
         }
       }}
       onExportData={() => navigate("/dashboard/export?type=applicants")}
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
     />
   );
 };
@@ -622,8 +640,6 @@ const DashboardRoutes = () => {
               </ProtectedRoute>
             }
           />
-<<<<<<< HEAD
-=======
           <Route
             path="my-interviews"
             element={
@@ -648,7 +664,6 @@ const DashboardRoutes = () => {
               </ProtectedRoute>
             }
           />
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
           {/* Admin Dashboard Routes (both flat and prefixed) */}
           <Route

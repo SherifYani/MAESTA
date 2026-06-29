@@ -7,6 +7,48 @@
  */
 import ApiService from './ApiService';
 
+const toArray = (value) => {
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(value?.items)) return value.items;
+    if (Array.isArray(value?.data)) return value.data;
+    if (Array.isArray(value?.interviews)) return value.interviews;
+    return [];
+};
+
+const normalizeInterview = (interview) => {
+    const scheduledAt = interview.scheduledAt || interview.ScheduledAt;
+    const scheduledDate = scheduledAt ? new Date(scheduledAt).toISOString().split('T')[0] : '';
+    const scheduledTime = scheduledAt ? new Date(scheduledAt).toTimeString().slice(0, 5) : '';
+
+    return {
+        ...interview,
+        id: interview.interviewId || interview.id,
+        applicantName: interview.jobSeekerName || interview.applicantName || 'Applicant',
+        jobTitle: interview.title || interview.jobTitle || 'Interview',
+        scheduledAt,
+        scheduledDate,
+        scheduledTime,
+        interviewType: interview.meetingLink ? 'video' : interview.location ? 'in-person' : 'phone',
+        location: interview.meetingLink || interview.location || '',
+        status: (interview.status || 'scheduled').toLowerCase(),
+        notes: interview.description || interview.notes || '',
+    };
+};
+
+const normalizePagedInterviews = (data) => {
+    const interviews = toArray(data).map(normalizeInterview);
+    return {
+        success: true,
+        data: {
+            interviews,
+            pagination: {
+                totalPages: data?.totalPages || data?.pagination?.totalPages || 1,
+                totalItems: data?.total || data?.totalItems || interviews.length,
+            },
+        },
+    };
+};
+
 /**
  * Get my interviews (paginated).
  * Backend: GET api/Interviews
@@ -72,16 +114,10 @@ export const deleteInterview = async (id) => {
     return response.data;
 };
 
-<<<<<<< HEAD
-// ─── Aliases & Missing endpoints (Placeholders to avoid compilation errors) ───
-
-export const getCompanyInterviews = async (params) => getMyInterviews(params?.page, params?.limit);
-=======
 export const getCompanyInterviews = async (params = {}) => {
     const data = await getMyInterviews(params.page || 1, params.limit || 20, params);
     return normalizePagedInterviews(data);
 };
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
 export const cancelInterview = async (id, reason) => {
     return updateStatus(id, { status: 'cancelled', notes: reason });
@@ -97,9 +133,6 @@ export const getJob = async (jobId) => {
     return response.data;
 };
 
-<<<<<<< HEAD
-export const getAvailableSlots = async () => ({ success: true, data: { slots: [] } });
-=======
 const FALLBACK_SLOTS = [
     { time: "09:00", available: true },
     { time: "10:00", available: true },
@@ -168,7 +201,6 @@ const generateSlotsForDate = (dateStr) => {
         return slot;
     });
 };
->>>>>>> a16752cd97e84085e9ff7455f54f0b4148464a6a
 
 const interviewService = {
     getMyInterviews,

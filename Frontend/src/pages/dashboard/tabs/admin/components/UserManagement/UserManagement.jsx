@@ -22,6 +22,7 @@ import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { usersData } from '../../config/adminMockData';
+import * as adminService from '../../../../../../services/adminService';
 import styles from './UserManagement.module.css';
 
 // Number of rows to display per page
