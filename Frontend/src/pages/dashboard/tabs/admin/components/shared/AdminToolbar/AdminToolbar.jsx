@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import styles from './AdminToolbar.module.css';
 
 /**

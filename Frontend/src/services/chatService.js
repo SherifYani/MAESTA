@@ -191,15 +191,6 @@ const chatService = {
         return response.data;
     },
 
-    /**
-     * Get list of users blocked by the current user.
-     * @returns {Promise<Array>} - Array of blocked users with their details
-     */
-    getBlockedUsers: async () => {
-        const response = await ApiService.get('/api/chat/blocked');
-        return response.data;
-    },
-
     // ─── SignalR Real-Time ─────────────────────────────────────────────────────
 
     /**

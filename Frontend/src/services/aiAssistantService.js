@@ -6,7 +6,6 @@
  * @date 2026-05-09
  */
 import ApiService from './ApiService';
-import jobService from './jobService';
 
 /**
  * General chat with AI assistant.
@@ -68,42 +67,13 @@ export const recommendJobs = async () => {
     return response.data;
 };
 
-export const getJobRecommendations = async ({ query = '', type = 'jobs', filters = {} } = {}) => {
-    if (type !== 'jobs') {
-        throw new Error('Candidate smart search is not supported by the current AI API.');
-    }
-
-    const response = await jobService.searchJobs({
-        keyword: query,
-        location: filters.location || undefined,
-        experienceLevel: filters.experienceLevel || undefined,
-        page: 1,
-        limit: 20,
-    });
-
-    const jobs = response?.jobs || response?.items || response || [];
-    return jobs.map((job) => ({
-        id: job.jobId || job.id,
-        title: job.title,
-        company: job.companyName || job.company || 'Company',
-        location: job.location || 'Remote',
-        salary: job.salaryMin || job.salaryMax
-            ? `${job.salaryMin || 0} - ${job.salaryMax || ''} ${job.currency || ''}`.trim()
-            : 'Not specified',
-        skills: job.skills || job.tags || [],
-        posted: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : '',
-        matchScore: Math.round(job.matchScore || 0),
-    }));
-};
-
 const aiAssistantService = {
     chat,
     generateJobDescription,
     analyzeResume,
     parseResume,
     matchResumeWithJob,
-    recommendJobs,
-    getJobRecommendations
+    recommendJobs
 };
 
 export default aiAssistantService;

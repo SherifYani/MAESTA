@@ -18,12 +18,11 @@ import styles from './GigDetailsPage.module.css';
 const GigDetailsPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { currentGig, isLoading, error, fetchGigById, submitBid } = useGig();
+    const { currentGig, isLoading, error, fetchGigById } = useGig();
     const { isFreelancer, canBidOnGigs } = useRole();
 
     const [showBidForm, setShowBidForm] = useState(false);
     const [activeTab, setActiveTab] = useState('details');
-    const [actionMessage, setActionMessage] = useState(null);
 
     useEffect(() => {
         if (id) {
@@ -32,27 +31,10 @@ const GigDetailsPage = () => {
     }, [id, fetchGigById]);
 
     const handleBidSubmit = async (bidData) => {
-        try {
-            await submitBid(id, bidData);
-            await fetchGigById(id);
-        } catch (err) {
-            console.error('Bid submission failed:', err);
-        }
+        // Implement bid submission logic
+        console.log('Bid submitted:', bidData);
+        // Here you would typically call submitBid from context
         setShowBidForm(false);
-    };
-
-    const handleSaveGig = () => {
-        setActionMessage('Saving gigs is not supported by the current backend API yet.');
-    };
-
-    const handleShareGig = async () => {
-        const url = window.location.href;
-        if (navigator.share) {
-            await navigator.share({ title: currentGig?.title || 'Gig', url });
-            return;
-        }
-        await navigator.clipboard.writeText(url);
-        setActionMessage('Gig link copied to clipboard.');
     };
 
     if (isLoading) {
@@ -89,8 +71,8 @@ const GigDetailsPage = () => {
                 </Button>
 
                 <div className={styles.headerActions}>
-                    <Button variant="secondary" onClick={handleSaveGig}>Save Gig</Button>
-                    <Button variant="secondary" onClick={handleShareGig}>Share</Button>
+                    <Button variant="secondary">Save Gig</Button>
+                    <Button variant="secondary">Share</Button>
                     {isFreelancer() && canBidOnGigs() && (
                         <Button variant="primary" onClick={() => navigate(`/gigs/${id}/bid`)}>
                             Submit Proposal
@@ -99,13 +81,9 @@ const GigDetailsPage = () => {
                 </div>
             </header>
 
-            {actionMessage && (
-                <Alert type="info" message={actionMessage} />
-            )}
-
             <main className={styles.mainContent}>
                 <div className={styles.gigOverview}>
-                    <GigCard gig={currentGig} onClick={() => setActiveTab('details')} className={styles.detailCard} />
+                    <GigCard gig={currentGig} onClick={() => { }} className={styles.detailCard} />
                 </div>
 
                 <div className={styles.tabs}>

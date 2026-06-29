@@ -8,28 +8,23 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, Shield } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getReportsData } from '../../config/adminDataService';
-import { resolveReport } from '../../../../../../services/adminService';
+import { reportsData } from '../../config/adminMockData';
 import styles from './ContentModeration.module.css';
 
 const PAGE_SIZE = 10;
 
+/**
+ * Content Moderation component — fully controlled parent for AdminDataTable.
+ * @returns {JSX.Element}
+ */
 const ContentModeration = () => {
-    const [reports, setReports] = useState([]);
-    const [, setLoading] = useState(true);
-
-    useEffect(() => {
-        getReportsData().then(data => {
-            setReports(data);
-            setLoading(false);
-        }).catch(() => setLoading(false));
-    }, []);
+    const [reports, setReports] = useState(reportsData);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -105,11 +100,16 @@ const ContentModeration = () => {
         if (page >= 1 && page <= totalPages) setCurrentPage(page);
     }, [totalPages]);
 
-    const handleAction = useCallback(async (id, action) => {
-        await resolveReport(id, action);
+    const handleAction = useCallback((id, action) => {
+        console.log(`Report ${id} action: ${action}`);
         setReports(prev => prev.map(report =>
             report.id === id
-                ? { ...report, status: action === 'dismiss' ? 'dismissed' : 'resolved', lastAction: action }
+                ? {
+                    ...report,
+                    status: action === 'dismiss' ? 'resolved' : 'removed',
+                    lastAction: action,
+                    resolvedAt: new Date().toISOString(),
+                }
                 : report
         ));
     }, []);

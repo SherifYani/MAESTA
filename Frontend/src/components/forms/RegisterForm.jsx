@@ -47,7 +47,7 @@ function RegisterForm() {
     city: "",
   });
 
-  const [employerData] = useState({
+  const [employerData, setEmployerData] = useState({
     companyName: "",
     description: "",
     industry: "",
@@ -270,6 +270,8 @@ function RegisterForm() {
   }, [
     formData,
     formErrors,
+    employerData,
+    employerErrors,
     selectedRole,
     termsAccepted,
   ]);
@@ -277,6 +279,21 @@ function RegisterForm() {
   /**
    * Maps current role names to guide role names
    */
+  const getGuideRoleName = () => {
+    switch (selectedRole) {
+      case "jobseeker":
+        return "JobSeeker";
+      case "employer":
+        return "Employer";
+      case "freelancer":
+        return "Freelancer";
+      case "client":
+        return "Client";
+      default:
+        return selectedRole;
+    }
+  };
+
   /**
    * Handles form submission — calls real API register step 1.
    * Payload matches RegisterStep1Request DTO exactly.

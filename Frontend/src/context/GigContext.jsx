@@ -175,7 +175,7 @@ export const GigProvider = ({ children }) => {
             setLoading(true);
             setError(null);
             const response = await gigService.getGigById(gigId);
-            dispatch({ type: ACTIONS.SET_CURRENT_GIG, payload: response?.data ?? response });
+            dispatch({ type: ACTIONS.SET_CURRENT_GIG, payload: response.data });
         } catch (error) {
             setError(error.message || 'Failed to fetch gig');
         }

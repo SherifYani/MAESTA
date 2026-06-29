@@ -11,8 +11,12 @@
 
 import { useContext, useCallback, memo } from "react";
 import {
+  Briefcase,
+  Users,
+  UserPlus,
   ChevronLeft,
   ChevronRight,
+  Shield,
   X,
 } from "lucide-react";
 import { DashboardContext } from "./DashboardLayout";
@@ -61,13 +65,15 @@ const DashboardSidebar = memo(({ isOpen, onToggle, isMobile }) => {
    */
   const handleRoleChange = useCallback(
     (role) => {
-      if (setCurrentRole) setCurrentRole(role);
+      setCurrentRole(role);
+      // After changing role, you might want to navigate to the dashboard home
+      // or the first item in the new role's navigation
       const newRoleNav = (ROLE_NAVIGATION[role] || ROLE_NAVIGATION[ROLES.CLIENT])?.navigation || [];
       if (newRoleNav.length > 0) {
         navigate(newRoleNav[0].path);
       }
     },
-    [setCurrentRole, navigate]
+    [setCurrentRole, navigate],
   );
 
   /*

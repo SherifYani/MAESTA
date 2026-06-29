@@ -11,9 +11,9 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-    MoreVertical, Trash, CheckCircle, Ban,
+    MoreVertical, Edit, Trash, CheckCircle, Ban,
     UserPlus, Users, UserCheck, UserX, Shield,
 } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
@@ -21,31 +21,21 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import adminService from '../../../../../../services/adminService';
+import { usersData } from '../../config/adminMockData';
 import styles from './UserManagement.module.css';
 
+// Number of rows to display per page
 const PAGE_SIZE = 10;
 
+/**
+ * User Management Component.
+ * All data transformation (filter, sort, paginate) lives here;
+ * AdminDataTable is a purely controlled, presentational component.
+ * @returns {JSX.Element}
+ */
 const UserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const [, setLoading] = useState(true);
-
-    useEffect(() => {
-        adminService.getUsers({ page: 1, pageSize: 100 }).then(result => {
-            const rows = (result.data?.users || []).map((user) => ({
-                id: user.userId || user.id,
-                name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
-                email: user.email,
-                role: (user.roles && user.roles[0]) || user.userType || 'unknown',
-                roles: user.roles || [],
-                status: user.isDeleted ? 'banned' : user.isActive ? 'active' : 'inactive',
-                lastActive: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never',
-                joinDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-',
-            }));
-            setUsers(rows);
-            setLoading(false);
-        }).catch(() => setLoading(false));
-    }, []);
+    // ── Data source ─────────────────────────────────────────────────────────
+    const [users, setUsers] = useState(usersData);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -134,9 +124,8 @@ const UserManagement = () => {
     }, [totalPages]);
 
     /** Activate / deactivate a user */
-    const handleToggleStatus = useCallback(async (id, currentStatus) => {
+    const handleToggleStatus = useCallback((id, currentStatus) => {
         const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-        await adminService.updateUserStatus(id, newStatus);
         setUsers((prev) =>
             prev.map((user) => user.id === id ? { ...user, status: newStatus } : user)
         );
@@ -144,10 +133,8 @@ const UserManagement = () => {
     }, []);
 
     /** Ban / unban a user */
-    const handleToggleBan = useCallback(async (id, currentStatus) => {
+    const handleToggleBan = useCallback((id, currentStatus) => {
         const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
-        if (newStatus === 'banned') await adminService.deleteUser(id);
-        else await adminService.updateUserStatus(id, 'active');
         setUsers((prev) =>
             prev.map((user) => user.id === id ? { ...user, status: newStatus } : user)
         );
@@ -155,9 +142,8 @@ const UserManagement = () => {
     }, []);
 
     /** Delete a user after confirmation */
-    const handleDeleteUser = useCallback(async (id, name) => {
+    const handleDeleteUser = useCallback((id, name) => {
         if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
-            await adminService.deleteUser(id);
             setUsers((prev) => prev.filter((user) => user.id !== id));
             setSelectedUser(null);
         }

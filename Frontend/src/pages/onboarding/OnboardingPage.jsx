@@ -11,13 +11,13 @@
  * @fix Re-enabled role-based renderForm() switch (was hardcoded to JobSeekerOnboarding).
  */
 import JobSeekerOnboarding from "./JobSeekerOnboarding";
-import FreelancerOnboarding from "./FreelancerOnboarding";
+// import FreelancerOnboarding from "./FreelancerOnboarding";
 import CompanyOnboarding from "./CompanyOnBoarding";
-import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "../../context/AuthContext"; // Import useAuth hook
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
+// import CompanyMemberOnboarding from "./CompanyMemberOnBoarding";
 
 export default function OnboardingPage() {
   const { user } = useAuth();
@@ -30,14 +30,12 @@ export default function OnboardingPage() {
     switch (userRole) {
       case "jobseeker":
         return <JobSeekerOnboarding />;
-      case "freelancer":
-        return <FreelancerOnboarding />;
+      // case "freelancer":
+      //   return <FreelancerOnboarding />;
       case "employer":
         return <CompanyOnboarding />;
-      case "CompanyMember":
-      case "companyMember":
-      case "company_member":
-        return <CompanyMemberOnboarding />;
+      // case "CompanyMember":
+      //     return <CompanyMemberOnboarding />;
       default:
         return (
           <div className="text-center p-8">

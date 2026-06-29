@@ -24,7 +24,7 @@ import {
     Eye,
     Zap
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import JobMetricsChart from "../shared/JobMetricsChart";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
@@ -189,7 +189,30 @@ const PerformanceAnalytics = ({
         };
 
         return processData;
-    }, [analyticsData]);
+    }, [analyticsData, period]);
+
+    /**
+     * Gets trend icon and color based on trend value
+     * @param {number} value - Current value
+     * @param {number} threshold - Threshold for comparison
+     * @returns {Object} Trend configuration object
+     */
+    const getTrendConfig = (value, threshold) => {
+        if (value > threshold) return { icon: TrendingUp, color: "success", label: "Increasing" };
+        if (value < threshold) return { icon: TrendingDown, color: "error", label: "Decreasing" };
+        return { icon: null, color: "warning", label: "Stable" };
+    };
+
+    /**
+     * Calculates percentage change between two values
+     * @param {number} current - Current value
+     * @param {number} previous - Previous value
+     * @returns {number} Percentage change
+     */
+    const calculateChange = (current, previous) => {
+        if (!previous || previous === 0) return 0;
+        return ((current - previous) / previous) * 100;
+    };
 
     /**
      * Handles period change
@@ -197,10 +220,14 @@ const PerformanceAnalytics = ({
      */
     const handlePeriodChange = (newPeriod) => {
         setPeriod(newPeriod);
+        setLoading(true);
 
         if (onPeriodChange) {
             onPeriodChange(newPeriod);
         }
+
+        // Simulate loading
+        setTimeout(() => setLoading(false), 500);
     };
 
     /**
@@ -219,16 +246,15 @@ const PerformanceAnalytics = ({
     /**
      * Handles data refresh
      */
-    const handleRefresh = async () => {
+    const handleRefresh = () => {
         setLoading(true);
 
-        try {
-            if (onRefresh) {
-                await onRefresh();
-            }
-        } finally {
-            setLoading(false);
+        if (onRefresh) {
+            onRefresh();
         }
+
+        // Simulate loading
+        setTimeout(() => setLoading(false), 1000);
     };
 
     /**
@@ -237,7 +263,8 @@ const PerformanceAnalytics = ({
      * @param {number} index - Index of clicked item
      */
     const handleChartClick = (item, index) => {
-        setSelectedMetric(item?.id || item?.name || selectedMetric);
+        console.log(`Chart item clicked:`, item, index);
+        // In a real app, this might show detailed information or navigate
     };
 
     // Period options configuration
@@ -484,7 +511,7 @@ const PerformanceAnalytics = ({
                                 </div>
                                 <button
                                     className={styles.insightAction}
-                                    onClick={() => setSelectedMetric('jobs')}
+                                    onClick={() => console.log(`View details for ${job.name}`)}
                                 >
                                     <Eye size={16} />
                                 </button>

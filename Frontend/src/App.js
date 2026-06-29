@@ -21,6 +21,7 @@ const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage.jsx"
 const VerificationEmailPage = lazy(() => import("./pages/auth/VerificationEmailPage.jsx"));
 const LoginForm = lazy(() => import("./pages/Login.jsx"));
 const OnboardingPage = lazy(() => import("./pages/onboarding/OnboardingPage.jsx"));
+const MockLoginPage = lazy(() => import("./pages/auth/MockLoginPage.jsx"));
 
 const DashboardRoutes = lazy(() => import("./routes/DashboardRoutes"));
 const JobRoutes = lazy(() => import("./routes/JobRoutes"));
@@ -29,7 +30,6 @@ const GigRoutes = lazy(() => import("./routes/GigRoutes"));
 const ChatRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.ChatRoutes })));
 const NotificationRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.NotificationRoutes })));
 const SubscriptionRoutes = lazy(() => import("./routes/CommonRoutes").then(m => ({ default: m.SubscriptionRoutes })));
-const CommunityRoutes = lazy(() => import("./routes/CommunityRoutes"));
 
 // Static Pages
 const LandingPage = lazy(() => import("./pages/LandingPage.jsx"));
@@ -91,6 +91,9 @@ function App() {
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerificationEmailPage />} />
         <Route path="/register/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+        {process.env.NODE_ENV === 'development' && (
+          <Route path="/mock-login" element={<MockLoginPage />} />
+        )}
 
         {/* Job Module - Handles /jobs */}
         <Route path="/jobs/*" element={
@@ -132,7 +135,6 @@ function App() {
         <Route path="/chat/*" element={<ProtectedRoute><ChatRoutes /></ProtectedRoute>} />
         <Route path="/notifications/*" element={<ProtectedRoute><NotificationRoutes /></ProtectedRoute>} />
         <Route path="/subscription/*" element={<ProtectedRoute><SubscriptionRoutes /></ProtectedRoute>} />
-        <Route path="/community/*" element={<ProtectedRoute><CommunityRoutes /></ProtectedRoute>} />
 
         {/* Profile Routes (Phase 4) */}
         <Route path="/profiles/jobseeker/:userId" element={<JobSeekerProfile />} />

@@ -21,20 +21,6 @@
 
 import ApiService from './ApiService';
 
-/**
- * Normalize a single notification from the backend DTO shape
- * to the shape used by the frontend context and components.
- * Backend: { notificationId, title, message, type, isRead, actionUrl, createdAt }
- * Frontend expects: { id, title, message, type, read, actionUrl, created_at }
- */
-const normalizeNotification = (n) => ({
-    ...n,
-    id: n.notificationId ?? n.id,
-    read: n.isRead ?? n.read ?? false,
-    actionUrl: n.actionUrl ?? null,
-    created_at: n.createdAt ?? n.created_at,
-});
-
 const notificationService = {
 
     /**
@@ -44,8 +30,7 @@ const notificationService = {
      */
     getNotifications: async (page = 1, limit = 20) => {
         const response = await ApiService.get('/api/notifications', { params: { page, limit } });
-        const raw = response.data?.items || response.data || [];
-        return Array.isArray(raw) ? raw.map(normalizeNotification) : [];
+        return response.data;
     },
 
     /**
@@ -117,7 +102,11 @@ const notificationService = {
      * Unsubscribe from push notifications.
      */
     unsubscribeFromPush: async () => {
-        throw new Error('Unsubscribing from push notifications is not supported by the current backend API.');
+        // MOCKED: Not implemented in backend yet.
+        console.warn("unsubscribeFromPush is mocked");
+        return { success: true };
+        // const response = await ApiService.delete('/api/notifications/subscribe');
+        // return response.data;
     },
 
     /**
@@ -125,9 +114,11 @@ const notificationService = {
      * @param {string} type - e.g. 'application', 'message', 'system'
      */
     getByType: async (type) => {
-        const response = await ApiService.get('/api/notifications', { params: { page: 1, limit: 50 } });
-        const notifications = response.data?.items || response.data || [];
-        return notifications.filter(notification => notification.type === type || notification.category === type);
+        // MOCKED: Not implemented in backend yet.
+        console.warn("getByType is mocked");
+        return [];
+        // const response = await ApiService.get(`/api/notifications/type/${type}`);
+        // return response.data;
     },
 };
 

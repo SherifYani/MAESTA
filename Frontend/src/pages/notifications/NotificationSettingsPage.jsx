@@ -31,36 +31,30 @@ const NotificationSettingsPage = () => {
         updatePreferences = () => { },
     } = context || {};
 
-    const defaultPreferences = {
-        inApp: { jobs: true, gigs: true, communication: true, system: true },
-        email: { jobs: true, gigs: true, communication: false, system: true },
-        push: { enabled: false, jobs: false, gigs: false, communication: false, system: false },
-    };
-
-    // Merge backend flat prefs (EmailNotifications, PushNotifications) into the nested local shape
-    const mergePreferences = (backendPrefs) => {
-        if (!backendPrefs || Object.keys(backendPrefs).length === 0) return defaultPreferences;
-        // If it's already nested (has inApp key), use it directly
-        if (backendPrefs.inApp) return backendPrefs;
-        // Otherwise it's the flat backend format — map it
-        return {
-            ...defaultPreferences,
-            email: {
-                ...defaultPreferences.email,
-                jobs: backendPrefs.emailNotifications ?? backendPrefs.EmailNotifications ?? true,
-                gigs: backendPrefs.emailNotifications ?? backendPrefs.EmailNotifications ?? true,
-                communication: backendPrefs.emailNotifications ?? backendPrefs.EmailNotifications ?? false,
-                system: backendPrefs.emailNotifications ?? backendPrefs.EmailNotifications ?? true,
-            },
-            push: {
-                ...defaultPreferences.push,
-                enabled: backendPrefs.pushNotifications ?? backendPrefs.PushNotifications ?? false,
-            },
-        };
+    const DEFAULT_PREFERENCES = {
+        inApp: {
+            jobs: true,
+            gigs: true,
+            communication: true,
+            system: true,
+        },
+        email: {
+            jobs: true,
+            gigs: true,
+            communication: false,
+            system: true,
+        },
+        push: {
+            enabled: false,
+            jobs: false,
+            gigs: false,
+            communication: false,
+            system: false,
+        },
     };
 
     // Local state for preferences
-    const [localPreferences, setLocalPreferences] = useState(defaultPreferences);
+    const [localPreferences, setLocalPreferences] = useState(DEFAULT_PREFERENCES);
 
     const [hasChanges, setHasChanges] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -74,7 +68,7 @@ const NotificationSettingsPage = () => {
     useEffect(() => {
         if (!hasInitialized.current && preferences && Object.keys(preferences).length > 0) {
             hasInitialized.current = true;
-            setLocalPreferences(mergePreferences(preferences));
+            setLocalPreferences(prev => ({ ...prev, ...preferences }));
         }
     }, [preferences]);
 

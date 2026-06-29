@@ -9,7 +9,6 @@
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ApiService from '../../services/ApiService';
 import PropTypes from 'prop-types';
 import {
     UploadCloud,
@@ -121,31 +120,42 @@ const FileUpload = ({
         return { valid: true };
     }, [allowedTypes, maxSize]);
 
-    const uploadFile = useCallback(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('bucketName', 'gig-files');
+    /**
+     * Simulates upload progress for demonstration.
+     * In a real app, this would be replaced with actual upload logic.
+     * @param {File} file - File to simulate upload for.
+     * @returns {void}
+     */
+    const simulateUpload = useCallback((file) => {
+        // Start at 0%
+        setUploadProgress(prev => ({
+            ...prev,
+            [file.name]: 0
+        }));
 
-        setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-        const response = await ApiService.upload('/api/Files/upload', formData, {
-            onUploadProgress: (event) => {
-                if (!event.total) return;
+        // Simulate progress updates
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 25;
+
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+
+                // Mark as complete after a short delay
+                setTimeout(() => {
+                    setUploadProgress(prev => ({
+                        ...prev,
+                        [file.name]: 100
+                    }));
+                }, 300);
+            } else {
                 setUploadProgress(prev => ({
                     ...prev,
-                    [file.name]: Math.round((event.loaded * 100) / event.total)
+                    [file.name]: Math.round(progress)
                 }));
             }
-        });
-
-        setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
-        return {
-            ...file,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: response.data?.url || response.data?.Url,
-            fileName: response.data?.fileName || response.data?.FileName
-        };
+        }, 150);
     }, []);
 
     /**
@@ -153,34 +163,49 @@ const FileUpload = ({
      * @param {FileList} newFiles - Files to process.
      * @returns {void}
      */
-    const handleFiles = useCallback(async (newFiles) => {
+    const handleFiles = useCallback((newFiles) => {
         if (disabled) return;
 
         const fileArray = Array.from(newFiles);
         const validFiles = [];
         const newErrors = [];
 
+        // Check total file count
         if (files.length + fileArray.length > maxFiles) {
             newErrors.push(`Maximum ${maxFiles} files allowed. You have ${files.length} files.`);
             setErrors(newErrors);
             return;
         }
 
+        // Validate each file
         fileArray.forEach(file => {
             const validation = validateFile(file);
-            if (validation.valid) validFiles.push(file);
-            else newErrors.push(`${file.name}: ${validation.error}`);
+
+            if (validation.valid) {
+                validFiles.push(file);
+                simulateUpload(file);
+            } else {
+                newErrors.push(`${file.name}: ${validation.error}`);
+            }
         });
 
-        setErrors(newErrors);
+        // Update errors state
+        if (newErrors.length > 0) {
+            setErrors(newErrors);
 
+            // Clear errors after 5 seconds
+            setTimeout(() => {
+                setErrors([]);
+            }, 5000);
+        }
+
+        // Update files state
         if (validFiles.length > 0) {
-            const uploadedFiles = await Promise.all(validFiles.map(uploadFile));
-            const updatedFiles = [...files, ...uploadedFiles];
+            const updatedFiles = [...files, ...validFiles];
             setFiles(updatedFiles);
             updateParent(updatedFiles);
         }
-    }, [disabled, files, maxFiles, validateFile, uploadFile, updateParent]);
+    }, [disabled, files, maxFiles, validateFile, simulateUpload, updateParent]);
 
     /**
      * Handles drop event.

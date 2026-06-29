@@ -280,21 +280,6 @@ export default function EditJobSeekerProfile() {
    * Handles "Upsert" logic: if the profile doesn't exist (no jobSeekerId), it creates it first.
    * @param {React.FormEvent<HTMLFormElement>} event - The form submit event.
    */
-  /**
-   * Helper to format YYYY-MM month string to YYYY-MM-DD for backend DateOnly compatibility.
-   */
-  const formatToDateOnlyString = (monthString) => {
-    if (!monthString) return null;
-    if (/^\d{4}-\d{2}-\d{2}$/.test(monthString)) return monthString;
-    if (/^\d{4}-\d{2}$/.test(monthString)) return `${monthString}-01`;
-    return monthString;
-  };
-
-  /**
-   * Handles form submission and updates job seeker profile data.
-   * Handles "Upsert" logic: if the profile doesn't exist (no jobSeekerId), it creates it first.
-   * @param {React.FormEvent<HTMLFormElement>} event - The form submit event.
-   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -324,182 +309,34 @@ export default function EditJobSeekerProfile() {
         updateJobSeekerData(freshProfile);
       }
 
-      // 2. Split full name into FirstName and LastName
-      const nameParts = formData.fullName.trim().split(/\s+/);
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
-
-      // Split location into City and Country
-      let city = "";
-      let country = "";
-      if (formData.location) {
-        const locationParts = formData.location.split(",");
-        city = locationParts[0]?.trim() || "";
-        country = locationParts[1]?.trim() || "";
-      }
-
-      // 3. Update User Profile fields
-      await profileService.updateProfile({
-        firstName,
-        lastName,
-        phone: formData.phoneNumber,
+      // 2. Prepare updated job seeker data for the standard Update call
+      const updatedJobSeekerData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
         profilePictureUrl: formData.profilePictureUrl,
-        city,
-        country
-      });
-
-      // 4. Update JobSeeker Profile fields
-      const savedJobseeker = await profileService.updateJobseekerProfile({
         professionalTitle: formData.headline,
         experienceYears: parseInt(formData.experienceYears) || 0,
         bio: formData.summary,
         preferredJobType: formData.preferredJobType,
         cvUrl: formData.resumeUrl,
-      });
-
-      // 5. Update Skills
-      const skillNames = skills.map(s => s.name);
-      await profileService.updateSkills(skillNames);
-
-      // 6. Sync Experiences
-      const initialExperiences = jobSeekerData.experiences || [];
-      const currentExperiences = experiences;
-
-      // Identify deleted experiences
-      const deletedExperiences = initialExperiences.filter(
-        (initExp) => !currentExperiences.some((currExp) => currExp.id === initExp.id)
-      );
-
-      for (const exp of deletedExperiences) {
-        await profileService.deleteWorkExperience(exp.id);
-      }
-
-      // Identify added and updated experiences
-      for (const exp of currentExperiences) {
-        const isNew = !exp.id || typeof exp.id !== 'number' || exp.id > 1000000000000;
-        const expData = {
-          jobTitle: exp.jobTitle,
-          company: exp.companyName,
-          startDate: formatToDateOnlyString(exp.startDate),
-          endDate: formatToDateOnlyString(exp.endDate),
-          isCurrent: !exp.endDate,
-          description: exp.description || ""
-        };
-
-        if (isNew) {
-          await profileService.addWorkExperience(expData);
-        } else {
-          const original = initialExperiences.find((i) => i.id === exp.id);
-          const hasChanged = !original ||
-            original.jobTitle !== exp.jobTitle ||
-            original.companyName !== exp.companyName ||
-            original.startDate !== exp.startDate ||
-            original.endDate !== exp.endDate ||
-            original.description !== exp.description;
-          
-          if (hasChanged) {
-            await profileService.updateWorkExperience(exp.id, expData);
-          }
-        }
-      }
-
-      // 7. Sync Education
-      const initialEducation = jobSeekerData.education || [];
-      const currentEducation = education;
-
-      // Identify deleted education entries
-      const deletedEducation = initialEducation.filter(
-        (initEdu) => !currentEducation.some((currEdu) => currEdu.id === initEdu.id)
-      );
-
-      for (const edu of deletedEducation) {
-        await profileService.deleteEducation(edu.id);
-      }
-
-      // Identify added and updated education entries
-      for (const edu of currentEducation) {
-        const isNew = !edu.id || typeof edu.id !== 'number' || edu.id > 1000000000000;
-        const eduData = {
-          degree: edu.degree,
-          institution: edu.institutionName,
-          fieldOfStudy: edu.fieldOfStudy || "",
-          startYear: edu.startYear ? parseInt(edu.startYear) : null,
-          endYear: edu.endYear ? parseInt(edu.endYear) : null,
-          isCurrent: !edu.endYear
-        };
-
-        if (isNew) {
-          await profileService.addEducation(eduData);
-        } else {
-          const original = initialEducation.find((i) => i.id === edu.id);
-          const hasChanged = !original ||
-            original.degree !== edu.degree ||
-            original.institutionName !== edu.institutionName ||
-            original.fieldOfStudy !== edu.fieldOfStudy ||
-            original.startYear !== edu.startYear ||
-            original.endYear !== edu.endYear;
-
-          if (hasChanged) {
-            await profileService.updateEducation(edu.id, eduData);
-          }
-        }
-      }
-
-      // 8. Construct final context state and update ProfileContext
-      // Fetch latest values to ensure state is completely in sync
-      const [freshProfile, freshSkills, freshExperiences, freshEducation] = await Promise.all([
-        profileService.getMyProfile().catch(err => ({})),
-        profileService.getJobseekerSkills().catch(err => []),
-        profileService.getJobseekerExperiences().catch(err => []),
-        profileService.getJobseekerEducation().catch(err => [])
-      ]);
-
-      const userObj = freshProfile?.user || {};
-      const jobseekerObj = freshProfile?.jobSeeker || savedJobseeker || {};
-
-      const skillsList = freshSkills.map(skillName => ({
-        name: skillName,
-        proficiencyLevel: "Intermediate"
-      }));
-
-      const experiencesList = freshExperiences.map(exp => ({
-        id: exp.workExperienceId,
-        jobTitle: exp.jobTitle,
-        companyName: exp.company,
-        startDate: exp.startDate ? exp.startDate.substring(0, 7) : "",
-        endDate: exp.endDate ? exp.endDate.substring(0, 7) : null,
-        description: exp.description || ""
-      }));
-
-      const educationList = freshEducation.map(edu => ({
-        id: edu.educationId,
-        institutionName: edu.institution,
-        degree: edu.degree,
-        fieldOfStudy: edu.fieldOfStudy || "",
-        startYear: edu.startYear || new Date().getFullYear(),
-        endYear: edu.endYear || null
-      }));
-
-      updateJobSeekerData({
-        fullName: `${userObj.firstName || ''} ${userObj.lastName || ''}`.trim() || formData.fullName,
-        email: userObj.email || formData.email,
-        phoneNumber: userObj.phone || formData.phoneNumber,
-        profilePictureUrl: userObj.profilePictureUrl || formData.profilePictureUrl,
-        experienceYears: jobseekerObj.experienceYears !== undefined ? jobseekerObj.experienceYears : parseInt(formData.experienceYears) || 0,
-        preferredJobType: jobseekerObj.preferredJobType || formData.preferredJobType,
         profile: {
           ...jobSeekerData.profile,
-          headline: jobseekerObj.professionalTitle || formData.headline,
-          summary: jobseekerObj.bio || formData.summary,
-          resumeUrl: jobseekerObj.cvUrl || formData.resumeUrl,
-          location: [userObj.city, userObj.country].filter(Boolean).join(', ') || formData.location,
-          identityVerificationStatus: jobseekerObj.isVerified ? 'Verified' : 'Unverified',
+          headline: formData.headline,
+          summary: formData.summary,
+          location: formData.location,
+          resumeUrl: formData.resumeUrl,
         },
-        skills: skillsList,
-        experiences: experiencesList,
-        education: educationList,
-      });
+        skills,
+        experiences,
+        education,
+      };
 
+      // 3. Call the API via profileService
+      await profileService.updateJobseekerProfile(updatedJobSeekerData);
+      
+      // Update context so the rest of the UI reflects changes immediately
+      updateJobSeekerData(updatedJobSeekerData);
       setSuccessMsg("Profile updated successfully!");
       setTimeout(() => navigate("/dashboard/profile"), 1500);
     } catch (err) {

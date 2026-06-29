@@ -50,8 +50,6 @@ const PublishedJobs = ({
     onCreateJob,
     onViewJob,
     onEditJob,
-    onUpdateJobStatus,
-    onDeleteJob,
     onManageApplicants
 }) => {
     const [filteredJobs, setFilteredJobs] = useState(jobs || []);
@@ -209,15 +207,15 @@ const PublishedJobs = ({
 
     const handleToggleStatus = (jobId, currentStatus, e) => {
         e.stopPropagation();
-        if (onUpdateJobStatus) {
-            onUpdateJobStatus(jobId, currentStatus !== "active");
-        }
+        console.log(`Toggling job ${jobId} status from ${currentStatus}`);
+        // In a real app, this would call an API
     };
 
     const handleDeleteJob = (jobId, e) => {
         e.stopPropagation();
         if (window.confirm("Are you sure you want to delete this job? This action cannot be undone.")) {
-            if (onDeleteJob) onDeleteJob(jobId);
+            console.log(`Deleting job ${jobId}`);
+            // In a real app, this would call an API
         }
     };
 

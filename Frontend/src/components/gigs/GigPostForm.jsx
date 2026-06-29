@@ -9,7 +9,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
     Briefcase,
@@ -22,7 +22,9 @@ import {
     Clock,
     Tag,
     User,
-    AlertCircle
+    FileText,
+    AlertCircle,
+    ChevronDown
 } from 'lucide-react';
 import { Button, Input, LoadingSpinner } from '../common';
 import GeneralSelect from '../common/GeneralSelect';
@@ -187,9 +189,6 @@ const GigPostForm = ({
                 if (formData.budgetMax && formData.budgetMax < formData.budgetMin) {
                     errors.budgetMax = 'Maximum budget must be greater than minimum';
                 }
-                break;
-
-            default:
                 break;
         }
 

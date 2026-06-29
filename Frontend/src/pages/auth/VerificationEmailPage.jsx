@@ -42,7 +42,7 @@ function VerificationEmailPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Timer hook
-  const { isActive, canResend, formattedTime, resetTimer } =
+  const { timer, isActive, canResend, formattedTime, resetTimer } =
     useResendTimer(60);
 
   // Validation handlers
@@ -100,6 +100,15 @@ function VerificationEmailPage() {
     [validateField]
   );
 
+  // Auto-focus next input (if using separate inputs)
+  const handleCodeInput = useCallback((e) => {
+    const { value, name } = e.target;
+
+    if (value.length === 1 && e.target.nextElementSibling) {
+      e.target.nextElementSibling.focus();
+    }
+  }, []);
+
   // Handle resend code — calls real API
   const handleResend = useCallback(async () => {
     if (!canResend) return;
@@ -145,6 +154,45 @@ function VerificationEmailPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Alternative: Render 6 separate inputs
+  const renderCodeInputs = () => {
+    return (
+      <div className="verification-code-inputs">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <input
+            key={index}
+            type="text"
+            inputMode="numeric"
+            maxLength="1"
+            className="code-input"
+            value={formData.code[index] || ""}
+            onChange={(e) => {
+              const newCode = formData.code.split("");
+              newCode[index] = e.target.value.replace(/\D/g, "")[0] || "";
+              setFormData({ code: newCode.join("") });
+
+              // Auto-focus next
+              if (e.target.value && e.target.nextElementSibling) {
+                e.target.nextElementSibling.focus();
+              }
+            }}
+            onKeyDown={(e) => {
+              // Handle backspace
+              if (
+                e.key === "Backspace" &&
+                !formData.code[index] &&
+                e.target.previousElementSibling
+              ) {
+                e.target.previousElementSibling.focus();
+              }
+            }}
+            autoFocus={index === 0}
+          />
+        ))}
+      </div>
+    );
   };
 
   return (

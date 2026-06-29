@@ -11,19 +11,29 @@ import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '../../../../components/common/LoadingSpinner';
 import { Button } from '../../../../components/common/Button';
 import { Badge } from '../../../../components/common/Badge';
+import { RatingStars } from '../../../../components/common/RatingStars';
 import { FilterPanel } from '../../../../components/common/FilterPanel';
 import { Modal } from '../../../../components/common/Modal';
+import { Input } from '../../../../components/common/Input';
 import { SuccessMessage, ErrorMessage } from '../../../../components/common/Message';
 import AdminPageHeader from '../admin/components/shared/AdminPageHeader/AdminPageHeader';
 import AdminDataTable from '../admin/components/shared/AdminDataTable';
 import jobService from '../../../../services/jobService';
 import styles from './CompanyApplicants.module.css';
 
+const updateApplicantStatus = async (applicantId, jobId, status) => {
+  return { success: true, data: { applicantId, jobId, status } };
+};
+
+const updateApplicantRating = async (applicantId, rating, notes) => {
+  return { success: true, data: { applicantId, rating, notes } };
+};
+
 const CompanyApplicants = () => {
   const navigate = useNavigate();
   // State
   const [applicants, setApplicants] = useState([]);
-  const [, setFilters] = useState({});
+  const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -34,7 +44,10 @@ const CompanyApplicants = () => {
   const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [newRating, setNewRating] = useState(0);
+  const [ratingNotes, setRatingNotes] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'appliedAt', direction: 'desc' });
 
   // Load applicants
@@ -42,20 +55,18 @@ const CompanyApplicants = () => {
     setIsLoading(true);
     try {
       const data = await jobService.getCompanyApplicants();
-      const items = Array.isArray(data) ? data : (data?.items || data?.data || []);
-      if (items) {
-        const mappedApplicants = items.map(app => ({
-            id: app.applicationId || app.id,
-            applicantId: app.applicantId,
-            name: app.applicantName || 'Applicant',
+      if (data) {
+        // Map backend fields to frontend component expectations
+        const mappedApplicants = data.map(app => ({
+            id: app.applicationId,
+            name: app.applicantName,
             email: app.applicantEmail || 'N/A',
             phone: app.applicantPhone || 'N/A',
             jobId: app.jobId,
             jobTitle: app.jobTitle,
             appliedAt: app.appliedAt,
             status: app.status?.toLowerCase() || 'pending',
-            matchScore: Math.round(app.matchScore || 0),
-            cvUrl: app.cvUrl || '',
+            rating: 0, // Not implemented in backend
             notes: app.coverLetter || ''
         }));
 
@@ -104,16 +115,15 @@ const CompanyApplicants = () => {
     setIsStatusModalOpen(true);
   };
 
-  const handleScheduleInterview = (applicant) => {
-    navigate(`/dashboard/interviews/schedule?applicationId=${applicant.id}`);
+  const handleUpdateRating = (applicant) => {
+    setSelectedApplicant(applicant);
+    setNewRating(applicant.rating || 0);
+    setRatingNotes(applicant.notes || '');
+    setIsRatingModalOpen(true);
   };
 
-  const handleViewResume = (applicant) => {
-    if (applicant.cvUrl) {
-      window.open(applicant.cvUrl, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    setError('This applicant has no resume URL.');
+  const handleScheduleInterview = (applicant) => {
+    navigate(`/dashboard/interviews/schedule?applicantId=${applicant.id}`);
   };
 
   const confirmStatusUpdate = async () => {
@@ -126,6 +136,24 @@ const CompanyApplicants = () => {
       setError('Error updating status');
     } finally {
       setIsStatusModalOpen(false);
+      setSelectedApplicant(null);
+    }
+  };
+
+  const confirmRatingUpdate = async () => {
+    if (!selectedApplicant) return;
+    try {
+      const response = await updateApplicantRating(selectedApplicant.id, newRating, ratingNotes);
+      if (response.success) {
+        setSuccess('Rating updated successfully');
+        loadApplicants();
+      } else {
+        setError('Failed to update rating');
+      }
+    } catch (err) {
+      setError('Error updating rating');
+    } finally {
+      setIsRatingModalOpen(false);
       setSelectedApplicant(null);
     }
   };
@@ -194,10 +222,12 @@ const CompanyApplicants = () => {
         },
       },
       {
-        header: 'Match',
-        accessor: 'matchScore',
+        header: 'Rating',
+        accessor: 'rating',
         sortable: true,
-        render: (row) => `${row.matchScore || 0}%`,
+        render: (row) => (
+          <RatingStars rating={row.rating} readonly size="sm" />
+        ),
       },
       {
         header: 'Actions',
@@ -217,7 +247,7 @@ const CompanyApplicants = () => {
               <option value="hired">Hire</option>
               <option value="rejected">Reject</option>
             </select>
-            <Button size="small" variant="outline" onClick={() => handleViewResume(row)}>Resume</Button>
+            <Button size="small" variant="outline" onClick={() => handleUpdateRating(row)}>Rate</Button>
             <Button size="small" variant="primary" onClick={() => handleScheduleInterview(row)}>Schedule</Button>
           </div>
         ),
@@ -337,8 +367,8 @@ const CompanyApplicants = () => {
               }>{selectedApplicant.status}</Badge>
             </div>
             <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Match Score:</span>
-              <span>{selectedApplicant.matchScore || 0}%</span>
+              <span className={styles.detailLabel}>Rating:</span>
+              <RatingStars rating={selectedApplicant.rating} readonly />
             </div>
             {selectedApplicant.notes && (
               <div className={styles.detailRow}>
@@ -366,6 +396,34 @@ const CompanyApplicants = () => {
         <p>Change <strong>{selectedApplicant?.name}</strong>'s status to <strong>{newStatus}</strong>?</p>
       </Modal>
 
+      {/* Rating Modal */}
+      <Modal
+        isOpen={isRatingModalOpen}
+        onClose={() => setIsRatingModalOpen(false)}
+        title="Rate Applicant"
+        size="md"
+        actions={
+          <>
+            <Button variant="outline" onClick={() => setIsRatingModalOpen(false)}>Cancel</Button>
+            <Button variant="primary" onClick={confirmRatingUpdate}>Save Rating</Button>
+          </>
+        }
+      >
+        <div className={styles.modalField}>
+          <label className={styles.formLabel}>Rating</label>
+          <RatingStars rating={newRating} onRate={setNewRating} />
+        </div>
+        <div className={styles.modalField}>
+          <label className={styles.formLabel}>Notes</label>
+          <textarea
+            value={ratingNotes}
+            onChange={(e) => setRatingNotes(e.target.value)}
+            className={styles.textarea}
+            placeholder="Add notes about this candidate..."
+            rows={4}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

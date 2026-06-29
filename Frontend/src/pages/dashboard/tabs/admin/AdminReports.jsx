@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-    FilterPanel,
-    DataTable,
-    Pagination,
-    Modal,
+import { 
+    FilterPanel, 
+    DataTable, 
+    Pagination, 
+    Badge, 
+    Modal, 
     Button,
     LoadingSpinner,
     SuccessMessage,
@@ -110,12 +111,8 @@ const AdminReports = () => {
 
     const columns = [
         { key: "id", label: "ID" },
-        { key: "name", label: "Name" },
+        { key: "name", label: "Metric Name" },
         { key: "value", label: "Value", sortable: true },
-        { key: "role", label: "Role" },
-        { key: "company", label: "Company" },
-        { key: "applications", label: "Applications" },
-        { key: "reports", label: "Reports" },
     ];
 
     const historyColumns = [
@@ -125,7 +122,7 @@ const AdminReports = () => {
         { 
             key: "status", 
             label: "Status",
-            render: () => 'Completed'
+            render: (val) => <Badge variant="success">Completed</Badge>
         },
         {
             key: "actions",
@@ -221,7 +218,6 @@ const AdminReports = () => {
                         data={reportData.data || []}
                         columns={columns}
                         keyField="id"
-                        renderCell={(key, value) => value == null || value === '' ? '-' : String(value)}
                         emptyMessage="No data available for this report."
                     />
                 </div>
@@ -238,11 +234,6 @@ const AdminReports = () => {
                             data={paginatedHistory}
                             columns={historyColumns}
                             keyField="reportId"
-                            renderCell={(key, value, row) => {
-                                const column = historyColumns.find((item) => item.key === key);
-                                if (column?.render) return column.render(value, row);
-                                return value == null || value === '' ? '-' : String(value);
-                            }}
                             emptyMessage="No reports generated yet."
                         />
                         {reportHistory.length > 0 && (
@@ -281,7 +272,7 @@ const AdminReports = () => {
                                 checked={exportFormat === 'csv'}
                                 onChange={(e) => setExportFormat(e.target.value)}
                             />
-                            JSON Document (.json)
+                            CSV Document (.csv)
                         </label>
                         <label>
                             <input 
@@ -291,7 +282,7 @@ const AdminReports = () => {
                                 checked={exportFormat === 'pdf'}
                                 onChange={(e) => setExportFormat(e.target.value)}
                             />
-                            Browser JSON Export
+                            PDF Document (.pdf)
                         </label>
                         <label>
                             <input 
@@ -301,7 +292,7 @@ const AdminReports = () => {
                                 checked={exportFormat === 'xlsx'}
                                 onChange={(e) => setExportFormat(e.target.value)}
                             />
-                            Data Snapshot
+                            Excel Spreadsheet (.xlsx)
                         </label>
                     </div>
                 </div>

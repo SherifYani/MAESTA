@@ -9,7 +9,6 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '../../../../components/common/LoadingSpinner';
 import { Button } from '../../../../components/common/Button';
 import { Badge } from '../../../../components/common/Badge';
@@ -22,7 +21,6 @@ import * as adminService from '../../../../services/adminService';
 import styles from './AdminActivities.module.css';
 
 const AdminActivities = () => {
-    const navigate = useNavigate();
     // State
     const [activities, setActivities] = useState([]);
     const [activityTypes, setActivityTypes] = useState([]);
@@ -63,22 +61,18 @@ const AdminActivities = () => {
         try {
             const params = {
                 page: currentPage,
-                pageSize: 20,
-                type: 'activity',
+                limit: 20,
+                type: filters.type !== 'all' ? filters.type : undefined,
+                userId: filters.userId,
+                startDate: filters.startDate,
+                endDate: filters.endDate,
                 search: searchTerm,
                 sort: sortConfig.key,
                 order: sortConfig.direction,
             };
             const response = await adminService.getActivities(params);
             if (response.success) {
-                const rows = (response.data.activities || []).map((activity) => ({
-                    ...activity,
-                    timestamp: activity.timestamp || activity.createdAt || activity.time,
-                    user: activity.user || activity.userName || activity.userEmail || (activity.userId ? `User #${activity.userId}` : 'System'),
-                    action: activity.action || activity.levelOrAction || 'Activity',
-                    details: activity.details || activity.message || activity.metadata || '',
-                }));
-                setActivities(rows);
+                setActivities(response.data.activities || []);
                 setTotalPages(response.data.pagination?.totalPages || 1);
                 setTotalItems(response.data.pagination?.totalItems || 0);
             } else {
@@ -172,7 +166,7 @@ const AdminActivities = () => {
                 header: 'Timestamp',
                 accessor: 'timestamp',
                 sortable: true,
-                render: (row) => row.timestamp ? new Date(row.timestamp).toLocaleString() : '-',
+                render: (row) => new Date(row.timestamp).toLocaleString(),
             },
             {
                 header: 'User',
@@ -181,7 +175,7 @@ const AdminActivities = () => {
                 render: (row) => (
                     <div>
                         <div className={styles.userName}>{row.user}</div>
-                        <div className={styles.userId}>{row.userEmail || `ID: ${row.userId || '-'}`}</div>
+                        <div className={styles.userId}>{row.userId}</div>
                     </div>
                 ),
             },
@@ -254,6 +248,13 @@ const AdminActivities = () => {
             {success && <SuccessMessage message={success} onDismiss={() => setSuccess(null)} autoDismiss={5000} />}
             {error && <ErrorMessage message={error} onDismiss={() => setError(null)} autoDismiss={5000} />}
 
+            <FilterPanel
+                filters={getFilterConfig()}
+                onApply={handleFilterApply}
+                onReset={handleFilterReset}
+                showReset
+            />
+
             <AdminDataTable
                 title=""
                 columns={getColumns()}
@@ -299,23 +300,11 @@ const AdminActivities = () => {
                         </div>
                         <div className={styles.detailRow}>
                             <span className={styles.detailLabel}>Timestamp:</span>
-                            <span>{selectedActivity.timestamp ? new Date(selectedActivity.timestamp).toLocaleString() : '-'}</span>
+                            <span>{new Date(selectedActivity.timestamp).toLocaleString()}</span>
                         </div>
                         <div className={styles.detailRow}>
                             <span className={styles.detailLabel}>User:</span>
-                            <span>{selectedActivity.user} ({selectedActivity.userEmail || selectedActivity.userId || 'System'})</span>
-                        </div>
-                        {selectedActivity.userId && (
-                            <div className={styles.detailRow}>
-                                <span className={styles.detailLabel}>Account:</span>
-                                <Button size="small" variant="outline" onClick={() => navigate(`/dashboard/users?userId=${selectedActivity.userId}`)}>
-                                    Open Account
-                                </Button>
-                            </div>
-                        )}
-                        <div className={styles.detailRow}>
-                            <span className={styles.detailLabel}>Role:</span>
-                            <span>{selectedActivity.userType || 'N/A'}</span>
+                            <span>{selectedActivity.user} ({selectedActivity.userId})</span>
                         </div>
                         <div className={styles.detailRow}>
                             <span className={styles.detailLabel}>Action:</span>

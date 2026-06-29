@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, Search, Users, Bot, Loader2, Sparkles,
-    MapPin, Banknote, Clock
+    MapPin, Banknote, Clock, FileText
 } from 'lucide-react';
 import aiAssistantService from '../../services/aiAssistantService';
 import { PageContainer } from '../../components/layout';
@@ -79,10 +79,9 @@ const SmartSearchPage = () => {
                 filters
             });
 
-            setResults(Array.isArray(response) ? response : []);
+            setResults(response);
         } catch (error) {
             console.error('Error searching:', error);
-            setResults([]);
         } finally {
             setIsSearching(false);
         }
@@ -173,7 +172,6 @@ const SmartSearchPage = () => {
                                 className={styles.suggestionItem}
                                 onClick={() => handleSuggestionClick(suggestion)}
                                 role="option"
-                                aria-selected={false}
                             >
                                 <Sparkles size={14} aria-hidden="true" /> {suggestion}
                             </button>

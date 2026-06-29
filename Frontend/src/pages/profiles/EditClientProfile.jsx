@@ -185,24 +185,23 @@ export default function EditClientProfile() {
       return;
     }
 
-    const clientProfilePayload = {
-      legalName: formData.fullName?.trim() || "",
-      contactPhone: formData.phoneNumber?.replace(/[\s()-]/g, "") || "",
-      identityDocumentUrl: formData.profilePictureUrl?.trim() || "",
+    // Prepare updated data
+    const updatedClientData = {
+      ...formData,
+      projects: projects.map((project) => ({
+        ...project,
+        budget: Number(project.budget) || 0,
+      })),
     };
 
     try {
       setLoading(true);
       setError(null);
-      const savedProfile = await profileService.updateClientProfile(clientProfilePayload);
-      updateClientData({
-        ...clientData,
-        fullName: savedProfile?.legalName || formData.fullName,
-        phoneNumber: savedProfile?.contactPhone || formData.phoneNumber,
-        profilePictureUrl: savedProfile?.identityDocumentUrl || formData.profilePictureUrl,
-        email: formData.email,
-        projects,
-      });
+      // Call the API via profileService
+      await profileService.updateClientProfile(updatedClientData);
+
+      // Update context and navigate back
+      updateClientData(updatedClientData);
       navigate("/dashboard/profile");
     } catch (err) {
       setError(err.message || "Failed to update profile. Please try again.");

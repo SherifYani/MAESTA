@@ -9,8 +9,9 @@
 
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import jobService from "../../services/jobService";
 import { PageContainer } from "../../components/layout";
 import { Pagination } from "../../components/common";
@@ -31,6 +32,24 @@ const SavedJobsPage = () => {
     const totalPages = Math.ceil(savedJobs.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedJobs = savedJobs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    /**
+     * Fetches saved jobs from the API
+     * @async
+     * @returns {Promise<void>}
+     */
+    const fetchSavedJobs = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await jobService.getSavedJobs();
+            setSavedJobs(data);
+        } catch (err) {
+            setError(err.message || "Failed to load saved jobs");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     /**
      * Removes a job from saved jobs

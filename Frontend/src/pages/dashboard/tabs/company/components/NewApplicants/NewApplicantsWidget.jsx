@@ -6,7 +6,7 @@
  * @date 2026-01-28
  */
 
-import { UserCheck, Mail, Calendar } from "lucide-react";
+import { UserCheck, Mail, Calendar, Target } from "lucide-react";
 import Badge from "../../../../components/ui/Badge";
 import PropTypes from "prop-types";
 import styles from "./NewApplicantsWidget.module.css";

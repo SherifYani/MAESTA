@@ -19,16 +19,6 @@ import AdminDataTable from './components/shared/AdminDataTable';
 import * as adminService from '../../../../services/adminService';
 import styles from './AdminUsersManagement.module.css';
 
-const mapUser = (user) => ({
-  ...user,
-  id: user.userId || user.id,
-  name: user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown',
-  role: user.role || user.roles?.[0] || user.userType || 'unknown',
-  roles: user.roles || [],
-  status: user.status || (user.isDeleted ? 'deleted' : user.isActive ? 'active' : 'inactive'),
-  lastLogin: user.lastLogin || user.lastLoginAt || null,
-});
-
 const AdminUsersManagement = () => {
   // State
   const [users, setUsers] = useState([]);
@@ -65,7 +55,7 @@ const AdminUsersManagement = () => {
       };
       const response = await adminService.getUsers(params);
       if (response.success) {
-        setUsers((response.data.users || []).map(mapUser));
+        setUsers(response.data.users || []);
         setTotalPages(response.data.pagination?.totalPages || 1);
         setTotalItems(response.data.pagination?.totalItems || 0);
       } else {
@@ -120,9 +110,7 @@ const AdminUsersManagement = () => {
   const confirmStatusUpdate = async () => {
     if (!selectedUser) return;
     try {
-      const response = newStatus === 'deleted'
-        ? await adminService.deleteUser(selectedUser.id)
-        : await adminService.updateUserStatus(selectedUser.id, newStatus);
+      const response = await adminService.updateUserStatus(selectedUser.id, newStatus, statusReason);
       if (response.success) {
         setSuccess(`User ${selectedUser.name} status updated to ${newStatus}`);
         loadUsers();
@@ -162,11 +150,10 @@ const AdminUsersManagement = () => {
       type: 'select',
       options: [
         { value: 'all', label: 'All Roles' },
-        { value: 'Admin', label: 'Admin' },
-        { value: 'Employer', label: 'Employer' },
+        { value: 'admin', label: 'Admin' },
+        { value: 'company', label: 'Company' },
         { value: 'jobseeker', label: 'Job Seeker' },
-        { value: 'Freelancer', label: 'Freelancer' },
-        { value: 'Client', label: 'Client' },
+        { value: 'freelancer', label: 'Freelancer' },
       ],
     },
     status: {
@@ -175,8 +162,8 @@ const AdminUsersManagement = () => {
       options: [
         { value: 'all', label: 'All Status' },
         { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-        { value: 'deleted', label: 'Deleted' },
+        { value: 'suspended', label: 'Suspended' },
+        { value: 'banned', label: 'Banned' },
       ],
     },
   };
@@ -201,10 +188,9 @@ const AdminUsersManagement = () => {
         sortable: true,
         render: (row) => {
           let variant = 'default';
-          const normalizedRole = String(row.role || '').toLowerCase();
-          if (normalizedRole === 'admin') variant = 'info';
-          else if (normalizedRole === 'employer') variant = 'success';
-          else if (normalizedRole === 'jobseeker') variant = 'warning';
+          if (row.role === 'admin') variant = 'info';
+          else if (row.role === 'company') variant = 'success';
+          else if (row.role === 'jobseeker') variant = 'warning';
           return <Badge variant={variant}>{row.role}</Badge>;
         },
       },
@@ -214,8 +200,8 @@ const AdminUsersManagement = () => {
         sortable: true,
         render: (row) => {
           let variant = 'success';
-          if (row.status === 'inactive') variant = 'warning';
-          if (row.status === 'deleted') variant = 'error';
+          if (row.status === 'suspended') variant = 'warning';
+          if (row.status === 'banned') variant = 'error';
           return <Badge variant={variant}>{row.status}</Badge>;
         },
       },
@@ -245,8 +231,8 @@ const AdminUsersManagement = () => {
             >
               <option value="">Change Status</option>
               <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="deleted">Delete</option>
+              <option value="suspended">Suspended</option>
+              <option value="banned">Banned</option>
             </select>
             <select
               value=""
@@ -255,10 +241,9 @@ const AdminUsersManagement = () => {
             >
               <option value="">Change Role</option>
               <option value="admin">Admin</option>
-              <option value="employer">Employer</option>
+              <option value="company">Company</option>
               <option value="jobseeker">Job Seeker</option>
               <option value="freelancer">Freelancer</option>
-              <option value="client">Client</option>
             </select>
           </div>
         ),
@@ -349,15 +334,15 @@ const AdminUsersManagement = () => {
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Role:</span>
               <Badge variant={
-                String(selectedUser.role || '').toLowerCase() === 'admin' ? 'info' :
-                String(selectedUser.role || '').toLowerCase() === 'employer' ? 'success' : 'warning'
+                selectedUser.role === 'admin' ? 'info' :
+                selectedUser.role === 'company' ? 'success' : 'warning'
               }>{selectedUser.role}</Badge>
             </div>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Status:</span>
               <Badge variant={
                 selectedUser.status === 'active' ? 'success' :
-                selectedUser.status === 'inactive' ? 'warning' : 'error'
+                selectedUser.status === 'suspended' ? 'warning' : 'error'
               }>{selectedUser.status}</Badge>
             </div>
             <div className={styles.detailRow}>

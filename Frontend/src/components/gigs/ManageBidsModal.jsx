@@ -26,7 +26,7 @@ const ManageBidsModal = ({ gigId, onClose }) => {
 
     useEffect(() => {
         fetchProposals();
-    }, [gigId, fetchProposals]);
+    }, [gigId]);
 
     /**
      * Fetches proposals from the API.

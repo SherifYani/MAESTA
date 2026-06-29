@@ -25,7 +25,6 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules dist build .next .cache coverage logs tmp temp obj bin",
-    "postinstall": "node scripts/postinstall.js",
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",

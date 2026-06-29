@@ -47,7 +47,7 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
         if (autoPlay && isSupported && text) {
             playText();
         }
-    }, [text, autoPlay, isSupported, playText]);
+    }, [text, autoPlay, isSupported]);
 
     /**
      * Plays the text using the Web Speech API

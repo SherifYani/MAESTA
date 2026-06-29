@@ -8,7 +8,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     LineChart,
     Line,
@@ -20,11 +20,11 @@ import {
     AreaChart,
     Area
 } from 'recharts';
-import { Calendar, Users, Briefcase } from 'lucide-react';
+import { Calendar, TrendingUp, Users, Briefcase, DollarSign } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import adminService from '../../../../../../services/adminService';
+import { userGrowthData, revenueData, jobPostingsData } from '../../config/adminMockData';
 import styles from './StatisticsDashboard.module.css';
 
 /**
@@ -34,22 +34,11 @@ import styles from './StatisticsDashboard.module.css';
  */
 const StatisticsDashboard = () => {
     const [timeRange, setTimeRange] = useState('6m');
-    const [userGrowth, setUserGrowth] = useState([]);
-    const [revenue, setRevenue] = useState([]);
-    const [jobPostings, setJobPostings] = useState([]);
-    const [, setLoading] = useState(true);
 
-    useEffect(() => {
-        const months = timeRange === '3m' ? 3 : timeRange === '6m' ? 6 : 12;
-        adminService.getMonthlyAnalytics(months).then((result) => {
-            setUserGrowth(result.data?.userGrowth || []);
-            setRevenue(result.data?.revenue || []);
-            setJobPostings(result.data?.jobPostings || []);
-            setLoading(false);
-        }).catch(() => setLoading(false));
-    }, [timeRange]);
-
-    const filterDataByTimeRange = useCallback((data) => {
+    /**
+     * Filters data based on selected time range.
+     */
+    const filterDataByTimeRange = (data) => {
         switch (timeRange) {
             case '3m':
                 return data.slice(-3);
@@ -60,11 +49,11 @@ const StatisticsDashboard = () => {
             default:
                 return data;
         }
-    }, [timeRange]);
+    };
 
-    const filteredUserData = useMemo(() => filterDataByTimeRange(userGrowth), [filterDataByTimeRange, userGrowth]);
-    const filteredJobData = useMemo(() => filterDataByTimeRange(jobPostings), [filterDataByTimeRange, jobPostings]);
-    const filteredRevenueData = useMemo(() => filterDataByTimeRange(revenue), [filterDataByTimeRange, revenue]);
+    const filteredUserData = useMemo(() => filterDataByTimeRange(userGrowthData), [timeRange]);
+    const filteredRevenueData = useMemo(() => filterDataByTimeRange(revenueData), [timeRange]);
+    const filteredJobData = useMemo(() => filterDataByTimeRange(jobPostingsData), [timeRange]);
 
     /**
      * Custom tooltip component for charts.
@@ -146,29 +135,6 @@ const StatisticsDashboard = () => {
                                     fill="url(#userGradient)"
                                     strokeWidth={2}
                                 />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
-                <div className={styles.chartCard}>
-                    <div className={styles.chartCard__header}>
-                        <div className={styles.chartCard__title}>
-                            <Calendar size={20} className={styles.chartCard__icon} />
-                            <h3>Monthly Revenue</h3>
-                        </div>
-                        <span className={styles.chartCard__subtitle}>
-                            ${filteredRevenueData.reduce((sum, d) => sum + Number(d.netRevenue || 0), 0).toLocaleString()} net revenue
-                        </span>
-                    </div>
-                    <div className={styles.chartCard__body}>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={filteredRevenueData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.3} />
-                                <XAxis dataKey="name" stroke="var(--color-muted-foreground)" />
-                                <YAxis stroke="var(--color-muted-foreground)" />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Area type="monotone" dataKey="netRevenue" stroke="var(--color-chart-2)" fill="var(--color-radial-pink-2)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>

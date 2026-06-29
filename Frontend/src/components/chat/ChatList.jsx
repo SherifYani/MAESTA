@@ -14,7 +14,7 @@
 
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Image, Paperclip } from "lucide-react";
 import styles from "./ChatList.module.css";
 
 /**

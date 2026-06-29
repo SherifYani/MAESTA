@@ -31,29 +31,34 @@ const JobDetailsPage = () => {
     const [similarJobs, setSimilarJobs] = useState([]);
 
     useEffect(() => {
-        const fetchJobDetails = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const jobData = await jobService.getJobById(jobId);
-                setJob(jobData);
-                setIsSaved(jobData.isSaved || false);
-
-                try {
-                    const similar = await jobService.getSimilarJobs(jobId);
-                    setSimilarJobs(similar.slice(0, 4));
-                } catch (err) {
-                    console.log('Could not load similar jobs');
-                }
-            } catch (err) {
-                setError(err.message || 'Failed to load job details');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchJobDetails();
     }, [jobId]);
+
+    /**
+     * Fetches job details and similar jobs
+     * @async
+     * @returns {Promise<void>}
+     */
+    const fetchJobDetails = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const jobData = await jobService.getJobById(jobId);
+            setJob(jobData);
+            setIsSaved(jobData.isSaved || false);
+
+            try {
+                const similar = await jobService.getSimilarJobs(jobId);
+                setSimilarJobs(similar.slice(0, 4));
+            } catch (err) {
+                console.log('Could not load similar jobs');
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to load job details');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     /**
      * Handles saving or unsaving a job

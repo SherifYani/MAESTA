@@ -35,7 +35,7 @@ const paymentService = {
             const response = await ApiService.get('/api/payments/methods');
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -45,7 +45,7 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/methods', paymentData);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -55,7 +55,7 @@ const paymentService = {
             const response = await ApiService.delete(`/api/payments/methods/${methodId}`);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -66,7 +66,7 @@ const paymentService = {
             const response = await ApiService.get(`/api/payments/transactions?${queryParams}`);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -76,29 +76,20 @@ const paymentService = {
             const response = await ApiService.get('/api/payments/balance');
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
     // Get earnings summary
     getEarningsSummary: async (period = 'month') => {
         try {
-            const response = await ApiService.get('/api/payments/balance');
-            const transactionsRes = await ApiService.get('/api/payments/transactions', {
-                params: { page: 1, limit: 100 }
-            });
-            const balance = response.data;
-            const transactions = transactionsRes.data?.items || transactionsRes.data || [];
-            return {
-                totalEarnings: balance?.totalEarnings || balance?.balance || 0,
-                pending: transactions
-                    .filter(t => t.status === 'pending')
-                    .reduce((sum, t) => sum + (t.amount || 0), 0),
-                available: balance?.available || balance?.balance || 0,
-                period
-            };
+            // MOCKED: Not implemented in backend yet.
+            console.warn("getEarningsSummary is mocked");
+            return { totalEarnings: 0, pending: 0, available: 0, period };
+            // const response = await ApiService.get(`/api/payments/earnings?period=${period}`);
+            // return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -108,7 +99,7 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/deposit', { amount, paymentMethodId });
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -118,7 +109,7 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/withdraw', { amount, method: withdrawalMethod });
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -157,26 +148,29 @@ const paymentService = {
         return response.data;
     },
 
-    // Get invoices — maps to transactions
+    // Get invoices
     getInvoices: async () => {
         try {
-            const response = await ApiService.get('/api/payments/transactions', {
-                params: { page: 1, limit: 50 }
-            });
-            const transactions = response.data?.items || response.data || [];
-            return transactions.filter(t => t.type === 'deposit' || t.type === 'payment');
+            // MOCKED: Not implemented in backend yet.
+            console.warn("getInvoices is mocked");
+            return [];
+            // const response = await ApiService.get('/api/payments/invoices');
+            // return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
-    // Request refund — maps to escrow refund
+    // Request refund
     requestRefund: async (transactionId, reason) => {
         try {
-            const response = await ApiService.post(`/api/payments/escrow/refund/${transactionId}`);
-            return response.data;
+            // MOCKED: Not implemented in backend yet.
+            console.warn("requestRefund is mocked");
+            return { success: true, transactionId };
+            // const response = await ApiService.post('/api/payments/refund', { transactionId, reason });
+            // return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -186,7 +180,7 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/bank-accounts', bankData);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -206,7 +200,7 @@ const paymentService = {
             const response = await ApiService.get(`/api/payments/calculate-fee?amount=${amount}&type=${type}`);
             return response.data;
         } catch (error) {
-            throw error;
+            throw error.response?.data || error.message;
         }
     }
 };

@@ -156,7 +156,7 @@ function FileUpload({
             const files = e.dataTransfer.files;
             processFiles(files);
         }
-    }, [isLoading, multiple, onChange, processFiles]);
+    }, [isLoading, multiple, onChange]);
 
     /**
      * Handles keyboard navigation

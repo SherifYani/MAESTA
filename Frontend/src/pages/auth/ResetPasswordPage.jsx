@@ -96,7 +96,7 @@ function ResetPasswordPage() {
       const error = validateField(name, value);
       setErrors((prev) => ({ ...prev, [name]: error }));
     }, 500),
-    [validateField, debounceValidation]
+    [validateField]
   );
 
   // Handle input changes

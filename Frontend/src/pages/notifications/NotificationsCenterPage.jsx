@@ -9,16 +9,15 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, CheckCircle, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { Search, Filter, CheckCircle, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import { groupNotificationsByDate, filterNotificationsByCategory, filterNotificationsByReadStatus } from '../../utils/notificationHelpers';
 import { NOTIFICATION_CATEGORIES } from '../../utils/notificationTypes';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import NotificationSkeleton from '../../components/notifications/NotificationSkeleton';
 import EmptyNotifications from '../../components/notifications/EmptyNotifications';
-import { getNotificationRoute } from '../../components/notifications/NotificationDropdown';
 import { PageContainer } from '../../components/layout';
 import styles from './NotificationsCenterPage.module.css';
 
@@ -127,9 +126,15 @@ const NotificationsCenterPage = () => {
      * @param {Object} notification - Notification object
      */
     const handleNotificationClick = (notification) => {
-        navigate(getNotificationRoute(notification));
+        // Navigate based on notification type/data
+        if (notification.data?.jobId) {
+            navigate(`/jobs/${notification.data.jobId}`);
+        } else if (notification.data?.projectId) {
+            navigate(`/gigs/${notification.data.projectId}`);
+        } else if (notification.data?.conversationId) {
+            navigate(`/chat/${notification.data.conversationId}`);
+        }
     };
-
 
     /**
      * Handle category filter toggle

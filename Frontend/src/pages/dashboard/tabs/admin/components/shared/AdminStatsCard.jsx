@@ -46,6 +46,7 @@ const AdminStatsCard = ({
 
         const isPositive = trend.startsWith('+');
         const isNegative = trend.startsWith('-');
+        const isNeutral = trend.includes('0%') || !isPositive && !isNegative;
 
         if (isPositive) {
             return {

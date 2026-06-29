@@ -5,15 +5,16 @@
  * @date 05-02-2026
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Monitor } from 'lucide-react';
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Monitor, Users, MessageSquare } from 'lucide-react';
 import styles from './VideoCallUI.module.css'; // Assuming you might create this or use inline styles for now given the request context
 
 const VideoCallUI = ({ isHost, roomId, onEndCall }) => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
 
+    // This is a mock UI, in a real app would integrate with WebRTC/Twilio/Agora
     return (
         <div className={styles.container}>
             <div className={styles.grid}>
@@ -25,7 +26,8 @@ const VideoCallUI = ({ isHost, roomId, onEndCall }) => {
                     </div>
                 </div>
                 <div className={styles.participant}>
-                    <div className={styles.placeholder}>Waiting for workspace participant connection...</div>
+                    <div className={styles.avatar}>Other Participant</div>
+                    <div className={styles.placeholder}>Waiting for connection...</div>
                 </div>
             </div>
 

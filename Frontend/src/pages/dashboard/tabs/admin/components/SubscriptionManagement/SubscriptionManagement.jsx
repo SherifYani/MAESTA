@@ -8,7 +8,7 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     Download,
     TrendingUp,
@@ -23,7 +23,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import { getSubscriptionsData } from '../../config/adminDataService';
+import { subscriptionsData } from '../../config/adminMockData';
 import styles from './SubscriptionManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -33,15 +33,7 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const SubscriptionManagement = () => {
-    const [subscriptions, setSubscriptions] = useState([]);
-    const [, setLoading] = useState(true);
-
-    useEffect(() => {
-        getSubscriptionsData().then(data => {
-            setSubscriptions(data);
-            setLoading(false);
-        }).catch(() => setLoading(false));
-    }, []);
+    const [subscriptions, setSubscriptions] = useState(subscriptionsData);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');

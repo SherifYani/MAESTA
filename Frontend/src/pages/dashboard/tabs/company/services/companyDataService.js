@@ -26,21 +26,16 @@ import { ROLES, ROLE_METRICS } from '../../../config/dashboard.config';
  */
 export const getCompanyDashboardData = async () => {
   try {
-    const [dashboardData, jobsData] = await Promise.all([
-      dashboardService.getCompanyDashboard(),
-      jobService.getCompanyJobs()
-    ]);
-    const jobs = jobsData?.items || jobsData || [];
-    
+    const data = await dashboardService.getCompanyDashboard();
     const companyData = {
-      profile: dashboardData?.profile || dashboardData || {},
-      publishedJobs: jobs,
-      newApplicants: dashboardData?.recentApplicants || [],
-      performanceAnalytics: dashboardData?.analytics || {},
-      recentActivity: dashboardData?.recentActivity || [],
-      pendingActions: dashboardData?.pendingActions || [],
+      profile: null,
+      publishedJobs: [],
+      newApplicants: [],
+      performanceAnalytics: null,
+      recentActivity: [],
+      pendingActions: [],
       metrics: [
-        { id: "activeJobs", label: "Active Jobs", value: dashboardData?.activeJobsCount?.toString() || "0", change: "+0", trend: "up", color: "var(--color-accent-pink)", details: "", progress: 0, targetValue: "0" },
+        { id: "activeJobs", label: "Active Jobs", value: data?.activeJobsCount?.toString() || "0", change: "+0", trend: "up", color: "var(--color-accent-pink)", details: "", progress: 0, targetValue: "0" },
         { id: "totalSpent", label: "Total Spent", value: "$0", change: "+0%", trend: "up", color: "var(--color-accent-green)", details: "This month", progress: 0, targetValue: "0" },
         { id: "activeContracts", label: "Active Contracts", value: "0", change: "+0", trend: "up", color: "var(--color-accent-blue)", details: "", progress: 0, targetValue: "0" },
         { id: "avgRating", label: "Avg Rating", value: "0.0", change: "0", trend: "neutral", color: "var(--color-accent-yellow)", details: "", progress: 0, targetValue: "5.0" },
@@ -206,7 +201,7 @@ export const getNewApplicantsData = async (filters = {}) => {
       shortlisted: applicants.filter(app => app.status?.toLowerCase() === "shortlisted").length,
       interviewed: applicants.filter(app => app.status?.toLowerCase() === "interviewed").length,
       rejected: applicants.filter(app => app.status?.toLowerCase() === "rejected").length,
-      avgMatchScore: Math.round(applicants.reduce((sum, app) => sum + (app.matchScore || 0), 0) / (applicants.length || 1)) || 0,
+      avgMatchScore: Math.round(applicants.reduce((sum, app) => sum + (app.matchScore || 0), 0) / applicants.length) || 0,
       highMatch: applicants.filter(app => (app.matchScore || 0) >= 90).length,
       mediumMatch: applicants.filter(app => (app.matchScore || 0) >= 75 && (app.matchScore || 0) < 90).length,
       lowMatch: applicants.filter(app => (app.matchScore || 0) < 75).length,
@@ -264,14 +259,14 @@ export const getPerformanceAnalyticsData = async (options = {}) => {
     return {
       success: true,
       data: {
-        analytics: analytics?.monthlyTrends ? analytics : { monthlyTrends: analytics },
-        stats: analytics?.stats || analytics?.overview || {},
-        insights: analytics?.insights || { 
+        analytics: analytics,
+        stats: analytics?.overview || {},
+        insights: { 
           topPerformingJobs: analytics?.jobPerformance || [], 
           quickInsights: [], 
           recommendations: [] 
         },
-        trends: analytics?.trends || { applicationTrend: 'neutral', hireTrend: 'neutral', timeTrend: 'neutral' },
+        trends: { applicationTrend: 'neutral', hireTrend: 'neutral', timeTrend: 'neutral' },
         period,
         lastUpdated: new Date().toISOString(),
         nextReportDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -294,8 +289,8 @@ export const getCompanySummaryData = async () => {
     return {
       success: true,
       data: {
-        profile: profile || {},
-        hiringTeam: profile?.team || [],
+        profile: profile,
+        hiringTeam: [],
         companyMetrics: profile?.stats || {},
       },
       timestamp: new Date().toISOString(),
@@ -318,14 +313,13 @@ export const getCompanySummaryData = async () => {
  */
 export const updateJobStatus = async (jobId, status) => {
   try {
-    const isPublished = status === 'active' || status === 'published';
-    const data = await jobService.toggleJobStatus(jobId, isPublished);
+    const isPublished = status === 'active';
+    await jobService.toggleJobStatus(jobId, isPublished);
     return {
       success: true,
       message: `Job status updated to ${status}`,
       jobId,
       status,
-      data,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -343,14 +337,13 @@ export const updateJobStatus = async (jobId, status) => {
  */
 export const updateApplicantStatus = async (applicantId, status, notes = '') => {
   try {
-    const data = await jobService.updateApplicationStatus(applicantId, status);
+    await jobService.updateApplicationStatus(applicantId, status);
     return {
       success: true,
       message: `Applicant status updated to ${status}`,
       applicantId,
       status,
       notes,
-      data,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -368,15 +361,13 @@ export const updateApplicantStatus = async (applicantId, status, notes = '') => 
  */
 export const bulkApplicantAction = async (applicantIds, action, data = {}) => {
   try {
-    const results = await Promise.all(
-      applicantIds.map(id => jobService.updateApplicationStatus(id, action))
-    );
+    const promises = applicantIds.map(id => jobService.updateApplicationStatus(id, action));
+    await Promise.all(promises);
     return {
       success: true,
       message: `${action} completed for ${applicantIds.length} applicants`,
       action,
       count: applicantIds.length,
-      results,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -393,13 +384,14 @@ export const bulkApplicantAction = async (applicantIds, action, data = {}) => {
  */
 export const exportCompanyData = async (dataType, options = {}) => {
   try {
-    const response = await jobService.getCompanyJobs();
+    // Basic export stub calling mock/placeholder endpoints if needed
+    console.log(`Exporting ${dataType} data`);
     return {
       success: true,
-      message: `${dataType} export completed`,
+      message: `${dataType} export started`,
       dataType,
       format: options.format || 'csv',
-      data: response,
+      downloadUrl: `/api/exports/${dataType}-${Date.now()}.${options.format || 'csv'}`,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {

@@ -8,14 +8,14 @@
  * @last-modified-date 2026-03-16
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { UserPlus, Shield, MoreVertical, Mail, Key, Users, UserCheck, UserX } from 'lucide-react';
 import AdminPageHeader from '../shared/AdminPageHeader/AdminPageHeader';
 import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import adminService from '../../../../../../services/adminService';
+import { staffData as initialStaffData } from '../../config/adminMockData';
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -25,23 +25,7 @@ const PAGE_SIZE = 10;
  * @returns {JSX.Element}
  */
 const StaffManagement = () => {
-    const [staffData, setStaffData] = useState([]);
-    const [, setLoading] = useState(true);
-
-    useEffect(() => {
-        adminService.getUsers({ page: 1, pageSize: 100, userType: 'Admin' }).then(result => {
-            const rows = (result.data?.users || []).filter((user) => (user.roles || []).includes('Admin') || user.userType === 'Admin').map((user) => ({
-                id: user.userId || user.id,
-                name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
-                email: user.email,
-                role: (user.roles && user.roles[0]) || user.userType || 'Admin',
-                status: user.isActive ? 'active' : 'inactive',
-                lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never',
-            }));
-            setStaffData(rows);
-            setLoading(false);
-        }).catch(() => setLoading(false));
-    }, []);
+    const [staffData, setStaffData] = useState(initialStaffData);
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [searchTerm, setSearchTerm] = useState('');
@@ -144,13 +128,6 @@ const StaffManagement = () => {
         setSelectedStaff(null);
     }, []);
 
-    const handleRevokeAdmin = useCallback(async (staff) => {
-        if (!window.confirm(`Remove admin access from ${staff.email}?`)) return;
-        await adminService.revokeAdmin(staff.id);
-        setStaffData((prev) => prev.filter((item) => item.id !== staff.id));
-        setSelectedStaff(null);
-    }, []);
-
     // =========================================================================
     // Cell renderers
     // =========================================================================
@@ -199,14 +176,6 @@ const StaffManagement = () => {
                     >
                         <Key size={14} />
                         Reset Password
-                    </button>
-                    <button
-                        className={styles.actions__item}
-                        onClick={() => handleRevokeAdmin(row)}
-                        role="menuitem"
-                    >
-                        <Shield size={14} />
-                        Revoke Admin
                     </button>
                 </div>
             )}

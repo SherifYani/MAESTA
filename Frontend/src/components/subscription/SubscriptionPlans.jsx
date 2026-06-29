@@ -17,10 +17,9 @@ import { useSubscription } from '../../context/SubscriptionContext';
 import PlanCard from './PlanCard';
 import BillingToggle from './BillingToggle';
 import { Shield, RefreshCw, CheckCircle, Zap } from 'lucide-react';
+import { calculateYearlySavings } from '../../mocks/subscriptionData';
 import GeneralSelect from '../../components/common/GeneralSelect';
 import styles from './SubscriptionPlans.module.css';
-
-const calculateYearlySavings = (monthlyPrice, yearlyPrice) => (monthlyPrice * 12) - yearlyPrice;
 
 /**
  * Main subscription plans display component showing all available plans with filtering and selection.
