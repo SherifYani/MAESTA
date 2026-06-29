@@ -13,6 +13,8 @@
   padding: var(--space-6);
   margin-bottom: var(--space-6);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 40;
 }
 
 .filtersGrid {

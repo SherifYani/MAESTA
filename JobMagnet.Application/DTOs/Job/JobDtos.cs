@@ -23,6 +23,10 @@ namespace JobMagnet.Application.DTOs.Job
         public string? ExperienceLevel { get; set; }
         public decimal? SalaryMin { get; set; }
         public decimal? SalaryMax { get; set; }
+        public List<string>? Skills { get; set; }
+        public string? SortBy { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public int Page { get; set; } = 1;
         public int Limit { get; set; } = 10;
     }
@@ -47,6 +51,7 @@ namespace JobMagnet.Application.DTOs.Job
         public string? Currency { get; set; }
         public bool IsPublished { get; set; }
         public int? EmployerId { get; set; }
+        public int? CompanyId { get; set; }
         public string? CompanyName { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }

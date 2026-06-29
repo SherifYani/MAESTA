@@ -220,6 +220,7 @@ const NewApplicants = ({
     const handleBulkAction = (action) => {
         if (onBulkAction && selectedApplicants.length > 0) {
             onBulkAction(action, selectedApplicants);
+            setSelectedApplicants([]);
         }
     };
 
@@ -265,23 +266,7 @@ const NewApplicants = ({
                     >
                         Reject
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="small"
-                        icon={Mail}
-                        onClick={() => handleBulkAction("email")}
-                    >
-                        Email
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="small"
-                        icon={Download}
-                        onClick={() => handleBulkAction("export")}
-                    >
-                        Export
-                    </Button>
-                </div>
+                </div>  
             </div>
         );
     };
@@ -421,16 +406,6 @@ const NewApplicants = ({
                             </button>
                         )}
 
-                        {applicant.actions?.canViewProfile && (
-                            <button
-                                className={styles.actionButton}
-                                onClick={(e) => handleViewProfile(applicant.id, applicant.profile.url, e)}
-                                title="View Profile"
-                            >
-                                <Eye size={16} />
-                            </button>
-                        )}
-
                         <button
                             className={styles.expandButton}
                             onClick={(e) => {
@@ -454,7 +429,6 @@ const NewApplicants = ({
         return (
             <tr
                 className={`${styles.applicantRow} ${selectedApplicants.includes(applicant.id) ? styles.selected : ""}`}
-                onClick={() => handleViewApplicant(applicant.id)}
             >
                 <td>
                     <input
@@ -538,6 +512,17 @@ const NewApplicants = ({
                         )}
 
                         <button
+                            className={styles.rowActionButton}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewApplicant(applicant.id);
+                            }}
+                            title="View Applicant"
+                        >
+                            <Eye size={16} />
+                        </button>
+
+                        {/* <button
                             className={styles.rowMoreButton}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -546,7 +531,7 @@ const NewApplicants = ({
                             title="More actions"
                         >
                             <MoreVertical size={16} />
-                        </button>
+                        </button> */}
                     </div>
                 </td>
             </tr>
@@ -590,14 +575,6 @@ const NewApplicants = ({
                             </svg>
                         </button>
                     </div>
-
-                    <Button
-                        variant="primary"
-                        icon={Download}
-                        onClick={() => handleBulkAction("export")}
-                    >
-                        Export Report
-                    </Button>
                 </div>
             </div>
 

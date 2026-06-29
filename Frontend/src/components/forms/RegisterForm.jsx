@@ -47,16 +47,7 @@ function RegisterForm() {
     city: "",
   });
 
-  const [employerData] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
-  });
+
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,16 +70,6 @@ function RegisterForm() {
     city: "",
   });
 
-  const [employerErrors, setEmployerErrors] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
-  });
 
   const [passwordValidation, setPasswordValidation] = useState({
     minLength: false,
@@ -218,19 +199,7 @@ function RegisterForm() {
       }
 
       // Update errors
-      if (
-        name.startsWith("company") ||
-        name === "description" ||
-        name === "industry" ||
-        name === "foundedYear" ||
-        name === "website" ||
-        name === "commercialRegistrationNumber" ||
-        name === "logoUrl"
-      ) {
-        setEmployerErrors((prev) => ({ ...prev, [name]: error }));
-      } else {
-        setFormErrors((prev) => ({ ...prev, [name]: error }));
-      }
+      setFormErrors((prev) => ({ ...prev, [name]: error }));
     },
     [validatePassword, formData.password, formData.confirmPassword]
   );
@@ -716,25 +685,6 @@ function RegisterForm() {
               aria-label="Login to your account">
               Sign In
             </Link>
-          </div>
-          <div className="register-form__social-login">
-            <div className="register-form__social-buttons">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("Google")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-google register-form__social-button-icon"></i>
-                Google
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("LinkedIn")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-linkedin register-form__social-button-icon"></i>
-                LinkedIn
-              </button>
-            </div>
           </div>
 
           <p className="register-form__terms-text">

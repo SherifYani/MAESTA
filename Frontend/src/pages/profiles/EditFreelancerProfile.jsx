@@ -39,7 +39,7 @@ export default function EditFreelancerProfile() {
   });
 
   const [skills, setSkills] = useState(freelancerData.skills || []);
-  const [experiences, setExperiences] = useState(freelancerData.experiences || []);
+  const [experiences] = useState(freelancerData.experiences || []);
   const [portfolio, setPortfolio] = useState(freelancerData.portfolio || []);
 
   const handleInputChange = (event) => {

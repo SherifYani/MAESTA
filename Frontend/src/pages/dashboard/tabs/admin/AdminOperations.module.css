@@ -1,9 +1,6 @@
 .adminOperationsPage {
   min-height: 100%;
-  padding: var(--space-4);
-  background:
-    radial-gradient(circle at top left, var(--color-radial-pink-1), transparent 34rem),
-    radial-gradient(circle at top right, var(--color-radial-pink-2), transparent 28rem);
+  padding: var(--space-4);  
 }
 
 .operationsGrid {

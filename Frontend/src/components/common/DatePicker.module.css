@@ -1,8 +1,8 @@
 /* 
  * @file DatePicker.module.css
- * @description Styles for DatePicker component – glassmorphism, animations.
+ * @description Styles for DatePicker component – fully theme‑aware.
  * @author Sherif Talaat
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2026-05-04
  */
 
@@ -19,6 +19,13 @@
   background: var(--color-input);
   color: var(--color-foreground);
   font-size: var(--font-size-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 3px var(--color-shadow-pink);
 }
 
 .popup {
@@ -33,6 +40,19 @@
   margin-top: var(--space-2);
   width: 280px;
   box-shadow: 0 8px 24px var(--color-shadow-pink);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
@@ -40,6 +60,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
+  color: var(--color-foreground);
+  font-weight: var(--font-weight-semibold);
 }
 
 .header button {
@@ -48,6 +70,12 @@
   font-size: var(--font-size-xl);
   cursor: pointer;
   padding: var(--space-1);
+  color: var(--color-foreground);
+  transition: color 0.2s;
+}
+
+.header button:hover {
+  color: var(--color-accent-pink);
 }
 
 .weekdays {
@@ -56,11 +84,11 @@
   text-align: center;
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-2);
+  color: var(--color-muted-foreground);
 }
 
 .weekday {
   font-size: var(--font-size-xs);
-  color: var(--color-muted-foreground);
 }
 
 .days {
@@ -78,15 +106,18 @@
   cursor: pointer;
   font-size: var(--font-size-sm);
   transition: all 0.2s;
+  color: var(--color-foreground);
 }
 
 .day:hover:not(:disabled) {
   background: var(--color-accent);
+  color: var(--color-accent-foreground);
 }
 
 .day.selected {
   background: linear-gradient(135deg, var(--color-submit-pink-1), var(--color-submit-pink-2));
   color: var(--color-primary-white);
+  font-weight: var(--font-weight-bold);
 }
 
 .day:disabled {

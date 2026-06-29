@@ -24,7 +24,7 @@ import {
     Eye,
     Zap
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import JobMetricsChart from "../shared/JobMetricsChart";
 import Button from "../../../../components/ui/Button";
 import Badge from "../../../../components/ui/Badge";
@@ -43,13 +43,21 @@ import styles from "./PerformanceAnalytics.module.css";
  */
 const PerformanceAnalytics = ({
     analyticsData,
+    period: periodProp,
     onPeriodChange,
     onExport,
     onRefresh
 }) => {
-    const [period, setPeriod] = useState("monthly");
+    const [period, setPeriod] = useState(periodProp || "monthly");
     const [selectedMetric, setSelectedMetric] = useState("applications");
     const [loading, setLoading] = useState(false);
+
+    // Sync with external period prop when provided
+    useEffect(() => {
+        if (periodProp && periodProp !== period) {
+            setPeriod(periodProp);
+        }
+    }, [periodProp]);
 
     /**
      * Processes data for different chart types in the correct format for Recharts
@@ -197,7 +205,6 @@ const PerformanceAnalytics = ({
      */
     const handlePeriodChange = (newPeriod) => {
         setPeriod(newPeriod);
-
         if (onPeriodChange) {
             onPeriodChange(newPeriod);
         }

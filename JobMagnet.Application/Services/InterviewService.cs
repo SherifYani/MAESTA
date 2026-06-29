@@ -138,7 +138,7 @@ namespace JobMagnet.Application.Services
             return MapToDto(interview);
         }
 
-        public async Task<IEnumerable<InterviewDto>> GetMyInterviewsAsync(int userId, string role, int page = 1, int limit = 20)
+        public async Task<IEnumerable<InterviewDto>> GetMyInterviewsAsync(int userId, string role, int page = 1, int limit = 20, string? status = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             IQueryable<Interview> query = _context.Interviews
                 .Include(i => i.Employer).ThenInclude(e => e!.User)
@@ -152,6 +152,24 @@ namespace JobMagnet.Application.Services
             else
             {
                 query = query.Where(i => i.JobSeeker!.UserId == userId);
+            }
+
+            // Apply status filter
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(i => i.Status.ToLower() == status.ToLower());
+            }
+
+            // Apply date range filter
+            if (startDate.HasValue)
+            {
+                var startUtc = new DateTimeOffset(startDate.Value.Date, TimeSpan.Zero);
+                query = query.Where(i => i.ScheduledAt >= startUtc);
+            }
+            if (endDate.HasValue)
+            {
+                var endUtc = new DateTimeOffset(endDate.Value.Date.AddDays(1), TimeSpan.Zero);
+                query = query.Where(i => i.ScheduledAt < endUtc);
             }
 
             return await query

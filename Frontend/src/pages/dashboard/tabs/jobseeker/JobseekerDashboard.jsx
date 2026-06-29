@@ -72,10 +72,10 @@ const JobseekerDashboard = () => {
       />
 
       {/* Stats Section */}
-      <ApplicationStats
+      {/* <ApplicationStats
         stats={stats.applications}
         jobSeekerStats={stats.jobSeeker}
-      />
+      /> */}
 
       {/* Main Content Grid */}
       <div className={styles.contentGrid}>

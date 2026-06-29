@@ -7,20 +7,8 @@ import jobService from "../services/jobService";
 import dashboardService from "../services/dashboardService";
 import exportService from "../services/exportService";
 
-// Data Services
-import {
-  getNewApplicantsData,
-  getPerformanceAnalyticsData,
-  updateApplicantStatus,
-  bulkApplicantAction,
-} from "../pages/dashboard/tabs/company/services/companyDataService";
-
 // Lazy load dashboard components
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
-const UserManagement = lazy(
-  () =>
-    import("../pages/dashboard/tabs/admin/components/UserManagement/UserManagement"),
-);
 const JobManagement = lazy(
   () =>
     import("../pages/dashboard/tabs/admin/components/JobManagement/JobManagement"),
@@ -125,6 +113,7 @@ const DetailedApplications = lazy(
     import("../pages/dashboard/tabs/jobseeker/components/DetailedApplications/DetailedApplications.jsx"),
 );
 const MyInterviewsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/MyInterviewsPage"));
+const AssessmentsPage = lazy(() => import("../pages/dashboard/tabs/jobseeker/AssessmentsPage"));
 
 // Shared Pages (all authenticated roles)
 const AccountSettings = lazy(
@@ -304,9 +293,25 @@ const NewApplicantsWithData = () => {
       onScheduleInterview={(id) => navigate(`/dashboard/interviews/schedule?applicationId=${id}`)}
       onUpdateApplicantStatus={updateStatus}
       onBulkAction={async (action, ids) => {
-        if (action === "export")
+        if (action === "export") {
           return exportService.generateExport("applicants", null, {}, "json");
-        await Promise.all(ids.map((id) => updateStatus(id, action)));
+        }
+        if (action === "email") {
+          // Future: implement bulk email
+          console.warn("Bulk email not implemented yet");
+          return;
+        }
+        
+        // Map UI action names to valid backend statuses
+        let status = action;
+        if (action === "shortlist") status = "shortlisted";
+        if (action === "reject") status = "rejected";
+        
+        try {
+          await Promise.all(ids.map((id) => updateStatus(id, status)));
+        } catch (error) {
+          console.error("Bulk action failed:", error);
+        }
       }}
       onExportData={() => navigate("/dashboard/export?type=applicants")}
     />
@@ -316,20 +321,23 @@ const NewApplicantsWithData = () => {
 const PerformanceAnalyticsWithData = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState("monthly");
+
+  const fetchAnalytics = async (currentPeriod) => {
+    setLoading(true);
+    try {
+      const data = await dashboardService.getCompanyAnalytics({ period: currentPeriod });
+      setAnalytics(data);
+    } catch (err) {
+      console.error("Failed to load analytics", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const data = await dashboardService.getCompanyAnalytics();
-        setAnalytics(data);
-      } catch (err) {
-        console.error("Failed to load analytics", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAnalytics();
-  }, []);
+    fetchAnalytics(period);
+  }, [period]);
 
   if (loading) return <TableSkeleton rows={10} columns={6} />;
   if (!analytics) return <div>Error loading analytics</div>;
@@ -340,10 +348,10 @@ const PerformanceAnalyticsWithData = () => {
       stats={analytics.stats}
       insights={analytics.insights}
       trends={analytics.trends}
-      period={analytics.period || "monthly"}
-      onPeriodChange={() => {}}
+      period={period}
+      onPeriodChange={setPeriod}
       onExport={() => {}}
-      onRefresh={() => window.location.reload()}
+      onRefresh={() => fetchAnalytics(period)}
     />
   );
 };
@@ -451,13 +459,46 @@ const DetailedApplicationsWithData = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadApplications = () => {
+    setLoading(true);
     jobService
       .getMyApplications()
       .then((res) => setApplications(res?.items || res || []))
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadApplications();
   }, []);
+
+  const handleWithdrawApplication = async (applicationId) => {
+    // Optimistic remove
+    setApplications((prev) => prev.filter((app) => (app.id || app.applicationId) !== applicationId));
+    try {
+      await jobService.withdrawApplication(applicationId);
+    } catch (err) {
+      console.error('Failed to withdraw application — refreshing list', err);
+      loadApplications();
+    }
+  };
+
+  const handleUpdateStatus = async (applicationId, newStatus) => {
+    try {
+      await jobService.updateApplicationStatus(applicationId, newStatus);
+      // Update local state optimistically
+      setApplications((prev) =>
+        prev.map((app) =>
+          (app.id || app.applicationId) === applicationId
+            ? { ...app, status: newStatus }
+            : app,
+        ),
+      );
+    } catch (err) {
+      console.error('Failed to update application status', err);
+      loadApplications();
+    }
+  };
 
   if (loading) return <TableSkeleton rows={5} columns={1} />;
 
@@ -466,16 +507,14 @@ const DetailedApplicationsWithData = () => {
       applications={applications}
       stats={{
         total: applications.length,
-        underReview: applications.filter((app) => app.status === "review")
-          .length,
-        interview: applications.filter((app) => app.status === "interview")
-          .length,
+        underReview: applications.filter((app) => app.status === "review").length,
+        interview: applications.filter((app) => app.status === "interview").length,
         offers: applications.filter((app) => app.status === "offer").length,
-        rejected: applications.filter((app) => app.status === "rejected")
-          .length,
+        rejected: applications.filter((app) => app.status === "rejected").length,
       }}
       onViewApplication={() => {}}
-      onWithdrawApplication={jobService.withdrawApplication}
+      onWithdrawApplication={handleWithdrawApplication}
+      onUpdateStatus={handleUpdateStatus}
     />
   );
 };
@@ -660,6 +699,14 @@ const DashboardRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={["jobseeker", "freelancer"]}>
                 <MyInterviewsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="jobseeker/assessments"
+            element={
+              <ProtectedRoute allowedRoles={["jobseeker", "freelancer"]}>
+                <AssessmentsPage />
               </ProtectedRoute>
             }
           />

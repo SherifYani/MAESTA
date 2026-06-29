@@ -144,14 +144,32 @@ namespace JobMagnet.Application.Services
             };
         }
 
-        public async Task<CompanyAnalyticsDto> GetCompanyAnalyticsAsync(int userId)
+        public async Task<CompanyAnalyticsDto> GetCompanyAnalyticsAsync(int userId, string? period = null)
         {
             var now = DateTimeOffset.UtcNow;
-            var sixMonthsAgo = now.AddMonths(-6);
+            DateTimeOffset startDate;
+            switch (period?.ToLower())
+            {
+                case "weekly":
+                    startDate = now.AddDays(-7);
+                    break;
+                case "monthly":
+                    startDate = now.AddMonths(-1);
+                    break;
+                case "quarterly":
+                    startDate = now.AddMonths(-3);
+                    break;
+                case "yearly":
+                    startDate = now.AddYears(-1);
+                    break;
+                default:
+                    startDate = now.AddMonths(-6);
+                    break;
+            }
 
-            // 1. Monthly Trends (last 6 months)
+            // 1. Monthly Trends
             var applicationsTrend = await _context.JobApplications
-                .Where(a => a.Job != null && a.Job.PostedByUserId == userId && a.AppliedAt >= sixMonthsAgo)
+                .Where(a => a.Job != null && a.Job.PostedByUserId == userId && a.AppliedAt >= startDate)
                 .GroupBy(a => new { a.AppliedAt.Year, a.AppliedAt.Month })
                 .Select(g => new TrendItemDto
                 {
@@ -161,7 +179,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
 
             var hiresTrend = await _context.JobApplications
-                .Where(a => a.Job != null && a.Job.PostedByUserId == userId && a.Status == "Accepted" && a.UpdatedAt >= sixMonthsAgo)
+                .Where(a => a.Job != null && a.Job.PostedByUserId == userId && a.Status == "Accepted" && a.UpdatedAt >= startDate)
                 .GroupBy(a => new { Year = a.UpdatedAt!.Value.Year, Month = a.UpdatedAt.Value.Month })
                 .Select(g => new TrendItemDto
                 {

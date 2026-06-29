@@ -10,7 +10,7 @@ namespace JobMagnet.Application.Interfaces
         Task<InterviewDto> UpdateStatusAsync(int userId, int interviewId, UpdateInterviewStatusRequest request);
         Task<InterviewDto> RescheduleAsync(int userId, int interviewId, RescheduleInterviewRequest request);
         Task<InterviewDto> GetInterviewByIdAsync(int userId, int interviewId);
-        Task<IEnumerable<InterviewDto>> GetMyInterviewsAsync(int userId, string role, int page = 1, int limit = 20);
+        Task<IEnumerable<InterviewDto>> GetMyInterviewsAsync(int userId, string role, int page = 1, int limit = 20, string? status = null, DateTime? startDate = null, DateTime? endDate = null);
         Task DeleteInterviewAsync(int employerId, int interviewId);
         Task<IEnumerable<AvailableSlotDto>> GetAvailableSlotsAsync(int userId, DateTime? from = null, DateTime? to = null);
     }

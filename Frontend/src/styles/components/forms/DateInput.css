@@ -1,6 +1,6 @@
 /**
  * @file DateInput.css
- * @description Styles for date input Component include grid layout, hover states, accessibility features and the pop-calendar and its styles 
+ * @description Styles for date input Component include grid layout, hover states, accessibility features and the pop-calendar and its styles
  * @author Sherif Talaat
  * @version 2.1.0
  * @date 05-12-2025
@@ -12,957 +12,345 @@
 @import "../../shared/_form-base.css";
 @import "../../shared/_form-animations.css";
 
-/* ==========================================================================
-   Modern Date Input Component
-   ========================================================================== */
-
-/* === Date Input Container === */
 .date-input__container {
   width: 100%;
-  margin: var(--space-4) 0;
+  margin: 0 0 var(--space-6);
   position: relative;
-  animation: fadeIn 0.4s ease-out;
-  color: var(--primary-white);
+  color: var(--color-foreground);
+  animation: formSlideIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
+.date-input__label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm, var(--text-sm));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-foreground);
+  line-height: var(--line-height-normal, 1.5);
+}
+
+.date-input__required {
+  color: var(--color-destructive);
+  margin-left: var(--space-1);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.date-input__fields-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 54px;
+  border-radius: var(--radius-md, 12px);
+  background: var(--color-input, var(--primary-black));
+  border: 1px solid var(--color-border, var(--translucent-black-1));
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease,
+    transform 0.2s ease;
+  box-shadow: 0 var(--space-1) var(--space-5) var(--color-translucent-white-1);
+  overflow: visible;
+}
+
+.date-input__fields-wrapper:hover {
+  border-color: var(--color-accent-hover, var(--accent-pink));
+  background: var(--color-input-hover, var(--color-input));
+}
+
+.date-input__fields-wrapper:focus-within {
+  border-color: var(--color-accent-pink, var(--accent-pink));
+  box-shadow: 0 0 0 3px var(--color-radial-pink-1, var(--radial-pink-1)),
+    0 var(--space-1) var(--space-5) var(--color-translucent-white-1);
+  background: var(--color-input-hover, var(--color-input));
+}
+
+.date-input--error .date-input__fields-wrapper {
+  border-color: var(--color-destructive);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-destructive) 12%, transparent);
+}
+
+.date-input__icon {
+  position: static;
+  transform: none;
+  flex: 0 0 auto;
+  width: 48px;
+  text-align: center;
+  color: var(--color-muted-foreground, var(--muted-foreground));
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.date-input__fields-wrapper:hover .date-input__icon,
+.date-input__fields-wrapper:focus-within .date-input__icon {
+  color: var(--color-accent-pink, var(--accent-pink));
+}
+
+.date-input__fields {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.date-input__part {
+  min-width: 0;
+  height: 52px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-foreground, var(--primary-white));
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: var(--font-weight-medium, 500);
+  text-align: center;
+}
+
+.date-input__part::placeholder {
+  color: var(--color-muted-foreground, var(--muted-foreground));
+  opacity: 0.8;
+  font-weight: var(--font-weight-normal, 400);
+}
+
+.date-input__separator {
+  color: var(--color-muted-foreground, var(--muted-foreground));
+  opacity: 0.75;
+}
+
+.date-input__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+  padding-right: var(--space-2);
+}
+
+.date-input__clear-button,
+.date-input__calendar-button {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm, 8px);
+  background: transparent;
+  color: var(--color-muted-foreground, var(--muted-foreground));
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.date-input__clear-button:hover,
+.date-input__calendar-button:hover,
+.date-input__calendar-button[aria-expanded="true"] {
+  color: var(--color-accent-pink, var(--accent-pink));
+  border-color: var(--color-accent-pink, var(--accent-pink));
+  background: var(--color-radial-pink-1, var(--radial-pink-1));
+}
+
+.date-input__clear-button:active,
+.date-input__calendar-button:active {
+  transform: scale(0.96);
+}
+
+.date-input__feedback {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.date-input__age-display,
+.date-input__error-message,
+.date-input__tips {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: fit-content;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs, var(--text-xs));
+}
+
+.date-input__age-display {
+  color: var(--color-muted-foreground, var(--muted-foreground));
+}
+
+.date-input__age-display i {
+  color: var(--color-accent-pink, var(--accent-pink));
+}
+
+.date-input__error-message {
+  color: var(--color-destructive);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.date-input__tips {
+  color: var(--color-muted-foreground, var(--muted-foreground));
+  opacity: 0.85;
+}
+
+.date-input__tips i {
+  color: var(--color-accent-pink, var(--accent-pink));
+}
+
+.date-input__calendar-popup {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 1000;
+  width: min(100%, 360px);
+  background: var(--color-card, var(--color-primary-black));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 24px 48px var(--color-translucent-black-1, rgba(0, 0, 0, 0.24));
+  overflow: hidden;
+  animation: calendarSlideIn 0.2s ease-out;
+}
+
+@keyframes calendarSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* === Date Input Label === */
-.date-input__label {
-  display: block;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-background);
-  margin-bottom: var(--space-3);
-  line-height: 1.5;
-  letter-spacing: -0.01em;
-  transition: color 0.3s ease;
-}
-
-.date-input__container:hover .date-input__label {
-  color: var(--accent-pink);
-}
-
-.date-input__required {
-  color: var(--color-destructive);
-  margin-left: var(--space-1);
-  font-weight: 700;
-}
-
-/* === Modern Date Input Fields Wrapper === */
-.date-input__fields-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border-radius: 16px;
-  background: var(--color-input);
-  border: 2px solid var(--color-border);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 10px var(--color-translucent-white-1),
-    inset 0 1px 0 var(--color-translucent-white-3);
-  padding: var(--space-2);
-  overflow: hidden;
-}
-
-.date-input__fields-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--accent-pink),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.date-input__fields-wrapper:hover {
-  border-color: color-mix(in srgb, var(--accent-pink) 40%, transparent);
-  box-shadow: 0 8px 32px var(--shadow-pink), 0 0 0 1px var(--radial-pink-2);
-  transform: translateY(-2px);
-}
-
-.date-input__fields-wrapper:hover::before {
-  opacity: 0.6;
-}
-
-.date-input__fields-wrapper:focus-within {
-  border-color: var(--vivid-pink);
-  box-shadow: 0 12px 40px var(--shadow-pink), 0 0 0 4px var(--radial-pink-1),
-    inset 0 1px 0 var(--color-translucent-white-3);
-}
-
-.date-input--error .date-input__fields-wrapper {
-  border-color: color-mix(in srgb, var(--color-destructive) 60%, transparent);
-  background: linear-gradient(
-    0deg,
-    color-mix(in srgb, var(--color-destructive) 5%, transparent),
-    transparent 30%
-  );
-}
-
-.date-input--error .date-input__fields-wrapper:focus-within {
-  border-color: var(--color-destructive);
-  box-shadow: 0 0 0 4px
-      color-mix(in srgb, var(--color-destructive) 10%, transparent),
-    0 8px 24px color-mix(in srgb, var(--color-destructive) 15%, transparent);
-}
-
-/* === Modern Date Input Icon === */
-.date-input__icon {
-  flex-shrink: 0;
-  color: var(--color-muted-foreground);
-  font-size: 1.1rem;
-  transition: all 0.4s ease;
-  width: 24px;
-  text-align: center;
-  filter: drop-shadow(0 2px 4px var(--color-translucent-white-1));
-}
-
-.date-input__fields-wrapper:hover .date-input__icon,
-.date-input__fields-wrapper:focus-within .date-input__icon {
-  color: var(--accent-pink);
-}
-
-/* === Modern Date Input Fields === */
-.date-input__fields {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  height: 100%;
-  position: relative;
-}
-
-.date-input__fields::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-border),
-    transparent
-  );
-  transform: translateY(-50%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.date-input__part {
-  position: relative;
-  background: transparent;
-  border: none;
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  width: calc((100% - 10%) / 2);
-  height: 100%;
-  outline: none;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 12px;
-  z-index: 1;
-  letter-spacing: -0.01em;
-}
-
-.date-input__part::placeholder {
-  color: var(--color-muted-foreground);
-  opacity: 0.5;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.date-input__separator {
-  color: var(--color-muted-foreground);
-  font-size: 1.1rem;
-  font-weight: 400;
-  opacity: 0.4;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.date-input__fields-wrapper:hover .date-input__separator {
-  opacity: 0.6;
-  color: var(--accent-pink);
-  transform: scale(1.1);
-}
-
-/* === Modern Date Input Actions === */
-.date-input__actions {
-  display: flex;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-.date-input__clear-button,
-.date-input__calendar-button {
-  background: var(--color-accent);
-  border: 1px solid var(--color-translucent-white-3);
-  color: var(--color-accent-foreground);
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.date-input__clear-button::before,
-.date-input__calendar-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    var(--color-translucent-white-3),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.date-input__clear-button:hover,
-.date-input__calendar-button:hover {
-  border-color: var(--accent-pink);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-3);
-}
-
-.date-input__clear-button:hover::before,
-.date-input__calendar-button:hover::before {
-  opacity: 1;
-}
-
-.date-input__clear-button:active,
-.date-input__calendar-button:active {
-  transform: translateY(0) scale(0.98);
-}
-
-.date-input__clear-button {
-  color: var(--color-muted-foreground);
-  background: var(--color-translucent-white-3);
-}
-
-.date-input__clear-button:hover {
-  color: var(--accent-pink);
-  background: color-mix(in srgb, var(--accent-pink) 10%, transparent);
-  border: 1px solid var(--accent-pink);
-}
-
-.date-input__calendar-button {
-  color: var(--color-muted-foreground);
-  background: linear-gradient(
-    135deg,
-    var(--color-translucent-white-3),
-    var(--color-translucent-white-1)
-  );
-}
-
-.date-input__calendar-button:hover {
-  color: var(--accent-pink);
-  background: var(--radial-pink-1);
-}
-
-.date-input__calendar-button[aria-expanded="true"] {
-  color: var(--vivid-pink);
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  box-shadow: 0 0 0 2px var(--radial-pink-1),
-    inset 0 1px 0 var(--color-translucent-white-3);
-  animation: buttonPulse 2s infinite;
-}
-
-@keyframes buttonPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 2px var(--radial-pink-1),
-      inset 0 1px 0 var(--color-translucent-white-3);
-  }
-  50% {
-    box-shadow: 0 0 0 4px var(--radial-pink-1),
-      inset 0 1px 0 var(--color-translucent-white-3),
-      0 0 20px var(--radial-pink-2);
-  }
-}
-
-/* === Modern Date Input Feedback === */
-.date-input__feedback {
-  margin-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: 0 var(--space-2);
-}
-
-/* === Modern Age Display === */
-.date-input__age-display {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: linear-gradient(
-    135deg,
-    var(--radial-pink-1),
-    var(--radial-pink-2)
-  );
-  border-radius: 10px;
-  border: 1px solid var(--radial-pink-1);
-  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(10px);
-  max-width: fit-content;
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.date-input__age-display i {
-  color: var(--accent-pink);
-  font-size: 1rem;
-  filter: drop-shadow(0 2px 4px var(--shadow-pink));
-}
-
-.date-input__age-text {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-muted-foreground);
-  letter-spacing: -0.01em;
-}
-
-/* === Modern Error Message === */
-.date-input__error-message {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-destructive) 10%, transparent),
-    color-mix(in srgb, var(--color-destructive) 5%, transparent)
-  );
-  color: var(--color-destructive);
-  border-radius: 10px;
-  border: 1px solid
-    color-mix(in srgb, var(--color-destructive) 20%, transparent);
-  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(10px);
-  max-width: fit-content;
-}
-
-.date-input__error-message i {
-  font-size: 1rem;
-  filter: drop-shadow(
-    0 2px 4px color-mix(in srgb, var(--color-destructive) 20%, transparent)
-  );
-}
-
-.date-input__error-message span {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* === Modern Tips === */
-.date-input__tips {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: linear-gradient(
-    135deg,
-    var(--color-translucent-white-3),
-    var(--color-translucent-white-1)
-  );
-  border-radius: 10px;
-  border: 1px solid var(--color-translucent-white-3);
-  backdrop-filter: blur(10px);
-  max-width: fit-content;
-}
-
-.date-input__tips i {
-  color: var(--accent-pink);
-  font-size: 1rem;
-  opacity: 0.7;
-}
-
-.date-input__tips span {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  color: var(--color-muted-foreground);
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-/* ==========================================================================
-   Modern Calendar Popup
-   ========================================================================== */
-
-/* === Modern Calendar Popup Container === */
-.date-input__calendar-popup {
-  position: absolute;
-  top: calc(100% + var(--space-3));
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--color-accent);
-  border: 1px solid var(--color-muted-foreground);
-  border-radius: 20px;
-  box-shadow: 0 24px 48px var(--color-translucent-white-2),
-    0 0 0 1px var(--color-translucent-white-3),
-    inset 0 1px 0 var(--color-translucent-white-3);
-  animation: calendarSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  transform-origin: top left;
-}
-
-@keyframes calendarSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* === Modern Calendar Header === */
 .date-input__calendar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-4) var(--space-3);
-  background: var(--color-primary-black);
-  border-bottom: 1px solid var(--color-translucent-white-3);
-  position: relative;
-}
-
-.date-input__calendar-header::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--accent-pink),
-    transparent
-  );
-  opacity: 0.3;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .date-input__calendar-header h4 {
-  font-family: var(--font-sans);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--color-background);
   margin: 0;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-foreground);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: var(--font-weight-semibold, 600);
 }
 
-.date-input__calendar-close {
-  background: var(--color-secondary);
-  border: 1px solid var(--color-secondary);
-  color: var(--color-muted-foreground);
-  cursor: pointer;
+.date-input__calendar-close,
+.date-input__month-nav {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.date-input__calendar-close:hover {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
-  transform: rotate(90deg) scale(1.1);
+.date-input__calendar-close:hover,
+.date-input__month-nav:hover:not(:disabled) {
+  color: var(--color-accent-pink, var(--accent-pink));
+  border-color: var(--color-accent-pink, var(--accent-pink));
+  background: var(--color-radial-pink-1, var(--radial-pink-1));
 }
 
-/* === Modern Calendar Body === */
+.date-input__month-nav:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .date-input__calendar-body {
   padding: var(--space-4);
-  background: var(--color-primary-black);
 }
 
-/* === Modern Month Selector === */
 .date-input__month-selector {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-4);
-  padding: 0 var(--space-1);
-  background: var(--color-secondary);
-  border-radius: 12px;
-  padding: var(--space-2);
-  border: 1px solid var(--color-secondary);
-}
-
-.date-input__month-nav {
-  background: var(--color-muted);
-  border: 1px solid var(--color-muted);
-  color: var(--color-foreground);
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  font-size: 0.8rem;
-}
-
-.date-input__month-nav:hover:not(:disabled) {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px var(--shadow-pink);
-}
-
-.date-input__month-nav:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
 }
 
 .date-input__current-month {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  font-weight: 700;
+  flex: 1;
   color: var(--color-foreground);
-  letter-spacing: -0.01em;
+  text-align: center;
+  font-weight: var(--font-weight-semibold, 600);
 }
 
-/* === Modern Calendar Grid === */
 .date-input__calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: var(--space-4);
+  gap: var(--space-1);
 }
 
 .date-input__calendar-day-header {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  color: var(--color-foreground);
+  color: var(--color-muted-foreground, var(--muted-foreground));
   text-align: center;
-  padding: var(--space-2) 0;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.7;
+  font-size: var(--font-size-xs, var(--text-xs));
+  font-weight: var(--font-weight-semibold, 600);
+  padding-bottom: var(--space-1);
 }
 
 .date-input__calendar-day-empty {
-  height: 40px;
+  height: 36px;
 }
 
 .date-input__calendar-day {
-  background: transparent;
+  height: 36px;
   border: 1px solid transparent;
-  color: var(--color-muted-foreground);
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.date-input__calendar-day::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, var(--radial-pink-1), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.date-input__calendar-day:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.date-input__calendar-day:hover:not(:disabled) {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 4px 12px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-3);
-}
-
-.date-input__calendar-day:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
-}
-
-.date-input__calendar-day--today {
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
-  border-color: transparent;
-  color: white;
-  font-weight: 700;
-  box-shadow: 0 4px 12px var(--shadow-pink);
-}
-
-.date-input__calendar-day--today:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--vivid-pink), var(--accent-pink));
-  color: white;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-2);
-}
-
-.date-input__calendar-day--disabled {
-  color: var(--color-muted-foreground);
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.date-input__calendar-day--disabled:hover {
+  border-radius: var(--radius-sm, 8px);
   background: transparent;
-  border-color: transparent;
-  color: var(--color-muted-foreground);
-  transform: none;
-  box-shadow: none;
+  color: var(--color-foreground);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
-/* === Modern Calendar Actions === */
+.date-input__calendar-day:hover:not(:disabled),
+.date-input__calendar-day--today {
+  color: var(--color-accent-pink, var(--accent-pink));
+  border-color: var(--color-accent-pink, var(--accent-pink));
+  background: var(--color-radial-pink-1, var(--radial-pink-1));
+}
+
+.date-input__calendar-day--disabled,
+.date-input__calendar-day:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
 .date-input__calendar-actions {
   display: flex;
-  gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-translucent-white-3);
-  position: relative;
-}
-
-.date-input__calendar-actions::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--accent-pink),
-    transparent
-  );
-  opacity: 0.3;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 .date-input__calendar-action {
   flex: 1;
-  background: linear-gradient(
-    135deg,
-    var(--radial-pink-1),
-    var(--radial-pink-2)
-  );
-  border: 1px solid var(--radial-pink-1);
-  color: var(--accent-pink);
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 10px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  position: relative;
-  overflow: hidden;
-}
-
-.date-input__calendar-action::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, var(--radial-pink-1), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--color-input);
+  color: var(--color-foreground);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs, var(--text-xs));
+  font-weight: var(--font-weight-medium, 500);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .date-input__calendar-action:hover {
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
-  color: white;
-  border-color: transparent;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-2);
+  color: var(--color-accent-pink, var(--accent-pink));
+  border-color: var(--color-accent-pink, var(--accent-pink));
+  background: var(--color-radial-pink-1, var(--radial-pink-1));
 }
-
-.date-input__calendar-action:hover::before {
-  opacity: 1;
-}
-
-.date-input__calendar-action:active {
-  transform: translateY(0);
-}
-
-.date-input__calendar-action i {
-  font-size: var(--text-sm);
-  transition: transform 0.3s ease;
-}
-
-.date-input__calendar-action:hover i {
-  transform: scale(1.2);
-}
-
-/* ==========================================================================
-   Responsive Design
-   ========================================================================== */
-
-/* Convert 768px to rem for consistency: 768px = 48rem */
-@media (max-width: 48rem) {
-  .date-input__fields-wrapper {
-    height: 52px;
-    border-radius: 14px;
-    padding: 0 var(--space-3);
-  }
-
-  .date-input__part {
-    font-size: 0.95rem;
-    padding: 0 var(--space-2);
-  }
-
-  .date-input__separator {
-    font-size: 1rem;
-  }
-
-  .date-input__calendar-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - var(--space-8));
-    max-width: 380px;
-    max-height: 85vh;
-    overflow-y: auto;
-    border-radius: 24px;
-  }
-
-  .date-input__calendar-day {
-    width: 36px;
-    height: 36px;
-    font-size: 0.9rem;
-  }
-
-  .date-input__calendar-actions {
-    flex-direction: column;
-  }
-}
-
-/* Convert 480px to rem: 480px = 30rem */
-@media (max-width: 30rem) {
-  .date-input__fields-wrapper {
-    flex-wrap: wrap;
-    height: auto;
-    padding: var(--space-3);
-    gap: var(--space-2);
-    min-height: 56px;
-  }
-
-  .date-input__icon {
-    position: absolute;
-    top: 50%;
-    left: var(--space-3);
-    transform: translateY(-50%);
-  }
-
-  .date-input__fields {
-    order: 2;
-    padding-left: 36px;
-    width: 100%;
-  }
-
-  .date-input__actions {
-    order: 1;
-    margin-left: auto;
-  }
-
-  .date-input__calendar-popup {
-    width: calc(100% - var(--space-4));
-    border-radius: 20px;
-  }
-}
-
-/* Date-specific responsive from the original shared sections */
-@media (max-width: 75rem) {
-  .date-input__field {
-    padding: 0.875rem 3.5rem 0.875rem 2.75rem;
-    font-size: 0.875rem;
-  }
-
-  .date-input__icon {
-    left: 1rem;
-    font-size: 0.875rem;
-  }
-
-  .date-input__calendar-toggle {
-    right: 1rem;
-    padding: 6px;
-    font-size: 0.875rem;
-  }
-
-  .date-input__calendar-popup {
-    width: 300px;
-  }
-}
-
-@media (max-width: 60.5rem) {
-  .date-input__calendar-popup {
-    width: 280px;
-  }
-
-  .date-input__calendar-grid {
-    gap: 2px;
-  }
-}
-
-@media (max-width: 40rem) {
-  .date-input__field {
-    padding: 0.625rem 3rem 0.625rem 2.25rem;
-    font-size: 0.875rem;
-  }
-
-  .date-input__icon {
-    left: 0.75rem;
-    font-size: 0.875rem;
-  }
-
-  .date-input__calendar-toggle {
-    right: 0.75rem;
-    padding: 4px;
-    font-size: 0.875rem;
-  }
-
-  .date-input__calendar-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - 2rem);
-    max-width: 320px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-}
-
-/* ==========================================================================
-   Accessibility & Reduced Motion
-   ========================================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  .date-input__container,
-  .date-input__fields-wrapper,
-  .date-input__part,
-  .date-input__clear-button,
-  .date-input__calendar-button,
-  .date-input__calendar-popup,
-  .date-input__calendar-day,
-  .date-input__calendar-action {
-    animation: none;
-    transition: none;
-  }
-
-  .date-input__calendar-popup {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .date-input__fields-wrapper:hover,
-  .date-input__fields-wrapper:focus-within,
-  .date-input__clear-button:hover,
-  .date-input__calendar-button:hover,
-  .date-input__calendar-day:hover,
-  .date-input__calendar-action:hover {
-    transform: none;
-  }
-
-  .date-input__feedback,
-  .date-input__calendar-popup,
-  .date-input__age-display,
-  .date-input__error-message {
-    animation: none;
-  }
-
-  .date-input__calendar-day:active:not(:disabled) {
-    transform: none;
-  }
-
-  .date-input__calendar-action:active {
-    transform: none;
-  }
-}
-
-/* ==========================================================================
-   Focus Management
-   ========================================================================== */
 
 .date-input__part:focus-visible,
 .date-input__calendar-button:focus-visible,
@@ -971,77 +359,54 @@
 .date-input__calendar-action:focus-visible,
 .date-input__month-nav:focus-visible,
 .date-input__calendar-close:focus-visible {
-  color: var(--accent-pink);
+  outline: 2px solid var(--color-accent-pink, var(--accent-pink));
+  outline-offset: 2px;
 }
 
-/* ==========================================================================
-   Dark Mode Adjustments
-   ========================================================================== */
-
-.dark .date-input__fields-wrapper {
-  background: linear-gradient(
-    135deg,
-    var(--color-translucent-white-1),
-    var(--color-translucent-white-3)
-  );
-  border-color: var(--color-translucent-white-3);
-  box-shadow: 0 2px 10px var(--color-translucent-black-1),
-    inset 0 1px 0 var(--color-translucent-white-3);
-}
-
-.dark .date-input__calendar-popup {
-  background: var(--color-translucent-white-4);
-  border-color: var(--color-translucent-white-3);
-  box-shadow: 0 24px 48px var(--color-translucent-black-1),
-    0 0 0 1px var(--color-translucent-white-3),
-    inset 0 1px 0 var(--color-translucent-white-3);
-  backdrop-filter: blur(30px);
-}
-
-.dark .date-input__calendar-day--today {
-  box-shadow: 0 4px 16px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-2);
-}
-
-.dark .date-input__calendar-action:hover {
-  box-shadow: 0 8px 32px var(--shadow-pink),
-    inset 0 1px 0 var(--color-translucent-white-2);
-}
-
-/* ==========================================================================
-   Loading State
-   ========================================================================== */
-
-.date-input--loading .date-input__fields-wrapper {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.date-input--loading .date-input__icon {
-  animation: spin 1.5s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+@media (max-width: 40rem) {
+  .date-input__fields-wrapper {
+    min-height: 50px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .date-input__icon {
+    width: 42px;
   }
-}
 
-/* ==========================================================================
-   Glass Effect Enhancement
-   ========================================================================== */
+  .date-input__part {
+    height: 48px;
+    font-size: 0.9rem;
+  }
 
-@media (min-width: 48rem) {
+  .date-input__actions {
+    padding-right: var(--space-1);
+  }
+
   .date-input__calendar-popup {
-    background: var(--color-translucent-white-4);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: calc(100% - var(--space-8));
+    max-width: 360px;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: translate(-50%, -50%);
   }
 
-  .dark .date-input__calendar-popup {
-    background: var(--color-translucent-white-4);
+  .date-input__calendar-actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .date-input__container,
+  .date-input__fields-wrapper,
+  .date-input__calendar-popup,
+  .date-input__calendar-day,
+  .date-input__calendar-action,
+  .date-input__clear-button,
+  .date-input__calendar-button {
+    animation: none;
+    transition: none;
   }
 }

@@ -151,6 +151,8 @@
 }
 
 .socialIcon {
+    font-size: 1.25rem;
+    line-height: 1;
     transition: transform 0.2s ease;
 }
 

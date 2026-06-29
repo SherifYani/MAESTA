@@ -1,16 +1,21 @@
 import adminService from '../../../../../services/adminService';
-import jobService from '../../../../../services/jobService';
-import paymentService from '../../../../../services/paymentService';
 
 export const getAdminStats = async () => {
     try {
         const metrics = await adminService.getDashboardMetrics();
         const pendingReports = await adminService.getPendingReports();
         return {
-            totalUsers: metrics?.totalUsers || 0,
-            activeJobs: metrics?.activeJobs || metrics?.totalJobs || 0,
-            pendingModeration: (metrics?.pendingModeration || metrics?.pendingReportsCount || 0) + (pendingReports?.length || 0),
-            totalRevenue: metrics?.totalRevenue || 0,
+            totalUsers: metrics?.totalUsers ?? 0,
+            totalJobs: metrics?.totalJobs ?? 0,
+            activeJobs: metrics?.activeJobs ?? metrics?.totalJobs ?? 0,
+            totalProjects: metrics?.totalProjects ?? 0,
+            pendingReportsCount: metrics?.pendingReportsCount ?? 0,
+            ongoingInterviewsCount: metrics?.ongoingInterviewsCount ?? 0,
+            pendingModeration: (metrics?.pendingReportsCount ?? 0) + (metrics?.pendingApprovals ?? 0),
+            totalRevenue: metrics?.totalRevenue ?? 0,
+            pendingApprovals: metrics?.pendingApprovals ?? 0,
+            pendingWithdrawals: metrics?.pendingWithdrawals ?? 0,
+            pendingRefunds: metrics?.pendingRefunds ?? 0,
             userGrowth: metrics?.userGrowth || "0%",
             revenueGrowth: metrics?.revenueGrowth || "0%",
             activeSessions: metrics?.activeSessions || 0,
@@ -18,8 +23,11 @@ export const getAdminStats = async () => {
             successRate: metrics?.successRate || "N/A"
         };
     } catch (error) {
+        console.error('[AdminStats] Error fetching stats:', error);
         return {
-            totalUsers: 0, activeJobs: 0, pendingModeration: 0, totalRevenue: 0,
+            totalUsers: 0, totalJobs: 0, activeJobs: 0, totalProjects: 0,
+            pendingReportsCount: 0, ongoingInterviewsCount: 0, pendingModeration: 0,
+            totalRevenue: 0, pendingApprovals: 0, pendingWithdrawals: 0, pendingRefunds: 0,
             userGrowth: "0%", revenueGrowth: "0%", activeSessions: 0,
             avgResponseTime: "N/A", successRate: "N/A"
         };

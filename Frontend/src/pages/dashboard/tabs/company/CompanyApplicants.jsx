@@ -6,7 +6,7 @@
  * @date 2026-05-04
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '../../../../components/common/LoadingSpinner';
 import { Button } from '../../../../components/common/Button';
@@ -18,12 +18,14 @@ import AdminPageHeader from '../admin/components/shared/AdminPageHeader/AdminPag
 import AdminDataTable from '../admin/components/shared/AdminDataTable';
 import jobService from '../../../../services/jobService';
 import styles from './CompanyApplicants.module.css';
+import GeneralSelect from '../../../../components/common/GeneralSelect';
 
 const CompanyApplicants = () => {
   const navigate = useNavigate();
   // State
   const [applicants, setApplicants] = useState([]);
-  const [, setFilters] = useState({});
+  const [filteredApplicants, setFilteredApplicants] = useState([]);
+  const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -38,10 +40,14 @@ const CompanyApplicants = () => {
   const [sortConfig, setSortConfig] = useState({ key: 'appliedAt', direction: 'desc' });
 
   // Load applicants
-  const loadApplicants = useCallback(async () => {
+  const loadApplicants = useCallback(async (appliedFilters = {}) => {
     setIsLoading(true);
     try {
-      const data = await jobService.getCompanyApplicants();
+      const params = {};
+      if (appliedFilters.status && appliedFilters.status !== 'all') params.status = appliedFilters.status;
+      if (appliedFilters.jobId && appliedFilters.jobId !== 'all') params.jobId = appliedFilters.jobId;
+      
+      const data = await jobService.getCompanyApplicants(params);
       const items = Array.isArray(data) ? data : (data?.items || data?.data || []);
       if (items) {
         const mappedApplicants = items.map(app => ({
@@ -74,8 +80,34 @@ const CompanyApplicants = () => {
   }, []);
 
   useEffect(() => {
-    loadApplicants();
-  }, [loadApplicants]);
+    loadApplicants(filters);
+  }, [loadApplicants, filters]);
+
+  // Apply client-side filtering when filters change
+  useEffect(() => {
+    let result = [...applicants];
+    
+    if (filters.status && filters.status !== 'all') {
+      result = result.filter(app => app.status === filters.status.toLowerCase());
+    }
+    
+    if (filters.jobId && filters.jobId !== 'all') {
+      result = result.filter(app => app.jobId === parseInt(filters.jobId) || String(app.jobId) === filters.jobId);
+    }
+    
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(app => 
+        app.name.toLowerCase().includes(term) || 
+        app.jobTitle.toLowerCase().includes(term) ||
+        app.email.toLowerCase().includes(term)
+      );
+    }
+    
+    setFilteredApplicants(result);
+    setTotalItems(result.length);
+    setCurrentPage(1);
+  }, [applicants, filters, searchTerm]);
 
   const handleFilterApply = (newFilters) => {
     setFilters(newFilters);
@@ -130,16 +162,26 @@ const CompanyApplicants = () => {
     }
   };
 
+  // Build job options dynamically from loaded applicants
+  const jobOptions = useMemo(() => {
+    const seen = new Map();
+    applicants.forEach(app => {
+      if (app.jobId && !seen.has(String(app.jobId))) {
+        seen.set(String(app.jobId), app.jobTitle || `Job #${app.jobId}`);
+      }
+    });
+    return [
+      { value: 'all', label: 'All Jobs' },
+      ...Array.from(seen.entries()).map(([value, label]) => ({ value, label })),
+    ];
+  }, [applicants]);
+
   // Filter config
   const filterConfig = {
     jobId: {
       label: 'Job',
       type: 'select',
-      options: [
-        { value: 'all', label: 'All Jobs' },
-        { value: 'job_1', label: 'Senior Developer' },
-        { value: 'job_2', label: 'Product Manager' },
-      ],
+      options: jobOptions,
     },
     status: {
       label: 'Status',
@@ -154,6 +196,7 @@ const CompanyApplicants = () => {
       ],
     },
   };
+
 
   // Table columns
   const getColumns = () => {
@@ -206,17 +249,19 @@ const CompanyApplicants = () => {
         render: (row) => (
           <div className={styles.actionButtons}>
             <Button size="small" variant="outline" onClick={() => handleApplicantClick(row)}>View</Button>
-            <select
+            <GeneralSelect
               value=""
-              onChange={(e) => handleUpdateStatus(row, e.target.value)}
+              showIcon={false}
+              onChange={(val) => handleUpdateStatus(row, val)}
               className={styles.statusSelect}
-            >
-              <option value="">Update Status</option>
-              <option value="shortlisted">Shortlist</option>
-              <option value="interviewed">Mark Interviewed</option>
-              <option value="hired">Hire</option>
-              <option value="rejected">Reject</option>
-            </select>
+              options={[
+                { value: '', label: 'Update Status' },
+                { value: 'shortlisted', label: 'Shortlist' },
+                { value: 'interviewed', label: 'Mark Interviewed' },
+                { value: 'hired', label: 'Hire' },
+                { value: 'rejected', label: 'Reject' },
+              ]}
+            />
             <Button size="small" variant="outline" onClick={() => handleViewResume(row)}>Resume</Button>
             <Button size="small" variant="primary" onClick={() => handleScheduleInterview(row)}>Schedule</Button>
           </div>
@@ -267,7 +312,7 @@ const CompanyApplicants = () => {
       <AdminDataTable
         title=""
         columns={getColumns()}
-        data={applicants}
+        data={filteredApplicants}
         searchable={true}
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
@@ -278,7 +323,6 @@ const CompanyApplicants = () => {
         totalPages={totalPages}
         totalItems={totalItems}
         onPageChange={setCurrentPage}
-        onRowClick={handleApplicantClick}
         sortConfig={sortConfig}
         onSort={(key) => {
           setSortConfig(prev => ({

@@ -1,6 +1,6 @@
 /**
  * @file DashboardLayout.jsx
- * @description Main layout component for the MAESTA dashboard with responsive behavior
+ * @description Main layout component for the Job Magnet dashboard with responsive behavior
  * @author Sherif Talaat
  * @version 3.0.0
  * @date 2025-12-19

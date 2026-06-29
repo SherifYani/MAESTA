@@ -138,6 +138,10 @@ function DateInput({
   minAge = 16,
   maxAge = 100,
   showAge = true,
+  allowFuture = false,
+  allowPast = true,
+  minDate,
+  maxDate,
   className = "",
   hasError = false,
   errorMessage = "",
@@ -160,9 +164,19 @@ function DateInput({
   const [localError, setLocalError] = useState("");
 
   // Calculate min and max dates
-  const { minDate, maxDate } = useMemo(() => {
+  const { minSelectableDate, maxSelectableDate } = useMemo(() => {
     const today = new Date();
-    today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+    today.setHours(12, 0, 0, 0);
+
+    const parsedMinDate = minDate ? parseDateString(minDate) : null;
+    const parsedMaxDate = maxDate ? parseDateString(maxDate) : null;
+
+    if (parsedMinDate || parsedMaxDate || allowFuture || !allowPast) {
+      return {
+        minSelectableDate: parsedMinDate || (!allowPast ? today : null),
+        maxSelectableDate: parsedMaxDate || (!allowFuture ? today : null),
+      };
+    }
 
     const min = new Date(today);
     min.setFullYear(today.getFullYear() - maxAge);
@@ -170,8 +184,8 @@ function DateInput({
     const max = new Date(today);
     max.setFullYear(today.getFullYear() - minAge);
 
-    return { minDate: min, maxDate: max };
-  }, [minAge, maxAge]);
+    return { minSelectableDate: min, maxSelectableDate: max };
+  }, [allowFuture, allowPast, minAge, maxAge, minDate, maxDate]);
 
   // Initialize from value prop
   useEffect(() => {
@@ -222,13 +236,35 @@ function DateInput({
     return date;
   }, []);
 
+  const isDateInRange = useCallback(
+    (date) => {
+      if (!date || isNaN(date.getTime())) return false;
+      if (minSelectableDate && date < minSelectableDate) return false;
+      if (maxSelectableDate && date > maxSelectableDate) return false;
+      return true;
+    },
+    [minSelectableDate, maxSelectableDate]
+  );
+
+  const getDateRangeError = useCallback(() => {
+    if (!allowPast) return "Date cannot be in the past";
+    if (!allowFuture) return "Date cannot be in the future";
+    return "Date is outside the allowed range";
+  }, [allowFuture, allowPast]);
+
   // Validate and update when parts change
   useEffect(() => {
     if (day && month && year) {
       const date = createDateFromParts(day, month, year);
 
       if (date) {
-        const validation = validateDate(date);
+        const validation = showAge
+          ? validateDate(date)
+          : {
+            isValid: isDateInRange(date),
+            message: isDateInRange(date) ? "" : getDateRangeError(),
+            age: null,
+          };
         const isoDate = formatDateToISO(date);
 
         setIsValid(validation.isValid);
@@ -272,7 +308,18 @@ function DateInput({
         },
       });
     }
-  }, [day, month, year, name, onChange, createDateFromParts, validateDate]);
+  }, [
+    day,
+    month,
+    year,
+    name,
+    onChange,
+    createDateFromParts,
+    validateDate,
+    showAge,
+    isDateInRange,
+    getDateRangeError,
+  ]);
 
   // Handle day input
   const handleDayChange = (e) => {
@@ -426,7 +473,12 @@ function DateInput({
     const isoDate = formatDateToISO(selectedDate);
 
     if (onChange) {
-      const validation = validateDate(selectedDate);
+      const validation = showAge
+        ? validateDate(selectedDate)
+        : {
+          isValid: isDateInRange(selectedDate),
+          age: null,
+        };
 
       onChange({
         target: {
@@ -443,8 +495,17 @@ function DateInput({
   };
 
   // Calendar configuration
-  const [currentMonth, setCurrentMonth] = useState(minDate.getMonth());
-  const [currentYear, setCurrentYear] = useState(minDate.getFullYear());
+  const defaultCalendarDate =
+    (value && parseDateString(value)) || maxSelectableDate || minSelectableDate || new Date();
+  const [currentMonth, setCurrentMonth] = useState(defaultCalendarDate.getMonth());
+  const [currentYear, setCurrentYear] = useState(defaultCalendarDate.getFullYear());
+
+  useEffect(() => {
+    const activeDate =
+      (value && parseDateString(value)) || maxSelectableDate || minSelectableDate || new Date();
+    setCurrentMonth(activeDate.getMonth());
+    setCurrentYear(activeDate.getFullYear());
+  }, [value, minSelectableDate, maxSelectableDate]);
 
   const monthNames = [
     "January",
@@ -504,20 +565,21 @@ function DateInput({
     }
   };
 
-  // Check navigation buttons
   const canGoPrev = useMemo(() => {
+    if (!minSelectableDate) return true;
     const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-    const firstDayOfPrevMonth = new Date(prevYear, prevMonth, 1, 12, 0, 0, 0);
-    return firstDayOfPrevMonth >= minDate;
-  }, [currentMonth, currentYear, minDate]);
+    const lastDayOfPrevMonth = new Date(prevYear, prevMonth + 1, 0, 12, 0, 0, 0);
+    return lastDayOfPrevMonth >= minSelectableDate;
+  }, [currentMonth, currentYear, minSelectableDate]);
 
   const canGoNext = useMemo(() => {
+    if (!maxSelectableDate) return true;
     const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
     const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     const firstDayOfNextMonth = new Date(nextYear, nextMonth, 1, 12, 0, 0, 0);
-    return firstDayOfNextMonth <= maxDate;
-  }, [currentMonth, currentYear, maxDate]);
+    return firstDayOfNextMonth <= maxSelectableDate;
+  }, [currentMonth, currentYear, maxSelectableDate]);
 
   // Select example date
   const selectExampleDate = () => {
@@ -534,7 +596,7 @@ function DateInput({
       0
     );
 
-    if (exampleDate >= minDate && exampleDate <= maxDate) {
+    if (isDateInRange(exampleDate)) {
       handleDateSelect(exampleDate);
     }
   };
@@ -556,9 +618,8 @@ function DateInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const containerClass = `date-input__container ${className} ${
-    hasError || !isValid ? "date-input--error" : ""
-  }`.trim();
+  const containerClass = `date-input__container ${className} ${hasError || !isValid ? "date-input--error" : ""
+    }`.trim();
 
   return (
     <div className={containerClass} ref={containerRef}>
@@ -658,9 +719,8 @@ function DateInput({
             aria-expanded={showCalendar}
             aria-controls={`${name}-calendar`}>
             <i
-              className={`fa-solid ${
-                showCalendar ? "fa-calendar-xmark" : "fa-calendar-alt"
-              }`}
+              className={`fa-solid ${showCalendar ? "fa-calendar-xmark" : "fa-calendar-alt"
+                }`}
               aria-hidden="true"
             />
           </button>
@@ -765,7 +825,7 @@ function DateInput({
                 const monthNum = date.getMonth();
                 const yearNum = date.getFullYear();
 
-                const isSelectable = date >= minDate && date <= maxDate;
+                const isSelectable = isDateInRange(date);
                 const isToday =
                   date.toDateString() === new Date().toDateString();
 
@@ -773,9 +833,8 @@ function DateInput({
                   <button
                     key={`${yearNum}-${monthNum}-${dayNum}`}
                     type="button"
-                    className={`date-input__calendar-day ${
-                      !isSelectable ? "date-input__calendar-day--disabled" : ""
-                    } ${isToday ? "date-input__calendar-day--today" : ""}`}
+                    className={`date-input__calendar-day ${!isSelectable ? "date-input__calendar-day--disabled" : ""
+                      } ${isToday ? "date-input__calendar-day--today" : ""}`}
                     onClick={() => isSelectable && handleDateSelect(date)}
                     disabled={!isSelectable}
                     aria-label={`Select ${monthNames[monthNum]} ${dayNum}, ${yearNum}`}>
@@ -820,6 +879,10 @@ DateInput.propTypes = {
   minAge: PropTypes.number,
   maxAge: PropTypes.number,
   showAge: PropTypes.bool,
+  allowFuture: PropTypes.bool,
+  allowPast: PropTypes.bool,
+  minDate: PropTypes.string,
+  maxDate: PropTypes.string,
   className: PropTypes.string,
   hasError: PropTypes.bool,
   errorMessage: PropTypes.string,
@@ -834,6 +897,10 @@ DateInput.defaultProps = {
   minAge: 16,
   maxAge: 100,
   showAge: true,
+  allowFuture: false,
+  allowPast: true,
+  minDate: undefined,
+  maxDate: undefined,
   className: "",
   hasError: false,
   errorMessage: "",

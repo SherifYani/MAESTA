@@ -7,8 +7,6 @@
  * @last-modified-date 2026-02-06
  */
 
-
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import styles from "./VoicePlayer.module.css";
@@ -53,7 +51,7 @@ const VoicePlayer = ({ text, autoPlay = false }) => {
         utteranceRef.current = utterance;
 
         // Configure voice settings
-        utterance.lang = "en-US"; // Changed from Arabic to English
+        utterance.lang = "en-US";
         utterance.rate = 1;
         utterance.pitch = 1;
         utterance.volume = 1;

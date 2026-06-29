@@ -30,10 +30,10 @@ import styles from './MarketingInfoPage.module.css';
 const pageContent = {
   about: {
     icon: Building2,
-    eyebrow: 'About MAESTA',
+    eyebrow: 'About Job Magnet',
     title: 'Connecting talent with meaningful work.',
     description:
-      'MAESTA brings job seekers, companies, freelancers, and clients together in one trusted marketplace for jobs, gigs, collaboration, and secure payments.',
+      'Job Magnet brings job seekers, companies, freelancers, and clients together in one trusted marketplace for jobs, gigs, collaboration, and secure payments.',
     highlights: [
       'Role-based dashboards for every user type',
       'AI-assisted tools for hiring and career growth',
@@ -44,7 +44,7 @@ const pageContent = {
   },
   blog: {
     icon: Newspaper,
-    eyebrow: 'MAESTA Blog',
+    eyebrow: 'Job Magnet Blog',
     title: 'Career, hiring, and freelancing insights.',
     description:
       'Read practical guidance for finding better opportunities, improving hiring pipelines, and managing project-based work.',
@@ -61,7 +61,7 @@ const pageContent = {
     eyebrow: 'Careers',
     title: 'Help build the future of work.',
     description:
-      'MAESTA is designed by builders who care about accessible hiring, trusted collaboration, and modern professional growth.',
+      'Job Magnet is designed by builders who care about accessible hiring, trusted collaboration, and modern professional growth.',
     highlights: [
       'Product and engineering opportunities',
       'Design and research collaboration',
@@ -75,7 +75,7 @@ const pageContent = {
     eyebrow: 'Privacy Policy',
     title: 'Your data should stay protected and transparent.',
     description:
-      'This privacy overview explains the kinds of account, profile, job, gig, payment, and communication data MAESTA may process to operate the platform.',
+      'This privacy overview explains the kinds of account, profile, job, gig, payment, and communication data Job Magnet may process to operate the platform.',
     highlights: [
       'Account and profile data support personalization',
       'Application and proposal data support marketplace workflows',
@@ -87,7 +87,7 @@ const pageContent = {
   terms: {
     icon: FileText,
     eyebrow: 'Terms of Service',
-    title: 'Clear rules for using MAESTA safely.',
+    title: 'Clear rules for using Job Magnet safely.',
     description:
       'These terms summarize expected user responsibilities across job posts, applications, gig proposals, payments, messaging, and platform conduct.',
     highlights: [
@@ -103,7 +103,7 @@ const pageContent = {
     eyebrow: 'Security',
     title: 'Security-first workflows for every role.',
     description:
-      'MAESTA uses authenticated routes, JWT-protected API calls, role-based access, and account verification flows to keep platform actions controlled.',
+      'Job Magnet uses authenticated routes, JWT-protected API calls, role-based access, and account verification flows to keep platform actions controlled.',
     highlights: [
       'Protected dashboards and role-specific navigation',
       'Token-based authentication for API requests',
@@ -115,7 +115,7 @@ const pageContent = {
   cookies: {
     icon: Cookie,
     eyebrow: 'Cookie Policy',
-    title: 'Cookies help keep MAESTA usable and consistent.',
+    title: 'Cookies help keep Job Magnet usable and consistent.',
     description:
       'Cookies and local storage may be used for authentication state, interface preferences, theme settings, and platform experience improvements.',
     highlights: [
@@ -131,7 +131,7 @@ const pageContent = {
     eyebrow: 'Accessibility',
     title: 'A platform that works for more people.',
     description:
-      'MAESTA pages should support keyboard navigation, clear focus states, semantic HTML, readable contrast, and reduced-motion preferences.',
+      'Job Magnet pages should support keyboard navigation, clear focus states, semantic HTML, readable contrast, and reduced-motion preferences.',
     highlights: [
       'Skip links and semantic page landmarks',
       'Accessible labels for navigation and controls',
@@ -143,11 +143,11 @@ const pageContent = {
   contact: {
     icon: HelpCircle,
     eyebrow: 'Contact Support',
-    title: 'Get help with your MAESTA account.',
+    title: 'Get help with your Job Magnet account.',
     description:
       'Reach support for account access, job applications, gig proposals, billing questions, or platform safety concerns.',
     highlights: [
-      'Email: hello@maesta.com',
+      'Email: hello@Job Magnet.com',
       'Phone: +1 (555) 123-4567',
       'Dashboard users can also open Help & Support',
     ],

@@ -24,6 +24,7 @@ import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
 import { getSubscriptionsData } from '../../config/adminDataService';
+import * as adminService from '../../../../../../services/adminService';
 import styles from './SubscriptionManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -144,11 +145,54 @@ const SubscriptionManagement = () => {
         setSelectedSubscription(null);
     }, []);
 
-    const handleCancelSubscription = useCallback((id, user) => {
-        if (window.confirm(`Cancel subscription for ${user}?`)) {
-            handleUpdateStatus(id, 'cancelled');
+    const handleCancelSubscription = useCallback(async (id, user) => {
+        if (!window.confirm(`Cancel subscription for ${user}?`)) return;
+        try {
+            await adminService.cancelSubscription(id);
+            setSubscriptions(prev => prev.map(sub =>
+                sub.id === id ? { ...sub, status: 'cancelled' } : sub
+            ));
+        } catch (err) {
+            console.error('Failed to cancel subscription', err);
+            alert('Failed to cancel subscription');
         }
-    }, [handleUpdateStatus]);
+        setSelectedSubscription(null);
+    }, []);
+
+    const handleReactivate = useCallback(async (id, user) => {
+        try {
+            await adminService.reactivateSubscription(id);
+            setSubscriptions(prev => prev.map(sub =>
+                sub.id === id ? { ...sub, status: 'active' } : sub
+            ));
+        } catch (err) {
+            console.error('Failed to reactivate subscription', err);
+            alert('Failed to reactivate subscription');
+        }
+        setSelectedSubscription(null);
+    }, []);
+
+    const handleExportData = useCallback(() => {
+        if (!subscriptions.length) { alert('No data to export.'); return; }
+        const headers = Object.keys(subscriptions[0]);
+        const rows = subscriptions.map(item =>
+            headers.map(h => {
+                const val = item[h] ?? '';
+                // Wrap values containing commas in quotes
+                return String(val).includes(',') ? `"${val}"` : val;
+            }).join(',')
+        );
+        const csv = [headers.join(','), ...rows].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `subscriptions-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }, [subscriptions]);
 
     // =========================================================================
     // Cell renderers
@@ -212,7 +256,7 @@ const SubscriptionManagement = () => {
                         {row.status === 'cancelled' && (
                             <button
                                 className={styles.actions__item}
-                                onClick={() => handleUpdateStatus(row.id, 'active')}
+                                onClick={() => handleReactivate(row.id, row.user)}
                                 role="menuitem"
                             >
                                 <RefreshCw size={14} />
@@ -289,7 +333,7 @@ const SubscriptionManagement = () => {
                 title="Subscription Management"
                 description="Manage subscriptions, billing, and revenue metrics across all user plans."
                 actions={
-                    <button className={styles.exportButton}>
+                    <button className={styles.exportButton} onClick={handleExportData}>
                         <Download size={18} />
                         Export Data
                     </button>

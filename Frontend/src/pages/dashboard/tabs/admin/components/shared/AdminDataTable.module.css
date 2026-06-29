@@ -146,8 +146,9 @@
    ========================================================================== */
 
 .tableWrapper {
-    overflow-x: auto;
+    overflow: visible;
     width: 100%;
+    min-height: 320px; /* Fits at least 4 rows + header and prevents dropdown clipping */
 }
 
 /* ==========================================================================
@@ -206,6 +207,11 @@
 
 .table__row {
     transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.table__row:has([class*="modern-select--open"]) {
+    position: relative;
+    z-index: 30;
 }
 
 .table__rowClickable {

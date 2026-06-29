@@ -15,7 +15,7 @@ import AdminToolbar from '../shared/AdminToolbar/AdminToolbar';
 import AdminStatsGrid from '../shared/AdminStatsGrid/AdminStatsGrid';
 import AdminDataTable from '../shared/AdminDataTable';
 import GeneralSelect from "../../../../../../components/common/GeneralSelect";
-import adminService from '../../../../../../services/adminService';
+import * as adminService from '../../../../../../services/adminService';
 import styles from './StaffManagement.module.css';
 
 const PAGE_SIZE = 10;
@@ -55,6 +55,12 @@ const StaffManagement = () => {
 
     // ── Action dropdown ───────────────────────────────────────────────────────
     const [selectedStaff, setSelectedStaff] = useState(null);
+
+    // ── Add Staff modal ───────────────────────────────────────────────────────
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [addForm, setAddForm] = useState({ email: '', role: 'Admin' });
+    const [addLoading, setAddLoading] = useState(false);
+    const [addError, setAddError] = useState('');
 
     // =========================================================================
     // Stats (on full dataset)
@@ -132,15 +138,25 @@ const StaffManagement = () => {
         if (page >= 1 && page <= totalPages) setCurrentPage(page);
     }, [totalPages]);
 
-    const handleResendInvite = useCallback((staff) => {
-        console.log(`Resending invitation to ${staff.email}`);
-        alert(`Invitation resent to ${staff.email}`);
+    const handleResendInvite = useCallback(async (staff) => {
+        try {
+            await adminService.resendInvite(staff.id);
+            alert(`Invitation resent to ${staff.email}`);
+        } catch (err) {
+            console.error('Failed to resend invite', err);
+            alert('Failed to resend invitation');
+        }
         setSelectedStaff(null);
     }, []);
 
-    const handleResetPassword = useCallback((staff) => {
-        console.log(`Resetting password for ${staff.email}`);
-        alert(`Password reset instructions sent to ${staff.email}`);
+    const handleResetPassword = useCallback(async (staff) => {
+        try {
+            await adminService.resetPassword(staff.id);
+            alert(`Password reset instructions sent to ${staff.email}`);
+        } catch (err) {
+            console.error('Failed to reset password', err);
+            alert('Failed to reset password');
+        }
         setSelectedStaff(null);
     }, []);
 
@@ -150,6 +166,29 @@ const StaffManagement = () => {
         setStaffData((prev) => prev.filter((item) => item.id !== staff.id));
         setSelectedStaff(null);
     }, []);
+
+    const handleAddStaff = useCallback(async (e) => {
+        e.preventDefault();
+        if (!addForm.email.trim()) { setAddError('Email is required.'); return; }
+        setAddLoading(true);
+        setAddError('');
+        try {
+            await adminService.inviteUser(addForm.email.trim(), addForm.role);
+            alert(`Invitation sent to ${addForm.email}`);
+            setShowAddModal(false);
+            setAddForm({ email: '', role: 'Admin' });
+        } catch (err) {
+            // 404 = endpoint not yet deployed — show friendly message
+            if (err?.response?.status === 404 || err?.response?.status === 405) {
+                alert('Invite feature is not yet available on the server. Coming soon!');
+                setShowAddModal(false);
+            } else {
+                setAddError(err?.response?.data?.message || 'Failed to send invitation.');
+            }
+        } finally {
+            setAddLoading(false);
+        }
+    }, [addForm]);
 
     // =========================================================================
     // Cell renderers
@@ -276,12 +315,80 @@ const StaffManagement = () => {
                 title="Staff Management"
                 description="Manage administrative staff, roles, and permissions across the platform."
                 actions={
-                    <button className={styles.addButton}>
+                    <button className={styles.addButton} onClick={() => setShowAddModal(true)}>
                         <UserPlus size={18} />
                         Add Staff
                     </button>
                 }
             />
+
+            {/* ── Add Staff Modal ── */}
+            {showAddModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <form
+                        onSubmit={handleAddStaff}
+                        style={{
+                            background: 'var(--color-surface, #1e1e2e)', borderRadius: 12,
+                            padding: 32, minWidth: 360, display: 'flex', flexDirection: 'column', gap: 16
+                        }}
+                    >
+                        <h2 style={{ margin: 0, color: 'var(--color-text, #fff)', fontSize: 18 }}>Invite Staff Member</h2>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--color-text-muted, #aaa)', fontSize: 13 }}>
+                            Email address
+                            <input
+                                type="email"
+                                required
+                                placeholder="staff@example.com"
+                                value={addForm.email}
+                                onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))}
+                                style={{
+                                    padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'var(--color-background, #141420)', color: 'var(--color-text, #fff)', fontSize: 14
+                                }}
+                            />
+                        </label>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, color: 'var(--color-text-muted, #aaa)', fontSize: 13 }}>
+                            Role
+                            <select
+                                value={addForm.role}
+                                onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))}
+                                style={{
+                                    padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'var(--color-background, #141420)', color: 'var(--color-text, #fff)', fontSize: 14
+                                }}
+                            >
+                                <option value="Admin">Admin</option>
+                                <option value="Moderator">Moderator</option>
+                                <option value="Analyst">Analyst</option>
+                                <option value="Support">Support</option>
+                            </select>
+                        </label>
+                        {addError && <p style={{ color: '#f87171', margin: 0, fontSize: 13 }}>{addError}</p>}
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                            <button
+                                type="button"
+                                onClick={() => { setShowAddModal(false); setAddError(''); }}
+                                style={{
+                                    padding: '8px 20px', borderRadius: 8, border: '1px solid var(--color-border, #333)',
+                                    background: 'transparent', color: 'var(--color-text-muted, #aaa)', cursor: 'pointer'
+                                }}
+                            >Cancel</button>
+                            <button
+                                type="submit"
+                                disabled={addLoading}
+                                style={{
+                                    padding: '8px 20px', borderRadius: 8, border: 'none',
+                                    background: 'var(--color-primary, #7c3aed)', color: '#fff',
+                                    cursor: addLoading ? 'not-allowed' : 'pointer', opacity: addLoading ? 0.7 : 1
+                                }}
+                            >{addLoading ? 'Sending…' : 'Send Invite'}</button>
+                        </div>
+                    </form>
+                </div>
+            )}
 
             <AdminStatsGrid stats={statsData} columns={4} />
 
