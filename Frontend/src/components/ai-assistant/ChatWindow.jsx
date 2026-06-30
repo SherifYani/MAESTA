@@ -11,7 +11,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Settings, Trash2, X, FileText, Search, Lightbulb } from "lucide-react";
+import { Settings, Trash2, X, FileText, Search, Lightbulb, BookOpen } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import AssistantSettings from "./AssistantSettings";
@@ -32,11 +32,13 @@ const ChatWindow = ({ isOpen, onClose }) => {
             type: "assistant",
             content: "Hello! I'm the Job Magnet platform smart assistant. How can I help you today?",
             timestamp: new Date(),
+            sourceType: "System",
         },
     ]);
     const [isTyping, setIsTyping] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
-    const [conversationId, setConversationId] = useState(null);
+    const [conversationId, setConversationId] = useState(() => localStorage.getItem("maesta_chat_session_id") || null);
+    const [useRag, setUseRag] = useState(() => localStorage.getItem("maesta_chat_use_rag") !== "false");
     const messagesEndRef = useRef(null);
 
     /**
@@ -75,21 +77,22 @@ const ChatWindow = ({ isOpen, onClose }) => {
         setIsTyping(true);
 
         try {
-            // Send to AI service
-            const response = await aiAssistantService.sendChatMessage(text, conversationId);
+            const response = await aiAssistantService.sendChatMessage(text, conversationId, { useRag });
 
-            // Update conversation ID if new
             if (response.conversationId) {
                 setConversationId(response.conversationId);
+                localStorage.setItem("maesta_chat_session_id", response.conversationId);
             }
 
-            // Add assistant response
             const assistantMessage = {
                 id: Date.now() + 1,
                 type: "assistant",
-                content: response.response || response.message,
+                content: response.answer || response.response || "No answer returned.",
                 timestamp: new Date(),
                 suggestions: response.suggestions,
+                sourceType: response.sourceType,
+                sources: response.sources,
+                ragEnabled: response.ragEnabled,
             };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
@@ -97,7 +100,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
             const errorMessage = {
                 id: Date.now() + 1,
                 type: "assistant",
-                content: "Sorry, an error occurred while processing your request. Please try again.",
+                content: error.message || "تعذر الاتصال بالشات بوت. تأكد أن Flask chatbot يعمل على localhost:5000 وأن API key مضبوط.",
                 timestamp: new Date(),
                 isError: true,
             };
@@ -123,11 +126,19 @@ const ChatWindow = ({ isOpen, onClose }) => {
             {
                 id: Date.now(),
                 type: "assistant",
-                content: "Chat cleared. How can I help you?",
+                content: "تم مسح المحادثة. أقدر أساعدك في إيه؟",
                 timestamp: new Date(),
+                sourceType: "System",
             },
         ]);
         setConversationId(null);
+        localStorage.removeItem("maesta_chat_session_id");
+    };
+
+    const handleToggleRag = () => {
+        const nextValue = !useRag;
+        setUseRag(nextValue);
+        localStorage.setItem("maesta_chat_use_rag", String(nextValue));
     };
 
     /**
@@ -204,7 +215,11 @@ const ChatWindow = ({ isOpen, onClose }) => {
             </header>
 
             {showSettings && (
-                <AssistantSettings onClose={() => setShowSettings(false)} />
+                <AssistantSettings
+                    onClose={() => setShowSettings(false)}
+                    useRag={useRag}
+                    onToggleRag={handleToggleRag}
+                />
             )}
 
             <div className={styles.messages} role="log" aria-live="polite" aria-relevant="additions">
@@ -228,6 +243,13 @@ const ChatWindow = ({ isOpen, onClose }) => {
             </div>
 
             <div className={styles.quickActions} role="group" aria-label="Quick actions">
+                <button
+                    className={useRag ? styles.quickActionActive : ""}
+                    onClick={handleToggleRag}
+                    aria-label="Toggle document search"
+                >
+                    <BookOpen size={16} aria-hidden="true" /> {useRag ? "Documents On" : "Documents Off"}
+                </button>
                 <button
                     onClick={() => handleQuickAction("resume")}
                     aria-label="Build resume"

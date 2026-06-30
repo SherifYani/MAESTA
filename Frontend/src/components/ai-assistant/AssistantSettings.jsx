@@ -22,7 +22,7 @@ import styles from "./AssistantSettings.module.css";
  * @param {Function} props.onClose - Function to close the settings panel
  * @returns {JSX.Element} Rendered settings panel
  */
-const AssistantSettings = ({ onClose }) => {
+const AssistantSettings = ({ onClose, useRag, onToggleRag }) => {
     const defaultSettings = {
         language: "en",
         voiceEnabled: true,
@@ -30,6 +30,8 @@ const AssistantSettings = ({ onClose }) => {
         voiceSpeed: 1,
         theme: "auto",
         notifications: true,
+        chatbotUrl: localStorage.getItem("maesta_chatbot_api_url") || process.env.REACT_APP_CHATBOT_API_URL || "http://localhost:5000",
+        chatbotApiKey: localStorage.getItem("maesta_chatbot_api_key") || "",
     };
 
     const [settings, setSettings] = useState(defaultSettings);
@@ -59,6 +61,14 @@ const AssistantSettings = ({ onClose }) => {
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
         localStorage.setItem("ai_assistant_settings", JSON.stringify(newSettings));
+
+        if (key === "chatbotUrl") {
+            localStorage.setItem("maesta_chatbot_api_url", value.trim());
+        }
+
+        if (key === "chatbotApiKey") {
+            localStorage.setItem("maesta_chatbot_api_key", value.trim());
+        }
     };
 
     /**
@@ -162,6 +172,44 @@ const AssistantSettings = ({ onClose }) => {
                         <span className={styles.slider}></span>
                     </label>
                 </div>
+
+                <div className={styles.setting}>
+                    <div>
+                        <span className={styles.label}>Document Search</span>
+                        <p className={styles.hint}>Use chatbot RAG knowledge base when answering.</p>
+                    </div>
+                    <label className={styles.toggle}>
+                        <input
+                            type="checkbox"
+                            checked={useRag}
+                            onChange={onToggleRag}
+                            aria-label="Toggle document search"
+                        />
+                        <span className={styles.slider}></span>
+                    </label>
+                </div>
+
+                <div className={styles.fieldSetting}>
+                    <label htmlFor="chatbotUrl" className={styles.label}>Chatbot API URL</label>
+                    <input
+                        id="chatbotUrl"
+                        className={styles.textInput}
+                        value={settings.chatbotUrl}
+                        onChange={(event) => handleSettingChange("chatbotUrl", event.target.value)}
+                        placeholder="http://localhost:5000"
+                    />
+                </div>
+
+                <div className={styles.fieldSetting}>
+                    <label htmlFor="chatbotApiKey" className={styles.label}>Chatbot API Key</label>
+                    <input
+                        id="chatbotApiKey"
+                        className={styles.textInput}
+                        value={settings.chatbotApiKey}
+                        onChange={(event) => handleSettingChange("chatbotApiKey", event.target.value)}
+                        placeholder="Paste key from Flask admin"
+                    />
+                </div>
             </div>
 
             <footer className={styles.footer}>
@@ -179,6 +227,13 @@ const AssistantSettings = ({ onClose }) => {
 
 AssistantSettings.propTypes = {
     onClose: PropTypes.func.isRequired,
+    useRag: PropTypes.bool,
+    onToggleRag: PropTypes.func,
+};
+
+AssistantSettings.defaultProps = {
+    useRag: true,
+    onToggleRag: null,
 };
 
 export default AssistantSettings;

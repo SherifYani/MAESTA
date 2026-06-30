@@ -4,13 +4,14 @@ const autoprefixer = require('autoprefixer');
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
-      // Ignore missing source map warnings from third-party packages
       webpackConfig.ignoreWarnings = [
         ...(webpackConfig.ignoreWarnings || []),
-        {
-          module: /@mediapipe\/tasks-vision/,
-        },
+        (warning) => (
+          warning.module?.resource?.includes('node_modules\\three-stdlib')
+          || warning.module?.resource?.includes('node_modules/three-stdlib')
+        ) && warning.message?.includes('Failed to parse source map'),
       ];
+
       return webpackConfig;
     },
   },

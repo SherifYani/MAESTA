@@ -1,12 +1,32 @@
 /**
  * @file aiAssistantService.js
- * @description AI Assistant API service connected to AiController.cs.
+ * @description AI Assistant API service connected to MAESTA chatbot Flask API and .NET AI endpoints.
  *              Uses named exports for consistency.
  * @author Antigravity (AI)
  * @date 2026-05-09
  */
 import ApiService from './ApiService';
 import jobService from './jobService';
+
+const getChatbotApiUrl = () => (
+    localStorage.getItem('maesta_chatbot_api_url')
+    || process.env.REACT_APP_CHATBOT_API_URL
+    || 'http://localhost:5000'
+).replace(/\/$/, '');
+
+const getChatbotApiKey = () => (
+    localStorage.getItem('maesta_chatbot_api_key')
+    || process.env.REACT_APP_CHATBOT_API_KEY
+    || ''
+);
+
+const cleanAssistantText = (text = '') => text
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/<thinking>[\s\S]*?<\/thinking>/gi, '')
+    .replace(/^[\s\S]*?<\/think>/i, '')
+    .replace(/^[\s\S]*?<\/thinking>/i, '')
+    .replace(/<\/?think(?:ing)?>/gi, '')
+    .trim();
 
 /**
  * General chat with AI assistant.
@@ -19,11 +39,56 @@ export const chat = async (prompt) => {
     return response.data;
 };
 
+export const sendChatMessage = async (question, sessionId, options = {}) => {
+    const apiKey = getChatbotApiKey();
+    if (!apiKey) {
+        throw new Error('Chatbot API key is missing. Set REACT_APP_CHATBOT_API_KEY or maesta_chatbot_api_key.');
+    }
+
+    const response = await fetch(`${getChatbotApiUrl()}/api/v1/chat`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey,
+        },
+        body: JSON.stringify({
+            question,
+            session_id: sessionId,
+            use_rag: options.useRag ?? true,
+        }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.message || data.error || 'Chatbot request failed');
+    }
+
+    const answer = cleanAssistantText(data.answer || '');
+
+    return {
+        answer,
+        response: answer,
+        conversationId: data.session_id || sessionId,
+        sourceType: data.source_type,
+        sources: data.sources || [],
+        ragEnabled: data.rag_enabled,
+        fromDocuments: data.from_documents,
+        note: data.note,
+    };
+};
+
+export const getChatbotHealth = async () => {
+    const response = await fetch(`${getChatbotApiUrl()}/api/v1/health`);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || data.error || 'Chatbot health check failed');
+    return data;
+};
+
 /**
  * Generate job description.
  * Backend: POST api/Ai/generate-job-description
  */
-export const generateJobDescription = async (title, requirements) => {
+export const generateJobDescription = async (title, requirements = '') => {
     const response = await ApiService.post('/api/Ai/generate-job-description', { title, requirements });
     return response.data;
 };
@@ -33,10 +98,16 @@ export const generateJobDescription = async (title, requirements) => {
  * Backend: POST api/Ai/analyze-resume
  */
 export const analyzeResume = async (resumeText) => {
-    const response = await ApiService.post('/api/Ai/analyze-resume', JSON.stringify(resumeText), {
+    const text = typeof resumeText === 'string' ? resumeText : JSON.stringify(resumeText);
+    const response = await ApiService.post('/api/Ai/analyze-resume', JSON.stringify(text), {
         headers: { 'Content-Type': 'application/json' }
     });
     return response.data;
+};
+
+export const improveText = async (text, tone = 'professional') => {
+    const response = await chat(`Improve this text in a ${tone} tone:\n\n${text}`);
+    return { improvedText: response.response || response };
 };
 
 /**
@@ -100,10 +171,13 @@ const aiAssistantService = {
     chat,
     generateJobDescription,
     analyzeResume,
+    improveText,
     parseResume,
     matchResumeWithJob,
     recommendJobs,
-    getJobRecommendations
+    getJobRecommendations,
+    sendChatMessage,
+    getChatbotHealth
 };
 
 export default aiAssistantService;

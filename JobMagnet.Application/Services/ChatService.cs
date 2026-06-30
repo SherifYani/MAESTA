@@ -88,7 +88,13 @@ namespace JobMagnet.Application.Services
 
             if (chat == null)
             {
-                chat = new Domain.Entities.Chat { User1Id = senderId, User2Id = request.ReceiverId };
+                chat = new Domain.Entities.Chat
+                {
+                    User1Id = senderId,
+                    User2Id = request.ReceiverId,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedBy = senderId
+                };
                 _context.Chats.Add(chat);
                 await _context.SaveChangesAsync();
             }
@@ -99,6 +105,7 @@ namespace JobMagnet.Application.Services
                 SenderId = senderId,
                 Content = request.Content,
                 IsRead = false,
+                SentAt = DateTimeOffset.UtcNow,
                 CreatedAt = DateTimeOffset.UtcNow
             };
 
@@ -254,6 +261,7 @@ namespace JobMagnet.Application.Services
 
         private static ChatMessageDto MapMessage(Domain.Entities.Message m, string? senderName, string? receiverName, int receiverId) => new()
         {
+            MessageId = m.MessageId,
             ChatId = m.ChatId,
             SenderId = m.SenderId,
             SenderName = senderName ?? "",
