@@ -76,7 +76,7 @@ const NotificationSettingsPage = () => {
             hasInitialized.current = true;
             setLocalPreferences(mergePreferences(preferences));
         }
-    }, [preferences]);
+    }, [preferences, mergePreferences]);
 
     /**
      * Handle toggle change

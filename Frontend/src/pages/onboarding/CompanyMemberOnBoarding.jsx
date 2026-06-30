@@ -44,7 +44,7 @@ function CompanyMemberOnboarding() {
   const [isSearching, setIsSearching] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [formErrors, setFormErrors] = useState({});
+  const [formErrors] = useState({});
   const [profilePicture, setProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -141,7 +141,6 @@ function CompanyMemberOnboarding() {
    */
   useEffect(() => {
     const errors = validateCompanyMemberOnboarding(formData, selectedCompany);
-    setFormErrors(errors);
 
     const profilePictureError = validateFile(profilePicture, {
       fieldName: "Profile picture",
@@ -209,7 +208,6 @@ function CompanyMemberOnboarding() {
 
     if (!isFormValid(allErrors)) {
       alert("Please complete all required sections before submitting.");
-      setFormErrors(errors);
       return;
     }
 

@@ -167,61 +167,34 @@ function FreelancerOnboarding() {
     setFormErrors(errors);
 
     // File validation for extra fields (not in guide)
-    const profilePictureError = validateFile(profilePicture, {
-      fieldName: "Profile picture",
-      maxSizeMB: 5,
-    });
+    // const profilePictureError = validateFile(profilePicture, {
+    //   fieldName: "Profile picture",
+    //   maxSizeMB: 5,
+    // });
 
-    const portfolioImagesError = validateMultipleFiles(
-      extraFields.portfolioImages,
-      {
-        minCount: 0, // Optional in current form but not in guide
-        fieldName: "Portfolio images",
-      }
-    );
-
-    // Calculate completion status based on guide requirements
-    const professionalInfoComplete =
-      !errors.professionalTitle &&
-      !errors.experienceYears &&
-      !errors.bio &&
-      formData.professionalTitle &&
-      formData.experienceYears !== "" &&
-      formData.bio;
-
-    const financialInfoComplete =
-      !errors.hourlyRate &&
-      !errors.currency &&
-      formData.hourlyRate &&
-      formData.currency;
-
-    const portfolioComplete =
-      !errors.portfolioUrl && // Optional, so no error means complete
-      (formData.portfolioUrl === "" || formData.portfolioUrl);
-
-    const verificationComplete =
-      !errors.documentVerificationUrl && // Optional
-      (formData.documentVerificationUrl === "" ||
-        formData.documentVerificationUrl);
-
-    setCompletionStatus({
-      professionalInfo: professionalInfoComplete,
-      financialInfo: financialInfoComplete,
-      portfolio: portfolioComplete,
-      verification: verificationComplete,
-    });
+    // const portfolioImagesError = validateMultipleFiles(
+    //   extraFields.portfolioImages,
+    //   {
+    //     minCount: 0,
+    //     fieldName: "Portfolio images",
+    //   }
+    // );
 
     // Calculate overall progress
     let progress = 0;
 
     // Professional Info (40%)
+    const professionalInfoComplete = !errors.professionalTitle && !errors.bio;
     if (professionalInfoComplete) progress += 40;
 
     // Financial Info (30%)
+    const financialInfoComplete = !errors.hourlyRate && !errors.currency;
     if (financialInfoComplete) progress += 30;
 
     // Portfolio and Verification (30% combined, both optional)
+    const portfolioComplete = !errors.portfolioUrl;
     if (portfolioComplete) progress += 15;
+    const verificationComplete = !errors.documentVerificationUrl;
     if (verificationComplete) progress += 15;
 
     setOverallProgress(Math.min(progress, 100));
@@ -274,12 +247,12 @@ function FreelancerOnboarding() {
   /**
    * Removes a portfolio image
    */
-  const removePortfolioImage = (index) => {
-    setExtraFields((prev) => ({
-      ...prev,
-      portfolioImages: prev.portfolioImages.filter((_, i) => i !== index),
-    }));
-  };
+  // const removePortfolioImage = (index) => {
+  //   setExtraFields(prev => ({
+  //     ...prev,
+  //     portfolioImages: prev.portfolioImages.filter((_, i) => i !== index)
+  //   }));
+  // };
 
   /**
    * Handles form submission

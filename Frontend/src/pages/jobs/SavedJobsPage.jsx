@@ -23,8 +23,8 @@ import styles from "./SavedJobsPage.module.css";
 const SavedJobsPage = () => {
     const navigate = useNavigate();
     const [savedJobs, setSavedJobs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [loading] = useState(true);
+    const [error] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     
     const ITEMS_PER_PAGE = 20;

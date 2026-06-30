@@ -1,9 +1,9 @@
 import {
   Briefcase, DollarSign, Building, Users, Clock, Send, Bookmark,
-  TrendingUp, Activity, PieChart, Calendar, Target, Shield,
-  ThumbsUp, UserPlus, Home, Settings, Bell, HelpCircle, LogOut,
-  Award, BarChart, Mail, FolderOpen, FileText, CheckCircle,
-  AlertCircle, Star, MessageSquare, Zap, ArrowUp, ArrowDown, Eye, XCircle,
+  TrendingUp, Activity, Calendar, Target, Shield,
+  UserPlus, Home, Settings, LogOut,
+  Award, BarChart, FileText, CheckCircle,
+  AlertCircle, Star, MessageSquare, ArrowUp, ArrowDown, Eye,
   Database
 } from "lucide-react";
 

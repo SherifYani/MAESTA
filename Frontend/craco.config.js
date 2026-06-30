@@ -2,6 +2,18 @@ const tailwindcss = require('tailwindcss');
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
+  webpack: {
+    configure: (webpackConfig) => {
+      // Ignore missing source map warnings from third-party packages
+      webpackConfig.ignoreWarnings = [
+        ...(webpackConfig.ignoreWarnings || []),
+        {
+          module: /@mediapipe\/tasks-vision/,
+        },
+      ];
+      return webpackConfig;
+    },
+  },
   devServer: (devServerConfig) => {
     if (Array.isArray(devServerConfig.allowedHosts)) {
       devServerConfig.allowedHosts = devServerConfig.allowedHosts.filter(Boolean);

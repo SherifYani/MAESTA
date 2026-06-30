@@ -12,8 +12,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  DollarSign, Clock, Calendar, FileText, 
-  Trash2, AlertCircle, Briefcase, ExternalLink 
+  Calendar, Trash2, Briefcase, ExternalLink 
 } from 'lucide-react';
 import { PageContainer } from '../../components/layout';
 import { Button, LoadingSpinner, Alert } from '../../components/common';

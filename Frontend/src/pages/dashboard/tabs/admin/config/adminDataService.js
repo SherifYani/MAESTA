@@ -3,7 +3,6 @@ import adminService from '../../../../../services/adminService';
 export const getAdminStats = async () => {
     try {
         const metrics = await adminService.getDashboardMetrics();
-        const pendingReports = await adminService.getPendingReports();
         return {
             totalUsers: metrics?.totalUsers ?? 0,
             totalJobs: metrics?.totalJobs ?? 0,

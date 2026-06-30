@@ -197,14 +197,6 @@ const SavedJobs = ({
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedJobs = filteredJobs.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
-  const winSize = Math.min(5, totalPages);
-  let startPageNum;
-  if (totalPages <= 5) startPageNum = 1;
-  else if (currentPage <= 3) startPageNum = 1;
-  else if (currentPage >= totalPages - 2) startPageNum = totalPages - 4;
-  else startPageNum = currentPage - 2;
-
-
   // If no saved jobs
   if (jobs.length === 0) {
     return (

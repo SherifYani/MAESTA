@@ -12,8 +12,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Briefcase, Calendar, DollarSign, Award, 
-  ExternalLink, CheckCircle2, AlertCircle, Clock 
+  Briefcase, ExternalLink
 } from 'lucide-react';
 import { PageContainer } from '../../components/layout';
 import { Button, LoadingSpinner, Alert } from '../../components/common';
@@ -106,15 +105,6 @@ const ProjectsPage = () => {
     if (activeTab === 'all') return true;
     return project.status?.toLowerCase() === activeTab.toLowerCase();
   });
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
   return (
     <PageContainer className={styles.pageContainer} size="lg">
