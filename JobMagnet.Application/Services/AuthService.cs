@@ -2,11 +2,13 @@ using JobMagnet.Application.DTOs.Auth;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Application.Settings;
 using JobMagnet.Core.Interfaces;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
+using JobMagnet.Core.Enums;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 namespace JobMagnet.Application.Services
 {
@@ -40,8 +42,7 @@ namespace JobMagnet.Application.Services
 
         private string GenerateOtpCode()
         {
-            var random = new Random();
-            return random.Next(100000, 999999).ToString();
+            return RandomNumberGenerator.GetInt32(100000, 999999).ToString();
         }
 
         public async Task<AuthResponse> RegisterStep1Async(RegisterStep1Request request, string? ipAddress = null)
@@ -67,13 +68,14 @@ namespace JobMagnet.Application.Services
                 Country = string.IsNullOrWhiteSpace(request.Country) ? null : request.Country,
                 City = string.IsNullOrWhiteSpace(request.City) ? null : request.City,
                 UserType = null,
-                RegistrationStatus = "PendingStep2",
+                RegistrationStatus = RegistrationStatus.PendingStep2.ToString(),
                 IsActive = true,
                 IsEmailVerified = false,
                 CreatedAt = DateTimeOffset.UtcNow
             };
 
             _context.Users.Add(user);
+            // Save initial user to get UserId for related entities
             await _context.SaveChangesAsync();
 
             var (accessToken, accessTokenExpiresAt) = _jwtTokenService.CreateAccessToken(user);
@@ -110,7 +112,7 @@ namespace JobMagnet.Application.Services
                 "Verify Your Email - Job Magnet",
                 $"<p>Welcome to Job Magnet! Your verification code is: <strong>{otpCode}</strong></p><p>This code expires in 30 minutes.</p>");
 
-            _logger.LogInformation($"User registered: {user.Email} (OTP generated)");
+            _logger.LogInformation("User registered: {Email} (OTP generated)", user.Email);
 
             return new AuthResponse
             {
@@ -132,14 +134,14 @@ namespace JobMagnet.Application.Services
             if (user == null)
                 throw new KeyNotFoundException("User not found");
 
-            if (user.RegistrationStatus != "PendingStep2")
+            if (user.RegistrationStatus != RegistrationStatus.PendingStep2.ToString())
                 throw new InvalidOperationException("Registration step 2 is not allowed for current status");
 
             var selectedUserType = request.UserType.Trim();
 
             user.UserType = selectedUserType;
             var requiresApproval = await _platformSettingsService.GetBoolAsync("requireUserApproval", true);
-            user.RegistrationStatus = requiresApproval ? "PendingApproval" : "Approved";
+            user.RegistrationStatus = requiresApproval ? RegistrationStatus.PendingApproval.ToString() : RegistrationStatus.Approved.ToString();
 
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == selectedUserType);
             if (role == null)
@@ -171,7 +173,7 @@ namespace JobMagnet.Application.Services
 
             switch (selectedUserType)
             {
-                case "Freelancer":
+                case nameof(UserType.Freelancer):
                     if (!await _context.Freelancers.AnyAsync(f => f.UserId == user.UserId))
                     {
                         _context.Freelancers.Add(new Freelancer
@@ -192,7 +194,7 @@ namespace JobMagnet.Application.Services
                     }
                     break;
 
-                case "Employer":
+                case nameof(UserType.Employer):
                     employerEntity = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.UserId);
                     if (employerEntity == null)
                     {
@@ -221,7 +223,7 @@ namespace JobMagnet.Application.Services
                     employerEntity.UpdatedAt = DateTimeOffset.UtcNow;
                     break;
 
-                case "JobSeeker":
+                case nameof(UserType.JobSeeker):
                     var jobSeekerEntity = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == user.UserId);
                     if (jobSeekerEntity == null)
                     {
@@ -249,7 +251,7 @@ namespace JobMagnet.Application.Services
                     jobSeekerEntity.UpdatedAt = DateTimeOffset.UtcNow;
                     break;
 
-                case "Client":
+                case nameof(UserType.Client):
                     if (!await _context.Clients.AnyAsync(c => c.UserId == user.UserId))
                     {
                         _context.Clients.Add(new Client
@@ -273,7 +275,7 @@ namespace JobMagnet.Application.Services
 
             await _context.SaveChangesAsync();
 
-            if (selectedUserType == "Employer")
+            if (selectedUserType == nameof(UserType.Employer))
             {
                 var employer = employerEntity ?? await _context.Employers.FirstOrDefaultAsync(e => e.UserId == user.UserId);
                 if (employer != null)
@@ -597,7 +599,7 @@ namespace JobMagnet.Application.Services
             user.LastLoginAt = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"User logged in: {user.Email}");
+            _logger.LogInformation("User logged in: {Email}", user.Email);
 
             return new AuthResponse
             {

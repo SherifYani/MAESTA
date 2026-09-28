@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Badge
@@ -11,15 +11,15 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int BadgeId { get; set; }
         
-        [Required(ErrorMessage = "اسم الشارة مطلوب")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "اسم الشارة يجب أن يكون بين 2 و 100 حرف")]
+        [Required(ErrorMessage = "ط§ط³ظ… ط§ظ„ط´ط§ط±ط© ظ…ط·ظ„ظˆط¨")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "ط§ط³ظ… ط§ظ„ط´ط§ط±ط© ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 2 ظˆ 100 ط­ط±ظپ")]
         public string Name { get; set; }
         
-        [StringLength(500, ErrorMessage = "الوصف يجب ألا يتجاوز 500 حرف")]
+        [StringLength(500, ErrorMessage = "ط§ظ„ظˆطµظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string? Description { get; set; }
         
-        [StringLength(500, ErrorMessage = "رابط الأيقونة يجب ألا يتجاوز 500 حرف")]
-        [Url(ErrorMessage = "صيغة رابط الأيقونة غير صحيحة")]
+        [StringLength(500, ErrorMessage = "ط±ط§ط¨ط· ط§ظ„ط£ظٹظ‚ظˆظ†ط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
+        [Url(ErrorMessage = "طµظٹط؛ط© ط±ط§ط¨ط· ط§ظ„ط£ظٹظ‚ظˆظ†ط© ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? IconUrl { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

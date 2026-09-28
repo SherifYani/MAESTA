@@ -167,6 +167,63 @@ export const getJobRecommendations = async ({ query = '', type = 'jobs', filters
     }));
 };
 
+/**
+ * Start an AI Bot interview.
+ * Backend: POST /api/v1/interview/start on Chatbot API
+ */
+export const startAiInterview = async (data) => {
+    const apiKey = getChatbotApiKey();
+    if (!apiKey) {
+        throw new Error('Chatbot API key is missing. Set REACT_APP_CHATBOT_API_KEY or maesta_chatbot_api_key.');
+    }
+
+    const response = await fetch(`${getChatbotApiUrl()}/api/v1/interview/start`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey,
+        },
+        body: JSON.stringify(data),
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.message || result.error || 'Failed to start AI interview');
+    }
+    
+    return result;
+};
+
+/**
+ * Score a CV against a Job Description.
+ * Backend: POST /api/v1/ats/score-cv on Chatbot API
+ */
+export const scoreCv = async (cvFile, jobDescription) => {
+    const apiKey = getChatbotApiKey();
+    if (!apiKey) {
+        throw new Error('Chatbot API key is missing. Set REACT_APP_CHATBOT_API_KEY or maesta_chatbot_api_key.');
+    }
+
+    const formData = new FormData();
+    formData.append('cv_file', cvFile);
+    formData.append('job_description', jobDescription);
+
+    const response = await fetch(`${getChatbotApiUrl()}/api/v1/ats/score-cv`, {
+        method: 'POST',
+        headers: {
+            'X-API-Key': apiKey,
+        },
+        body: formData,
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.message || result.error || 'Failed to score CV');
+    }
+    
+    return result;
+};
+
 const aiAssistantService = {
     chat,
     generateJobDescription,
@@ -177,7 +234,9 @@ const aiAssistantService = {
     recommendJobs,
     getJobRecommendations,
     sendChatMessage,
-    getChatbotHealth
+    getChatbotHealth,
+    startAiInterview,
+    scoreCv
 };
 
 export default aiAssistantService;

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Payment
@@ -11,35 +11,35 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int PaymentId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط·ظ„ظˆط¨")]
         public int UserId { get; set; }
         
-        [Required(ErrorMessage = "المبلغ مطلوب")]
-        [Range(0.01, 10000000, ErrorMessage = "المبلغ يجب أن يكون بين 0.01 و 10,000,000")]
+        [Required(ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ظ…ط·ظ„ظˆط¨")]
+        [Range(0.01, 10000000, ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 0.01 ظˆ 10,000,000")]
         public decimal Amount { get; set; }
         
-        [Required(ErrorMessage = "قيمة الرسوم مطلوبة")]
-        [Range(0, 1000000, ErrorMessage = "قيمة الرسوم يجب أن تكون بين 0 و 1,000,000")]
+        [Required(ErrorMessage = "ظ‚ظٹظ…ط© ط§ظ„ط±ط³ظˆظ… ظ…ط·ظ„ظˆط¨ط©")]
+        [Range(0, 1000000, ErrorMessage = "ظ‚ظٹظ…ط© ط§ظ„ط±ط³ظˆظ… ظٹط¬ط¨ ط£ظ† طھظƒظˆظ† ط¨ظٹظ† 0 ظˆ 1,000,000")]
         public decimal FeeAmount { get; set; }
         
-        [Required(ErrorMessage = "العملة مطلوبة")]
-        [StringLength(10, ErrorMessage = "العملة يجب ألا تتجاوز 10 أحرف")]
-        [RegularExpression(@"^[A-Z]{3}$", ErrorMessage = "العملة يجب أن تكون رمز ISO 4217 (مثل: USD, EGP, SAR)")]
+        [Required(ErrorMessage = "ط§ظ„ط¹ظ…ظ„ط© ظ…ط·ظ„ظˆط¨ط©")]
+        [StringLength(10, ErrorMessage = "ط§ظ„ط¹ظ…ظ„ط© ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 10 ط£ط­ط±ظپ")]
+        [RegularExpression(@"^[A-Z]{3}$", ErrorMessage = "ط§ظ„ط¹ظ…ظ„ط© ظٹط¬ط¨ ط£ظ† طھظƒظˆظ† ط±ظ…ط² ISO 4217 (ظ…ط«ظ„: USD, EGP, SAR)")]
         public string Currency { get; set; }
         
-        [Required(ErrorMessage = "حالة الدفع مطلوبة")]
-        [StringLength(50, ErrorMessage = "حالة الدفع يجب ألا تتجاوز 50 حرف")]
-        [RegularExpression(@"^(Pending|Processing|Completed|Failed|Refunded|Cancelled)$", ErrorMessage = "حالة الدفع غير صالحة")]
+        [Required(ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¯ظپط¹ ظ…ط·ظ„ظˆط¨ط©")]
+        [StringLength(50, ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¯ظپط¹ ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Pending|Processing|Completed|Failed|Refunded|Cancelled)$", ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¯ظپط¹ ط؛ظٹط± طµط§ظ„ط­ط©")]
         public string Status { get; set; }
         
-        [StringLength(200, ErrorMessage = "معرف المعاملة يجب ألا يتجاوز 200 حرف")]
+        [StringLength(200, ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط¹ط§ظ…ظ„ط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 200 ط­ط±ظپ")]
         public string? TransactionId { get; set; }
         
-        [StringLength(100, ErrorMessage = "مزود الدفع يجب ألا يتجاوز 100 حرف")]
-        [RegularExpression(@"^(Stripe|PayPal|Fawry|Paymob|PayTabs|HyperPay|Checkout|Other)$", ErrorMessage = "مزود الدفع غير مدعوم")]
+        [StringLength(100, ErrorMessage = "ظ…ط²ظˆط¯ ط§ظ„ط¯ظپط¹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 100 ط­ط±ظپ")]
+        [RegularExpression(@"^(Stripe|PayPal|Fawry|Paymob|PayTabs|HyperPay|Checkout|Other)$", ErrorMessage = "ظ…ط²ظˆط¯ ط§ظ„ط¯ظپط¹ ط؛ظٹط± ظ…ط¯ط¹ظˆظ…")]
         public string? PaymentProvider { get; set; }
         
-        [StringLength(5000, ErrorMessage = "استجابة البوابة يجب ألا تتجاوز 5000 حرف")]
+        [StringLength(5000, ErrorMessage = "ط§ط³طھط¬ط§ط¨ط© ط§ظ„ط¨ظˆط§ط¨ط© ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 5000 ط­ط±ظپ")]
         public string? GatewayResponse { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

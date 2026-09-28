@@ -30,6 +30,7 @@ const NAV_GUEST = [
   { name: 'Jobs',     path: '/jobs' },
   { name: 'Gigs',     path: '/gigs' },
   { name: 'AI Tools', path: '/ai' },
+  { name: 'CV Builder', path: '/ai/cv-builder' },
 ];
 
 /**
@@ -43,6 +44,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Applications', path: '/dashboard/applications' },
     { name: 'Gigs',         path: '/gigs' },
     { name: 'AI Tools',     path: '/ai' },
+    { name: 'CV Builder',   path: '/ai/cv-builder' },
     { name: 'Messages',     path: '/chat' },
   ],
   freelancer: [
@@ -51,6 +53,7 @@ const NAV_AUTHENTICATED = {
     { name: 'My Gigs',   path: '/gigs/manage' },
     { name: 'Proposals', path: '/gigs/proposals' },
     { name: 'AI Tools',  path: '/ai' },
+    { name: 'CV Builder', path: '/ai/cv-builder' },
     { name: 'Messages',  path: '/chat' },
   ],
   company: [
@@ -59,6 +62,7 @@ const NAV_AUTHENTICATED = {
     { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
     { name: 'AI Tools',   path: '/ai' },
+    { name: 'CV Builder', path: '/ai/cv-builder' },
     { name: 'Messages',   path: '/chat' },
   ],
   employer: [
@@ -67,6 +71,7 @@ const NAV_AUTHENTICATED = {
     { name: 'My Jobs',    path: '/dashboard/published-jobs' },
     { name: 'Candidates', path: '/dashboard/applicants' },
     { name: 'AI Tools',   path: '/ai' },
+    { name: 'CV Builder', path: '/ai/cv-builder' },
     { name: 'Messages',   path: '/chat' },
   ],
   client: [
@@ -75,6 +80,7 @@ const NAV_AUTHENTICATED = {
     { name: 'My Projects', path: '/gigs/projects' },
     { name: 'Talent',      path: '/dashboard/talent' },
     { name: 'AI Tools',    path: '/ai' },
+    { name: 'CV Builder',  path: '/ai/cv-builder' },
     { name: 'Messages',    path: '/chat' },
   ],
   admin: [
@@ -82,6 +88,7 @@ const NAV_AUTHENTICATED = {
     { name: 'Users',      path: '/dashboard/users' },
     { name: 'Jobs',       path: '/dashboard/jobs' },
     { name: 'AI Tools',   path: '/ai' },
+    { name: 'CV Builder', path: '/ai/cv-builder' },
     { name: 'Moderation', path: '/dashboard/moderation' },
   ],
 };

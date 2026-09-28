@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Role
@@ -11,11 +11,11 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int RoleId { get; set; }
         
-        [Required(ErrorMessage = "اسم الدور مطلوب")]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "اسم الدور يجب أن يكون بين 2 و 50 حرف")]
+        [Required(ErrorMessage = "ط§ط³ظ… ط§ظ„ط¯ظˆط± ظ…ط·ظ„ظˆط¨")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "ط§ط³ظ… ط§ظ„ط¯ظˆط± ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 2 ظˆ 50 ط­ط±ظپ")]
         public string RoleName { get; set; }
         
-        [StringLength(500, ErrorMessage = "الوصف يجب ألا يتجاوز 500 حرف")]
+        [StringLength(500, ErrorMessage = "ط§ظ„ظˆطµظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string? Description { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

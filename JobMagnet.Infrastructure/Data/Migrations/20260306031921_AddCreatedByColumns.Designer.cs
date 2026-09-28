@@ -25,7 +25,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ActivityLog", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ActivityLog", b =>
                 {
                     b.Property<int>("ActivityId")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ActivityLogs");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Admin", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Admin", b =>
                 {
                     b.Property<int>("AdminId")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Admins");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Announcement", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Announcement", b =>
                 {
                     b.Property<int>("AnnouncementId")
                         .ValueGeneratedOnAdd()
@@ -180,7 +180,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Announcements");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Badge", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Badge", b =>
                 {
                     b.Property<int>("BadgeId")
                         .ValueGeneratedOnAdd()
@@ -226,7 +226,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Badges");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.BlockedUser", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.BlockedUser", b =>
                 {
                     b.Property<int>("BlockId")
                         .ValueGeneratedOnAdd()
@@ -262,7 +262,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("BlockedUsers");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Category", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -310,7 +310,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Chat", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Chat", b =>
                 {
                     b.Property<int>("ChatId")
                         .ValueGeneratedOnAdd()
@@ -359,7 +359,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Client", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Client", b =>
                 {
                     b.Property<int>("ClientId")
                         .ValueGeneratedOnAdd()
@@ -420,7 +420,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.CommissionRate", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.CommissionRate", b =>
                 {
                     b.Property<int>("CommissionRateId")
                         .ValueGeneratedOnAdd()
@@ -464,7 +464,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("CommissionRates");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.CommunityPost", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.CommunityPost", b =>
                 {
                     b.Property<int>("CommunityPostId")
                         .ValueGeneratedOnAdd()
@@ -532,7 +532,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("CommunityPosts");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.CommunityReply", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.CommunityReply", b =>
                 {
                     b.Property<int>("CommunityReplyId")
                         .ValueGeneratedOnAdd()
@@ -588,7 +588,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("CommunityReplies");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Company", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Company", b =>
                 {
                     b.Property<int>("CompanyId")
                         .ValueGeneratedOnAdd()
@@ -696,7 +696,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Contract", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Contract", b =>
                 {
                     b.Property<int>("ContractId")
                         .ValueGeneratedOnAdd()
@@ -756,7 +756,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Contracts");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Dispute", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Dispute", b =>
                 {
                     b.Property<int>("DisputeId")
                         .ValueGeneratedOnAdd()
@@ -828,7 +828,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Disputes");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.EmailTemplate", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.EmailTemplate", b =>
                 {
                     b.Property<int>("EmailTemplateId")
                         .ValueGeneratedOnAdd()
@@ -880,7 +880,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("EmailTemplates");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Employer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Employer", b =>
                 {
                     b.Property<int>("EmployerId")
                         .ValueGeneratedOnAdd()
@@ -952,7 +952,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Employers");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ErrorLog", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ErrorLog", b =>
                 {
                     b.Property<int>("ErrorId")
                         .ValueGeneratedOnAdd()
@@ -997,7 +997,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ErrorLogs");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.EscrowTransaction", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.EscrowTransaction", b =>
                 {
                     b.Property<int>("EscrowTransactionId")
                         .ValueGeneratedOnAdd()
@@ -1064,7 +1064,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("EscrowTransactions");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Faq", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Faq", b =>
                 {
                     b.Property<int>("FaqId")
                         .ValueGeneratedOnAdd()
@@ -1111,7 +1111,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Faqs");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Favorite", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Favorite", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1158,7 +1158,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Favorites");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Freelancer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Freelancer", b =>
                 {
                     b.Property<int>("FreelancerId")
                         .ValueGeneratedOnAdd()
@@ -1257,7 +1257,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Freelancers");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.FreelancerLevel", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.FreelancerLevel", b =>
                 {
                     b.Property<int>("LevelId")
                         .ValueGeneratedOnAdd()
@@ -1305,7 +1305,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("FreelancerLevels");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.FreelancerPortfolio", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.FreelancerPortfolio", b =>
                 {
                     b.Property<int>("PortfolioId")
                         .ValueGeneratedOnAdd()
@@ -1364,7 +1364,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("FreelancerPortfolios");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.FreelancerTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.FreelancerTag", b =>
                 {
                     b.Property<int>("FreelancerId")
                         .HasColumnType("int");
@@ -1404,7 +1404,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("FreelancerTags");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Invoice", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Invoice", b =>
                 {
                     b.Property<int>("InvoiceId")
                         .ValueGeneratedOnAdd()
@@ -1470,7 +1470,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Invoices");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.IpBlacklist", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.IpBlacklist", b =>
                 {
                     b.Property<int>("IPId")
                         .ValueGeneratedOnAdd()
@@ -1518,7 +1518,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("IpBlacklists");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Job", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Job", b =>
                 {
                     b.Property<int>("JobId")
                         .ValueGeneratedOnAdd()
@@ -1614,7 +1614,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobApplication", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobApplication", b =>
                 {
                     b.Property<int>("JobApplicationId")
                         .ValueGeneratedOnAdd()
@@ -1691,7 +1691,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("JobApplications");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobCategory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobCategory", b =>
                 {
                     b.Property<int>("JobId")
                         .HasColumnType("int");
@@ -1731,7 +1731,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("JobCategories");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobSeeker", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobSeeker", b =>
                 {
                     b.Property<int>("JobSeekerId")
                         .ValueGeneratedOnAdd()
@@ -1799,7 +1799,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("JobSeekers");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobTag", b =>
                 {
                     b.Property<int>("JobId")
                         .HasColumnType("int");
@@ -1839,7 +1839,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("JobTags");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Message", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Message", b =>
                 {
                     b.Property<int>("MessageId")
                         .ValueGeneratedOnAdd()
@@ -1915,7 +1915,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Notification", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Notification", b =>
                 {
                     b.Property<int>("NotificationId")
                         .ValueGeneratedOnAdd()
@@ -2000,7 +2000,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Payment", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
@@ -2095,7 +2095,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.PlatformSetting", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.PlatformSetting", b =>
                 {
                     b.Property<int>("SettingId")
                         .ValueGeneratedOnAdd()
@@ -2142,7 +2142,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("PlatformSettings");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Project", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Project", b =>
                 {
                     b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd()
@@ -2232,7 +2232,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectCategory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectCategory", b =>
                 {
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -2272,7 +2272,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ProjectCategories");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectDelivery", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectDelivery", b =>
                 {
                     b.Property<int>("ProjectDeliveryId")
                         .ValueGeneratedOnAdd()
@@ -2325,7 +2325,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ProjectDeliveries");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectMilestone", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectMilestone", b =>
                 {
                     b.Property<int>("MilestoneId")
                         .ValueGeneratedOnAdd()
@@ -2390,7 +2390,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ProjectMilestones");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectTag", b =>
                 {
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -2430,7 +2430,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("ProjectTags");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.PromoCode", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.PromoCode", b =>
                 {
                     b.Property<int>("PromoCodeId")
                         .ValueGeneratedOnAdd()
@@ -2490,7 +2490,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("PromoCodes");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Proposal", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Proposal", b =>
                 {
                     b.Property<int>("ProposalId")
                         .ValueGeneratedOnAdd()
@@ -2565,7 +2565,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Proposals");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Rating", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Rating", b =>
                 {
                     b.Property<int>("RatingId")
                         .ValueGeneratedOnAdd()
@@ -2616,7 +2616,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Referral", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Referral", b =>
                 {
                     b.Property<int>("ReferralId")
                         .ValueGeneratedOnAdd()
@@ -2664,7 +2664,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Referrals");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("TokenId")
                         .ValueGeneratedOnAdd()
@@ -2728,7 +2728,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.RefundRequest", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.RefundRequest", b =>
                 {
                     b.Property<int>("RefundRequestId")
                         .ValueGeneratedOnAdd()
@@ -2782,7 +2782,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("RefundRequests");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Report", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Report", b =>
                 {
                     b.Property<int>("ReportId")
                         .ValueGeneratedOnAdd()
@@ -2852,7 +2852,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Review", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Review", b =>
                 {
                     b.Property<int>("ReviewId")
                         .ValueGeneratedOnAdd()
@@ -2935,7 +2935,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Role", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Role", b =>
                 {
                     b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
@@ -2977,7 +2977,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SavedFreelancer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SavedFreelancer", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -3023,7 +3023,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SavedFreelancers");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SavedJob", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SavedJob", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -3069,7 +3069,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SavedJobs");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SearchHistory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SearchHistory", b =>
                 {
                     b.Property<int>("SearchId")
                         .ValueGeneratedOnAdd()
@@ -3119,7 +3119,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SearchHistories");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Skill", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Skill", b =>
                 {
                     b.Property<int>("SkillId")
                         .ValueGeneratedOnAdd()
@@ -3161,7 +3161,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SmsTemplate", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SmsTemplate", b =>
                 {
                     b.Property<int>("SmsTemplateId")
                         .ValueGeneratedOnAdd()
@@ -3208,7 +3208,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SmsTemplates");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Subscription", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Subscription", b =>
                 {
                     b.Property<int>("SubscriptionId")
                         .ValueGeneratedOnAdd()
@@ -3296,7 +3296,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SupportTicket", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SupportTicket", b =>
                 {
                     b.Property<int>("TicketId")
                         .ValueGeneratedOnAdd()
@@ -3344,7 +3344,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SupportTickets");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SystemLog", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SystemLog", b =>
                 {
                     b.Property<int>("LogId")
                         .ValueGeneratedOnAdd()
@@ -3380,7 +3380,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("SystemLogs");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Tag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Tag", b =>
                 {
                     b.Property<int>("TagId")
                         .ValueGeneratedOnAdd()
@@ -3422,7 +3422,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.TicketMessage", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.TicketMessage", b =>
                 {
                     b.Property<int>("TicketMessageId")
                         .ValueGeneratedOnAdd()
@@ -3471,7 +3471,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("TicketMessages");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Timesheet", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Timesheet", b =>
                 {
                     b.Property<int>("TimesheetId")
                         .ValueGeneratedOnAdd()
@@ -3524,7 +3524,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Timesheets");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Transaction", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Transaction", b =>
                 {
                     b.Property<int>("TransactionId")
                         .ValueGeneratedOnAdd()
@@ -3598,7 +3598,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.User", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -3752,7 +3752,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserBadge", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserBadge", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -3787,7 +3787,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserBadges");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserCertification", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserCertification", b =>
                 {
                     b.Property<int>("CertificationId")
                         .ValueGeneratedOnAdd()
@@ -3844,7 +3844,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserCertifications");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserDocument", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserDocument", b =>
                 {
                     b.Property<int>("DocumentId")
                         .ValueGeneratedOnAdd()
@@ -3908,7 +3908,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserDocuments");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserEducation", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserEducation", b =>
                 {
                     b.Property<int>("EducationId")
                         .ValueGeneratedOnAdd()
@@ -3970,7 +3970,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserEducations");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserRole", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -4013,7 +4013,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserSettings", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserSettings", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -4068,7 +4068,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserSettings");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserSkill", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserSkill", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -4129,7 +4129,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserSkills");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserWallet", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserWallet", b =>
                 {
                     b.Property<int>("WalletId")
                         .ValueGeneratedOnAdd()
@@ -4180,7 +4180,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserWallets");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserWorkExperience", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserWorkExperience", b =>
                 {
                     b.Property<int>("WorkExperienceId")
                         .ValueGeneratedOnAdd()
@@ -4238,7 +4238,7 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("UserWorkExperiences");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.WithdrawalRequest", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.WithdrawalRequest", b =>
                 {
                     b.Property<int>("WithdrawalRequestId")
                         .ValueGeneratedOnAdd()
@@ -4295,9 +4295,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.ToTable("WithdrawalRequests");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ActivityLog", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ActivityLog", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -4305,9 +4305,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Admin", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Admin", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4316,15 +4316,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.BlockedUser", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.BlockedUser", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "BlockerUser")
+                    b.HasOne("JobMagnet.Core.Entities.User", "BlockerUser")
                         .WithMany()
                         .HasForeignKey("BlockedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "BlockedUserEntity")
+                    b.HasOne("JobMagnet.Core.Entities.User", "BlockedUserEntity")
                         .WithMany()
                         .HasForeignKey("BlockedUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4335,9 +4335,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("BlockerUser");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Client", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Client", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4346,9 +4346,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.CommunityPost", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.CommunityPost", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("PostedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4357,15 +4357,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.CommunityReply", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.CommunityReply", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.CommunityPost", null)
+                    b.HasOne("JobMagnet.Core.Entities.CommunityPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4374,9 +4374,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Company", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Company", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Employer", "Employer")
+                    b.HasOne("JobMagnet.Core.Entities.Employer", "Employer")
                         .WithMany()
                         .HasForeignKey("EmployerId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4385,21 +4385,21 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Employer");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Contract", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Contract", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "ClientUser")
+                    b.HasOne("JobMagnet.Core.Entities.User", "ClientUser")
                         .WithMany()
                         .HasForeignKey("ClientUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "FreelancerUser")
+                    b.HasOne("JobMagnet.Core.Entities.User", "FreelancerUser")
                         .WithMany()
                         .HasForeignKey("FreelancerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4412,15 +4412,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Dispute", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Dispute", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("RaisedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4431,9 +4431,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Employer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Employer", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4442,9 +4442,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ErrorLog", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ErrorLog", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -4452,15 +4452,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.EscrowTransaction", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.EscrowTransaction", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("FreelancerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4471,9 +4471,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Favorite", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Favorite", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4482,9 +4482,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Freelancer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Freelancer", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4493,9 +4493,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.FreelancerPortfolio", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.FreelancerPortfolio", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Freelancer", "Freelancer")
+                    b.HasOne("JobMagnet.Core.Entities.Freelancer", "Freelancer")
                         .WithMany()
                         .HasForeignKey("FreelancerId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4504,15 +4504,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Freelancer");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.FreelancerTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.FreelancerTag", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Freelancer", "Freelancer")
+                    b.HasOne("JobMagnet.Core.Entities.Freelancer", "Freelancer")
                         .WithMany()
                         .HasForeignKey("FreelancerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Tag", null)
+                    b.HasOne("JobMagnet.Core.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4521,9 +4521,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Freelancer");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Invoice", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Invoice", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4532,9 +4532,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Job", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Job", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("PostedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4543,15 +4543,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobApplication", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobApplication", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Job", "Job")
+                    b.HasOne("JobMagnet.Core.Entities.Job", "Job")
                         .WithMany()
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.JobSeeker", "JobSeeker")
+                    b.HasOne("JobMagnet.Core.Entities.JobSeeker", "JobSeeker")
                         .WithMany()
                         .HasForeignKey("JobSeekerId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4562,15 +4562,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("JobSeeker");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobCategory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobCategory", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Category", null)
+                    b.HasOne("JobMagnet.Core.Entities.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Job", "Job")
+                    b.HasOne("JobMagnet.Core.Entities.Job", "Job")
                         .WithMany()
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4579,9 +4579,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Job");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobSeeker", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobSeeker", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4590,15 +4590,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.JobTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.JobTag", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Job", "Job")
+                    b.HasOne("JobMagnet.Core.Entities.Job", "Job")
                         .WithMany()
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Tag", null)
+                    b.HasOne("JobMagnet.Core.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4607,9 +4607,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Job");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Notification", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Notification", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4618,9 +4618,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Payment", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Payment", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4629,14 +4629,14 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Project", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Project", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Freelancer", "Freelancer")
+                    b.HasOne("JobMagnet.Core.Entities.Freelancer", "Freelancer")
                         .WithMany()
                         .HasForeignKey("AssignedFreelancerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("OwnerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4647,15 +4647,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectCategory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectCategory", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Category", null)
+                    b.HasOne("JobMagnet.Core.Entities.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4664,9 +4664,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectDelivery", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectDelivery", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4675,9 +4675,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectMilestone", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectMilestone", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4686,15 +4686,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.ProjectTag", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.ProjectTag", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Tag", null)
+                    b.HasOne("JobMagnet.Core.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4703,15 +4703,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Proposal", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Proposal", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("FreelancerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4722,9 +4722,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Rating", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Rating", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4733,9 +4733,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Referral", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Referral", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("ReferredUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4744,9 +4744,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4755,9 +4755,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.RefundRequest", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.RefundRequest", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4766,9 +4766,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Review", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Review", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4777,15 +4777,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SavedFreelancer", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SavedFreelancer", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "FreelancerUser")
+                    b.HasOne("JobMagnet.Core.Entities.User", "FreelancerUser")
                         .WithMany()
                         .HasForeignKey("FreelancerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "SavedByUser")
+                    b.HasOne("JobMagnet.Core.Entities.User", "SavedByUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4796,15 +4796,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("SavedByUser");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SavedJob", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SavedJob", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Job", "Job")
+                    b.HasOne("JobMagnet.Core.Entities.Job", "Job")
                         .WithMany()
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4815,9 +4815,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SearchHistory", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SearchHistory", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -4825,9 +4825,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Subscription", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Subscription", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4836,9 +4836,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.SupportTicket", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.SupportTicket", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4847,9 +4847,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.TicketMessage", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.TicketMessage", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("SenderUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4858,15 +4858,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Timesheet", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Timesheet", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("FreelancerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Project", "Project")
+                    b.HasOne("JobMagnet.Core.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4877,9 +4877,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.Transaction", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.Transaction", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4888,15 +4888,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserBadge", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserBadge", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Badge", null)
+                    b.HasOne("JobMagnet.Core.Entities.Badge", null)
                         .WithMany()
                         .HasForeignKey("BadgeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4905,9 +4905,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserCertification", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserCertification", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4916,9 +4916,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserDocument", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserDocument", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4927,9 +4927,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserEducation", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserEducation", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4938,15 +4938,15 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserRole", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Role", null)
+                    b.HasOne("JobMagnet.Core.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4955,9 +4955,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserSettings", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserSettings", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4966,20 +4966,20 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserSkill", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserSkill", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.Skill", null)
+                    b.HasOne("JobMagnet.Core.Entities.Skill", null)
                         .WithMany()
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Entities.Skill", "Skill")
+                    b.HasOne("JobMagnet.Core.Entities.Skill", "Skill")
                         .WithMany()
                         .HasForeignKey("SkillId1")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4990,9 +4990,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserWallet", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserWallet", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -5001,9 +5001,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.UserWorkExperience", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.UserWorkExperience", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -5012,9 +5012,9 @@ namespace JobMagnet.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Entities.WithdrawalRequest", b =>
+            modelBuilder.Entity("JobMagnet.Core.Entities.WithdrawalRequest", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Entities.User", "User")
+                    b.HasOne("JobMagnet.Core.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)

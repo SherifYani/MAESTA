@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Review
@@ -11,30 +11,30 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int ReviewId { get; set; }
         
-        [Required(ErrorMessage = "معرف المراجع مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط±ط§ط¬ط¹ ظ…ط·ظ„ظˆط¨")]
         public int ReviewerId { get; set; }
         
-        [StringLength(50, ErrorMessage = "دور المراجع يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^(Freelancer|Employer|Client|JobSeeker)$", ErrorMessage = "دور المراجع غير صالح")]
+        [StringLength(50, ErrorMessage = "ط¯ظˆط± ط§ظ„ظ…ط±ط§ط¬ط¹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Freelancer|Employer|Client|JobSeeker)$", ErrorMessage = "ط¯ظˆط± ط§ظ„ظ…ط±ط§ط¬ط¹ ط؛ظٹط± طµط§ظ„ط­")]
         public string? ReviewerRole { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم المستهدف مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ط§ظ„ظ…ط³طھظ‡ط¯ظپ ظ…ط·ظ„ظˆط¨")]
         public int TargetUserId { get; set; }
         
-        [StringLength(50, ErrorMessage = "دور المستهدف يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^(Freelancer|Employer|Client|JobSeeker)$", ErrorMessage = "دور المستهدف غير صالح")]
+        [StringLength(50, ErrorMessage = "ط¯ظˆط± ط§ظ„ظ…ط³طھظ‡ط¯ظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Freelancer|Employer|Client|JobSeeker)$", ErrorMessage = "ط¯ظˆط± ط§ظ„ظ…ط³طھظ‡ط¯ظپ ط؛ظٹط± طµط§ظ„ط­")]
         public string? TargetRole { get; set; }
         
-        [Required(ErrorMessage = "التعليق مطلوب")]
-        [StringLength(2000, MinimumLength = 5, ErrorMessage = "التعليق يجب أن يكون بين 5 و 2000 حرف")]
+        [Required(ErrorMessage = "ط§ظ„طھط¹ظ„ظٹظ‚ ظ…ط·ظ„ظˆط¨")]
+        [StringLength(2000, MinimumLength = 5, ErrorMessage = "ط§ظ„طھط¹ظ„ظٹظ‚ ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 5 ظˆ 2000 ط­ط±ظپ")]
         public string Comment { get; set; }
         
-        [Required(ErrorMessage = "قيمة التقييم مطلوبة")]
-        [Range(1, 5, ErrorMessage = "قيمة التقييم يجب أن تكون بين 1 و 5")]
+        [Required(ErrorMessage = "ظ‚ظٹظ…ط© ط§ظ„طھظ‚ظٹظٹظ… ظ…ط·ظ„ظˆط¨ط©")]
+        [Range(1, 5, ErrorMessage = "ظ‚ظٹظ…ط© ط§ظ„طھظ‚ظٹظٹظ… ظٹط¬ط¨ ط£ظ† طھظƒظˆظ† ط¨ظٹظ† 1 ظˆ 5")]
         public byte RatingValue { get; set; }
         
-        [StringLength(100, ErrorMessage = "نوع السياق يجب ألا يتجاوز 100 حرف")]
-        [RegularExpression(@"^(Project|Job|Contract|Proposal)$", ErrorMessage = "نوع السياق غير صالح")]
+        [StringLength(100, ErrorMessage = "ظ†ظˆط¹ ط§ظ„ط³ظٹط§ظ‚ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 100 ط­ط±ظپ")]
+        [RegularExpression(@"^(Project|Job|Contract|Proposal)$", ErrorMessage = "ظ†ظˆط¹ ط§ظ„ط³ظٹط§ظ‚ ط؛ظٹط± طµط§ظ„ط­")]
         public string? ContextEntity { get; set; }
         
         public int? ContextEntityId { get; set; }

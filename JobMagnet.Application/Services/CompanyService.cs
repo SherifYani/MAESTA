@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Company;
+﻿using JobMagnet.Application.DTOs.Company;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -163,7 +163,7 @@ namespace JobMagnet.Application.Services
             return await GetMyCompanyAsync(employerUserId);
         }
 
-        private static CompanyDto MapCompany(Domain.Entities.Company c) => new()
+        private static CompanyDto MapCompany(Core.Entities.Company c) => new()
         {
             CompanyId = c.CompanyId,
             EmployerId = c.EmployerId,
@@ -220,7 +220,7 @@ namespace JobMagnet.Application.Services
             var employerRecord = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == userToAdd.UserId);
             if (employerRecord == null)
             {
-                employerRecord = new Domain.Entities.Employer
+                employerRecord = new Core.Entities.Employer
                 {
                     UserId = userToAdd.UserId,
                     CompanyId = company.CompanyId,
@@ -281,7 +281,7 @@ namespace JobMagnet.Application.Services
             var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == userId);
             if (employer == null)
             {
-                employer = new Domain.Entities.Employer
+                employer = new Core.Entities.Employer
                 {
                     UserId = userId,
                     CompanyId = company.CompanyId,
@@ -358,7 +358,7 @@ namespace JobMagnet.Application.Services
 
             if (settings == null)
             {
-                settings = new Domain.Entities.UserSettings
+                settings = new Core.Entities.UserSettings
                 {
                     UserId = userId,
                     Language = "en",

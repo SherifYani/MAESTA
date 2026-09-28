@@ -1,6 +1,6 @@
 using JobMagnet.Application.DTOs.Admin;
 using JobMagnet.Application.Interfaces;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

@@ -2,7 +2,7 @@ using JobMagnet.Application.DTOs.Notification;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
 
 namespace JobMagnet.Application.Services
 {

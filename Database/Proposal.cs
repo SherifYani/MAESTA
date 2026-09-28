@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Proposal
@@ -11,22 +11,22 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int ProposalId { get; set; }
         
-        [Required(ErrorMessage = "معرف المشروع مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط´ط±ظˆط¹ ظ…ط·ظ„ظˆط¨")]
         public int ProjectId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستقل مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھظ‚ظ„ ظ…ط·ظ„ظˆط¨")]
         public int FreelancerUserId { get; set; }
         
-        [Required(ErrorMessage = "المبلغ المقترح مطلوب")]
-        [Range(0.01, 10000000, ErrorMessage = "المبلغ المقترح يجب أن يكون بين 0.01 و 10,000,000")]
+        [Required(ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ط§ظ„ظ…ظ‚طھط±ط­ ظ…ط·ظ„ظˆط¨")]
+        [Range(0.01, 10000000, ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ط§ظ„ظ…ظ‚طھط±ط­ ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 0.01 ظˆ 10,000,000")]
         public decimal ProposedAmount { get; set; }
         
-        [StringLength(5000, MinimumLength = 20, ErrorMessage = "نص العرض يجب أن يكون بين 20 و 5000 حرف")]
+        [StringLength(5000, MinimumLength = 20, ErrorMessage = "ظ†طµ ط§ظ„ط¹ط±ط¶ ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 20 ظˆ 5000 ط­ط±ظپ")]
         public string? ProposalText { get; set; }
         
-        [Required(ErrorMessage = "حالة العرض مطلوبة")]
-        [StringLength(50, ErrorMessage = "حالة العرض يجب ألا تتجاوز 50 حرف")]
-        [RegularExpression(@"^(Pending|Accepted|Rejected|Withdrawn)$", ErrorMessage = "حالة العرض غير صالحة")]
+        [Required(ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¹ط±ط¶ ظ…ط·ظ„ظˆط¨ط©")]
+        [StringLength(50, ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¹ط±ط¶ ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Pending|Accepted|Rejected|Withdrawn)$", ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ط¹ط±ط¶ ط؛ظٹط± طµط§ظ„ط­ط©")]
         public string Status { get; set; }
         
         public DateTimeOffset SentAt { get; set; }

@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Dashboard;
+﻿using JobMagnet.Application.DTOs.Dashboard;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +40,7 @@ namespace JobMagnet.Application.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.UserId == user.UserId && !e.IsDeleted);
 
-            Domain.Entities.Company? company = null;
+            Core.Entities.Company? company = null;
             if (employer != null)
             {
                 company = await _context.Companies

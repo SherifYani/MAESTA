@@ -265,6 +265,20 @@ const JobApplicationPage = () => {
                     />
                 </div>
 
+                <div className={styles.cvTestSection} style={{ background: '#eff6ff', padding: '1.5rem', borderRadius: '0.5rem', marginBottom: '2rem', border: '1px solid #bfdbfe', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h3 style={{ color: '#1e40af', fontSize: '1.1rem', marginBottom: '0.25rem' }}>Want to know your chances?</h3>
+                        <p style={{ color: '#3b82f6', fontSize: '0.9rem', margin: 0 }}>Use our AI CV Analyzer to check how well your resume matches this job before applying.</p>
+                    </div>
+                    <button 
+                        type="button" 
+                        onClick={() => window.open('/cv-analyzer', '_blank')}
+                        style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '0.25rem', cursor: 'pointer', fontWeight: '500' }}
+                    >
+                        Test Your CV Score ✨
+                    </button>
+                </div>
+
                 <div className={styles.formActions}>
                     <button
                         type="button"

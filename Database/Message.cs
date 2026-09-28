@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Message
@@ -11,14 +11,14 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int MessageId { get; set; }
         
-        [Required(ErrorMessage = "معرف المحادثة مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط­ط§ط¯ط«ط© ظ…ط·ظ„ظˆط¨")]
         public int ChatId { get; set; }
         
-        [Required(ErrorMessage = "معرف المرسل مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط±ط³ظ„ ظ…ط·ظ„ظˆط¨")]
         public int SenderId { get; set; }
         
-        [Required(ErrorMessage = "محتوى الرسالة مطلوب")]
-        [StringLength(5000, MinimumLength = 1, ErrorMessage = "محتوى الرسالة يجب أن يكون بين 1 و 5000 حرف")]
+        [Required(ErrorMessage = "ظ…ط­طھظˆظ‰ ط§ظ„ط±ط³ط§ظ„ط© ظ…ط·ظ„ظˆط¨")]
+        [StringLength(5000, MinimumLength = 1, ErrorMessage = "ظ…ط­طھظˆظ‰ ط§ظ„ط±ط³ط§ظ„ط© ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 1 ظˆ 5000 ط­ط±ظپ")]
         public string Content { get; set; }
         
         public bool IsRead { get; set; }

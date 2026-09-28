@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Invoice
@@ -11,22 +11,22 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int InvoiceId { get; set; }
         
-        [Required(ErrorMessage = "معرف المشروع مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط´ط±ظˆط¹ ظ…ط·ظ„ظˆط¨")]
         public int ProjectId { get; set; }
         
-        [Required(ErrorMessage = "المبلغ مطلوب")]
-        [Range(0.01, 10000000, ErrorMessage = "مبلغ الفاتورة يجب أن يكون بين 0.01 و 10,000,000")]
+        [Required(ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ظ…ط·ظ„ظˆط¨")]
+        [Range(0.01, 10000000, ErrorMessage = "ظ…ط¨ظ„ط؛ ط§ظ„ظپط§طھظˆط±ط© ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 0.01 ظˆ 10,000,000")]
         public decimal Amount { get; set; }
         
         public DateTimeOffset? DueDate { get; set; }
         
-        [Required(ErrorMessage = "حالة الفاتورة مطلوبة")]
-        [StringLength(50, ErrorMessage = "حالة الفاتورة يجب ألا تتجاوز 50 حرف")]
-        [RegularExpression(@"^(Draft|Sent|Paid|Overdue|Cancelled|Refunded)$", ErrorMessage = "حالة الفاتورة غير صالحة")]
+        [Required(ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ظپط§طھظˆط±ط© ظ…ط·ظ„ظˆط¨ط©")]
+        [StringLength(50, ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ظپط§طھظˆط±ط© ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Draft|Sent|Paid|Overdue|Cancelled|Refunded)$", ErrorMessage = "ط­ط§ظ„ط© ط§ظ„ظپط§طھظˆط±ط© ط؛ظٹط± طµط§ظ„ط­ط©")]
         public string Status { get; set; }
         
-        [StringLength(50, ErrorMessage = "رقم الفاتورة يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^[A-Z0-9\-]+$", ErrorMessage = "رقم الفاتورة يجب أن يحتوي على أحرف وأرقام فقط")]
+        [StringLength(50, ErrorMessage = "ط±ظ‚ظ… ط§ظ„ظپط§طھظˆط±ط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^[A-Z0-9\-]+$", ErrorMessage = "ط±ظ‚ظ… ط§ظ„ظپط§طھظˆط±ط© ظٹط¬ط¨ ط£ظ† ظٹط­طھظˆظٹ ط¹ظ„ظ‰ ط£ط­ط±ظپ ظˆط£ط±ظ‚ط§ظ… ظپظ‚ط·")]
         public string? InvoiceNumber { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

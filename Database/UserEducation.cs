@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class UserEducation
@@ -14,11 +14,11 @@ namespace JobMagnet.Domain.Entities
         [Required]
         public int UserId { get; set; }
         
-        [Required(ErrorMessage = "الدرجة العلمية مطلوبة")]
+        [Required(ErrorMessage = "ط§ظ„ط¯ط±ط¬ط© ط§ظ„ط¹ظ„ظ…ظٹط© ظ…ط·ظ„ظˆط¨ط©")]
         [StringLength(100, MinimumLength = 2)]
         public string Degree { get; set; }
         
-        [Required(ErrorMessage = "اسم المؤسسة مطلوب")]
+        [Required(ErrorMessage = "ط§ط³ظ… ط§ظ„ظ…ط¤ط³ط³ط© ظ…ط·ظ„ظˆط¨")]
         [StringLength(200, MinimumLength = 2)]
         public string Institution { get; set; }
         

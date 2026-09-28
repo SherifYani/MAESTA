@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Freelancer;
+﻿using JobMagnet.Application.DTOs.Freelancer;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -62,13 +62,13 @@ namespace JobMagnet.Application.Services
             };
         }
 
-        // ─── Portfolio ────────────────────────────────────────────────────────
+        // â”€â”€â”€ Portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<PortfolioItemDto> AddPortfolioItemAsync(int userId, AddPortfolioItemRequest request)
         {
             var f = await _context.Freelancers.FirstOrDefaultAsync(x => x.UserId == userId && !x.IsDeleted);
             if (f == null) throw new KeyNotFoundException("Freelancer profile not found");
 
-            var item = new Domain.Entities.FreelancerPortfolio
+            var item = new Core.Entities.FreelancerPortfolio
             {
                 FreelancerId = f.FreelancerId,
                 ProjectTitle = request.Title,
@@ -123,7 +123,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        private static PortfolioItemDto MapPortfolio(Domain.Entities.FreelancerPortfolio p) => new()
+        private static PortfolioItemDto MapPortfolio(Core.Entities.FreelancerPortfolio p) => new()
         {
             PortfolioId = p.PortfolioId,
             Title = p.ProjectTitle,

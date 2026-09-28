@@ -45,25 +45,34 @@ export default function LandingPage() {
     // Fetch live data
     const fetchData = async () => {
       try {
-        const [statsData, jobsData] = await Promise.all([
-          generalService.getPublicStats(),
-          jobService.getJobs({ limit: 4 })
-        ]);
-        
+        const statsData = await generalService.getPublicStats().catch(err => {
+          console.error("Error fetching stats:", err);
+          return null;
+        });
+
         if (statsData) {
           setStats({
             totalJobs: statsData.totalJobs > 1000 ? `${(statsData.totalJobs / 1000).toFixed(1)}K+` : statsData.totalJobs,
             totalCompanies: statsData.totalCompanies > 1000 ? `${(statsData.totalCompanies / 1000).toFixed(1)}K+` : statsData.totalCompanies,
-            successRate: statsData.successfulPlacements > 0 ? "95%" : "0%" // Placeholder logic for success rate
+            successRate: statsData.successfulPlacements > 0 ? "95%" : "0%"
           });
         }
+      } catch (error) {
+        console.error("Unexpected error with stats:", error);
+      }
+
+      try {
+        const jobsData = await jobService.getJobs({ limit: 4 }).catch(err => {
+          console.error("Error fetching jobs:", err);
+          return null;
+        });
 
         if (jobsData) {
             const items = jobsData.jobs || jobsData.Jobs || jobsData.items || jobsData.data || (Array.isArray(jobsData) ? jobsData : []);
-            setFeaturedJobs(items.slice(0, 4));
+            setFeaturedJobs(Array.isArray(items) ? items.slice(0, 4) : []);
         }
       } catch (error) {
-        console.error("Error fetching landing page data:", error);
+        console.error("Unexpected error with jobs:", error);
       } finally {
         setLoading(false);
       }

@@ -1,6 +1,6 @@
 using JobMagnet.Application.DTOs.Interview;
 using JobMagnet.Application.Interfaces;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;

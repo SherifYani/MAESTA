@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Profile;
+﻿using JobMagnet.Application.DTOs.Profile;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +48,7 @@ namespace JobMagnet.Application.Services
             if (settings == null)
             {
                 // Create default settings if not exists
-                settings = new Domain.Entities.UserSettings
+                settings = new Core.Entities.UserSettings
                 {
                     UserId = userId,
                     Language = "en",
@@ -81,7 +81,7 @@ namespace JobMagnet.Application.Services
             return MapSettings(settings);
         }
 
-        private static UserSettingsDto MapSettings(Domain.Entities.UserSettings s) => new()
+        private static UserSettingsDto MapSettings(Core.Entities.UserSettings s) => new()
         {
             Language = s.Language,
             TimeZone = s.TimeZone,
@@ -92,7 +92,7 @@ namespace JobMagnet.Application.Services
             Preferences = s.Preferences
         };
 
-        // ─── Private Helper ──────────────────────────────────────────────────
+        // â”€â”€â”€ Private Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private async Task<UserProfileDto> BuildProfileAsync(int userId)
         {
             var user = await _context.Users
@@ -107,7 +107,7 @@ namespace JobMagnet.Application.Services
             var employer = await _context.Employers.AsNoTracking()
                 .FirstOrDefaultAsync(e => e.UserId == userId && !e.IsDeleted);
 
-            Domain.Entities.Company? company = null;
+            Core.Entities.Company? company = null;
             if (employer != null)
                 company = await _context.Companies.AsNoTracking()
                     .FirstOrDefaultAsync(c => c.EmployerId == employer.EmployerId && !c.IsDeleted);

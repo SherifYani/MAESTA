@@ -1,4 +1,4 @@
-using JobMagnet.Domain.Entities;
+﻿using JobMagnet.Core.Entities;
 
 namespace JobMagnet.Core.Interfaces
 {

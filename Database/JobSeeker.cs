@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class JobSeeker
@@ -11,21 +11,21 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int JobSeekerId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط·ظ„ظˆط¨")]
         public int UserId { get; set; }
         
-        [StringLength(500, ErrorMessage = "رابط السيرة الذاتية يجب ألا يتجاوز 500 حرف")]
-        [Url(ErrorMessage = "صيغة رابط السيرة الذاتية غير صحيحة")]
+        [StringLength(500, ErrorMessage = "ط±ط§ط¨ط· ط§ظ„ط³ظٹط±ط© ط§ظ„ط°ط§طھظٹط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
+        [Url(ErrorMessage = "طµظٹط؛ط© ط±ط§ط¨ط· ط§ظ„ط³ظٹط±ط© ط§ظ„ط°ط§طھظٹط© ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? CVUrl { get; set; }
         
-        [Range(0, 50, ErrorMessage = "سنوات الخبرة يجب أن تكون بين 0 و 50")]
+        [Range(0, 50, ErrorMessage = "ط³ظ†ظˆط§طھ ط§ظ„ط®ط¨ط±ط© ظٹط¬ط¨ ط£ظ† طھظƒظˆظ† ط¨ظٹظ† 0 ظˆ 50")]
         public int? ExperienceYears { get; set; }
         
-        [StringLength(50, ErrorMessage = "نوع الوظيفة المفضل يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^(FullTime|PartTime|Contract|Freelance|Internship|Temporary)$", ErrorMessage = "نوع الوظيفة غير صالح")]
+        [StringLength(50, ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظˆط¸ظٹظپط© ط§ظ„ظ…ظپط¶ظ„ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(FullTime|PartTime|Contract|Freelance|Internship|Temporary)$", ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظˆط¸ظٹظپط© ط؛ظٹط± طµط§ظ„ط­")]
         public string? PreferredJobType { get; set; }
         
-        [StringLength(2000, MinimumLength = 10, ErrorMessage = "النبذة التعريفية يجب أن تكون بين 10 و 2000 حرف")]
+        [StringLength(2000, MinimumLength = 10, ErrorMessage = "ط§ظ„ظ†ط¨ط°ط© ط§ظ„طھط¹ط±ظٹظپظٹط© ظٹط¬ط¨ ط£ظ† طھظƒظˆظ† ط¨ظٹظ† 10 ظˆ 2000 ط­ط±ظپ")]
         public string? Bio { get; set; }
         
         public bool IsVerified { get; set; }

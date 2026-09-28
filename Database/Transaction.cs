@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Transaction
@@ -11,22 +11,22 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int TransactionId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط·ظ„ظˆط¨")]
         public int UserId { get; set; }
         
-        [Required(ErrorMessage = "نوع المعاملة مطلوب")]
-        [StringLength(50, ErrorMessage = "نوع المعاملة يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^(Deposit|Withdrawal|Payment|Refund|Commission|Bonus|Penalty|Transfer)$", ErrorMessage = "نوع المعاملة غير صالح")]
+        [Required(ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظ…ط¹ط§ظ…ظ„ط© ظ…ط·ظ„ظˆط¨")]
+        [StringLength(50, ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظ…ط¹ط§ظ…ظ„ط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Deposit|Withdrawal|Payment|Refund|Commission|Bonus|Penalty|Transfer)$", ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظ…ط¹ط§ظ…ظ„ط© ط؛ظٹط± طµط§ظ„ط­")]
         public string Type { get; set; }
         
-        [Required(ErrorMessage = "المبلغ مطلوب")]
+        [Required(ErrorMessage = "ط§ظ„ظ…ط¨ظ„ط؛ ظ…ط·ظ„ظˆط¨")]
         public decimal Amount { get; set; }
         
-        [StringLength(50, ErrorMessage = "الحالة يجب ألا تتجاوز 50 حرف")]
-        [RegularExpression(@"^(Pending|Completed|Failed|Cancelled|Reversed)$", ErrorMessage = "الحالة غير صالحة")]
+        [StringLength(50, ErrorMessage = "ط§ظ„ط­ط§ظ„ط© ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^(Pending|Completed|Failed|Cancelled|Reversed)$", ErrorMessage = "ط§ظ„ط­ط§ظ„ط© ط؛ظٹط± طµط§ظ„ط­ط©")]
         public string? Status { get; set; }
         
-        [StringLength(500, ErrorMessage = "الوصف يجب ألا يتجاوز 500 حرف")]
+        [StringLength(500, ErrorMessage = "ط§ظ„ظˆطµظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string? Description { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

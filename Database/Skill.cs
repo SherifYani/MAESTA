@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Skill
@@ -11,8 +11,8 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int SkillId { get; set; }
         
-        [Required(ErrorMessage = "اسم المهارة مطلوب")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "اسم المهارة يجب أن يكون بين 2 و 100 حرف")]
+        [Required(ErrorMessage = "ط§ط³ظ… ط§ظ„ظ…ظ‡ط§ط±ط© ظ…ط·ظ„ظˆط¨")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "ط§ط³ظ… ط§ظ„ظ…ظ‡ط§ط±ط© ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 2 ظˆ 100 ط­ط±ظپ")]
         public string Name { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

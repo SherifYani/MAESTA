@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.JobSeeker;
+﻿using JobMagnet.Application.DTOs.JobSeeker;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -63,13 +63,13 @@ namespace JobMagnet.Application.Services
             };
         }
 
-        // ─── Work Experience ──────────────────────────────────────────────────
+        // â”€â”€â”€ Work Experience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<WorkExperienceDto> AddWorkExperienceAsync(int userId, AddWorkExperienceRequest request)
         {
             var jobSeeker = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
             if (jobSeeker == null) throw new KeyNotFoundException("JobSeeker not found");
 
-            var exp = new Domain.Entities.UserWorkExperience
+            var exp = new Core.Entities.UserWorkExperience
             {
                 UserId = jobSeeker.UserId,
                 JobTitle = request.JobTitle,
@@ -127,7 +127,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        private static WorkExperienceDto MapWorkExperience(Domain.Entities.UserWorkExperience exp) => new()
+        private static WorkExperienceDto MapWorkExperience(Core.Entities.UserWorkExperience exp) => new()
         {
             WorkExperienceId = exp.WorkExperienceId,
             JobTitle = exp.JobTitle,
@@ -138,13 +138,13 @@ namespace JobMagnet.Application.Services
             Description = exp.Description
         };
 
-        // ─── Education ────────────────────────────────────────────────────────
+        // â”€â”€â”€ Education â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<EducationDto> AddEducationAsync(int userId, AddEducationRequest request)
         {
             var jobSeeker = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
             if (jobSeeker == null) throw new KeyNotFoundException("JobSeeker not found");
 
-            var edu = new Domain.Entities.UserEducation
+            var edu = new Core.Entities.UserEducation
             {
                 UserId = jobSeeker.UserId,
                 Degree = request.Degree,
@@ -201,7 +201,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        private static EducationDto MapEducation(Domain.Entities.UserEducation edu) => new()
+        private static EducationDto MapEducation(Core.Entities.UserEducation edu) => new()
         {
             EducationId = edu.EducationId,
             Degree = edu.Degree,
@@ -212,7 +212,7 @@ namespace JobMagnet.Application.Services
             IsCurrent = !edu.EndDate.HasValue
         };
 
-        // ─── Skills ───────────────────────────────────────────────────────────
+        // â”€â”€â”€ Skills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task UpdateSkillsAsync(int userId, UpdateSkillsRequest request)
         {
             var jobSeeker = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
@@ -235,7 +235,7 @@ namespace JobMagnet.Application.Services
                     var skill = await _context.Skills.FirstOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower());
                     if (skill == null)
                     {
-                        skill = new Domain.Entities.Skill
+                        skill = new Core.Entities.Skill
                         {
                             Name = skillName,
                             CreatedAt = DateTimeOffset.UtcNow,
@@ -263,12 +263,12 @@ namespace JobMagnet.Application.Services
             }
 
             // Add new skills
-            var newSkills = new List<Domain.Entities.UserSkill>();
+            var newSkills = new List<Core.Entities.UserSkill>();
             foreach (var skillId in requestedSkillIds)
             {
                 if (!existingSkillIds.Contains(skillId))
                 {
-                    newSkills.Add(new Domain.Entities.UserSkill
+                    newSkills.Add(new Core.Entities.UserSkill
                     {
                         UserId = jobSeeker.UserId,
                         SkillId = skillId,
@@ -298,13 +298,13 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        // ─── Portfolio ────────────────────────────────────────────────────────
+        // â”€â”€â”€ Portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<PortfolioDto> AddPortfolioItemAsync(int userId, AddPortfolioItemRequest request)
         {
             var freelancer = await _context.Freelancers.FirstOrDefaultAsync(f => f.UserId == userId && !f.IsDeleted);
             if (freelancer == null) throw new KeyNotFoundException("Freelancer profile not found for portfolio");
 
-            var item = new Domain.Entities.FreelancerPortfolio
+            var item = new Core.Entities.FreelancerPortfolio
             {
                 FreelancerId = freelancer.FreelancerId,
                 ProjectTitle = request.Title,
@@ -361,7 +361,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        private static PortfolioDto MapPortfolio(Domain.Entities.FreelancerPortfolio p) => new()
+        private static PortfolioDto MapPortfolio(Core.Entities.FreelancerPortfolio p) => new()
         {
             PortfolioId = p.PortfolioId,
             Title = p.ProjectTitle,

@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Payment;
+﻿using JobMagnet.Application.DTOs.Payment;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +52,7 @@ namespace JobMagnet.Application.Services
             var wallet = await GetOrCreateWalletAsync(userId);
 
             // Simulation of payment gateway integration
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = userId,
                 Amount = request.Amount,
@@ -88,7 +88,7 @@ namespace JobMagnet.Application.Services
 
             wallet.Balance -= request.Amount;
             
-            var withdrawal = new Domain.Entities.WithdrawalRequest
+            var withdrawal = new Core.Entities.WithdrawalRequest
             {
                 UserId = userId,
                 Amount = request.Amount,
@@ -97,7 +97,7 @@ namespace JobMagnet.Application.Services
                 RequestedAt = DateTimeOffset.UtcNow
             };
 
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = userId,
                 Amount = -request.Amount,
@@ -133,7 +133,7 @@ namespace JobMagnet.Application.Services
             wallet.Balance -= request.Amount;
             wallet.UpdatedAt = DateTimeOffset.UtcNow;
 
-            var escrow = new Domain.Entities.EscrowTransaction
+            var escrow = new Core.Entities.EscrowTransaction
             {
                 ProjectId = request.ProjectId,
                 FreelancerUserId = 0, // Will be set or linked via Project/Proposal
@@ -144,7 +144,7 @@ namespace JobMagnet.Application.Services
                 CreatedAt = DateTimeOffset.UtcNow
             };
 
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = clientId,
                 Amount = -request.Amount,
@@ -187,7 +187,7 @@ namespace JobMagnet.Application.Services
             freelancerWallet.Balance += escrow.Amount;
             freelancerWallet.UpdatedAt = DateTimeOffset.UtcNow;
 
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = escrow.FreelancerUserId,
                 Amount = escrow.Amount,
@@ -225,7 +225,7 @@ namespace JobMagnet.Application.Services
             clientWallet.Balance += escrow.Amount;
             clientWallet.UpdatedAt = DateTimeOffset.UtcNow;
 
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = clientId,
                 Amount = escrow.Amount,
@@ -282,7 +282,7 @@ namespace JobMagnet.Application.Services
             wallet.Balance -= price;
             wallet.UpdatedAt = DateTimeOffset.UtcNow;
 
-            var subscription = new Domain.Entities.Subscription
+            var subscription = new Core.Entities.Subscription
             {
                 UserId = userId,
                 PlanName = request.PlanName,
@@ -294,7 +294,7 @@ namespace JobMagnet.Application.Services
                 CreatedAt = DateTimeOffset.UtcNow
             };
 
-            var transaction = new Domain.Entities.Transaction
+            var transaction = new Core.Entities.Transaction
             {
                 UserId = userId,
                 Amount = -price,
@@ -317,12 +317,12 @@ namespace JobMagnet.Application.Services
             };
         }
 
-        private async Task<Domain.Entities.UserWallet> GetOrCreateWalletAsync(int userId)
+        private async Task<Core.Entities.UserWallet> GetOrCreateWalletAsync(int userId)
         {
             var wallet = await _context.UserWallets.FirstOrDefaultAsync(w => w.UserId == userId);
             if (wallet == null)
             {
-                wallet = new Domain.Entities.UserWallet { UserId = userId, Balance = 0, Currency = "USD" };
+                wallet = new Core.Entities.UserWallet { UserId = userId, Balance = 0, Currency = "USD" };
                 _context.UserWallets.Add(wallet);
                 await _context.SaveChangesAsync();
             }
@@ -339,7 +339,7 @@ namespace JobMagnet.Application.Services
         public async Task<object> AddPaymentMethodAsync(int userId, object request)
         {
             // Simulated parsing of request
-            var method = new Domain.Entities.PaymentMethod
+            var method = new Core.Entities.PaymentMethod
             {
                 UserId = userId,
                 Provider = "Visa",
@@ -371,7 +371,7 @@ namespace JobMagnet.Application.Services
 
         public async Task<object> AddBankAccountAsync(int userId, object request)
         {
-            var account = new Domain.Entities.BankAccount
+            var account = new Core.Entities.BankAccount
             {
                 UserId = userId,
                 BankName = "Example Bank",

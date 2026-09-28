@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class SupportTicket
@@ -14,7 +14,7 @@ namespace JobMagnet.Domain.Entities
         [Required]
         public int CreatedByUserId { get; set; }
         
-        [Required(ErrorMessage = "عنوان التذكرة مطلوب")]
+        [Required(ErrorMessage = "ط¹ظ†ظˆط§ظ† ط§ظ„طھط°ظƒط±ط© ظ…ط·ظ„ظˆط¨")]
         [StringLength(200, MinimumLength = 5)]
         public string Subject { get; set; }
         

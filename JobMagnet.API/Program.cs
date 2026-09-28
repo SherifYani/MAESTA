@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Minio;
 using System.Text;
+using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using JobMagnet.API.Hubs;
 using JobMagnet.API.Middleware;
@@ -24,18 +25,9 @@ builder.Services.AddDbContext<JobMagnetDbContext>(options =>
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddScoped<IEmailService, JobMagnet.Application.Services.SmtpEmailService>();
 
-// ─── MinIO (File Storage) ─────────────────────────────────────────────────────
-builder.Services.Configure<MinioOptions>(builder.Configuration.GetSection("Minio"));
-var minioOptions = builder.Configuration.GetSection("Minio").Get<MinioOptions>();
-if (minioOptions is not null)
-{
-    builder.Services.AddMinio(configureClient => configureClient
-        .WithEndpoint(minioOptions.Endpoint)
-        .WithCredentials(minioOptions.AccessKey, minioOptions.SecretKey)
-        .WithSSL(minioOptions.UseSSL)
-        .Build());
-    builder.Services.AddScoped<IStorageService, MinioStorageService>();
-}
+// ─── Local Storage ─────────────────────────────────────────────────────────────
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IStorageService, JobMagnet.API.Services.LocalStorageService>();
 
 // ─── JWT Options ─────────────────────────────────────────────────────────────
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
@@ -158,6 +150,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ─── Pipeline ─────────────────────────────────────────────────────────────────
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -167,6 +161,19 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; // Swagger على الـ root URL
     });
 }
+
+// ─── Serve Secret Folder ──────────────────────────────────────────────────────
+var secretPath = Path.Combine(app.Environment.ContentRootPath, "secret");
+if (!Directory.Exists(secretPath))
+{
+    Directory.CreateDirectory(secretPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(secretPath),
+    RequestPath = "/secret"
+});
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");

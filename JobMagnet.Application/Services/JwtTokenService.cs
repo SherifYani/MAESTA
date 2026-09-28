@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
 using JobMagnet.Core.Interfaces;
 using JobMagnet.Application.Settings;
 using Microsoft.Extensions.Options;

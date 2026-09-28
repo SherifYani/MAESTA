@@ -1,4 +1,4 @@
-using JobMagnet.Domain.Entities;
+﻿using JobMagnet.Core.Entities;
 using JobMagnet.Application.DTOs.Chat;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
@@ -88,7 +88,7 @@ namespace JobMagnet.Application.Services
 
             if (chat == null)
             {
-                chat = new Domain.Entities.Chat
+                chat = new Core.Entities.Chat
                 {
                     User1Id = senderId,
                     User2Id = request.ReceiverId,
@@ -99,7 +99,7 @@ namespace JobMagnet.Application.Services
                 await _context.SaveChangesAsync();
             }
 
-            var message = new Domain.Entities.Message
+            var message = new Core.Entities.Message
             {
                 ChatId = chat.ChatId,
                 SenderId = senderId,
@@ -259,7 +259,7 @@ namespace JobMagnet.Application.Services
             return blocked;
         }
 
-        private static ChatMessageDto MapMessage(Domain.Entities.Message m, string? senderName, string? receiverName, int receiverId) => new()
+        private static ChatMessageDto MapMessage(Core.Entities.Message m, string? senderName, string? receiverName, int receiverId) => new()
         {
             MessageId = m.MessageId,
             ChatId = m.ChatId,

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Client
@@ -11,21 +11,21 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int ClientId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط·ظ„ظˆط¨")]
         public int UserId { get; set; }
         
-        [StringLength(200, ErrorMessage = "الاسم القانوني يجب ألا يتجاوز 200 حرف")]
+        [StringLength(200, ErrorMessage = "ط§ظ„ط§ط³ظ… ط§ظ„ظ‚ط§ظ†ظˆظ†ظٹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 200 ط­ط±ظپ")]
         public string? LegalName { get; set; }
         
-        [StringLength(20, ErrorMessage = "رقم الهاتف يجب ألا يتجاوز 20 حرف")]
-        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+        [StringLength(20, ErrorMessage = "ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 20 ط­ط±ظپ")]
+        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "طµظٹط؛ط© ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? ContactPhone { get; set; }
         
-        [StringLength(500, ErrorMessage = "العنوان يجب ألا يتجاوز 500 حرف")]
+        [StringLength(500, ErrorMessage = "ط§ظ„ط¹ظ†ظˆط§ظ† ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string? Address { get; set; }
         
-        [StringLength(500, ErrorMessage = "رابط وثيقة الهوية يجب ألا يتجاوز 500 حرف")]
-        [Url(ErrorMessage = "صيغة رابط وثيقة الهوية غير صحيحة")]
+        [StringLength(500, ErrorMessage = "ط±ط§ط¨ط· ظˆط«ظٹظ‚ط© ط§ظ„ظ‡ظˆظٹط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
+        [Url(ErrorMessage = "طµظٹط؛ط© ط±ط§ط¨ط· ظˆط«ظٹظ‚ط© ط§ظ„ظ‡ظˆظٹط© ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? IdentityDocumentUrl { get; set; }
         
         public bool IsVerified { get; set; }

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Category
@@ -11,11 +11,11 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int CategoryId { get; set; }
         
-        [Required(ErrorMessage = "اسم التصنيف مطلوب")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "اسم التصنيف يجب أن يكون بين 2 و 100 حرف")]
+        [Required(ErrorMessage = "ط§ط³ظ… ط§ظ„طھطµظ†ظٹظپ ظ…ط·ظ„ظˆط¨")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "ط§ط³ظ… ط§ظ„طھطµظ†ظٹظپ ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 2 ظˆ 100 ط­ط±ظپ")]
         public string Name { get; set; }
         
-        [StringLength(500, ErrorMessage = "الوصف يجب ألا يتجاوز 500 حرف")]
+        [StringLength(500, ErrorMessage = "ط§ظ„ظˆطµظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string? Description { get; set; }
         
         public DateTimeOffset CreatedAt { get; set; }

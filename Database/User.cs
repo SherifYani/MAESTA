@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class User
@@ -11,36 +11,36 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int UserId { get; set; }
         
-        [Required(ErrorMessage = "البريد الإلكتروني مطلوب")]
-        [EmailAddress(ErrorMessage = "صيغة البريد الإلكتروني غير صحيحة")]
-        [StringLength(100, ErrorMessage = "البريد الإلكتروني يجب ألا يتجاوز 100 حرف")]
+        [Required(ErrorMessage = "ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظ…ط·ظ„ظˆط¨")]
+        [EmailAddress(ErrorMessage = "طµظٹط؛ط© ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط؛ظٹط± طµط­ظٹط­ط©")]
+        [StringLength(100, ErrorMessage = "ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 100 ط­ط±ظپ")]
         public string Email { get; set; }
         
-        [Required(ErrorMessage = "كلمة المرور مطلوبة")]
-        [StringLength(500, ErrorMessage = "كلمة المرور المشفرة يجب ألا تتجاوز 500 حرف")]
+        [Required(ErrorMessage = "ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ظ…ط·ظ„ظˆط¨ط©")]
+        [StringLength(500, ErrorMessage = "ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ظ…ط´ظپط±ط© ظٹط¬ط¨ ط£ظ„ط§ طھطھط¬ط§ظˆط² 500 ط­ط±ظپ")]
         public string PasswordHash { get; set; }
         
-        [StringLength(20, ErrorMessage = "رقم الهاتف يجب ألا يتجاوز 20 حرف")]
-        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+        [StringLength(20, ErrorMessage = "ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 20 ط­ط±ظپ")]
+        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "طµظٹط؛ط© ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? Phone { get; set; }
         
         public bool IsPhoneVerified { get; set; }
         
         public bool IsEmailVerified { get; set; }
         
-        [Range(0, 10, ErrorMessage = "عدد محاولات تسجيل الدخول الفاشلة يجب أن يكون بين 0 و 10")]
+        [Range(0, 10, ErrorMessage = "ط¹ط¯ط¯ ظ…ط­ط§ظˆظ„ط§طھ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط§ظ„ظپط§ط´ظ„ط© ظٹط¬ط¨ ط£ظ† ظٹظƒظˆظ† ط¨ظٹظ† 0 ظˆ 10")]
         public int FailedLoginAttempts { get; set; }
         
         public DateTimeOffset? LockoutEndDate { get; set; }
         
         public bool TwoFactorEnabled { get; set; }
         
-        [StringLength(200, ErrorMessage = "مفتاح التحقق الثنائي يجب ألا يتجاوز 200 حرف")]
+        [StringLength(200, ErrorMessage = "ظ…ظپطھط§ط­ ط§ظ„طھط­ظ‚ظ‚ ط§ظ„ط«ظ†ط§ط¦ظٹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 200 ط­ط±ظپ")]
         public string? TwoFactorSecretKey { get; set; }
         
-        [StringLength(30, ErrorMessage = "نوع المستخدم يجب ألا يتجاوز 30 حرف")]
-        [RegularExpression(@"^(Admin|Freelancer|Employer|JobSeeker|Client)?$", ErrorMessage = "نوع المستخدم غير صالح")]
-        public string? UserType { get; set; } // nullable - استخدم IsFreelancer, IsJobSeeker, etc بدلاً منه
+        [StringLength(30, ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظ…ط³طھط®ط¯ظ… ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 30 ط­ط±ظپ")]
+        [RegularExpression(@"^(Admin|Freelancer|Employer|JobSeeker|Client)?$", ErrorMessage = "ظ†ظˆط¹ ط§ظ„ظ…ط³طھط®ط¯ظ… ط؛ظٹط± طµط§ظ„ط­")]
+        public string? UserType { get; set; } // nullable - ط§ط³طھط®ط¯ظ… IsFreelancer, IsJobSeeker, etc ط¨ط¯ظ„ط§ظ‹ ظ…ظ†ظ‡
         
         public DateTimeOffset? LastLoginAt { get; set; }
         
@@ -53,8 +53,8 @@ namespace JobMagnet.Domain.Entities
         public DateTimeOffset CreatedAt { get; set; }
         
         // ===== COMPUTED COLUMNS: Multi-Role Support =====
-        // هذه الحقول محسوبة تلقائياً من قاعدة البيانات
-        // تسمح للمستخدم بأن يكون له عدة أدوار في نفس الوقت
+        // ظ‡ط°ظ‡ ط§ظ„ط­ظ‚ظˆظ„ ظ…ط­ط³ظˆط¨ط© طھظ„ظ‚ط§ط¦ظٹط§ظ‹ ظ…ظ† ظ‚ط§ط¹ط¯ط© ط§ظ„ط¨ظٹط§ظ†ط§طھ
+        // طھط³ظ…ط­ ظ„ظ„ظ…ط³طھط®ط¯ظ… ط¨ط£ظ† ظٹظƒظˆظ† ظ„ظ‡ ط¹ط¯ط© ط£ط¯ظˆط§ط± ظپظٹ ظ†ظپط³ ط§ظ„ظˆظ‚طھ
         
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public bool IsFreelancer { get; private set; }

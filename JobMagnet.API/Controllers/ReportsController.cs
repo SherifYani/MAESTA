@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using JobMagnet.Infrastructure.Data;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Core.Entities;
 using System.Security.Claims;
 
 namespace JobMagnet.API.Controllers

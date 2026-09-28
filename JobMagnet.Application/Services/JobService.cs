@@ -16,7 +16,7 @@ namespace JobMagnet.Application.Services
             _platformSettingsService = platformSettingsService;
         }
 
-        // ─── Jobs ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€ Jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<PagedJobsResponse> GetJobsAsync(JobSearchRequest request)
         {
             var query = _context.Jobs.AsNoTracking().Where(j => !j.IsDeleted && j.IsActive);
@@ -83,7 +83,7 @@ namespace JobMagnet.Application.Services
             var employer = await _context.Employers.FirstOrDefaultAsync(e => e.UserId == employerUserId && !e.IsDeleted);
             if (employer == null) throw new UnauthorizedAccessException("Not an employer");
 
-            var job = new Domain.Entities.Job
+            var job = new Core.Entities.Job
             {
                 PostedByUserId = employer.UserId, // Using the UserId as PostedByUserId
                 Title = request.Title,
@@ -167,7 +167,7 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        // ─── Applications ─────────────────────────────────────────────────────
+        // â”€â”€â”€ Applications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<JobApplicationDto> ApplyAsync(int userId, int jobId, ApplyToJobRequest request)
         {
             var jobSeeker = await _context.JobSeekers.FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
@@ -181,7 +181,7 @@ namespace JobMagnet.Application.Services
                 .FirstOrDefaultAsync(a => a.JobId == jobId && a.JobSeekerId == jobSeeker.JobSeekerId && !a.IsDeleted);
             if (existingApp != null) throw new InvalidOperationException("Already applied to this job");
 
-            var app = new Domain.Entities.JobApplication
+            var app = new Core.Entities.JobApplication
             {
                 JobId = jobId,
                 JobSeekerId = jobSeeker.JobSeekerId,
@@ -200,11 +200,19 @@ namespace JobMagnet.Application.Services
 
         public async Task<IEnumerable<JobApplicationDto>> GetMyApplicationsAsync(int userId)
         {
+            // JobSeekerId != UserId — look up the JobSeeker record first
+            var jobSeeker = await _context.JobSeekers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
+
+            if (jobSeeker == null) return Enumerable.Empty<JobApplicationDto>();
+
             return await _context.JobApplications
                 .AsNoTracking()
                 .Include(a => a.Job)
                 .Include(a => a.JobSeeker)
-                .Where(a => a.JobSeekerId == userId && !a.IsDeleted)
+                    .ThenInclude(js => js!.User)
+                .Where(a => a.JobSeekerId == jobSeeker.JobSeekerId && !a.IsDeleted)
                 .Select(a => MapApplication(a, a.Job != null ? a.Job.Title : "", a.JobSeeker != null && a.JobSeeker.User != null ? $"{a.JobSeeker.User.FirstName} {a.JobSeeker.User.LastName}".Trim() : ""))
                 .ToListAsync();
         }
@@ -260,8 +268,14 @@ namespace JobMagnet.Application.Services
 
         public async Task WithdrawApplicationAsync(int userId, int applicationId)
         {
+            // JobSeekerId != UserId — look up the JobSeeker record first
+            var jobSeeker = await _context.JobSeekers
+                .FirstOrDefaultAsync(js => js.UserId == userId && !js.IsDeleted);
+
+            if (jobSeeker == null) throw new KeyNotFoundException("Application not found or unauthorized");
+
             var app = await _context.JobApplications
-                .FirstOrDefaultAsync(a => a.JobApplicationId == applicationId && a.JobSeekerId == userId && !a.IsDeleted);
+                .FirstOrDefaultAsync(a => a.JobApplicationId == applicationId && a.JobSeekerId == jobSeeker.JobSeekerId && !a.IsDeleted);
             
             if (app == null) throw new KeyNotFoundException("Application not found or unauthorized");
 
@@ -269,7 +283,7 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        // ─── Saved Jobs ───────────────────────────────────────────────────────
+        // â”€â”€â”€ Saved Jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task SaveJobAsync(int userId, int jobId)
         {
             var job = await _context.Jobs.FindAsync(jobId);
@@ -281,7 +295,7 @@ namespace JobMagnet.Application.Services
             var existing = await _context.SavedJobs.FirstOrDefaultAsync(s => s.UserId == userId && s.JobId == jobId);
             if (existing != null) return; // already saved
 
-            _context.SavedJobs.Add(new Domain.Entities.SavedJob
+            _context.SavedJobs.Add(new Core.Entities.SavedJob
             {
                 UserId = userId,
                 JobId = jobId,
@@ -350,8 +364,8 @@ namespace JobMagnet.Application.Services
             return recommendations;
         }
 
-        // ─── Private Mappers ──────────────────────────────────────────────────
-        private static JobDto MapJob(Domain.Entities.Job job, string? companyName, double? matchScore) => new()
+        // â”€â”€â”€ Private Mappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        private static JobDto MapJob(Core.Entities.Job job, string? companyName, double? matchScore) => new()
         {
             JobId = job.JobId,
             Title = job.Title,
@@ -369,7 +383,7 @@ namespace JobMagnet.Application.Services
             MatchScore = matchScore
         };
 
-        private static JobApplicationDto MapApplication(Domain.Entities.JobApplication app, string jobTitle, string applicantName) => new()
+        private static JobApplicationDto MapApplication(Core.Entities.JobApplication app, string jobTitle, string applicantName) => new()
         {
             ApplicationId = app.JobApplicationId,
             JobId = app.JobId,

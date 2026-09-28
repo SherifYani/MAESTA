@@ -1,4 +1,4 @@
-using JobMagnet.Application.DTOs.Gig;
+﻿using JobMagnet.Application.DTOs.Gig;
 using JobMagnet.Application.Interfaces;
 using JobMagnet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace JobMagnet.Application.Services
             _context = context;
         }
 
-        // ─── Gigs / Projects ──────────────────────────────────────────────────
+        // â”€â”€â”€ Gigs / Projects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<IEnumerable<GigDto>> GetGigsAsync(int page = 1, int limit = 20)
         {
             return await _context.Projects
@@ -39,7 +39,7 @@ namespace JobMagnet.Application.Services
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.UserId == clientId && !c.IsDeleted);
             if (client == null) throw new UnauthorizedAccessException("Only clients can post gigs");
 
-            var project = new Domain.Entities.Project
+            var project = new Core.Entities.Project
             {
                 OwnerUserId = client.ClientId,
                 Title = request.Title,
@@ -95,7 +95,7 @@ namespace JobMagnet.Application.Services
                 .ToListAsync();
         }
 
-        // ─── Proposals ────────────────────────────────────────────────────────
+        // â”€â”€â”€ Proposals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<ProposalDto> SubmitProposalAsync(int freelancerId, int projectId, SubmitProposalRequest request)
         {
             var f = await _context.Freelancers.FirstOrDefaultAsync(x => x.UserId == freelancerId && !x.IsDeleted);
@@ -107,7 +107,7 @@ namespace JobMagnet.Application.Services
             var existing = await _context.Proposals.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.FreelancerUserId == f.FreelancerId && !x.IsDeleted);
             if (existing != null) throw new InvalidOperationException("Already submitted a proposal");
 
-            var proposal = new Domain.Entities.Proposal
+            var proposal = new Core.Entities.Proposal
             {
                 ProjectId = projectId,
                 FreelancerUserId = f.FreelancerId,
@@ -182,8 +182,8 @@ namespace JobMagnet.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        // ─── Private Mappers ──────────────────────────────────────────────────
-        private static GigDto MapGig(Domain.Entities.Project p) => new()
+        // â”€â”€â”€ Private Mappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        private static GigDto MapGig(Core.Entities.Project p) => new()
         {
             ProjectId = p.ProjectId,
             Title = p.Title,
@@ -193,7 +193,7 @@ namespace JobMagnet.Application.Services
             CreatedAt = p.CreatedAt
         };
 
-        private static ProposalDto MapProposal(Domain.Entities.Proposal p, string freelancerName) => new()
+        private static ProposalDto MapProposal(Core.Entities.Proposal p, string freelancerName) => new()
         {
             ProposalId = p.ProposalId,
             ProjectId = p.ProjectId,

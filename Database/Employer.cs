@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobMagnet.Domain.Entities
+namespace JobMagnet.Core.Entities
 {
 
     public class Employer
@@ -11,28 +11,28 @@ namespace JobMagnet.Domain.Entities
         [Key]
         public int EmployerId { get; set; }
         
-        [Required(ErrorMessage = "معرف المستخدم مطلوب")]
+        [Required(ErrorMessage = "ظ…ط¹ط±ظپ ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط·ظ„ظˆط¨")]
         public int UserId { get; set; }
         
-        [StringLength(100, ErrorMessage = "البريد الإلكتروني للشركة يجب ألا يتجاوز 100 حرف")]
-        [EmailAddress(ErrorMessage = "صيغة البريد الإلكتروني غير صحيحة")]
+        [StringLength(100, ErrorMessage = "ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظ„ظ„ط´ط±ظƒط© ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 100 ط­ط±ظپ")]
+        [EmailAddress(ErrorMessage = "طµظٹط؛ط© ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? BusinessEmail { get; set; }
         
         public bool IsVerified { get; set; }
         
-        [StringLength(50, ErrorMessage = "الرقم القومي يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^[0-9A-Za-z\-]+$", ErrorMessage = "الرقم القومي يجب أن يحتوي على أرقام وحروف فقط")]
+        [StringLength(50, ErrorMessage = "ط§ظ„ط±ظ‚ظ… ط§ظ„ظ‚ظˆظ…ظٹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^[0-9A-Za-z\-]+$", ErrorMessage = "ط§ظ„ط±ظ‚ظ… ط§ظ„ظ‚ظˆظ…ظٹ ظٹط¬ط¨ ط£ظ† ظٹط­طھظˆظٹ ط¹ظ„ظ‰ ط£ط±ظ‚ط§ظ… ظˆط­ط±ظˆظپ ظپظ‚ط·")]
         public string? NationalId { get; set; }
         
-        [StringLength(50, ErrorMessage = "الرقم الضريبي يجب ألا يتجاوز 50 حرف")]
-        [RegularExpression(@"^[0-9A-Za-z\-]+$", ErrorMessage = "الرقم الضريبي يجب أن يحتوي على أرقام وحروف فقط")]
+        [StringLength(50, ErrorMessage = "ط§ظ„ط±ظ‚ظ… ط§ظ„ط¶ط±ظٹط¨ظٹ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 50 ط­ط±ظپ")]
+        [RegularExpression(@"^[0-9A-Za-z\-]+$", ErrorMessage = "ط§ظ„ط±ظ‚ظ… ط§ظ„ط¶ط±ظٹط¨ظٹ ظٹط¬ط¨ ط£ظ† ظٹط­طھظˆظٹ ط¹ظ„ظ‰ ط£ط±ظ‚ط§ظ… ظˆط­ط±ظˆظپ ظپظ‚ط·")]
         public string? TaxNumber { get; set; }
         
-        [StringLength(100, ErrorMessage = "اسم جهة الاتصال يجب ألا يتجاوز 100 حرف")]
+        [StringLength(100, ErrorMessage = "ط§ط³ظ… ط¬ظ‡ط© ط§ظ„ط§طھطµط§ظ„ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 100 ط­ط±ظپ")]
         public string? ContactPerson { get; set; }
         
-        [StringLength(20, ErrorMessage = "رقم الهاتف يجب ألا يتجاوز 20 حرف")]
-        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+        [StringLength(20, ErrorMessage = "ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ظٹط¬ط¨ ط£ظ„ط§ ظٹطھط¬ط§ظˆط² 20 ط­ط±ظپ")]
+        [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "طµظٹط؛ط© ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ ط؛ظٹط± طµط­ظٹط­ط©")]
         public string? ContactPhone { get; set; }
         
         public DateTimeOffset? VerificationRequestedAt { get; set; }

@@ -3,7 +3,7 @@ echo Starting JobMagnet Development Environment...
 
 echo.
 echo Starting Backend (ASP.NET Core)...
-cd Backend
+cd JobMagnet.API
 start "Backend" cmd /k "dotnet run"
 
 echo.
