@@ -2,12 +2,10 @@
  * @file authService.js
  * @description Authentication services — all routes verified against the real
  *              JobMagnet.API AuthController (api/auth/*).
+ *              Falls back to mock data when the backend is unavailable.
  * @author Sherif Talaat
- * @version 3.1.0
+ * @version 3.2.0
  * @date 2026-04-29
- *
- * @last-modified-by Antigravity (AI) — verified against AuthController.cs
- * @last-modified-date 2026-04-29
  *
  * REAL ROUTES (AuthController [Route("api/[controller]")]):
  *   POST   api/auth/register/step1      ← [AllowAnonymous]
@@ -30,8 +28,30 @@
  */
 
 import ApiService from './ApiService';
+import {
+    isNetworkError,
+    MOCK_USER,
+    MOCK_TOKEN_RESPONSE,
+    findMockUser,
+    createMockTokenResponse,
+} from './mockData';
 
 const authService = {
+
+    /**
+     * Dedicated direct Mock Login helper — immediately prepares user and session.
+     * @param {string} roleOrEmail - e.g. 'jobSeeker', 'employer', 'freelancer', 'admin', 'client', or any email
+     */
+    mockLogin: (roleOrEmail = 'jobSeeker') => {
+        const mockUser = findMockUser(roleOrEmail);
+        const response = createMockTokenResponse(mockUser);
+        try {
+            localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+        } catch (e) {
+            console.error('[authService] Failed to store mock user session', e);
+        }
+        return response;
+    },
 
     /**
      * Register Step 1 — basic info (email, password, name…).
@@ -39,8 +59,20 @@ const authService = {
      * @param {Object} userData - { name, email, password, ... }
      */
     register: async (userData) => {
-        const response = await ApiService.post('/api/auth/register/step1', userData);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/register/step1', userData);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] register — mock fallback');
+                const mockUser = findMockUser(userData?.email || 'jobseeker');
+                try {
+                    localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+                } catch {}
+                return createMockTokenResponse(mockUser);
+            }
+            throw error;
+        }
     },
 
     /**
@@ -49,8 +81,21 @@ const authService = {
      * @param {Object} roleData - { userType, ... role-specific fields }
      */
     registerStep2: async (roleData) => {
-        const response = await ApiService.post('/api/auth/register/step2', roleData);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/register/step2', roleData);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] registerStep2 — mock fallback');
+                const role = roleData?.userType || 'jobseeker';
+                const mockUser = findMockUser(role);
+                try {
+                    localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+                } catch {}
+                return createMockTokenResponse(mockUser);
+            }
+            throw error;
+        }
     },
 
     /**
@@ -59,8 +104,23 @@ const authService = {
      * @param {Object} credentials - { email, password }
      */
     login: async (credentials) => {
-        const response = await ApiService.post('/api/auth/login', credentials);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/login', credentials);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] login — mock fallback');
+                const mockUser = findMockUser(credentials?.email || credentials?.role);
+                const mockAuthResponse = createMockTokenResponse(mockUser);
+                try {
+                    localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+                } catch (e) {
+                    console.error('[authService] Failed to save mock session', e);
+                }
+                return mockAuthResponse;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -68,8 +128,16 @@ const authService = {
      * @param {string} email
      */
     forgotPassword: async (email) => {
-        const response = await ApiService.post('/api/auth/forgot-password', { email });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/forgot-password', { email });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] forgotPassword — mock fallback');
+                return { message: 'Reset email sent (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -79,8 +147,16 @@ const authService = {
      * @param {string} newPassword
      */
     resetPassword: async (token, newPassword) => {
-        const response = await ApiService.post('/api/auth/reset-password', { token, newPassword });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/reset-password', { token, newPassword });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] resetPassword — mock fallback');
+                return { message: 'Password reset successful (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -90,16 +166,32 @@ const authService = {
      * @param {string} code  - OTP code from the verification email
      */
     verifyEmail: async (email, code) => {
-        const response = await ApiService.post('/api/auth/verify-email', { email, code });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/verify-email', { email, code });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] verifyEmail — mock fallback');
+                return { message: 'Email verified (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
      * Resend the verification code email.
      */
     resendVerification: async (email) => {
-        const response = await ApiService.post('/api/auth/resend-verification', { email });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/resend-verification', { email });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] resendVerification — mock fallback');
+                return { message: 'Verification email resent (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -108,10 +200,30 @@ const authService = {
      * @param {string} token - Google ID token
      */
     loginWithGoogle: async (token) => {
-        const response = await ApiService.post('/api/auth/login-google', JSON.stringify(token), {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/login-google', JSON.stringify(token), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] loginWithGoogle — mock fallback');
+                const mockUser = {
+                    ...findMockUser('jobseeker'),
+                    id: 'mock-google-user',
+                    userId: 'mock-google-user',
+                    firstName: 'Google',
+                    lastName: 'User',
+                    name: 'Google User',
+                    email: 'google.demo@example.com',
+                };
+                try {
+                    localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+                } catch {}
+                return createMockTokenResponse(mockUser);
+            }
+            throw error;
+        }
     },
 
     /**
@@ -119,10 +231,30 @@ const authService = {
      * @param {string} token - LinkedIn access token
      */
     loginWithLinkedIn: async (token) => {
-        const response = await ApiService.post('/api/auth/login-linkedin', JSON.stringify(token), {
-            headers: { 'Content-Type': 'application/json' }
-        });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/login-linkedin', JSON.stringify(token), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] loginWithLinkedIn — mock fallback');
+                const mockUser = {
+                    ...findMockUser('jobseeker'),
+                    id: 'mock-linkedin-user',
+                    userId: 'mock-linkedin-user',
+                    firstName: 'LinkedIn',
+                    lastName: 'Professional',
+                    name: 'LinkedIn Professional',
+                    email: 'linkedin.demo@example.com',
+                };
+                try {
+                    localStorage.setItem('maesta_mock_user', JSON.stringify(mockUser));
+                } catch {}
+                return createMockTokenResponse(mockUser);
+            }
+            throw error;
+        }
     },
 
     /**
@@ -135,6 +267,10 @@ const authService = {
             await ApiService.post('/api/auth/logout', { refreshToken });
         } catch {
             // Swallow network errors — client-side token cleanup still happens in AuthContext
+        } finally {
+            try {
+                localStorage.removeItem('maesta_mock_user');
+            } catch {}
         }
     },
 
@@ -142,8 +278,19 @@ const authService = {
      * Logout from ALL devices — revokes all refresh tokens.
      */
     logoutAll: async () => {
-        const response = await ApiService.post('/api/auth/logout-all');
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/logout-all');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] logoutAll — mock fallback');
+                try {
+                    localStorage.removeItem('maesta_mock_user');
+                } catch {}
+                return { message: 'Logged out from all devices (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -152,8 +299,24 @@ const authService = {
      * @returns {{ id, name, email, role, ... }}
      */
     getCurrentUser: async () => {
-        const response = await ApiService.get('/api/auth/me');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/auth/me');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] getCurrentUser — mock fallback');
+                try {
+                    const savedMock = localStorage.getItem('maesta_mock_user');
+                    if (savedMock) {
+                        return JSON.parse(savedMock);
+                    }
+                } catch (e) {
+                    console.warn('[authService] Error parsing maesta_mock_user', e);
+                }
+                return MOCK_USER;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -162,8 +325,16 @@ const authService = {
      * @param {string} refreshToken
      */
     refreshToken: async (refreshToken) => {
-        const response = await ApiService.post('/api/auth/refresh-token', { refreshToken });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/refresh-token', { refreshToken });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] refreshToken — mock fallback');
+                return MOCK_TOKEN_RESPONSE;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -173,24 +344,48 @@ const authService = {
      * @param {string} newPassword
      */
     changePassword: async (currentPassword, newPassword) => {
-        const response = await ApiService.put('/api/profile/change-password', { currentPassword, newPassword });
-        return response.data;
+        try {
+            const response = await ApiService.put('/api/profile/change-password', { currentPassword, newPassword });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] changePassword — mock fallback');
+                return { message: 'Password changed (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
      * Enable Two-Factor Authentication.
      */
     enable2FA: async () => {
-        const response = await ApiService.post('/api/auth/enable-2fa');
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/enable-2fa');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] enable2FA — mock fallback');
+                return { message: '2FA enabled (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
      * Disable Two-Factor Authentication.
      */
     disable2FA: async () => {
-        const response = await ApiService.post('/api/auth/disable-2fa');
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/disable-2fa');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] disable2FA — mock fallback');
+                return { message: '2FA disabled (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -200,8 +395,16 @@ const authService = {
      * @param {string} code
      */
     verify2FA: async (email, code) => {
-        const response = await ApiService.post('/api/auth/verify-2fa', { email, code });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/auth/verify-2fa', { email, code });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[authService] verify2FA — mock fallback');
+                return MOCK_TOKEN_RESPONSE;
+            }
+            throw error;
+        }
     },
 };
 

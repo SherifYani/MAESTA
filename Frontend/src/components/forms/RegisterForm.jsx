@@ -1,61 +1,42 @@
 /**
  * @file RegisterForm.jsx
- * @description Registration form component with role selection, validation, and social login
+ * @description Centered Hero Redesign — Registration form component (Phase 1)
+ *              Streamlined fields, role switcher toggle, responsive inputs, and mock fallback.
  * @author Sherif Talaat
- * @version 3.0.0
- * @date 10-10-2025
- *
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-04-29
- * @fix Wired handleSubmit to real API Step 1: authService.register(RegisterStep1Request).
- *      Navigates to /verify with email in router state. Shows API errors inline.
+ * @version 4.0.0
+ * @date 2026-09-28
  */
 
-import { useState, useCallback } from "react";
-import RoleCard from "./RoleCard";
+import React, { useState, useCallback, useMemo } from "react";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
 import DateInput from "./dateInput";
 import "../../styles/pages/register-form.css";
 import "../../styles/components/form-components.css";
 import { useNavigate, Link } from "react-router-dom";
-import { validatePhoneNumber, validateURL } from "../../utils/form-validation";
+import { validatePhoneNumber } from "../../utils/form-validation";
 import { useAuth } from "../../context/AuthContext";
+import { Sparkles, Briefcase, Building2, Check, X, ShieldAlert } from "lucide-react";
+
 /**
  * RegisterForm Component
- * @description Renders the complete registration form with role selection and validation
- * @returns {JSX.Element} The rendered registration form component
+ * @description Streamlined registration form with role selection and validation
  */
-function RegisterForm() {
+export default function RegisterForm() {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, mockLogin } = useAuth();
   const [apiError, setApiError] = useState("");
 
   const [selectedRole, setSelectedRole] = useState("jobseeker");
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
-    firstName: "",
-    lastName: "",
     phone: "",
-    profilePictureUrl: "",
-    linkedInUrl: "",
     gender: "",
     dateOfBirth: "",
-    country: "",
-    city: "",
-  });
-
-  const [employerData] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
   });
 
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -63,224 +44,111 @@ function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Validation states
+  // Validation error states
   const [formErrors, setFormErrors] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
-    firstName: "",
-    lastName: "",
     phone: "",
-    profilePictureUrl: "",
-    linkedInUrl: "",
     gender: "",
     dateOfBirth: "",
-    country: "",
-    city: "",
-  });
-
-  const [employerErrors, setEmployerErrors] = useState({
-    companyName: "",
-    description: "",
-    industry: "",
-    companySize: "",
-    foundedYear: "",
-    website: "",
-    commercialRegistrationNumber: "",
-    logoUrl: "",
-  });
-
-  const [passwordValidation, setPasswordValidation] = useState({
-    minLength: false,
-    hasUppercase: false,
-    hasLowercase: false,
-    hasNumber: false,
-    hasSymbol: false,
   });
 
   /**
    * Validates password strength requirements
-   * @param {string} password - The password to validate
-   * @returns {Object} Validation results for each requirement
    */
-  const validatePassword = useCallback((password) => {
+  const passwordValidation = useMemo(() => {
+    const p = formData.password || "";
     return {
-      minLength: password.length >= 8, // GUIDE: MinLength(8)
-      hasUppercase: /[A-Z]/.test(password),
-      hasLowercase: /[a-z]/.test(password),
-      hasNumber: /\d/.test(password),
-      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      minLength: p.length >= 8,
+      hasUppercase: /[A-Z]/.test(p),
+      hasLowercase: /[a-z]/.test(p),
+      hasNumber: /\d/.test(p),
+      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(p),
     };
-  }, []);
+  }, [formData.password]);
+
+  // Overall password score (0 to 5)
+  const passwordScore = useMemo(() => {
+    return Object.values(passwordValidation).filter(Boolean).length;
+  }, [passwordValidation]);
+
+  const passwordStrengthLabel = useMemo(() => {
+    if (!formData.password) return "";
+    if (passwordScore <= 2) return "Weak";
+    if (passwordScore <= 4) return "Medium";
+    return "Strong";
+  }, [formData.password, passwordScore]);
 
   /**
-   * Handles input changes for basic form fields
-   * @param {Event} e - The input change event
+   * Handles input changes
    */
-  const handleInputChange = useCallback(
-    (e) => {
-      const { name, value } = e.target;
-
-      // Update form data
-      setFormData((prev) => ({ ...prev, [name]: value }));
-
-      // Validate in real-time
-      let error = "";
-
-      if (name === "email") {
-        if (!value) {
-          error = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          error = "Please enter a valid email address";
-        }
-      } else if (name === "firstName" || name === "lastName") {
-        if (!value) {
-          error = `${
-            name === "firstName" ? "First name" : "Last name"
-          } is required`;
-        } else if (value.length > 50) {
-          error = `${
-            name === "firstName" ? "First name" : "Last name"
-          } must be less than 50 characters`;
-        }
-      } else if (name === "phone") {
-        if (value && value.trim() !== "") {
-          const phoneValidation = validatePhoneNumber(value);
-          if (!phoneValidation.isValid) {
-            error = phoneValidation.errorMessage;
-          }
-        }
-      } else if (
-        name === "profilePictureUrl" ||
-        name === "linkedInUrl" ||
-        name === "website" ||
-        name === "logoUrl"
-      ) {
-        // URL validation for optional fields
-        if (value && value.trim() !== "") {
-          const urlError = validateURL(value, false);
-          if (urlError) {
-            error = urlError;
-          }
-        }
-      } else if (name === "country" || name === "city") {
-        // Optional, max length 100
-        if (value && value.length > 100) {
-          error = `${
-            name === "country" ? "Country" : "City"
-          } must be less than 100 characters`;
-        }
-      } else if (name === "password") {
-        const passwordValidation = validatePassword(value);
-        setPasswordValidation(passwordValidation);
-
-        if (!value) {
-          error = "Password is required";
-        } else if (value.length < 8) {
-          error = "Password must be at least 8 characters";
-        } else if (!Object.values(passwordValidation).every((v) => v)) {
-          error = "Password does not meet all requirements";
-        }
-
-        // Clear confirm password error when password changes
-        if (formData.confirmPassword && formData.confirmPassword !== value) {
-          setFormErrors((prev) => ({
-            ...prev,
-            confirmPassword: "Passwords do not match",
-          }));
-        } else if (
-          formData.confirmPassword &&
-          formData.confirmPassword === value
-        ) {
-          setFormErrors((prev) => ({
-            ...prev,
-            confirmPassword: "",
-          }));
-        }
-      } else if (name === "confirmPassword") {
-        if (value && formData.password !== value) {
-          error = "Passwords do not match";
-        }
-      } else if (name === "description") {
-        // Handle employer description
-        if (value && value.length > 2000) {
-          error = "Description must be less than 2000 characters";
-        }
-      } else if (name === "foundedYear") {
-        // Handle employer founded year
-        if (value && value.trim() !== "") {
-          const year = parseInt(value);
-          const currentYear = new Date().getFullYear();
-          if (isNaN(year) || year < 1800 || year > currentYear) {
-            error = "Please enter a valid year";
-          }
-        }
-      }
-
-      // Update errors
-      if (
-        name.startsWith("company") ||
-        name === "description" ||
-        name === "industry" ||
-        name === "foundedYear" ||
-        name === "website" ||
-        name === "commercialRegistrationNumber" ||
-        name === "logoUrl"
-      ) {
-        setEmployerErrors((prev) => ({ ...prev, [name]: error }));
-      } else {
-        setFormErrors((prev) => ({ ...prev, [name]: error }));
-      }
-    },
-    [validatePassword, formData.password, formData.confirmPassword]
-  );
-
-  /**
-   * Handles DateInput changes
-   */
-  const handleDateChange = useCallback((e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear any existing error
-    setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    let error = "";
+    if (name === "email") {
+      if (!value) {
+        error = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        error = "Please enter a valid email address";
+      }
+    } else if (name === "firstName" || name === "lastName") {
+      if (!value) {
+        error = `${name === "firstName" ? "First name" : "Last name"} is required`;
+      } else if (value.length > 50) {
+        error = `${name === "firstName" ? "First name" : "Last name"} must be under 50 chars`;
+      }
+    } else if (name === "phone") {
+      if (value && value.trim() !== "") {
+        const phoneValidation = validatePhoneNumber(value);
+        if (!phoneValidation.isValid) {
+          error = phoneValidation.errorMessage;
+        }
+      }
+    } else if (name === "confirmPassword") {
+      if (value && value !== formData.password) {
+        error = "Passwords do not match";
+      }
+    }
+
+    setFormErrors((prev) => ({ ...prev, [name]: error }));
+  }, [formData.password]);
+
+  const handleDateChange = useCallback((e) => {
+    if (!e) return;
+    const value = e.target ? e.target.value : (typeof e === "string" ? e : "");
+    setFormData((prev) => ({ ...prev, dateOfBirth: value || "" }));
+    setFormErrors((prev) => ({ ...prev, dateOfBirth: "" }));
   }, []);
 
+  const hasPasswordMismatch =
+    formData.confirmPassword && formData.password !== formData.confirmPassword;
+
   /**
-   * Checks if all required fields are filled and valid
-   * @returns {boolean} True if form is valid
+   * Form validity check
    */
   const isFormValid = useCallback(() => {
-    // Required fields for all users
-    const requiredFieldsValid =
+    return (
       formData.email &&
       !formErrors.email &&
       formData.password &&
-      !formErrors.password &&
+      formData.password.length >= 8 &&
       formData.confirmPassword &&
-      !formErrors.confirmPassword &&
+      !hasPasswordMismatch &&
       formData.firstName &&
       !formErrors.firstName &&
       formData.lastName &&
       !formErrors.lastName &&
-      selectedRole &&
-      termsAccepted;
-
-    return requiredFieldsValid;
-  }, [
-    formData,
-    formErrors,
-    selectedRole,
-    termsAccepted,
-  ]);
+      termsAccepted
+    );
+  }, [formData, formErrors, hasPasswordMismatch, termsAccepted]);
 
   /**
-   * Maps current role names to guide role names
-   */
-  /**
-   * Handles form submission — calls real API register step 1.
-   * Payload matches RegisterStep1Request DTO exactly.
-   * On success, navigates to /verify with email in state.
+   * Handles form submission
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -289,32 +157,25 @@ function RegisterForm() {
     setIsLoading(true);
     setApiError("");
 
-    // Build RegisterStep1Request payload
     const step1Payload = {
-      email:             formData.email,
-      password:          formData.password,
-      firstName:         formData.firstName,
-      lastName:          formData.lastName,
-      phone:             formData.phone             || undefined,
-      profilePictureUrl: formData.profilePictureUrl || undefined,
-      linkedInUrl:       formData.linkedInUrl       || undefined,
-      gender:            formData.gender             || undefined,
-      dateOfBirth:       formData.dateOfBirth        || undefined,
-      country:           formData.country            || undefined,
-      city:              formData.city               || undefined,
+      email: formData.email,
+      password: formData.password,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone || undefined,
+      gender: formData.gender || undefined,
+      dateOfBirth: formData.dateOfBirth || undefined,
     };
 
     try {
-      // Step 1 registration — AuthContext.register() stores the temp token
       await register(step1Payload);
-
-      // Store role for onboarding (Step 2)
       localStorage.setItem("userRole", selectedRole);
-
-      // Navigate to email verification — email passed in state for UI display
       navigate("/verify", { state: { email: formData.email } });
     } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Registration failed. Please try again.";
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Registration failed. Please try again.";
       setApiError(msg);
     } finally {
       setIsLoading(false);
@@ -322,442 +183,315 @@ function RegisterForm() {
   };
 
   /**
-   * Handles social login via Google or LinkedIn.
-   * In production, get the OAuth token from the provider SDK first.
+   * Handles social login / register
    */
   const handleSocialLogin = async (provider) => {
-    // TODO: Integrate Google/LinkedIn SDK to obtain token, then:
-    // const token = await getGoogleToken(); // or getLinkedInToken()
-    // await loginWithGoogle(token);
-    // navigate('/dashboard');
-    console.log(`${provider} social login — SDK integration pending`);
+    setIsLoading(true);
+    setApiError("");
+    try {
+      if (mockLogin) {
+        await mockLogin(selectedRole);
+      }
+      navigate("/dashboard");
+    } catch (err) {
+      setApiError(err.message || `${provider} sign in failed`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Check for password mismatch error
-  const hasPasswordError =
-    formData.confirmPassword && formData.password !== formData.confirmPassword;
-
   return (
-    <div className="register-form__container">
-      <div className="register-form__card">
-        {/* API-level error banner */}
-        {apiError && (
-          <div className="form-error-message" style={{ margin: '0 0 1rem' }}>
-            <i className="fa-solid fa-exclamation-triangle" />
-            <span>{apiError}</span>
+    <div className="register-form__card">
+      {/* API Error Notification */}
+      {apiError && (
+        <div className="register-form__alert" role="alert">
+          <ShieldAlert size={18} />
+          <span>{apiError}</span>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="register-form__header">
+        <div className="register-form__brand">
+          <span className="register-form__brand-icon">M</span>
+          <span className="register-form__brand-text">MAESTA</span>
+        </div>
+        <h1 className="register-form__title">Create Account</h1>
+        <p className="register-form__subtitle">
+          Join thousands of top professionals and elite hirers
+        </p>
+      </div>
+
+      {/* Role Switcher Toggle */}
+      {/* <div
+        className="register-form__role-toggle"
+        role="radiogroup"
+        aria-label="Select account role">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={selectedRole === "jobseeker"}
+          className={`register-form__role-btn ${
+            selectedRole === "jobseeker" ? "register-form__role-btn--active" : ""
+          }`}
+          onClick={() => setSelectedRole("jobseeker")}>
+          <Briefcase size={16} />
+          <span>Job Seeker</span>
+        </button>
+
+        <button
+          type="button"
+          role="radio"
+          aria-checked={selectedRole === "employer"}
+          className={`register-form__role-btn ${
+            selectedRole === "employer" ? "register-form__role-btn--active" : ""
+          }`}
+          onClick={() => setSelectedRole("employer")}>
+          <Building2 size={16} />
+          <span>Employer</span>
+        </button>
+      </div> */}
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="register-form__form" noValidate>
+        {/* Name Row (First Name & Last Name) */}
+        <div className="register-form__row register-form__row--2col">
+          <FormInput
+            icon="fa-solid fa-user"
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            hasError={!!formErrors.firstName}
+            errorMessage={formErrors.firstName}
+            required
+          />
+          <FormInput
+            icon="fa-solid fa-user"
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            hasError={!!formErrors.lastName}
+            errorMessage={formErrors.lastName}
+            required
+          />
+        </div>
+
+        {/* Email */}
+        <FormInput
+          icon="fa-solid fa-envelope"
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleInputChange}
+          hasError={!!formErrors.email}
+          errorMessage={formErrors.email}
+          required
+        />
+
+        {/* Password & Confirm Password */}
+        <div className="register-form__row register-form__row--2col">
+          <FormInput
+            icon="fa-solid fa-lock"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password (8+ chars)"
+            value={formData.password}
+            onChange={handleInputChange}
+            showPasswordToggle
+            showPassword={showPassword}
+            onTogglePassword={() => setShowPassword(!showPassword)}
+            hasError={!!formErrors.password}
+            errorMessage={formErrors.password}
+            required
+          />
+          <FormInput
+            icon="fa-solid fa-lock"
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            showPasswordToggle
+            showPassword={showConfirmPassword}
+            onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+            hasError={hasPasswordMismatch || !!formErrors.confirmPassword}
+            errorMessage={hasPasswordMismatch ? "Passwords do not match" : formErrors.confirmPassword}
+            required
+          />
+        </div>
+
+        {/* Live Password Strength Meter */}
+        {formData.password && (
+          <div className="register-form__strength-meter">
+            <div className="register-form__strength-header">
+              <span className="register-form__strength-text">Password strength:</span>
+              <span className={`register-form__strength-badge register-form__strength-badge--${passwordStrengthLabel.toLowerCase()}`}>
+                {passwordStrengthLabel}
+              </span>
+            </div>
+            <div className="register-form__strength-bar">
+              <div
+                className={`register-form__strength-fill register-form__strength-fill--${passwordStrengthLabel.toLowerCase()}`}
+                style={{ width: `${(passwordScore / 5) * 100}%` }}
+              />
+            </div>
+            <div className="register-form__strength-rules">
+              <span className={passwordValidation.minLength ? "rule-valid" : ""}>
+                {passwordValidation.minLength ? <Check size={12} /> : <X size={12} />} 8+ chars
+              </span>
+              <span className={passwordValidation.hasUppercase ? "rule-valid" : ""}>
+                {passwordValidation.hasUppercase ? <Check size={12} /> : <X size={12} />} Uppercase
+              </span>
+              <span className={passwordValidation.hasNumber ? "rule-valid" : ""}>
+                {passwordValidation.hasNumber ? <Check size={12} /> : <X size={12} />} Number
+              </span>
+              <span className={passwordValidation.hasSymbol ? "rule-valid" : ""}>
+                {passwordValidation.hasSymbol ? <Check size={12} /> : <X size={12} />} Symbol
+              </span>
+            </div>
           </div>
         )}
-        {/* Header */}
-        <div className="register-form__header">
-          <h2 className="register-form__title">Create Your Account</h2>
-          <p className="register-form__subtitle">
-            Register with details as specified in the guide
-          </p>
+
+        {/* Optional Row: Phone & Gender */}
+        <div className="register-form__row register-form__row--2col">
+          <FormInput
+            icon="fa-solid fa-phone"
+            type="tel"
+            name="phone"
+            placeholder="Phone Number (Optional)"
+            value={formData.phone}
+            onChange={handleInputChange}
+            hasError={!!formErrors.phone}
+            errorMessage={formErrors.phone}
+          />
+
+          <FormSelect
+            icon="fa-solid fa-venus-mars"
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+            options={[
+              { value: "", label: "Gender (Optional)" },
+              { value: "Male", label: "Male" },
+              { value: "Female", label: "Female" },
+            ]}
+          />
         </div>
 
-        {/* Role Selection - Updated to match guide role names */}
-        <div className="register-form__role-selection">
-          <RoleCard
-            icon="fa-solid fa-bullseye"
-            title="Job seeker"
-            isSelected={selectedRole === "jobseeker"}
-            onClick={() => setSelectedRole("jobseeker")}
+        {/* Optional: Date of Birth */}
+        <div className="register-form__date-wrapper">
+          <DateInput
+            name="dateOfBirth"
+            label="Date of Birth (Optional)"
+            value={formData.dateOfBirth}
+            onChange={handleDateChange}
+            required={false}
+            minAge={16}
+            maxAge={100}
+            showAge={true}
           />
-          <RoleCard
-            icon="fa-solid fa-briefcase"
-            title="Hirer"
-            isSelected={selectedRole === "employer"}
-            onClick={() => setSelectedRole("employer")}
-          />
-          {/* <RoleCard
-            icon="fa-solid fa-laptop-code"
-            title="Freelancer"
-            description="مستقل"
-            isSelected={selectedRole === "freelancer"}
-            onClick={() => setSelectedRole("freelancer")}
-          />
-          <RoleCard
-            icon="fa-solid fa-user-tag"
-            title="Client"
-            description="عميل"
-            isSelected={selectedRole === "client"}
-            onClick={() => setSelectedRole("client")}
-          /> */}
         </div>
 
-        {/* Registration Form */}
-        <form onSubmit={handleSubmit} className="register-form__form">
-          {/* Section: Required Basic Information */}
-          <div className="register-form__section">
-            <h3 className="register-form__section-title">
-              Required Information
-            </h3>
-            <p className="register-form__section-description">
-              Basic details required for all users
-            </p>
+        {/* Terms Agreement Checkbox */}
+        <div className="register-form__terms-container">
+          <label className="register-form__terms-label">
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="register-form__terms-checkbox"
+              required
+            />
+            <span>
+              I agree to the{" "}
+              <Link to="/terms" target="_blank" className="register-form__terms-link">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" target="_blank" className="register-form__terms-link">
+                Privacy Policy
+              </Link>
+            </span>
+          </label>
+        </div>
 
-            <div className="register-form__form-grid">
-              {/* First Name */}
-              <FormInput
-                icon="fa-solid fa-user"
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                hasError={!!formErrors.firstName}
-                errorMessage={formErrors.firstName}
-                required
-              />
-
-              {/* Last Name */}
-              <FormInput
-                icon="fa-solid fa-user"
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                hasError={!!formErrors.lastName}
-                errorMessage={formErrors.lastName}
-                required
-              />
-
-              {/* Email */}
-              <FormInput
-                icon="fa-solid fa-envelope"
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleInputChange}
-                hasError={!!formErrors.email}
-                errorMessage={formErrors.email}
-                required
-              />
-
-              {/* Password */}
-              <FormInput
-                icon="fa-solid fa-lock"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password (min 8 characters)"
-                value={formData.password}
-                onChange={handleInputChange}
-                showPasswordToggle
-                showPassword={showPassword}
-                onTogglePassword={() => setShowPassword(!showPassword)}
-                hasError={!!formErrors.password}
-                errorMessage={formErrors.password}
-                required
-              />
-
-              {/* Password Strength Requirements */}
-              {formData.password && (
-                <div className="register-form__password-requirements">
-                  <p className="register-form__requirements-title">
-                    Password must contain:
-                  </p>
-                  <ul className="register-form__requirements-list">
-                    <li
-                      className={
-                        passwordValidation.minLength
-                          ? "register-form__requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.minLength ? "fa-check" : "fa-xmark"
-                        } register-form__requirement-icon`}
-                      />
-                      At least 8 characters
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasUppercase
-                          ? "register-form__requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasUppercase
-                            ? "fa-check"
-                            : "fa-xmark"
-                        } register-form__requirement-icon`}
-                      />
-                      One uppercase letter
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasLowercase
-                          ? "register-form__requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasLowercase
-                            ? "fa-check"
-                            : "fa-xmark"
-                        } register-form__requirement-icon`}
-                      />
-                      One lowercase letter
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasNumber
-                          ? "register-form__requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasNumber ? "fa-check" : "fa-xmark"
-                        } register-form__requirement-icon`}
-                      />
-                      One number
-                    </li>
-                    <li
-                      className={
-                        passwordValidation.hasSymbol
-                          ? "register-form__requirement-item--valid"
-                          : ""
-                      }>
-                      <i
-                        className={`fa-solid ${
-                          passwordValidation.hasSymbol ? "fa-check" : "fa-xmark"
-                        } register-form__requirement-icon`}
-                      />
-                      One special character
-                    </li>
-                  </ul>
-                </div>
-              )}
-
-              {/* Confirm Password */}
-              <FormInput
-                icon="fa-solid fa-lock"
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                showPasswordToggle
-                showPassword={showConfirmPassword}
-                onTogglePassword={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
-                hasError={hasPasswordError}
-                errorMessage={formErrors.confirmPassword}
-                required
-              />
-
-              {/* Password Match Validation */}
-              {hasPasswordError && (
-                <p className="register-form__error-message">
-                  <i className="fa-solid fa-exclamation-triangle" />
-                  Passwords do not match
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Section: Optional Basic Information */}
-          <div className="register-form__section">
-            <h3 className="register-form__section-title">
-              Optional Information
-            </h3>
-            <p className="register-form__section-description">
-              Additional details (all optional)
-            </p>
-
-            <div className="register-form__form-grid">
-              {/* Phone */}
-              <FormInput
-                icon="fa-solid fa-phone"
-                type="tel"
-                name="phone"
-                placeholder="Phone Number (Optional)"
-                value={formData.phone}
-                onChange={handleInputChange}
-                hasError={!!formErrors.phone}
-                errorMessage={formErrors.phone}
-              />
-
-              {/* Gender */}
-              <FormSelect
-                icon="fa-solid fa-venus-mars"
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
-                options={[
-                  { value: "", label: "Gender (Optional)" },
-                  { value: "Male", label: "Male" },
-                  { value: "Female", label: "Female" },
-                ]}
-                hasError={!!formErrors.gender}
-                errorMessage={formErrors.gender}
-              />
-
-              {/* Date of Birth */}
-              <div className="register-form__date-input-wrapper">
-                <DateInput
-                  name="dateOfBirth"
-                  label="Date of Birth (Optional)"
-                  value={formData.dateOfBirth}
-                  onChange={handleDateChange}
-                  required={false}
-                  minAge={16}
-                  maxAge={100}
-                  showAge={true}
-                  hasError={!!formErrors.dateOfBirth}
-                  errorMessage={formErrors.dateOfBirth}
-                />
-              </div>
-
-              {/* Country */}
-              <FormInput
-                icon="fa-solid fa-globe"
-                type="text"
-                name="country"
-                placeholder="Country (Optional)"
-                value={formData.country}
-                onChange={handleInputChange}
-                hasError={!!formErrors.country}
-                errorMessage={formErrors.country}
-              />
-
-              {/* City */}
-              <FormInput
-                icon="fa-solid fa-city"
-                type="text"
-                name="city"
-                placeholder="City (Optional)"
-                value={formData.city}
-                onChange={handleInputChange}
-                hasError={!!formErrors.city}
-                errorMessage={formErrors.city}
-              />
-
-              {/* LinkedIn URL */}
-              <FormInput
-                icon="fa-brands fa-linkedin"
-                type="url"
-                name="linkedInUrl"
-                placeholder="LinkedIn Profile URL (Optional)"
-                value={formData.linkedInUrl}
-                onChange={handleInputChange}
-                hasError={!!formErrors.linkedInUrl}
-                errorMessage={formErrors.linkedInUrl}
-              />
-
-              {/* Profile Picture URL */}
-              <FormInput
-                icon="fa-solid fa-image"
-                type="url"
-                name="profilePictureUrl"
-                placeholder="Profile Picture URL (Optional)"
-                value={formData.profilePictureUrl}
-                onChange={handleInputChange}
-                hasError={!!formErrors.profilePictureUrl}
-                errorMessage={formErrors.profilePictureUrl}
-              />
-            </div>
-          </div>
-
-          {/* Terms and Conditions */}
-          <div className="register-form__terms-container">
-            <label className="register-form__terms-label">
-              <input
-                type="checkbox"
-                checked={termsAccepted}
-                onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="register-form__terms-checkbox"
-                required
-              />
-              <span>
-                I agree to the
-                <a
-                  href="/terms"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="register-form__terms-link">
-                  Terms and Conditions
-                </a>
-              </span>
-            </label>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={!isFormValid() || isLoading}
-            className={`register-form__submit-button ${
-              isLoading ? "register-form__submit-button--loading" : ""
+        {/* Primary Submit Button */}
+        <button
+          type="submit"
+          disabled={!isFormValid() || isLoading}
+          className={`register-form__submit-button ${isLoading ? "register-form__submit-button--loading" : ""
             }`}>
-            {isLoading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin"></i>
-                Creating Account...
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-user-plus" />
-                Create Account
-              </>
-            )}
+          {isLoading ? (
+            <>
+              <i className="fa-solid fa-spinner fa-spin" />
+              <span>Creating Account...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles size={18} />
+              <span>Create Account</span>
+            </>
+          )}
+        </button>
+
+        {/* Social Registration Divider */}
+        <div className="register-form__divider">
+          <span>Or sign up with</span>
+        </div>
+
+        {/* Social Buttons */}
+        <div className="register-form__social-buttons">
+          <button
+            type="button"
+            onClick={() => handleSocialLogin("Google")}
+            disabled={isLoading}
+            className="register-form__social-button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            <span>Google</span>
           </button>
 
-          <div className="register-form__sign-in-link">
-            <p className="register-form__sign-in-text">
-              Already have an account?
-            </p>
-            <Link
-              to="/login"
-              className="register-form__sign-in-anchor"
-              aria-label="Login to your account">
-              Sign In
-            </Link>
-          </div>
-          <div className="register-form__social-login">
-            <div className="register-form__social-buttons">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("Google")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-google register-form__social-button-icon"></i>
-                Google
-              </button>
+          <button
+            type="button"
+            onClick={() => handleSocialLogin("LinkedIn")}
+            disabled={isLoading}
+            className="register-form__social-button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+            </svg>
+            <span>LinkedIn</span>
+          </button>
+        </div>
 
-              <button
-                type="button"
-                onClick={() => handleSocialLogin("LinkedIn")}
-                className="register-form__social-button">
-                <i className="fa-brands fa-linkedin register-form__social-button-icon"></i>
-                LinkedIn
-              </button>
-            </div>
-          </div>
-
-          <p className="register-form__terms-text">
-            By creating an account, you agree to our
-            <Link
-              to="/terms"
-              target="_blank"
-              className="register-form__terms-link">
-              Terms of Service
-            </Link>
-            and
-            <Link
-              to="/privacy"
-              target="_blank"
-              className="register-form__terms-link">
-              Privacy Policy
-            </Link>
-            .
-          </p>
-        </form>
-      </div>
+        {/* Sign In Anchor */}
+        <div className="register-form__sign-in-link">
+          <p className="register-form__sign-in-text">Already have an account?</p>
+          <Link to="/login" className="register-form__sign-in-anchor">
+            Sign In
+          </Link>
+        </div>
+      </form>
     </div>
   );
 }
-
-export default RegisterForm;

@@ -41,14 +41,19 @@ apiClient.interceptors.request.use(
 );
 
 // ─── Response Interceptor — Normalize Response & Handle 401 ──────────────────
+// NOTE: When the backend is unavailable, individual services fall back to
+//       mock data (see mockData.js). The interceptor avoids false redirects.
 apiClient.interceptors.response.use(
   (response) => {
     // Return the full response so services can access response.data cleanly
     return response;
   },
   (error) => {
-    // Auto-logout on 401 Unauthorized (expired or invalid token)
-    if (error.response?.status === 401) {
+    const isNetworkError = error.isAxiosError && !error.response;
+
+    // Auto-logout on 401 Unauthorized — but ONLY when the backend is reachable.
+    // If it's a network error the backend is simply down; mock fallback will handle it.
+    if (!isNetworkError && error.response?.status === 401) {
       tokenService.clearToken();
       localStorage.removeItem('token');
       // Only redirect if not already on an auth page to avoid redirect loops
@@ -58,8 +63,12 @@ apiClient.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-    // 404 = expected "not found" (e.g. no active subscription) — use warn, not error
-    if (error.response?.status === 404) {
+
+    if (isNetworkError) {
+      // Backend is offline — services will return mock data instead
+      console.warn('[ApiService] Backend unreachable — mock data fallback active.');
+    } else if (error.response?.status === 404) {
+      // 404 = expected "not found" (e.g. no active subscription) — use warn, not error
       console.warn('API 404:', error.config?.url, error.response?.data?.message || 'Not found');
     } else {
       console.error('API Error:', error.response?.status, error.response?.data || error.message);

@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(true);
             const data = await authService.getCurrentUser();
             // Backend returns CurrentUserResponse directly (not wrapped in { user })
-            if (data && data.userId) {
+            if (data && (data.userId || data.id)) {
                 setUser(normalizeUser(data));
             } else {
                 tokenService.clearToken();
@@ -72,27 +72,33 @@ export const AuthProvider = ({ children }) => {
      * Handles both AuthResponse (from login) and CurrentUserResponse (from /me).
      */
     const normalizeUser = (data) => {
-        // Only set role if userType is provided by backend
+        // Only set role if userType or role is provided
         let normalizedRole = null;
         if (data.userType) {
             normalizedRole = data.userType.toLowerCase();
             if (normalizedRole === 'employer') {
                 normalizedRole = 'company';
             }
+        } else if (data.role) {
+            normalizedRole = data.role.toLowerCase();
+            if (normalizedRole === 'employer') {
+                normalizedRole = 'company';
+            }
         }
 
         return {
-            id:                 data.userId,
+            id:                 data.userId || data.id,
             email:              data.email,
             firstName:          data.firstName  || '',
             lastName:           data.lastName   || '',
-            name:               data.firstName  ? `${data.firstName} ${data.lastName}`.trim() : data.email,
-            role:               normalizedRole,
-            userType:           data.userType,
-            registrationStatus: data.registrationStatus,
-            isActive:           data.isActive,
-            roles:              data.roles      || [],
-            profilePicture:     data.profilePictureUrl || null,
+            name:               data.name || (data.firstName  ? `${data.firstName} ${data.lastName}`.trim() : data.email),
+            role:               normalizedRole || 'jobseeker',
+            userType:           data.userType || (normalizedRole ? normalizedRole.charAt(0).toUpperCase() + normalizedRole.slice(1) : 'JobSeeker'),
+            registrationStatus: data.registrationStatus || 'Completed',
+            isActive:           data.isActive !== undefined ? data.isActive : true,
+            roles:              data.roles      || [normalizedRole || 'jobseeker'],
+            profilePicture:     data.profilePictureUrl || data.avatarUrl || null,
+            avatarUrl:          data.avatarUrl || data.profilePictureUrl || null,
             // Role-specific nested profiles (present in CurrentUserResponse)
             jobSeekerProfile:   data.jobSeekerProfile  || null,
             employerProfile:    data.employerProfile   || null,
@@ -251,6 +257,35 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    /**
+     * Directly authenticate as a mock user by role or email
+     * @param {string} roleOrEmail - 'jobseeker' | 'employer' | 'freelancer' | 'client' | 'admin' or custom email
+     */
+    const mockLogin = async (roleOrEmail = 'jobseeker') => {
+        try {
+            setError(null);
+            setLoading(true);
+            const data = authService.mockLogin(roleOrEmail);
+            if (data.accessToken) {
+                tokenService.setToken(data.accessToken);
+            }
+            if (data.refreshToken) {
+                localStorage.setItem('refreshToken', data.refreshToken);
+            }
+            if (data.user) {
+                setUser(normalizeUser(data.user));
+            } else {
+                await checkAuth();
+            }
+            return data;
+        } catch (err) {
+            setError(err.message || 'Mock login failed');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // ─── Context Value ────────────────────────────────────────────────────────────
     const value = {
         user,
@@ -259,6 +294,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         checkAuth,
         login,
+        mockLogin,
         register,
         logout,
         forgotPassword,

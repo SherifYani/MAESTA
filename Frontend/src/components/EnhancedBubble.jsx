@@ -14,7 +14,7 @@
  * - Adjusted material properties for enhanced glass effect.
  */
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, Component } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, MeshDistortMaterial, Sphere } from "@react-three/drei";
 
@@ -220,6 +220,36 @@ function BubbleContent() {
   );
 }
 
+class WebGLBoundary extends Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(err) {
+    console.warn("EnhancedBubble 3D Canvas error caught:", err);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle at 35% 35%, rgba(201, 161, 82, 0.4), rgba(184, 148, 95, 0.1) 60%, transparent 80%)",
+            filter: "blur(20px)",
+          }}
+        />
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /**
  * EnhancedBubble Component
  * @description Main 3D bubble visualization component with auto-rotation and interactive controls.
@@ -228,16 +258,20 @@ function BubbleContent() {
  */
 export default function EnhancedBubble() {
   return (
-    <Canvas camera={{ position: [0, 0, 7], fov: 50 }}>
-      <BubbleContent />
-      <OrbitControls
-        enableZoom={false}
-        autoRotate
-        autoRotateSpeed={1.2}
-        enablePan={false}
-        minPolarAngle={Math.PI / 3}
-        maxPolarAngle={Math.PI / 1.5}
-      />
-    </Canvas>
+    <WebGLBoundary>
+      <Canvas camera={{ position: [0, 0, 7], fov: 50 }}>
+        <Suspense fallback={null}>
+          <BubbleContent />
+          <OrbitControls
+            enableZoom={false}
+            autoRotate
+            autoRotateSpeed={1.2}
+            enablePan={false}
+            minPolarAngle={Math.PI / 3}
+            maxPolarAngle={Math.PI / 1.5}
+          />
+        </Suspense>
+      </Canvas>
+    </WebGLBoundary>
   );
 }

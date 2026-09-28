@@ -1,12 +1,10 @@
 /**
  * @file notificationService.js
  * @description Notification services — verified against NotificationsController.cs.
+ *              Falls back to mock data when the backend is unavailable.
  * @author Sherif Talaat
- * @version 2.1.0
+ * @version 2.2.0
  * @date 2026-04-29
- *
- * @last-modified-by Antigravity (AI) — verified against NotificationsController.cs
- * @last-modified-date 2026-04-29
  *
  * REAL ROUTES (NotificationsController [Route("api/[controller]")]):
  *   GET    api/notifications?page=&limit=
@@ -20,6 +18,7 @@
  **/
 
 import ApiService from './ApiService';
+import { isNetworkError, MOCK_NOTIFICATIONS } from './mockData';
 
 /**
  * Normalize a single notification from the backend DTO shape
@@ -43,9 +42,17 @@ const notificationService = {
      * @param {number} limit
      */
     getNotifications: async (page = 1, limit = 20) => {
-        const response = await ApiService.get('/api/notifications', { params: { page, limit } });
-        const raw = response.data?.items || response.data || [];
-        return Array.isArray(raw) ? raw.map(normalizeNotification) : [];
+        try {
+            const response = await ApiService.get('/api/notifications', { params: { page, limit } });
+            const raw = response.data?.items || response.data || [];
+            return Array.isArray(raw) ? raw.map(normalizeNotification) : [];
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] getNotifications — mock fallback');
+                return MOCK_NOTIFICATIONS.map(normalizeNotification);
+            }
+            throw error;
+        }
     },
 
     /**
@@ -53,8 +60,16 @@ const notificationService = {
      * Backend: GET api/notifications/unread
      */
     getUnreadCount: async () => {
-        const response = await ApiService.get('/api/notifications/unread');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/notifications/unread');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] getUnreadCount — mock fallback');
+                return MOCK_NOTIFICATIONS.filter(n => !n.isRead).length;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -62,16 +77,32 @@ const notificationService = {
      * @param {string|number} notificationId
      */
     markAsRead: async (notificationId) => {
-        const response = await ApiService.put(`/api/notifications/${notificationId}/read`);
-        return response.data;
+        try {
+            const response = await ApiService.put(`/api/notifications/${notificationId}/read`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] markAsRead — mock fallback');
+                return { id: notificationId, read: true };
+            }
+            throw error;
+        }
     },
 
     /**
      * Mark all notifications as read.
      */
     markAllAsRead: async () => {
-        const response = await ApiService.put('/api/notifications/read-all');
-        return response.data;
+        try {
+            const response = await ApiService.put('/api/notifications/read-all');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] markAllAsRead — mock fallback');
+                return { message: 'All notifications marked as read (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -79,16 +110,32 @@ const notificationService = {
      * @param {string|number} notificationId
      */
     deleteNotification: async (notificationId) => {
-        const response = await ApiService.delete(`/api/notifications/${notificationId}`);
-        return response.data;
+        try {
+            const response = await ApiService.delete(`/api/notifications/${notificationId}`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] deleteNotification — mock fallback');
+                return { message: 'Notification deleted (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
      * Get the user's notification preferences.
      */
     getPreferences: async () => {
-        const response = await ApiService.get('/api/notifications/preferences');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/notifications/preferences');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] getPreferences — mock fallback');
+                return { email: true, push: false, sms: false };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -96,8 +143,16 @@ const notificationService = {
      * @param {Object} preferences
      */
     updatePreferences: async (preferences) => {
-        const response = await ApiService.put('/api/notifications/preferences', preferences);
-        return response.data;
+        try {
+            const response = await ApiService.put('/api/notifications/preferences', preferences);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] updatePreferences — mock fallback');
+                return preferences;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -106,11 +161,19 @@ const notificationService = {
      * @param {string} deviceToken - push notification device token
      */
     subscribeToPush: async (deviceToken) => {
-        const response = await ApiService.post('/api/notifications/push/subscribe',
-            JSON.stringify(deviceToken),
-            { headers: { 'Content-Type': 'application/json' } }
-        );
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/notifications/push/subscribe',
+                JSON.stringify(deviceToken),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] subscribeToPush — mock fallback');
+                return { message: 'Push subscription registered (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -125,9 +188,17 @@ const notificationService = {
      * @param {string} type - e.g. 'application', 'message', 'system'
      */
     getByType: async (type) => {
-        const response = await ApiService.get('/api/notifications', { params: { page: 1, limit: 50 } });
-        const notifications = response.data?.items || response.data || [];
-        return notifications.filter(notification => notification.type === type || notification.category === type);
+        try {
+            const response = await ApiService.get('/api/notifications', { params: { page: 1, limit: 50 } });
+            const notifications = response.data?.items || response.data || [];
+            return notifications.filter(notification => notification.type === type || notification.category === type);
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[notificationService] getByType — mock fallback');
+                return MOCK_NOTIFICATIONS.filter(n => n.type === type);
+            }
+            throw error;
+        }
     },
 };
 

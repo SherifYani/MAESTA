@@ -18,10 +18,30 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Briefcase,
+  Building2,
+  Zap,
+  UserCheck,
+  ShieldCheck,
+} from "lucide-react";
 import "../styles/login.css";
 import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
+
+const DEMO_ACCOUNTS = [
+  { roleKey: "jobSeeker", label: "Job Seeker", email: "alex.johnson@example.com", icon: Briefcase },
+  { roleKey: "employer", label: "Employer", email: "employer@example.com", icon: Building2 },
+  { roleKey: "freelancer", label: "Freelancer", email: "freelancer@example.com", icon: Zap },
+  { roleKey: "client", label: "Client", email: "client@example.com", icon: UserCheck },
+  { roleKey: "admin", label: "Admin", email: "admin@example.com", icon: ShieldCheck },
+];
 
 /**
  * LoginForm Component
@@ -32,7 +52,7 @@ import Footer from "../components/common/Footer";
  */
 export default function LoginForm() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, mockLogin } = useAuth();
 
   // State for password visibility toggle
   const [showPassword, setShowPassword] = useState(false);
@@ -158,6 +178,34 @@ export default function LoginForm() {
   };
 
   /**
+   * Quick demo/mock login as one of the platform roles
+   */
+  const handleQuickDemoLogin = async (roleKey, email) => {
+    setLoading(true);
+    setError("");
+    setFormData({
+      email: email,
+      password: "password123",
+    });
+
+    try {
+      if (mockLogin) {
+        await mockLogin(roleKey);
+      } else {
+        await login({ email, password: "password123" });
+      }
+
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || '/dashboard';
+      localStorage.removeItem('redirectAfterLogin');
+      navigate(redirectTo);
+    } catch (err) {
+      setError(err.message || "Demo login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
    * Toggles password visibility between text and password types.
    */
   const togglePasswordVisibility = () => {
@@ -165,13 +213,26 @@ export default function LoginForm() {
   };
 
   /**
-   * Handles social login button clicks.
+   * Handles social login button clicks with demo fallback.
    * @param {string} provider - Social login provider (e.g., "google", "linkedin").
    */
-  const handleSocialLogin = (provider) => {
-    console.log(`Social login with ${provider}`);
-    // Implementation for social login would go here
-    setError(`${provider} login is not yet implemented`);
+  const handleSocialLogin = async (provider) => {
+    setLoading(true);
+    setError("");
+    try {
+      if (mockLogin) {
+        await mockLogin('jobSeeker');
+      } else {
+        await login({ email: `${provider}.demo@example.com`, password: "password123" });
+      }
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || '/dashboard';
+      localStorage.removeItem('redirectAfterLogin');
+      navigate(redirectTo);
+    } catch (err) {
+      setError(err.message || `${provider} login failed`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   /**
@@ -260,6 +321,36 @@ export default function LoginForm() {
                 {error}
               </div>
             )}
+
+            {/* Quick Mock/Demo Login Section */}
+            <div className="auth-login__mock-section">
+              <div className="auth-login__mock-header">
+                <Sparkles size={15} className="auth-login__mock-sparkle" />
+                <span>Quick Demo Login (Select Role)</span>
+              </div>
+              <div className="auth-login__mock-grid">
+                {DEMO_ACCOUNTS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.roleKey}
+                      type="button"
+                      className="auth-login__mock-btn"
+                      onClick={() => handleQuickDemoLogin(item.roleKey, item.email)}
+                      disabled={loading}
+                      title={`Instant Demo Sign-in as ${item.label} (${item.email})`}>
+                      <Icon size={16} aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="auth-login__divider">
+              <span>Or sign in with email</span>
+            </div>
 
             {/* Login Form */}
             <form

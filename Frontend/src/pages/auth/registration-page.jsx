@@ -1,15 +1,13 @@
 /**
- * @file RegistrationPage.jsx
- * @description Main registration page with 3D background and welcome content
- * @author Shahd Mohay
- * @version 2.2.0
- * @date 11-10-2025
- * 
- * @last-modified-by Sherif Talaat
- * @last-modified-date 2026-03-16
+ * @file registration-page.jsx
+ * @description Centered Hero Redesign — Registration page with interactive 3D EnhancedBubble backdrop
+ * @author Shahd Mohay / Sherif Talaat
+ * @version 3.0.0
+ * @date 2026-09-28
  */
 
-import { ArrowLeft, Sparkles, TrendingUp, Users } from "lucide-react";
+import React from "react";
+import { ArrowLeft } from "lucide-react";
 import "../../styles/pages/registration-page.css";
 import "../../styles/globals.css";
 import RegisterForm from "../../components/forms/RegisterForm";
@@ -19,16 +17,10 @@ import Footer from "../../components/common/Footer";
 
 /**
  * RegistrationPage Component
- * @description Main registration page component with 3D background and form
+ * @description Main registration page component with centered 3D bubble and floating glass form
  * @returns {JSX.Element} The rendered registration page
  */
-function RegistrationPage() {
-  const features = [
-    { icon: Sparkles, text: "AI-Powered Matching" },
-    { icon: TrendingUp, text: "Career Growth Tools" },
-    { icon: Users, text: "Global Network" },
-  ];
-
+export default function RegistrationPage() {
   /**
    * Navigates back to the previous page.
    */
@@ -37,60 +29,29 @@ function RegistrationPage() {
   };
 
   return (
-    <div>
+    <div className="registration-page-wrapper">
       <Header />
-      <div className="registration-page">
+      <main className="registration-page">
+        {/* Back Button */}
         <button
           className="registration-page__back-button"
-          aria-label="Go back"
-          onClick={handleBackNavigation}>
+          aria-label="Go back to previous page"
+          onClick={handleBackNavigation}
+          type="button">
           <ArrowLeft size={20} />
         </button>
 
-        <div className="registration-page__left-section">
-          <div className="register__canvas">
-            <EnhancedBubble />
-          </div>
-
-          <div className="registration-page__welcome-content">
-            <div className="registration-page__badge">
-              <Sparkles size={14} className="registration-page__badge-icon" />
-              <span>Trusted by 100K+ professionals</span>
-            </div>
-
-            <h1 className="registration-page__welcome-title">
-              Transform Your
-              <br />
-              <span className="registration-page__gradient-text">
-                Career Journey
-              </span>
-            </h1>
-
-            <p className="registration-page__welcome-description">
-              Join the next generation of professionals. Connect with
-              opportunities, grow your network, and unlock your full potential.
-            </p>
-
-            <div className="registration-page__features-list">
-              {features.map((feature, index) => (
-                <div key={index} className="registration-page__feature-item">
-                  <div className="registration-page__feature-icon">
-                    <feature.icon size={18} />
-                  </div>
-                  <span>{feature.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Centered 3D EnhancedBubble Canvas */}
+        <div className="registration-page__bubble-backdrop" aria-hidden="true">
+          <EnhancedBubble />
         </div>
 
-        <div className="registration-page__right-section">
+        {/* Centered Registration Card Container */}
+        <div className="registration-page__centered-content">
           <RegisterForm />
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
 }
-
-export default RegistrationPage;

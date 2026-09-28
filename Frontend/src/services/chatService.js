@@ -1,13 +1,10 @@
 /**
  * @file chatService.js
- * @description Chat/messaging services — REST calls verified against
- *              ChatController.cs and SignalR ChatHub.cs.
+ * @description Chat/messaging services — REST calls verified against ChatController.cs and SignalR ChatHub.cs.
+ *              Falls back to mock data when the backend is unavailable.
  * @author Sherif Talaat
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2026-04-29
- *
- * @last-modified-by Antigravity (AI) — verified against ChatController.cs + ChatHub.cs
- * @last-modified-date 2026-04-29
  *
  * REAL REST ROUTES (ChatController [Route("api/[controller]")]):
  *   GET    api/chat/conversations               → get all my conversations
@@ -32,6 +29,7 @@
 
 import ApiService from './ApiService';
 import { tokenService } from '../lib/token-service';
+import { isNetworkError, MOCK_CONVERSATIONS, MOCK_MESSAGES } from './mockData';
 
 // ─── SignalR Hub Connection ───────────────────────────────────────────────────
 // Lazy-loaded to avoid loading @microsoft/signalr at app startup
@@ -82,8 +80,16 @@ const chatService = {
      * Get all conversations for the current user.
      */
     getConversations: async () => {
-        const response = await ApiService.get('/api/chat/conversations');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/chat/conversations');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] getConversations — mock fallback');
+                return MOCK_CONVERSATIONS;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -91,8 +97,16 @@ const chatService = {
      * @param {number} otherUserId
      */
     getMessages: async (otherUserId) => {
-        const response = await ApiService.get(`/api/chat/messages/${otherUserId}`);
-        return response.data;
+        try {
+            const response = await ApiService.get(`/api/chat/messages/${otherUserId}`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] getMessages — mock fallback');
+                return MOCK_MESSAGES;
+            }
+            throw error;
+        }
     },
 
     /**
@@ -101,13 +115,40 @@ const chatService = {
      * @param {Object} messageData - { receiverId, content, attachmentUrl? }
      */
     sendMessage: async (messageData) => {
-        const response = await ApiService.post('/api/chat/messages', messageData);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/chat/messages', messageData);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] sendMessage — mock fallback');
+                return {
+                    id: `msg-mock-${Date.now()}`,
+                    ...messageData,
+                    sentAt: new Date().toISOString(),
+                    isOwn: true,
+                };
+            }
+            throw error;
+        }
     },
 
     sendMessageToUser: async (receiverId, content) => {
-        const response = await ApiService.post('/api/chat/messages', { receiverId, content });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/chat/messages', { receiverId, content });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] sendMessageToUser — mock fallback');
+                return {
+                    id: `msg-mock-${Date.now()}`,
+                    receiverId,
+                    content,
+                    sentAt: new Date().toISOString(),
+                    isOwn: true,
+                };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -115,13 +156,29 @@ const chatService = {
      * @param {number} senderId
      */
     markMessagesAsRead: async (senderId) => {
-        const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
-        return response.data;
+        try {
+            const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] markMessagesAsRead — mock fallback');
+                return { message: 'Messages marked as read (mock).' };
+            }
+            throw error;
+        }
     },
 
     markAsRead: async (senderId) => {
-        const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
-        return response.data;
+        try {
+            const response = await ApiService.put(`/api/chat/messages/${senderId}/read`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] markAsRead — mock fallback');
+                return { message: 'Messages marked as read (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -129,8 +186,16 @@ const chatService = {
      * @param {number} messageId
      */
     deleteMessage: async (messageId) => {
-        const response = await ApiService.delete(`/api/chat/messages/${messageId}`);
-        return response.data;
+        try {
+            const response = await ApiService.delete(`/api/chat/messages/${messageId}`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] deleteMessage — mock fallback');
+                return { message: 'Message deleted (mock).' };
+            }
+            throw error;
+        }
     },
 
     // ─── Conversation Management ──────────────────────────────────────────────
@@ -140,8 +205,16 @@ const chatService = {
      * @param {number} otherUserId
      */
     archiveConversation: async (otherUserId) => {
-        const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/archive`);
-        return response.data;
+        try {
+            const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/archive`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] archiveConversation — mock fallback');
+                return { message: 'Conversation archived (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -149,8 +222,16 @@ const chatService = {
      * @param {number} otherUserId
      */
     unarchiveConversation: async (otherUserId) => {
-        const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/unarchive`);
-        return response.data;
+        try {
+            const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/unarchive`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] unarchiveConversation — mock fallback');
+                return { message: 'Conversation unarchived (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -160,8 +241,16 @@ const chatService = {
      * @param {string} [details]
      */
     reportConversation: async (otherUserId, reason, details = '') => {
-        const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/report`, { reason, details });
-        return response.data;
+        try {
+            const response = await ApiService.post(`/api/chat/conversations/${otherUserId}/report`, { reason, details });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] reportConversation — mock fallback');
+                return { message: 'Conversation reported (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -170,12 +259,16 @@ const chatService = {
      * @param {boolean} isTyping
      */
     sendTypingIndicator: async (otherUserId, isTyping) => {
-        const response = await ApiService.post(
-            `/api/chat/conversations/${otherUserId}/typing`,
-            {},
-            { params: { isTyping } }
-        );
-        return response.data;
+        try {
+            const response = await ApiService.post(
+                `/api/chat/conversations/${otherUserId}/typing`,
+                {},
+                { params: { isTyping } }
+            );
+            return response.data;
+        } catch {
+            // Swallow errors silently — typing indicators are best-effort
+        }
     },
 
     // ─── Search ───────────────────────────────────────────────────────────────
@@ -185,8 +278,17 @@ const chatService = {
      * @param {string} query
      */
     searchMessages: async (query) => {
-        const response = await ApiService.get('/api/chat/search', { params: { q: query } });
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/chat/search', { params: { q: query } });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] searchMessages — mock fallback');
+                const lc = query.toLowerCase();
+                return MOCK_MESSAGES.filter(m => m.content.toLowerCase().includes(lc));
+            }
+            throw error;
+        }
     },
 
     // ─── Blocking ─────────────────────────────────────────────────────────────
@@ -197,8 +299,16 @@ const chatService = {
      * @param {string} [reason]
      */
     blockUser: async (userId, reason = '') => {
-        const response = await ApiService.post('/api/chat/block', { userId, reason });
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/chat/block', { userId, reason });
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] blockUser — mock fallback');
+                return { message: 'User blocked (mock).' };
+            }
+            throw error;
+        }
     },
 
     /**
@@ -206,22 +316,37 @@ const chatService = {
      * @returns {Promise<Array>} - Array of blocked users with their details
      */
     getBlockedUsers: async () => {
-        const response = await ApiService.get('/api/chat/blocked');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/chat/blocked');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[chatService] getBlockedUsers — mock fallback');
+                return [];
+            }
+            throw error;
+        }
     },
 
     // ─── SignalR Real-Time ─────────────────────────────────────────────────────
 
     /**
      * Connect to the SignalR chat hub and register event handlers.
+     * When the backend is offline this will gracefully fail and the app
+     * continues in mock/offline mode.
      * @param {Function} onMessage   - called when a new message arrives: (senderId, message) => void
      * @param {Function} onTyping    - called on typing indicator: (senderId, isTyping) => void
      */
     connectHub: async (onMessage, onTyping) => {
-        const hub = await getHubConnection();
-        hub.on('ReceiveMessage', onMessage);
-        hub.on('UserTyping', onTyping);
-        return hub;
+        try {
+            const hub = await getHubConnection();
+            hub.on('ReceiveMessage', onMessage);
+            hub.on('UserTyping', onTyping);
+            return hub;
+        } catch (error) {
+            console.warn('[chatService] connectHub — backend unavailable, real-time chat disabled.');
+            return null;
+        }
     },
 
     /**
@@ -230,8 +355,12 @@ const chatService = {
      * @param {string} message
      */
     sendHubMessage: async (receiverId, message) => {
-        const hub = await getHubConnection();
-        await hub.invoke('SendMessage', String(receiverId), message);
+        try {
+            const hub = await getHubConnection();
+            await hub.invoke('SendMessage', String(receiverId), message);
+        } catch (error) {
+            console.warn('[chatService] sendHubMessage — hub unavailable (mock mode).');
+        }
     },
 
     /**
@@ -240,8 +369,12 @@ const chatService = {
      * @param {boolean} isTyping
      */
     sendHubTyping: async (receiverId, isTyping) => {
-        const hub = await getHubConnection();
-        await hub.invoke('SendTypingIndicator', String(receiverId), isTyping);
+        try {
+            const hub = await getHubConnection();
+            await hub.invoke('SendTypingIndicator', String(receiverId), isTyping);
+        } catch {
+            // Swallow silently — typing indicator is best-effort
+        }
     },
 
     /**

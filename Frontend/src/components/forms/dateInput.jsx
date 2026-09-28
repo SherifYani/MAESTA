@@ -99,10 +99,12 @@ const formatDateToISO = (date) => {
  * @returns {Date|null} Parsed Date object or null
  */
 const parseDateString = (dateString) => {
-  if (!dateString) return null;
+  if (!dateString || typeof dateString !== "string") return null;
 
   // Parse ISO date string (YYYY-MM-DD)
-  const [year, month, day] = dateString.split("-").map(Number);
+  const parts = dateString.split("-");
+  if (parts.length !== 3) return null;
+  const [year, month, day] = parts.map(Number);
 
   if (!year || !month || !day || isNaN(year) || isNaN(month) || isNaN(day)) {
     return null;

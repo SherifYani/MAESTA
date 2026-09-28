@@ -1,12 +1,10 @@
 /**
  * @file paymentService.js
  * @description Payment services — verified against PaymentsController.cs.
+ *              Falls back to mock data when the backend is unavailable.
  * @author Sherif Talaat
- * @version 2.1.0
+ * @version 2.2.0
  * @date 2026-04-29
- *
- * @last-modified-by Antigravity (AI) — verified against PaymentsController.cs
- * @last-modified-date 2026-04-29
  *
  * REAL ROUTES (PaymentsController [Route("api/[controller]")]):
  *   GET    api/payments/balance
@@ -27,6 +25,30 @@
  **/
 
 import ApiService from './ApiService';
+import { isNetworkError, MOCK_SUBSCRIPTION } from './mockData';
+
+// ─── Mock fallback data defined locally (payment-specific) ───────────────────
+const MOCK_BALANCE = {
+    balance: 1250.00,
+    available: 1000.00,
+    pending: 250.00,
+    totalEarnings: 4800.00,
+    currency: 'USD',
+};
+
+const MOCK_TRANSACTIONS = [
+    { id: 'tx-1', type: 'deposit', amount: 500, status: 'completed', date: '2026-09-10T10:00:00Z', description: 'Wallet top-up' },
+    { id: 'tx-2', type: 'payment', amount: -1400, status: 'completed', date: '2026-09-15T14:00:00Z', description: 'Contract payment — React E-Commerce' },
+    { id: 'tx-3', type: 'deposit', amount: 750, status: 'pending', date: '2026-09-25T09:00:00Z', description: 'Milestone release' },
+];
+
+const MOCK_PAYMENT_METHODS = [
+    { id: 'pm-1', type: 'card', last4: '4242', brand: 'Visa', isDefault: true, expiresAt: '12/28' },
+];
+
+const MOCK_BANK_ACCOUNTS = [
+    { id: 'ba-1', bankName: 'National Bank', accountNumber: '****1234', isDefault: true },
+];
 
 const paymentService = {
     // Get saved payment methods
@@ -35,6 +57,10 @@ const paymentService = {
             const response = await ApiService.get('/api/payments/methods');
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getPaymentMethods — mock fallback');
+                return MOCK_PAYMENT_METHODS;
+            }
             throw error;
         }
     },
@@ -45,6 +71,10 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/methods', paymentData);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] addPaymentMethod — mock fallback');
+                return { id: `pm-mock-${Date.now()}`, ...paymentData };
+            }
             throw error;
         }
     },
@@ -55,6 +85,10 @@ const paymentService = {
             const response = await ApiService.delete(`/api/payments/methods/${methodId}`);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] removePaymentMethod — mock fallback');
+                return { message: 'Payment method removed (mock).' };
+            }
             throw error;
         }
     },
@@ -66,6 +100,10 @@ const paymentService = {
             const response = await ApiService.get(`/api/payments/transactions?${queryParams}`);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getTransactions — mock fallback');
+                return { items: MOCK_TRANSACTIONS, totalItems: MOCK_TRANSACTIONS.length };
+            }
             throw error;
         }
     },
@@ -76,6 +114,10 @@ const paymentService = {
             const response = await ApiService.get('/api/payments/balance');
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getBalance — mock fallback');
+                return MOCK_BALANCE;
+            }
             throw error;
         }
     },
@@ -98,6 +140,15 @@ const paymentService = {
                 period
             };
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getEarningsSummary — mock fallback');
+                return {
+                    totalEarnings: MOCK_BALANCE.totalEarnings,
+                    pending: MOCK_BALANCE.pending,
+                    available: MOCK_BALANCE.available,
+                    period,
+                };
+            }
             throw error;
         }
     },
@@ -108,6 +159,10 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/deposit', { amount, paymentMethodId });
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] depositFunds — mock fallback');
+                return { id: `tx-mock-${Date.now()}`, amount, type: 'deposit', status: 'completed' };
+            }
             throw error;
         }
     },
@@ -118,43 +173,82 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/withdraw', { amount, method: withdrawalMethod });
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] requestWithdrawal — mock fallback');
+                return { id: `tx-mock-${Date.now()}`, amount, type: 'withdrawal', status: 'pending' };
+            }
             throw error;
         }
     },
 
     // Deposit to escrow for a contract
-    // Backend: POST api/payments/escrow/deposit — body: EscrowDepositRequest
     depositToEscrow: async (escrowDepositRequest) => {
-        const response = await ApiService.post('/api/payments/escrow/deposit', escrowDepositRequest);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/payments/escrow/deposit', escrowDepositRequest);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] depositToEscrow — mock fallback');
+                return { message: 'Escrow deposit successful (mock).', ...escrowDepositRequest };
+            }
+            throw error;
+        }
     },
 
     // Release escrow for a completed contract
-    // Backend: POST api/payments/escrow/release/{contractId}
     releaseEscrow: async (contractId) => {
-        const response = await ApiService.post(`/api/payments/escrow/release/${contractId}`);
-        return response.data;
+        try {
+            const response = await ApiService.post(`/api/payments/escrow/release/${contractId}`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] releaseEscrow — mock fallback');
+                return { message: 'Escrow released (mock).', contractId };
+            }
+            throw error;
+        }
     },
 
     // Refund escrow (Admin only)
-    // Backend: POST api/payments/escrow/refund/{contractId}
     refundEscrow: async (contractId) => {
-        const response = await ApiService.post(`/api/payments/escrow/refund/${contractId}`);
-        return response.data;
+        try {
+            const response = await ApiService.post(`/api/payments/escrow/refund/${contractId}`);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] refundEscrow — mock fallback');
+                return { message: 'Escrow refunded (mock).', contractId };
+            }
+            throw error;
+        }
     },
 
     // Subscribe to a plan
-    // Backend: POST api/subscriptions/subscribe
     subscribeToPlan: async (planRequest) => {
-        const response = await ApiService.post('/api/subscriptions/subscribe', planRequest);
-        return response.data;
+        try {
+            const response = await ApiService.post('/api/subscriptions/subscribe', planRequest);
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] subscribeToPlan — mock fallback');
+                return { ...MOCK_SUBSCRIPTION, ...planRequest };
+            }
+            throw error;
+        }
     },
 
     // Get current active subscription
-    // Backend: GET api/subscriptions/current
     getCurrentSubscription: async () => {
-        const response = await ApiService.get('/api/subscriptions/current');
-        return response.data;
+        try {
+            const response = await ApiService.get('/api/subscriptions/current');
+            return response.data;
+        } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getCurrentSubscription — mock fallback');
+                return MOCK_SUBSCRIPTION;
+            }
+            throw error;
+        }
     },
 
     // Get invoices — maps to transactions
@@ -166,6 +260,10 @@ const paymentService = {
             const transactions = response.data?.items || response.data || [];
             return transactions.filter(t => t.type === 'deposit' || t.type === 'payment');
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getInvoices — mock fallback');
+                return MOCK_TRANSACTIONS.filter(t => t.type === 'deposit' || t.type === 'payment');
+            }
             throw error;
         }
     },
@@ -176,6 +274,10 @@ const paymentService = {
             const response = await ApiService.post(`/api/payments/escrow/refund/${transactionId}`);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] requestRefund — mock fallback');
+                return { message: 'Refund requested (mock).', transactionId };
+            }
             throw error;
         }
     },
@@ -186,6 +288,10 @@ const paymentService = {
             const response = await ApiService.post('/api/payments/bank-accounts', bankData);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] linkBankAccount — mock fallback');
+                return { id: `ba-mock-${Date.now()}`, ...bankData };
+            }
             throw error;
         }
     },
@@ -196,6 +302,10 @@ const paymentService = {
             const response = await ApiService.get('/api/payments/bank-accounts');
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] getBankAccounts — mock fallback');
+                return MOCK_BANK_ACCOUNTS;
+            }
             throw error;
         }
     },
@@ -206,6 +316,11 @@ const paymentService = {
             const response = await ApiService.get(`/api/payments/calculate-fee?amount=${amount}&type=${type}`);
             return response.data;
         } catch (error) {
+            if (isNetworkError(error)) {
+                console.warn('[paymentService] calculateFee — mock fallback');
+                // Simple 5% fee calculation for mock
+                return { amount, fee: parseFloat((amount * 0.05).toFixed(2)), total: parseFloat((amount * 1.05).toFixed(2)), type };
+            }
             throw error;
         }
     }
