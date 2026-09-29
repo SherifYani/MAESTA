@@ -212,10 +212,6 @@ export default function RegisterForm() {
 
       {/* Header */}
       <div className="register-form__header">
-        <div className="register-form__brand">
-          <span className="register-form__brand-icon">M</span>
-          <span className="register-form__brand-text">MAESTA</span>
-        </div>
         <h1 className="register-form__title">Create Account</h1>
         <p className="register-form__subtitle">
           Join thousands of top professionals and elite hirers
@@ -294,36 +290,34 @@ export default function RegisterForm() {
         />
 
         {/* Password & Confirm Password */}
-        <div className="register-form__row register-form__row--2col">
-          <FormInput
-            icon="fa-solid fa-lock"
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Password (8+ chars)"
-            value={formData.password}
-            onChange={handleInputChange}
-            showPasswordToggle
-            showPassword={showPassword}
-            onTogglePassword={() => setShowPassword(!showPassword)}
-            hasError={!!formErrors.password}
-            errorMessage={formErrors.password}
-            required
-          />
-          <FormInput
-            icon="fa-solid fa-lock"
-            type={showConfirmPassword ? "text" : "password"}
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            showPasswordToggle
-            showPassword={showConfirmPassword}
-            onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
-            hasError={hasPasswordMismatch || !!formErrors.confirmPassword}
-            errorMessage={hasPasswordMismatch ? "Passwords do not match" : formErrors.confirmPassword}
-            required
-          />
-        </div>
+        <FormInput
+          icon="fa-solid fa-lock"
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="Password (8+ chars)"
+          value={formData.password}
+          onChange={handleInputChange}
+          showPasswordToggle
+          showPassword={showPassword}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+          hasError={!!formErrors.password}
+          errorMessage={formErrors.password}
+          required
+        />
+        <FormInput
+          icon="fa-solid fa-lock"
+          type={showConfirmPassword ? "text" : "password"}
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          showPasswordToggle
+          showPassword={showConfirmPassword}
+          onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+          hasError={hasPasswordMismatch || !!formErrors.confirmPassword}
+          errorMessage={hasPasswordMismatch ? "Passwords do not match" : formErrors.confirmPassword}
+          required
+        />
 
         {/* Live Password Strength Meter */}
         {formData.password && (
@@ -358,7 +352,7 @@ export default function RegisterForm() {
         )}
 
         {/* Optional Row: Phone & Gender */}
-        <div className="register-form__row register-form__row--2col">
+        <div className="register-form__row register-form__row--2col register-form__row--contact">
           <FormInput
             icon="fa-solid fa-phone"
             type="tel"
@@ -373,10 +367,11 @@ export default function RegisterForm() {
           <FormSelect
             icon="fa-solid fa-venus-mars"
             name="gender"
+            buttonClassName="register-form__gender-select-button"
             value={formData.gender}
             onChange={handleInputChange}
             options={[
-              { value: "", label: "Gender (Optional)" },
+              { value: "", label: "Gender" },
               { value: "Male", label: "Male" },
               { value: "Female", label: "Female" },
             ]}

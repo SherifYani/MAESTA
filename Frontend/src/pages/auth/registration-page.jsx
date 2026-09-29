@@ -6,7 +6,7 @@
  * @date 2026-09-28
  */
 
-import React from "react";
+import React, { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import "../../styles/pages/registration-page.css";
 import "../../styles/globals.css";
@@ -21,6 +21,18 @@ import Footer from "../../components/common/Footer";
  * @returns {JSX.Element} The rendered registration page
  */
 export default function RegistrationPage() {
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 50 }, (_, index) => ({
+        id: `registration-star-${index}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        opacity: Math.random() * 0.7 + 0.3,
+      })),
+    []
+  );
+
   /**
    * Navigates back to the previous page.
    */
@@ -32,6 +44,21 @@ export default function RegistrationPage() {
     <div className="registration-page-wrapper">
       <Header />
       <main className="registration-page">
+        <div className="registration-page__stars" aria-hidden="true">
+          {stars.map((star) => (
+            <div
+              key={star.id}
+              className="registration-page__star"
+              style={{
+                left: star.left,
+                top: star.top,
+                animationDelay: star.animationDelay,
+                opacity: star.opacity,
+              }}
+            />
+          ))}
+        </div>
+
         {/* Back Button */}
         <button
           className="registration-page__back-button"

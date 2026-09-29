@@ -22,7 +22,7 @@
   margin: var(--space-4) 0;
   position: relative;
   animation: fadeIn 0.4s ease-out;
-  color: var(--primary-white);
+  color: var(--color-primary-white);
 }
 
 @keyframes fadeIn {
@@ -50,7 +50,7 @@
 }
 
 .date-input__container:hover .date-input__label {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
 }
 
 .date-input__required {
@@ -85,7 +85,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--accent-pink),
+    var(--color-accent-pink),
     transparent
   );
   opacity: 0;
@@ -93,8 +93,8 @@
 }
 
 .date-input__fields-wrapper:hover {
-  border-color: color-mix(in srgb, var(--accent-pink) 40%, transparent);
-  box-shadow: 0 8px 32px var(--shadow-pink), 0 0 0 1px var(--radial-pink-2);
+  border-color: color-mix(in srgb, var(--color-accent-pink) 40%, transparent);
+  box-shadow: 0 8px 32px var(--color-shadow-pink), 0 0 0 1px var(--color-radial-pink-2);
   transform: translateY(-2px);
 }
 
@@ -103,8 +103,8 @@
 }
 
 .date-input__fields-wrapper:focus-within {
-  border-color: var(--vivid-pink);
-  box-shadow: 0 12px 40px var(--shadow-pink), 0 0 0 4px var(--radial-pink-1),
+  border-color: var(--color-vivid-pink);
+  box-shadow: 0 12px 40px var(--color-shadow-pink), 0 0 0 4px var(--color-radial-pink-1),
     inset 0 1px 0 var(--color-translucent-white-3);
 }
 
@@ -137,7 +137,7 @@
 
 .date-input__fields-wrapper:hover .date-input__icon,
 .date-input__fields-wrapper:focus-within .date-input__icon {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
 }
 
 /* === Modern Date Input Fields === */
@@ -204,7 +204,7 @@
 
 .date-input__fields-wrapper:hover .date-input__separator {
   opacity: 0.6;
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
   transform: scale(1.1);
 }
 
@@ -252,9 +252,9 @@
 
 .date-input__clear-button:hover,
 .date-input__calendar-button:hover {
-  border-color: var(--accent-pink);
+  border-color: var(--color-accent-pink);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px var(--shadow-pink),
+  box-shadow: 0 6px 20px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-3);
 }
 
@@ -274,9 +274,9 @@
 }
 
 .date-input__clear-button:hover {
-  color: var(--accent-pink);
-  background: color-mix(in srgb, var(--accent-pink) 10%, transparent);
-  border: 1px solid var(--accent-pink);
+  color: var(--color-accent-pink);
+  background: color-mix(in srgb, var(--color-accent-pink) 10%, transparent);
+  border: 1px solid var(--color-accent-pink);
 }
 
 .date-input__calendar-button {
@@ -289,15 +289,15 @@
 }
 
 .date-input__calendar-button:hover {
-  color: var(--accent-pink);
-  background: var(--radial-pink-1);
+  color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
 }
 
 .date-input__calendar-button[aria-expanded="true"] {
-  color: var(--vivid-pink);
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  box-shadow: 0 0 0 2px var(--radial-pink-1),
+  color: var(--color-vivid-pink);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 0 0 2px var(--color-radial-pink-1),
     inset 0 1px 0 var(--color-translucent-white-3);
   animation: buttonPulse 2s infinite;
 }
@@ -305,13 +305,13 @@
 @keyframes buttonPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 2px var(--radial-pink-1),
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1),
       inset 0 1px 0 var(--color-translucent-white-3);
   }
   50% {
-    box-shadow: 0 0 0 4px var(--radial-pink-1),
+    box-shadow: 0 0 0 4px var(--color-radial-pink-1),
       inset 0 1px 0 var(--color-translucent-white-3),
-      0 0 20px var(--radial-pink-2);
+      0 0 20px var(--color-radial-pink-2);
   }
 }
 
@@ -332,11 +332,11 @@
   padding: var(--space-2) var(--space-3);
   background: linear-gradient(
     135deg,
-    var(--radial-pink-1),
-    var(--radial-pink-2)
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
   );
   border-radius: 10px;
-  border: 1px solid var(--radial-pink-1);
+  border: 1px solid var(--color-radial-pink-1);
   animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(10px);
   max-width: fit-content;
@@ -354,9 +354,9 @@
 }
 
 .date-input__age-display i {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
   font-size: 1rem;
-  filter: drop-shadow(0 2px 4px var(--shadow-pink));
+  filter: drop-shadow(0 2px 4px var(--color-shadow-pink));
 }
 
 .date-input__age-text {
@@ -419,7 +419,7 @@
 }
 
 .date-input__tips i {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
   font-size: 1rem;
   opacity: 0.7;
 }
@@ -438,11 +438,10 @@
 
 /* === Modern Calendar Popup Container === */
 .date-input__calendar-popup {
-  position: absolute;
-  top: calc(100% + var(--space-3));
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  position: fixed;
+  z-index: 1100; /* Must be above footer's fixed devNotice (z-index: 1000) */
+  max-height: min(480px, calc(100vh - 120px)); /* Never overflow the viewport */
+  overflow-y: auto;
   background: var(--color-accent);
   border: 1px solid var(--color-muted-foreground);
   border-radius: 20px;
@@ -450,9 +449,24 @@
     0 0 0 1px var(--color-translucent-white-3),
     inset 0 1px 0 var(--color-translucent-white-3);
   animation: calendarSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
   backdrop-filter: blur(20px);
   transform-origin: top left;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-pink) transparent;
+}
+
+.date-input__calendar-popup::-webkit-scrollbar {
+  width: 4px;
+}
+
+.date-input__calendar-popup::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.date-input__calendar-popup::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: var(--radius-full);
 }
 
 @keyframes calendarSlideIn {
@@ -487,7 +501,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--accent-pink),
+    var(--color-accent-pink),
     transparent
   );
   opacity: 0.3;
@@ -500,7 +514,7 @@
   color: var(--color-background);
   margin: 0;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -522,9 +536,9 @@
 }
 
 .date-input__calendar-close:hover {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
   transform: rotate(90deg) scale(1.1);
 }
 
@@ -563,11 +577,11 @@
 }
 
 .date-input__month-nav:hover:not(:disabled) {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
   transform: scale(1.1);
-  box-shadow: 0 4px 12px var(--shadow-pink);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
 }
 
 .date-input__month-nav:disabled {
@@ -581,6 +595,97 @@
   font-weight: 700;
   color: var(--color-foreground);
   letter-spacing: -0.01em;
+}
+
+/* === Modern Calendar Header Selectors (Month & Year) === */
+.date-input__calendar-header-selectors {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 1;
+  margin: 0 var(--space-2);
+}
+
+.date-input__select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.date-input__select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: var(--color-input);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding: 6px 28px 6px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  box-shadow: 0 1px 3px var(--color-translucent-white-1);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.4;
+}
+
+.date-input__month-select {
+  min-width: 115px;
+}
+
+.date-input__year-select {
+  min-width: 82px;
+}
+
+.date-input__select:hover {
+  border-color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
+  color: var(--color-accent-pink);
+  box-shadow: 0 4px 14px var(--color-shadow-pink);
+  transform: translateY(-1px);
+}
+
+.date-input__select:focus {
+  border-color: var(--color-vivid-pink);
+  background: var(--color-input);
+  box-shadow: 0 0 0 2px var(--color-radial-pink-1),
+    0 4px 16px var(--color-shadow-pink);
+  transform: translateY(-1px);
+}
+
+.date-input__select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.date-input__select-wrapper:hover .date-input__select-arrow {
+  color: var(--color-accent-pink);
+  transform: translateY(-50%) scale(1.15);
+}
+
+.date-input__select-wrapper:focus-within .date-input__select-arrow {
+  color: var(--color-vivid-pink);
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Options dropdown styling */
+.date-input__select option {
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
 }
 
 /* === Modern Calendar Grid === */
@@ -633,7 +738,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, var(--radial-pink-1), transparent);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -643,11 +748,11 @@
 }
 
 .date-input__calendar-day:hover:not(:disabled) {
-  background: var(--radial-pink-1);
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
+  background: var(--color-radial-pink-1);
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 4px 12px var(--shadow-pink),
+  box-shadow: 0 4px 12px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-3);
 }
 
@@ -656,18 +761,18 @@
 }
 
 .date-input__calendar-day--today {
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
   border-color: transparent;
   color: white;
   font-weight: 700;
-  box-shadow: 0 4px 12px var(--shadow-pink);
+  box-shadow: 0 4px 12px var(--color-shadow-pink);
 }
 
 .date-input__calendar-day--today:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--vivid-pink), var(--accent-pink));
+  background: linear-gradient(135deg, var(--color-vivid-pink), var(--color-accent-pink));
   color: white;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px var(--shadow-pink),
+  box-shadow: 0 6px 20px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-2);
 }
 
@@ -704,7 +809,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--accent-pink),
+    var(--color-accent-pink),
     transparent
   );
   opacity: 0.3;
@@ -714,11 +819,11 @@
   flex: 1;
   background: linear-gradient(
     135deg,
-    var(--radial-pink-1),
-    var(--radial-pink-2)
+    var(--color-radial-pink-1),
+    var(--color-radial-pink-2)
   );
-  border: 1px solid var(--radial-pink-1);
-  color: var(--accent-pink);
+  border: 1px solid var(--color-radial-pink-1);
+  color: var(--color-accent-pink);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -741,17 +846,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, var(--radial-pink-1), transparent);
+  background: linear-gradient(135deg, var(--color-radial-pink-1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .date-input__calendar-action:hover {
-  background: linear-gradient(135deg, var(--accent-pink), var(--vivid-pink));
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-vivid-pink));
   color: white;
   border-color: transparent;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-pink),
+  box-shadow: 0 8px 24px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-2);
 }
 
@@ -794,11 +899,6 @@
   }
 
   .date-input__calendar-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - var(--space-8));
     max-width: 380px;
     max-height: 85vh;
     overflow-y: auto;
@@ -901,11 +1001,6 @@
   }
 
   .date-input__calendar-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - 2rem);
     max-width: 320px;
     max-height: 80vh;
     overflow-y: auto;
@@ -971,7 +1066,7 @@
 .date-input__calendar-action:focus-visible,
 .date-input__month-nav:focus-visible,
 .date-input__calendar-close:focus-visible {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
 }
 
 /* ==========================================================================
@@ -999,12 +1094,12 @@
 }
 
 .dark .date-input__calendar-day--today {
-  box-shadow: 0 4px 16px var(--shadow-pink),
+  box-shadow: 0 4px 16px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-2);
 }
 
 .dark .date-input__calendar-action:hover {
-  box-shadow: 0 8px 32px var(--shadow-pink),
+  box-shadow: 0 8px 32px var(--color-shadow-pink),
     inset 0 1px 0 var(--color-translucent-white-2);
 }
 

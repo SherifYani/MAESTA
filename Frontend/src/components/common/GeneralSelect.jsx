@@ -36,6 +36,7 @@ function GeneralSelect({
   icon: Icon = Trophy,
   placeholder = "Select an option...",
   disabled = false,
+  buttonClassName = "",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -132,7 +133,7 @@ function GeneralSelect({
         ref={selectRef}
         onClick={handleButtonClick}
         onKeyDown={handleKeyDown}
-        className={`${styles["modern-select__button"]} ${disabled ? styles["modern-select__button--disabled"] : ""
+        className={`${styles["modern-select__button"]} ${buttonClassName} ${disabled ? styles["modern-select__button--disabled"] : ""
           }`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}

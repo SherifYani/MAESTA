@@ -58,6 +58,33 @@
   z-index: 0;
 }
 
+.registration-page__stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.registration-page__star {
+  position: absolute;
+  width: 0.25rem;
+  height: 0.25rem;
+  background: var(--color-primary-white);
+  border-radius: 50%;
+  animation: registration-page-twinkle 3s infinite;
+}
+
+@keyframes registration-page-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
 /* ==========================================================================
    Back Navigation Button
    ========================================================================== */
@@ -184,5 +211,9 @@
 @media (prefers-reduced-motion: reduce) {
   .registration-page__back-button {
     transition: none;
+  }
+
+  .registration-page__star {
+    animation: none;
   }
 }

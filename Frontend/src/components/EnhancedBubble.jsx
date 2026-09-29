@@ -236,8 +236,8 @@ class WebGLBoundary extends Component {
       return (
         <div
           style={{
-            width: "100%",
-            height: "100%",
+            width: "150%",
+            height: "150%",
             borderRadius: "50%",
             background:
               "radial-gradient(circle at 35% 35%, rgba(201, 161, 82, 0.4), rgba(184, 148, 95, 0.1) 60%, transparent 80%)",
@@ -259,7 +259,7 @@ class WebGLBoundary extends Component {
 export default function EnhancedBubble() {
   return (
     <WebGLBoundary>
-      <Canvas camera={{ position: [0, 0, 7], fov: 50 }}>
+      <Canvas camera={{ position: [0, 0, 5.5], fov: 50 }}>
         <Suspense fallback={null}>
           <BubbleContent />
           <OrbitControls

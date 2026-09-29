@@ -278,8 +278,8 @@
   --color-radial-pink-3: rgb(179 154 126 / 0.06);
 
   /* Interactive States */
-  --color-input-hover: oklch(0.25 0.009 285);
-  --color-accent-hover: oklch(0.30 0.012 285);
+  --color-input-hover: oklch(0.24 0.009 285);
+  --color-accent-hover: oklch(0.31 0.009 285);
 
   /* Semantic Colors - Status Indicators (Dark Mode) */
   --color-success: #4ade80;
@@ -292,10 +292,6 @@
   --color-info-bg: rgba(96, 165, 250, 0.15);
   --color-rating: #facc15;
   --color-overlay: rgba(0, 0, 0, 0.75);
-
-  /* Interactive States - Warmer hover states */
-  --color-input-hover: oklch(0.24 0.009 285);
-  --color-accent-hover: oklch(0.31 0.009 285);
 
   /* Translucent Overlays - Reduced for eye comfort in dark mode */
   --color-translucent-white-1: rgba(255, 255, 255, 0.07);

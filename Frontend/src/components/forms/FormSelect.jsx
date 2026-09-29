@@ -35,6 +35,7 @@ function FormSelect({
     options,
     required = false,
     className = "",
+    buttonClassName = "",
     hasError = false,
 }) {
     const containerClass = `form-select__container ${className} ${hasError ? "form-select--error" : ""
@@ -53,7 +54,8 @@ function FormSelect({
                     }}
                     options={options}
                     icon={icon}
-                    className="form-select__field"
+                        buttonClassName={buttonClassName}
+                        className="form-select__field"
                 />
             </div>
         </div>
@@ -73,6 +75,7 @@ FormSelect.propTypes = {
     ).isRequired,
     required: PropTypes.bool,
     className: PropTypes.string,
+    buttonClassName: PropTypes.string,
     hasError: PropTypes.bool,
 };
 

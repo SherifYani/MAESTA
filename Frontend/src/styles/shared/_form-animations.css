@@ -15,8 +15,8 @@
 
 :root {
   /* Timing functions */
-  --animation-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --animation-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-ease-out: cubic-bezier(0, 0, 0.2, 1);      /* true ease-out: fast start, slow end */
+  --animation-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1); /* standard Material ease-in-out */
   --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
   /* Durations */

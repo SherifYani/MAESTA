@@ -50,5 +50,6 @@
 
 /* Adjust input field padding when password toggle is present */
 .form-input__wrapper:has(.form-input__password-toggle) .form-input__field {
-  padding-right: calc(var(--space-6) * 5.25); /* Space for icon + toggle */
+  padding-right: calc(var(--space-6) * 4);
+  /* Space for icon + toggle */
 }

@@ -27,16 +27,16 @@
   position: relative;
   width: 100%;
   border-radius: 12px;
-  background: var(--primary-black);
-  border: 2px dashed var(--translucent-black-1);
+  background: var(--color-primary-black);
+  border: 2px dashed var(--color-translucent-black-1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px var(--shadow-pink);
+  box-shadow: 0 4px 20px var(--color-shadow-pink);
   background-image: radial-gradient(
       circle at 10% 20%,
-      var(--radial-pink-1) 0%,
+      var(--color-radial-pink-1) 0%,
       transparent 20%
     ),
-    radial-gradient(circle at 90% 80%, var(--radial-pink-2) 0%, transparent 20%);
+    radial-gradient(circle at 90% 80%, var(--color-radial-pink-2) 0%, transparent 20%);
   animation: formSlideIn 0.3s ease-out;
   cursor: pointer;
   overflow: hidden;
@@ -44,32 +44,32 @@
 
 /* === File Upload Wrapper Hover State === */
 .file-upload__wrapper:hover {
-  border-color: var(--accent-pink);
-  box-shadow: 0 6px 25px var(--shadow-pink);
+  border-color: var(--color-accent-pink);
+  box-shadow: 0 6px 25px var(--color-shadow-pink);
   transform: translateY(-2px);
-  background: var(--translucent-white-3);
+  background: var(--color-translucent-white-3);
 }
 
 /* === File Upload Wrapper Focus State === */
 .file-upload__wrapper:focus-within {
-  border-color: var(--vivid-pink);
-  box-shadow: 0 0 0 3px var(--radial-pink-1), 0 8px 30px var(--shadow-pink);
+  border-color: var(--color-vivid-pink);
+  box-shadow: 0 0 0 3px var(--color-radial-pink-1), 0 8px 30px var(--color-shadow-pink);
   transform: translateY(-2px);
   animation: formGlowPulse 2s infinite;
 }
 
 /* === File Upload Wrapper Drag-over State === */
 .file-upload__wrapper--dragover {
-  border-color: var(--accent-pink);
-  background: var(--radial-pink-1);
+  border-color: var(--color-accent-pink);
+  background: var(--color-radial-pink-1);
   border-style: solid;
   transform: translateY(-1px);
 }
 
 /* === File Upload Wrapper Has File State === */
 .file-upload__wrapper--has-file {
-  border-color: var(--accent-pink);
-  background: var(--radial-pink-2);
+  border-color: var(--color-accent-pink);
+  background: var(--color-radial-pink-2);
 }
 
 /* === File Upload Wrapper Loading State === */
@@ -95,7 +95,7 @@
   justify-content: center;
   padding: 2.5rem 2rem;
   text-align: center;
-  color: var(--primary-white);
+  color: var(--color-primary-white);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -110,27 +110,27 @@
 /* === File Upload Icon === */
 .file-upload__icon {
   font-size: 2.5rem;
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
   margin-bottom: 1rem;
   transition: all 0.3s ease;
 }
 
 .file-upload__wrapper:hover .file-upload__icon {
   transform: scale(1.1);
-  color: var(--vivid-pink);
+  color: var(--color-vivid-pink);
 }
 
 /* === File Upload Text === */
 .file-upload__text {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--primary-white);
+  color: var(--color-primary-white);
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
 }
 
 .file-upload__wrapper:hover .file-upload__text {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
 }
 
 /* === File Upload Filename Display === */
@@ -153,7 +153,7 @@
 
 /* === File Upload Success Icon === */
 .file-upload__success-icon {
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
   font-size: 1rem;
 }
 
@@ -171,7 +171,7 @@
 
 .file-upload__clear:hover {
   color: var(--destructive);
-  background: var(--translucent-white-1);
+  background: var(--color-translucent-white-1);
 }
 
 /* === File Upload Hint Text === */
@@ -210,7 +210,7 @@
 /* === File Preview Icon === */
 .file-upload__preview-icon {
   font-size: 2rem;
-  color: var(--accent-pink);
+  color: var(--color-accent-pink);
 }
 
 /* === File Preview Details === */
@@ -253,8 +253,8 @@
 }
 
 .file-upload__preview-action:hover {
-  border-color: var(--accent-pink);
-  color: var(--accent-pink);
+  border-color: var(--color-accent-pink);
+  color: var(--color-accent-pink);
   transform: translateY(-1px);
 }
 
@@ -266,9 +266,9 @@
 }
 
 .file-upload__preview-action--remove:hover {
-  background: var(--accent-pink);
-  color: var(--primary-white);
-  border-color: var(--accent-pink);
+  background: var(--color-accent-pink);
+  color: var(--color-primary-white);
+  border-color: var(--color-accent-pink);
 }
 
 /* ==========================================================================
@@ -345,18 +345,18 @@
   .file-upload__wrapper {
     border-radius: 10px;
     border-width: 1.5px;
-    box-shadow: 0 2px 10px var(--shadow-pink);
+    box-shadow: 0 2px 10px var(--color-shadow-pink);
   }
 
   .file-upload__wrapper:hover,
   .file-upload__wrapper:focus-within,
   .file-upload__wrapper--dragover {
     transform: translateY(-1px);
-    box-shadow: 0 3px 15px var(--shadow-pink);
+    box-shadow: 0 3px 15px var(--color-shadow-pink);
   }
 
   .file-upload__wrapper:focus-within {
-    box-shadow: 0 0 0 2px var(--radial-pink-1), 0 4px 20px var(--shadow-pink);
+    box-shadow: 0 0 0 2px var(--color-radial-pink-1), 0 4px 20px var(--color-shadow-pink);
     animation: none;
   }
 

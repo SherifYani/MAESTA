@@ -34,7 +34,7 @@
     }
 }
 
-/* Slide Up */
+/* Slide Up — alias of fadeInUp; use fadeInUp for new code */
 @keyframes slideUp {
     from {
         opacity: 0;
